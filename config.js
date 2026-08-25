@@ -9,8 +9,8 @@ window.THRIVE = {
   /* ── WhatsApp de Denisse ──
      Formato internacional, solo dígitos, sin + ni espacios.
      Honduras es 504. Ejemplo: 50499887766
-     ⚠️ PENDIENTE — hoy es un número de relleno y el botón no funciona. */
-  whatsapp: '50400000000',
+     WhatsApp Business de Denisse, confirmado el 25 ago 2026. */
+  whatsapp: '50488912039',
 
   /* ── Dónde vive el sitio ──
      Sin barra al final. Se usa para armar los links que Denisse manda.
