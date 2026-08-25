@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THRIVE — antes de coordinar tu clase</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/img/seal.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/css/thrive.css">
+</head>
+
+<body>
+
+<div class="form-shell" id="shell">
+
+  <div class="form-top">
+    <button class="back" id="back" type="button" hidden>← atrás</button>
+    <span class="count" id="count">Pregunta 1 de 6</span>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+
+  <!-- las pantallas se generan desde el arreglo PREGUNTAS -->
+  <div id="steps"></div>
+
+</div>
+
+<!-- ══════════ CIERRE ══════════ -->
+<div class="confirm" id="listo" hidden>
+  <div class="check">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+  </div>
+  <h1 class="h2" style="margin-top:26px;">Listo, ya lo tengo</h1>
+  <p class="body" style="margin-top:18px;">Denisse revisa cada solicitud personalmente. Te escribe por WhatsApp para coordinar tu clase de prueba — normalmente el mismo día.</p>
+  <p class="body" style="margin-top:18px; color:var(--ink-3); font-size:0.94rem;">Podés cerrar esta ventana.</p>
+
+  <div class="btn-row" id="cierreAcciones"></div>
+</div>
+
+<script src="../config.js"></script>
+<script src="../assets/js/thrive.js"></script>
+<script>
+(function(){
+  'use strict';
+  var CFG = window.THRIVE || {};
+
+  /* ═══════════════════════════════════════════════════════
+     Las seis preguntas.
+     Cambiar el texto acá cambia el formulario. Nada más hay
+     que tocar. El orden importa: lo fácil primero, lo
+     delicado al final, cuando ya se comprometió con el proceso.
+     ⚠️ BORRADOR — pendiente validación de Denisse.
+     ═══════════════════════════════════════════════════════ */
+  var PREGUNTAS = [
+    {
+      id:'actividad', tipo:'multi',
+      titulo:'¿Qué hacés hoy para moverte?',
+      ayuda:'Podés marcar varias.',
+      opciones:['Pilates','Tenis','Running','Caminatas','Gym','Nada por ahora','Otro']
+    },
+    {
+      id:'porque', tipo:'texto',
+      titulo:'¿Por qué querés incorporar fuerza ahora?',
+      ayuda:'Contame con tus palabras. No hay respuesta correcta.',
+      placeholder:'Escribí lo que se te venga…'
+    },
+    {
+      id:'historial', tipo:'unica',
+      titulo:'¿Has entrenado fuerza antes?',
+      opciones:['Nunca','Entrené antes y lo dejé','Entreno actualmente']
+    },
+    {
+      id:'salud', tipo:'texto', opcional:true,
+      titulo:'¿Hay algún dolor, lesión o condición que deba conocer antes de ponerte a entrenar?',
+      ayuda:'Si no hay nada, podés dejarlo en blanco y seguir.',
+      placeholder:'Por ejemplo: cirugía de rodilla hace tres años…'
+    },
+    {
+      id:'meta', tipo:'texto',
+      titulo:'¿Qué te gustaría poder hacer en tres meses que hoy te cuesta?',
+      ayuda:'Mientras más concreto, mejor.',
+      placeholder:'Subir gradas sin quedarme sin aire, cargar a mi hijo…'
+    },
+    {
+      id:'horario', tipo:'unica', cierre:true,
+      titulo:'¿Podés sostener el horario de 7:30 a.m. hasta el 15 de diciembre?',
+      opciones:['Sí, 3x — lunes, miércoles y viernes','Sí, 2x — martes y jueves','No estoy segura']
+    }
+  ];
+
+  var CONSENTIMIENTO = 'Autorizo a Denisse a usar esta información para evaluar si THRIVE es adecuado para mí.';
+
+  /* ═══ estado ═══ */
+  var resp = {};
+  var consiente = false;
+  var i = 0;
+
+  var elSteps = document.getElementById('steps');
+  var elCount = document.getElementById('count');
+  var elBar   = document.getElementById('bar');
+  var elBack  = document.getElementById('back');
+  var elShell = document.getElementById('shell');
+  var elListo = document.getElementById('listo');
+
+  /* ═══ construir las pantallas ═══ */
+  PREGUNTAS.forEach(function(q, idx){
+    var step = document.createElement('div');
+    step.className = 'step';
+    step.hidden = true;
+    step.dataset.idx = idx;
+
+    var h = document.createElement('h1');
+    h.className = 'q-title';
+    h.textContent = q.titulo;
+    step.appendChild(h);
+
+    if(q.ayuda){
+      var help = document.createElement('p');
+      help.className = 'q-help';
+      help.textContent = q.ayuda;
+      step.appendChild(help);
+    }
+
+    var body = document.createElement('div');
+    body.className = 'q-body';
+    step.appendChild(body);
+
+    if(q.tipo === 'texto'){
+      var ta = document.createElement('textarea');
+      ta.className = 'field';
+      ta.placeholder = q.placeholder || '';
+      ta.setAttribute('aria-label', q.titulo);
+      ta.addEventListener('input', function(){
+        resp[q.id] = ta.value.trim();
+        pintarSiguiente(step, q);
+      });
+      body.appendChild(ta);
+
+    } else {
+      q.opciones.forEach(function(txt){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'opt' + (q.tipo === 'multi' ? ' multi' : '');
+        b.setAttribute('aria-pressed','false');
+        var m = document.createElement('span'); m.className = 'mark';
+        b.appendChild(m);
+        b.appendChild(document.createTextNode(txt));
+
+        b.addEventListener('click', function(){
+          if(q.tipo === 'multi'){
+            var actual = resp[q.id] || [];
+            var pos = actual.indexOf(txt);
+            if(pos === -1) actual.push(txt); else actual.splice(pos,1);
+            resp[q.id] = actual;
+            b.setAttribute('aria-pressed', pos === -1 ? 'true' : 'false');
+            pintarSiguiente(step, q);
+          } else {
+            resp[q.id] = txt;
+            body.querySelectorAll('.opt').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
+            b.setAttribute('aria-pressed','true');
+            /* Las de opción única avanzan solas: baja el formulario
+               de ~14 toques a ~9. Las de escribir sí llevan botón. */
+            if(!q.cierre){ setTimeout(function(){ ir(idx + 1); }, 260); }
+            else pintarSiguiente(step, q);
+          }
+        });
+        body.appendChild(b);
+      });
+    }
+
+    /* consentimiento, solo en la última */
+    if(q.cierre){
+      var cons = document.createElement('button');
+      cons.type = 'button';
+      cons.className = 'consent';
+      cons.setAttribute('aria-checked','false');
+      var cm = document.createElement('span'); cm.className = 'mark';
+      cons.appendChild(cm);
+      cons.appendChild(document.createTextNode(CONSENTIMIENTO));
+      cons.addEventListener('click', function(){
+        consiente = !consiente;
+        cons.setAttribute('aria-checked', consiente ? 'true' : 'false');
+        pintarSiguiente(step, q);
+      });
+      step.appendChild(cons);
+    }
+
+    var foot = document.createElement('div');
+    foot.className = 'step-foot';
+    var next = document.createElement('button');
+    next.type = 'button';
+    next.className = 'cta';
+    next.textContent = q.cierre ? 'Enviar' : 'Siguiente';
+    next.addEventListener('click', function(){
+      if(q.cierre) enviar(next);
+      else ir(idx + 1);
+    });
+    foot.appendChild(next);
+    var err = document.createElement('p');
+    err.className = 'err';
+    foot.appendChild(err);
+    step.appendChild(foot);
+
+    elSteps.appendChild(step);
+  });
+
+  /* El botón de una pantalla de texto/múltiple se apaga si falta lo obligatorio */
+  function pintarSiguiente(step, q){
+    var btn = step.querySelector('.step-foot .cta');
+    if(!btn) return;
+    var v = resp[q.id];
+    var lleno = q.opcional ? true
+      : (q.tipo === 'multi' ? (v && v.length) : (typeof v === 'string' ? v.length > 0 : !!v));
+    var ok = lleno && (!q.cierre || consiente);
+    btn.disabled = !ok;
+  }
+
+  /* Las de opción única sin cierre no muestran botón: avanzan al tocar */
+  function refrescarBoton(idx){
+    var q = PREGUNTAS[idx];
+    var step = elSteps.children[idx];
+    var foot = step.querySelector('.step-foot');
+    if(q.tipo === 'unica' && !q.cierre){ foot.hidden = true; return; }
+    foot.hidden = false;
+    pintarSiguiente(step, q);
+  }
+
+  function ir(n){
+    if(n >= PREGUNTAS.length) n = PREGUNTAS.length - 1;
+    if(n < 0) n = 0;
+    for(var k = 0; k < elSteps.children.length; k++) elSteps.children[k].hidden = (k !== n);
+    i = n;
+    elCount.textContent = (n === PREGUNTAS.length - 1) ? 'Última pregunta' : ('Pregunta ' + (n+1) + ' de ' + PREGUNTAS.length);
+    elBar.style.transform = 'scaleX(' + ((n+1) / PREGUNTAS.length) + ')';
+    elBack.hidden = (n === 0);
+    refrescarBoton(n);
+    var f = elSteps.children[n].querySelector('.field');
+    if(f) setTimeout(function(){ f.focus(); }, 120);
+    try{ scrollTo({top:0, behavior:'smooth'}); }catch(e){ scrollTo(0,0); }
+  }
+
+  elBack.addEventListener('click', function(){ ir(i - 1); });
+
+  /* ═══ envío ═══ */
+  function armarPayload(){
+    return {
+      referida: (window.THRIVE_RT && window.THRIVE_RT.referida) || null,
+      respuestas: resp,
+      consentimiento: consiente,
+      enviado_en: new Date().toISOString(),
+      user_agent: navigator.userAgent
+    };
+  }
+
+  function resumenTexto(p){
+    var l = ['Respuestas del screening de THRIVE', ''];
+    if(p.referida) l.push('Me invitó: ' + p.referida);
+    PREGUNTAS.forEach(function(q){
+      var v = p.respuestas[q.id];
+      if(Array.isArray(v)) v = v.join(', ');
+      l.push('');
+      l.push(q.titulo);
+      l.push(v && String(v).length ? String(v) : '(sin respuesta)');
+    });
+    return l.join('\n');
+  }
+
+  function enviar(btn){
+    var err = btn.parentElement.querySelector('.err');
+    err.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    var payload = armarPayload();
+    var sb = CFG.supabase || {};
+
+    function terminar(){
+      elShell.hidden = true;
+      elListo.hidden = false;
+      pintarCierre(payload);
+      try{ scrollTo(0,0); }catch(e){}
+    }
+
+    if(!sb.enabled || !sb.url || !sb.anonKey){
+      /* Todavía sin backend: no se pierde nada, se ofrece mandarlo por WhatsApp. */
+      console.info('[THRIVE] Supabase apagado. Respuestas:', payload);
+      terminar();
+      return;
+    }
+
+    fetch(sb.url.replace(/\/$/,'') + '/rest/v1/' + (sb.table || 'thrive_screening'), {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': sb.anonKey,
+        'Authorization':'Bearer ' + sb.anonKey,
+        'Prefer':'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      terminar();
+    })
+    .catch(function(e){
+      console.error('[THRIVE] no se pudo guardar:', e);
+      /* Nunca dejar a la persona con la sensación de que se perdió su tiempo:
+         se muestra el cierre igual y se ofrece la salida por WhatsApp. */
+      terminar();
+    });
+  }
+
+  function pintarCierre(payload){
+    var cont = document.getElementById('cierreAcciones');
+    cont.innerHTML = '';
+    var a = document.createElement('a');
+    a.className = 'cta wa';
+    a.setAttribute('data-wa','');
+    a.href = (window.THRIVE_RT ? window.THRIVE_RT.linkWhatsApp(resumenTexto(payload)) : '#');
+    a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.4-5.3-4.6-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg> Mandarle mis respuestas por WhatsApp';
+    cont.appendChild(a);
+  }
+
+  ir(0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu clase de prueba — THRIVE</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/img/seal.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/css/thrive.css">
+</head>
+
+<body>
+
+<div class="confirm">
+
+  <img class="seal" src="../assets/img/seal.svg" alt="Healing Through Movement" width="64" height="64">
+
+  <p class="kick" style="margin-top:28px;">Tu clase de prueba</p>
+  <h1 class="h2" style="margin-top:12px;" id="saludo">Te esperamos.</h1>
+
+  <div class="when">
+    <span class="k">Cuándo</span>
+    <span class="d" id="fecha">—</span>
+    <span class="t" id="hora">—</span>
+  </div>
+
+  <div class="btn-row">
+    <a class="cta" id="cal" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
+      Agregar a Google Calendar
+    </a>
+    <a class="btn-ghost" data-wa data-wa-text="Hola, Denisse! No voy a poder llegar a la clase de prueba." href="#">
+      Avisar si no puedo llegar
+    </a>
+  </div>
+
+  <div class="detail">
+    <div>
+      <h3>Dónde</h3>
+      <p id="lugar">—</p>
+      <p id="direccion" class="sub"></p>
+      <p style="margin-top:10px;"><a id="mapa" class="kick" style="text-transform:none; letter-spacing:.04em; border-bottom:1px solid var(--line);" href="#" target="_blank" rel="noopener" hidden>Ver en el mapa →</a></p>
+    </div>
+    <div>
+      <h3>Qué traer</h3>
+      <p id="llevar">—</p>
+    </div>
+    <div>
+      <h3>Antes de llegar</h3>
+      <p>Llegá <b>diez minutos antes</b>. Vamos a conversar un momento antes de empezar para saber desde dónde venís.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer style="background:transparent; color:var(--ink-3); padding-bottom:clamp(50px,9vw,80px);">
+  <div class="confirm" style="padding-top:0; padding-bottom:0;">
+    <div class="inner" style="border-top:1px solid var(--line-soft); padding-top:26px; display:flex; flex-direction:column; gap:6px;">
+      <span class="mvt" style="font-family:var(--mono); font-size:0.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--clay);">Move. Heal. Thrive.</span>
+      <p style="font-size:0.85rem;">Denisse Suazo · Active Life Professional</p>
+    </div>
+  </div>
+</footer>
+
+<script src="../config.js"></script>
+<script src="../assets/js/thrive.js"></script>
+<script>
+(function(){
+  'use strict';
+  var C = (window.THRIVE && window.THRIVE.clase) || {};
+
+  /* El nombre viene del link que manda Denisse: /clase/?n=Ana */
+  var nombre = '';
+  try{
+    var raw = new URLSearchParams(location.search).get('n');
+    nombre = (window.THRIVE_RT && window.THRIVE_RT.limpiarNombre(raw)) || '';
+  }catch(e){}
+  if(nombre) document.getElementById('saludo').textContent = 'Te esperamos, ' + nombre + '.';
+
+  document.getElementById('fecha').textContent = C.fecha || 'Fecha por confirmar';
+  document.getElementById('hora').textContent  = C.hora  || '';
+  document.getElementById('lugar').textContent = C.lugar || '';
+  document.getElementById('direccion').textContent = C.direccion || '';
+  document.getElementById('llevar').textContent = C.llevar || '';
+
+  if(C.mapa){
+    var m = document.getElementById('mapa');
+    m.href = C.mapa; m.hidden = false;
+  }
+
+  /* ── Google Calendar ──
+     Un link pre-llenado, no una invitación real: cero autenticación,
+     cero backend, funciona desde cualquier teléfono. */
+  function comoUTC(iso, sumarMin){
+    var d = new Date(iso);
+    if(isNaN(d)) return null;
+    if(sumarMin) d = new Date(d.getTime() + sumarMin*60000);
+    return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  }
+
+  var ini = comoUTC(C.inicioISO);
+  var fin = comoUTC(C.inicioISO, C.duracion || 60);
+  var cal = document.getElementById('cal');
+
+  if(ini && fin){
+    var p = new URLSearchParams({
+      action:'TEMPLATE',
+      text:'Clase de prueba — THRIVE',
+      dates: ini + '/' + fin,
+      details:'Healing Through Movement. ' + (C.llevar || ''),
+      location: [C.direccion, C.lugar].filter(Boolean).join(', ')
+    });
+    cal.href = 'https://calendar.google.com/calendar/render?' + p.toString();
+  } else {
+    cal.setAttribute('hidden','');
+  }
+})();
+</script>
+</body>
+</html>
