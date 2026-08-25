@@ -1,0 +1,25 @@
+# ═══════════════════════════════════════════════════════════
+#  THRIVE — configuración del proyecto de Supabase
+#  Se aplica con:  supabase config push
+# ═══════════════════════════════════════════════════════════
+project_id = "cbdnbzkoorzeezcgzziu"
+
+[auth]
+site_url = "https://healingthroughmovement.studio"
+additional_redirect_urls = ["https://healingthroughmovement.studio/panel"]
+
+# ⚠️ ESTA es la línea que cierra el registro público. Si alguien puede
+# crearse cuenta solo, su sesión cuenta como 'authenticated' y las
+# políticas lo dejan leer TODAS las respuestas, salud incluida.
+# La usuaria de Denisse se crea a mano desde el panel de Supabase.
+enable_signup = false
+
+[auth.email]
+# OJO: acá 'enable_signup' NO es "permitir registrarse" — el CLI lo mapea
+# a "el correo está habilitado como método". Ponerlo en false apaga
+# también el INICIO DE SESIÓN, y Denisse queda afuera. Va en true; quien
+# cierra el registro es la línea de arriba.
+enable_signup = true
+enable_confirmations = false
+max_frequency = "1m0s"
+otp_length = 8

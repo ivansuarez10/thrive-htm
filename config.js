@@ -32,9 +32,9 @@ window.THRIVE = {
      protege los datos son las políticas RLS del schema, no la clave.
      Nunca pegar acá la service_role. */
   supabase: {
-    enabled: false,
-    url: '',            // https://xxxxx.supabase.co
-    anonKey: '',        // la clave anon, nunca la service_role
+    enabled: true,
+    url: 'https://cbdnbzkoorzeezcgzziu.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNiZG5iemtvb3J6ZWV6Y2d6eml1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2OTI3NzcsImV4cCI6MjEwMzI2ODc3N30.hlXuI2E-ShTjrgHrm5X1X5vxoxoDDTaWz-r_EU-K61g',
     table: 'candidatas'
   },
 
