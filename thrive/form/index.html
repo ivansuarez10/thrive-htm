@@ -32,7 +32,7 @@
   <div class="check">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
   </div>
-  <h1 class="h2" style="margin-top:26px;">Listo — ya me llegó</h1>
+  <h1 class="h2" style="margin-top:26px;">Listo, ya me llegó</h1>
   <p class="body" style="margin-top:18px;">Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.</p>
   <p class="body" style="margin-top:18px;">Mientras tanto no tenés que hacer nada. Si algo cambia de tu lado, escribime nomás.</p>
   <p class="body" style="margin-top:22px; font-size:0.94rem;">Nos vemos pronto,<br><strong>Denisse</strong> · Healing Through Movement</p>
@@ -48,17 +48,16 @@
   var CFG = window.THRIVE || {};
 
   /* ═══════════════════════════════════════════════════════
-     Las seis preguntas.
+     Las quince preguntas que escribió Denisse.
      Cambiar el texto acá cambia el formulario. Nada más hay
      que tocar. El orden importa: lo fácil primero, lo
      delicado al final, cuando ya se comprometió con el proceso.
-     ⚠️ BORRADOR — pendiente validación de Denisse.
      ═══════════════════════════════════════════════════════ */
   var PREGUNTAS = [
 
     /* ── Para conocerte ── */
     {
-      id:'nombre', tipo:'corta', seccion:'Para conocerte',
+      id:'nombre', tipo:'corta',
       titulo:'Nombre y apellido',
       placeholder:'Como te llama la gente que te quiere'
     },
@@ -82,7 +81,7 @@
     {
       id:'historia', tipo:'texto',
       titulo:'Contame sobre tu historia con el ejercicio y el movimiento. ¿Qué actividades o deportes has practicado anteriormente y qué hacés actualmente?',
-      placeholder:'Aunque sea "nada por ahora" — eso también me sirve.'
+      placeholder:'Aunque sea "nada por ahora": eso también me sirve.'
     },
     {
       id:'fuerza_exp', tipo:'unica',
@@ -97,7 +96,7 @@
     },
     {
       id:'porque_ahora', tipo:'texto',
-      titulo:'¿Qué te hizo querer incorporar —o retomar— entrenamiento de fuerza en este momento?',
+      titulo:'¿Qué te hizo querer incorporar, o retomar, entrenamiento de fuerza en este momento?',
       ayuda:'Contame con tus palabras. No hay respuesta correcta.',
       placeholder:'Escribí lo que se te venga…'
     },
@@ -112,8 +111,8 @@
        Van al final a propósito: para entonces ya se comprometió con el
        proceso y contesta con más honestidad que si se lo preguntás de entrada. */
     {
-      id:'dolor', tipo:'unica', seccion:'Para entrenarte segura',
-      nota:'Las siguientes cuatro preguntas las lee solo Denisse y no se comparten con nadie. Ninguna respuesta te deja fuera por sí sola — lo que cambia es cómo trabajamos, no si podés entrenar.',
+      id:'dolor', tipo:'unica',
+      nota:'Las siguientes cuatro preguntas las lee solo Denisse y no se comparten con nadie. Ninguna respuesta te deja fuera por sí sola. Lo que cambia es cómo trabajamos, no si podés entrenar.',
       titulo:'¿Tenés actualmente algún dolor, lesión o limitación física que pueda afectar tu entrenamiento?',
       opciones:[
         'No.',
@@ -149,11 +148,11 @@
 
     /* ── Fit logístico ── */
     {
-      id:'grupo', tipo:'unica', seccion:'Lo práctico',
+      id:'grupo', tipo:'unica',
       titulo:'¿Cuál grupo te interesa?',
       opciones:[
-        'THRIVE 2X — martes y jueves · 7:30 a.m. · $220/mes',
-        'THRIVE 3X — lunes, miércoles y viernes · 7:30 a.m. · $300/mes',
+        'THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes',
+        'THRIVE 3X · lunes, miércoles y viernes · 7:30 a.m. · $300/mes',
         'Todavía no estoy segura.'
       ]
     },
@@ -174,7 +173,7 @@
     }
   ];
 
-  var CONSENTIMIENTO = 'Autorizo a Denisse a usar esta información —incluida la de salud— para evaluar si THRIVE es adecuado para mí y para entrenarme de forma segura.';
+  var CONSENTIMIENTO = 'Autorizo a Denisse a usar esta información, incluida la de salud, para evaluar si THRIVE es adecuado para mí y para entrenarme de forma segura.';
 
   /* Lo último que se lee antes de enviar. */
   var ANTES_DE_ENVIAR = [
@@ -200,14 +199,6 @@
     step.className = 'step';
     step.hidden = true;
     step.dataset.idx = idx;
-
-    if(q.seccion){
-      var sec = document.createElement('p');
-      sec.className = 'kick';
-      sec.style.marginBottom = '18px';
-      sec.textContent = q.seccion;
-      step.appendChild(sec);
-    }
 
     if(q.nota){
       var nota = document.createElement('p');
