@@ -52,7 +52,7 @@
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
 
-<script src="/config.js?v=26dbb157"></script>
+<script src="/config.js?v=fd363c52"></script>
 <script src="/assets/js/thrive.js?v=df32d3d7"></script>
 <script>
 (function(){
@@ -415,18 +415,24 @@
 
   /* ═══ envío ═══ */
   function armarPayload(){
+    /* El nombre de quien refirió puede venir horneado en la página o
+       escrito por ella en la pregunta 3. Manda el horneado, que es el
+       que no se equivoca. */
+    var refiere = (window.THRIVE_RT && window.THRIVE_RT.referida)
+                  || resp.referida || null;
     return {
-      referida: (window.THRIVE_RT && window.THRIVE_RT.referida) || null,
+      nombre: resp.nombre || 'Sin nombre',
+      referida_por: refiere,
       respuestas: resp,
       consentimiento: consiente,
-      enviado_en: new Date().toISOString(),
-      user_agent: navigator.userAgent
+      origen: 'formulario',
+      estado: 'formulario'
     };
   }
 
   function resumenTexto(p){
     var l = ['Respuestas del screening de THRIVE', ''];
-    if(p.referida) l.push('Me invitó: ' + p.referida);
+    if(p.referida_por) l.push('Me invitó: ' + p.referida_por);
     PREGUNTAS.forEach(function(q){
       var v = p.respuestas[q.id];
       if(Array.isArray(v)) v = v.join(', ');

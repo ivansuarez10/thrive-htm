@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THRIVE · panel</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/img/seal.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=f997bf09">
+<style>
+/* ═══ el panel es una herramienta, no una página de venta ═══ */
+body{background:var(--sand);}
+.pn-shell{max-width:1120px; margin:0 auto; padding:0 clamp(16px,4vw,28px) 80px;}
+
+/* ── entrar ── */
+.pn-login{min-height:100svh; display:grid; place-items:center; padding:24px;}
+.pn-login form{
+  width:min(380px,100%); background:var(--white); border-radius:18px;
+  padding:clamp(28px,6vw,38px); box-shadow:var(--flota-2);
+}
+.pn-login img{width:56px; height:56px; margin-bottom:22px;}
+.pn-login h1{font-family:var(--display); font-weight:600; font-size:1.5rem; letter-spacing:-.02em;}
+.pn-login p{margin-top:8px; font-size:.94rem; color:var(--ink-2);}
+.pn-campo{display:block; margin-top:18px;}
+.pn-campo span{
+  display:block; font-family:var(--mono); font-size:.64rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--teal-deep); margin-bottom:7px;
+}
+.pn-campo input{
+  width:100%; font:inherit; font-size:1rem; color:var(--ink);
+  background:var(--linen); border:1px solid var(--line); border-radius:11px; padding:13px 15px;
+  transition:border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.pn-campo input:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-pale);}
+.pn-btn{
+  width:100%; margin-top:22px; background:var(--ink); color:var(--linen);
+  font-weight:600; font-size:.98rem; padding:14px; border-radius:999px; cursor:pointer;
+  transition:background 240ms var(--ease), opacity 240ms var(--ease);
+}
+.pn-btn:hover{background:var(--teal-deep);}
+.pn-btn:disabled{opacity:.5; cursor:default;}
+.pn-error{margin-top:14px; font-size:.9rem; color:#8A2F2F; min-height:1.2em;}
+
+/* ── barra ── */
+.pn-top{
+  position:sticky; top:0; z-index:30;
+  background:rgba(240,235,227,.93);
+  -webkit-backdrop-filter:saturate(180%) blur(12px); backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line-soft);
+}
+.pn-top-in{
+  max-width:1120px; margin:0 auto; padding:13px clamp(16px,4vw,28px);
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.pn-marca{display:flex; align-items:center; gap:10px; margin-right:auto;}
+.pn-marca img{width:26px; height:26px;}
+.pn-marca b{font-family:var(--display); font-weight:600; font-size:1rem; letter-spacing:-.01em;}
+.pn-salir{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-2); padding:10px 12px; border-radius:9px; cursor:pointer;
+}
+.pn-salir:hover{color:var(--ink); background:var(--white);}
+
+/* ── cupos ── */
+.pn-cupos{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:24px;}
+.cupo{
+  background:var(--white); border-radius:16px; padding:20px 22px;
+  box-shadow:var(--flota-1);
+}
+.cupo b{
+  display:block; font-family:var(--mono); font-size:.66rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--teal-deep);
+}
+.cupo .barras{display:flex; gap:6px; margin-top:14px;}
+.cupo .barras i{
+  flex:1; height:9px; border-radius:999px; background:var(--sand);
+  transition:background 400ms var(--ease);
+}
+.cupo .barras i.lleno{background:var(--teal);}
+.cupo em{display:block; margin-top:12px; font-style:normal; font-size:.9rem; color:var(--ink-2);}
+.cupo em s{color:var(--ink); font-weight:700; text-decoration:none;}
+
+/* ── filtros ── */
+.pn-filtros{display:flex; gap:8px; flex-wrap:wrap; margin-top:26px;}
+.pn-f{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-2); background:var(--white); border:1px solid var(--line-soft);
+  padding:10px 14px; border-radius:999px; cursor:pointer;
+  transition:all 220ms var(--ease);
+}
+.pn-f:hover{color:var(--ink);}
+.pn-f[aria-pressed="true"]{background:var(--ink); color:var(--linen); border-color:var(--ink);}
+.pn-f i{font-style:normal; opacity:.6; margin-left:6px;}
+
+/* ── lista ── */
+.pn-lista{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
+.fila{
+  background:var(--white); border:1px solid var(--line-soft); border-radius:14px;
+  padding:17px 20px; display:grid; gap:4px; cursor:pointer; text-align:left; width:100%;
+  transition:box-shadow 260ms var(--ease), transform 260ms var(--ease);
+}
+.fila:hover{box-shadow:var(--flota-2); transform:translateY(-2px);}
+.fila .l1{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.fila .nom{font-family:var(--display); font-weight:600; font-size:1.08rem; letter-spacing:-.01em;}
+.fila .l2{font-family:var(--mono); font-size:.74rem; color:var(--ink-2);}
+
+.pill{
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; background:var(--sand); color:var(--ink-2);
+}
+.pill.adentro{background:var(--teal); color:var(--white);}
+.pill.clase_agendada,.pill.vino{background:var(--teal-pale); color:var(--teal-deep);}
+.pill.no{background:var(--sand); color:var(--ink-3);}
+
+/* La alerta de salud tiene que verse antes de leer el nombre. */
+.alerta{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 10px; border-radius:999px;
+  background:#F6E3E3; color:#8A2F2F;
+}
+.alerta svg{width:12px; height:12px;}
+
+.pn-vacio{
+  background:var(--white); border-radius:16px; padding:44px 24px; text-align:center;
+  color:var(--ink-2); font-size:.96rem;
+}
+
+/* ── ficha ── */
+.pn-ficha[hidden]{display:none;}
+.pn-ficha{
+  position:fixed; inset:0; z-index:60; display:grid; grid-template-rows:1fr auto;
+  background:rgba(30,29,26,.42); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+}
+.ficha-caja{
+  align-self:end; background:var(--linen);
+  border-radius:22px 22px 0 0; max-height:92svh; overflow:auto;
+  padding:0 clamp(18px,4vw,32px) 34px;
+  animation:sube 420ms var(--ease);
+}
+@keyframes sube{from{transform:translateY(24px); opacity:0;} to{transform:none; opacity:1;}}
+@media (min-width:760px){
+  .pn-ficha{place-items:center; grid-template-rows:none;}
+  .ficha-caja{align-self:center; width:min(700px,94vw); border-radius:22px; max-height:88svh;}
+}
+.ficha-top{
+  position:sticky; top:0; background:var(--linen); padding:22px 0 14px;
+  display:flex; align-items:flex-start; gap:14px; border-bottom:1px solid var(--line-soft);
+}
+.ficha-top h2{font-family:var(--display); font-weight:600; font-size:1.5rem; letter-spacing:-.02em; margin-right:auto;}
+.ficha-x{font-size:1.4rem; line-height:1; color:var(--ink-2); padding:4px 10px; border-radius:8px; cursor:pointer;}
+.ficha-x:hover{background:var(--sand); color:var(--ink);}
+
+.aviso-salud{
+  margin-top:18px; background:#F6E3E3; border-radius:14px; padding:16px 18px;
+  color:#7A2828; font-size:.95rem; line-height:1.55;
+}
+.aviso-salud b{display:block; font-weight:700; margin-bottom:5px;}
+
+.ficha-sec{margin-top:26px;}
+.ficha-sec > h3{
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--teal-deep); margin-bottom:12px;
+}
+.qa{padding:14px 0; border-bottom:1px solid var(--line-soft);}
+.qa p{font-size:.86rem; color:var(--ink-2); line-height:1.5;}
+.qa span{display:block; margin-top:6px; font-size:1rem; color:var(--ink); white-space:pre-wrap;}
+.qa span.vacio{color:var(--ink-3); font-style:italic;}
+.qa.riesgo span{color:#7A2828; font-weight:600;}
+.qa .det{
+  display:block; margin-top:7px; padding-left:13px; border-left:2px solid var(--teal-pale);
+  font-size:.96rem; color:var(--ink-2);
+}
+
+.ficha-campos{display:grid; gap:14px; grid-template-columns:1fr 1fr;}
+.ficha-campos label{display:block;}
+.ficha-campos.ancho{grid-template-columns:1fr;}
+.ficha-campos span{
+  display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--teal-deep); margin-bottom:6px;
+}
+.ficha-campos select,.ficha-campos input,.ficha-campos textarea{
+  width:100%; font:inherit; font-size:.98rem; color:var(--ink);
+  background:var(--white); border:1px solid var(--line); border-radius:11px; padding:12px 14px;
+}
+.ficha-campos textarea{min-height:110px; resize:vertical; line-height:1.55;}
+.ficha-campos select:focus,.ficha-campos input:focus,.ficha-campos textarea:focus{
+  outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-pale);
+}
+.ficha-pie{
+  position:sticky; bottom:0; background:var(--linen); padding:18px 0 0;
+  margin-top:24px; border-top:1px solid var(--line-soft);
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.ficha-pie .pn-btn{width:auto; margin:0; padding:13px 26px;}
+.guardado{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--teal-deep);}
+
+.pn-apagado{
+  margin-top:24px; background:var(--white); border-radius:16px;
+  padding:26px 24px; box-shadow:var(--flota-1);
+}
+.pn-apagado h2{font-family:var(--display); font-weight:600; font-size:1.2rem; letter-spacing:-.02em;}
+.pn-apagado p{margin-top:10px; font-size:.95rem; color:var(--ink-2); line-height:1.6;}
+.pn-apagado code{font-family:var(--mono); font-size:.86rem; background:var(--sand); padding:2px 6px; border-radius:5px;}
+.pn-apagado ol{margin:14px 0 0 18px; font-size:.95rem; color:var(--ink-2); line-height:1.9;}
+</style>
+</head>
+<body>
+
+<!-- ══════════ ENTRAR ══════════ -->
+<div class="pn-login" id="login">
+  <form id="formLogin" autocomplete="on">
+    <img src="/assets/img/seal.svg" alt="" width="56" height="56">
+    <h1>Panel de THRIVE</h1>
+    <p>Las respuestas de las candidatas, sus estados y tus notas.</p>
+
+    <label class="pn-campo">
+      <span>Correo</span>
+      <input type="email" id="correo" required autocomplete="username" inputmode="email">
+    </label>
+    <label class="pn-campo">
+      <span>Contraseña</span>
+      <input type="password" id="clave" required autocomplete="current-password">
+    </label>
+
+    <button class="pn-btn" type="submit" id="btnEntrar">Entrar</button>
+    <p class="pn-error" id="errLogin" role="alert"></p>
+  </form>
+</div>
+
+<!-- ══════════ PANEL ══════════ -->
+<div id="panel" hidden>
+  <div class="pn-top">
+    <div class="pn-top-in">
+      <div class="pn-marca">
+        <img src="/assets/img/seal.svg" alt="" width="26" height="26">
+        <b>THRIVE</b>
+      </div>
+      <button class="pn-salir" type="button" id="btnSalir">Salir</button>
+    </div>
+  </div>
+
+  <div class="pn-shell">
+    <div id="apagado" hidden></div>
+
+    <div id="contenido" hidden>
+      <div class="pn-cupos" id="cupos"></div>
+      <div class="pn-filtros" id="filtros"></div>
+      <div class="pn-lista" id="lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FICHA ══════════ -->
+<div class="pn-ficha" id="ficha" hidden role="dialog" aria-modal="true" aria-labelledby="fichaNom">
+  <div class="ficha-caja" id="fichaCaja"></div>
+</div>
+
+<script src="/config.js?v=fd363c52"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var CFG = (window.THRIVE && window.THRIVE.supabase) || {};
+  var TABLA = CFG.table || 'candidatas';
+
+  var elLogin = document.getElementById('login');
+  var elPanel = document.getElementById('panel');
+  var elApagado = document.getElementById('apagado');
+  var elContenido = document.getElementById('contenido');
+  var elErr = document.getElementById('errLogin');
+
+  /* ═══ sin Supabase configurado no hay nada que mostrar ═══
+     En vez de una pantalla en blanco o un error de consola, se explica
+     qué falta. Este panel lo va a abrir Ivan antes que nadie. */
+  if(!CFG.enabled || !CFG.url || !CFG.anonKey){
+    elLogin.hidden = true;
+    elPanel.hidden = false;
+    elApagado.hidden = false;
+    elApagado.className = 'pn-apagado';
+    elApagado.innerHTML =
+      '<h2>Falta conectar Supabase</h2>' +
+      '<p>El panel está construido, pero todavía no hay base de datos detrás. ' +
+      'Tres pasos y queda vivo:</p>' +
+      '<ol>' +
+        '<li>Crear el proyecto en Supabase y correr <code>sitio/supabase/schema.sql</code> en el SQL Editor.</li>' +
+        '<li>Crear la usuaria de Denisse en <b>Authentication → Users</b>, con <b>Auto Confirm</b>, y apagar <b>Enable email signups</b>.</li>' +
+        '<li>Pegar la URL y la clave anon en <code>sitio/config.js?v=fd363c52</code> y poner <code>enabled: true</code>.</li>' +
+      '</ol>';
+    return;
+  }
+
+  var sb = window.supabase.createClient(CFG.url, CFG.anonKey);
+
+  /* ═══ los estados, en el orden del flujo ═══ */
+  var ESTADOS = [
+    ['formulario',     'Llenó el formulario'],
+    ['escribio',       'Escribió'],
+    ['invitada',       'Invitada'],
+    ['clase_agendada', 'Clase agendada'],
+    ['vino',           'Vino a la clase'],
+    ['adentro',        'Adentro'],
+    ['lista_espera',   'Lista de espera'],
+    ['no',             'No siguió']
+  ];
+  var nombreEstado = function(v){
+    for(var i=0;i<ESTADOS.length;i++) if(ESTADOS[i][0]===v) return ESTADOS[i][1];
+    return v;
+  };
+
+  /* Las 15 preguntas, para mostrar la respuesta junto a su pregunta.
+     El orden importa: es el mismo en que ella las contestó. */
+  var PREGUNTAS = [
+    ['nombre',       'Nombre y apellido'],
+    ['edad',         'Rango de edad'],
+    ['referida',     '¿Quién te compartió esta invitación?'],
+    ['sobre_vos',    '¿A qué te dedicás y cómo se ve tu semana?'],
+    ['historia',     'Tu historia con el ejercicio y el movimiento'],
+    ['fuerza_exp',   'Experiencia con entrenamiento de fuerza'],
+    ['porque_ahora', '¿Qué te hizo querer incorporar fuerza ahora?'],
+    ['meta',         '¿Qué te gustaría lograr o desarrollar?'],
+    ['dolor',        '¿Dolor, lesión o limitación física?'],
+    ['condicion',    '¿Condición médica o antecedente de salud?'],
+    ['restriccion',  '¿Restricción médica para hacer ejercicio?'],
+    ['sintomas',     '¿Dolor de pecho, desmayos o palpitaciones al esforzarte?'],
+    ['grupo',        '¿Cuál grupo te interesa?'],
+    ['compromiso',   '¿Podés sostener el horario hasta el 15 de diciembre?'],
+    ['algo_mas',     '¿Algo más que quisiera que sepa?']
+  ];
+  var SALUD = ['dolor','condicion','restriccion','sintomas'];
+  var RIESGO = ['restriccion','sintomas'];
+
+  var datos = [];
+  var filtro = 'todas';
+
+  var esc = function(v){
+    return String(v == null ? '' : v)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  };
+
+  /* ═══ entrar ═══ */
+  document.getElementById('formLogin').addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = document.getElementById('btnEntrar');
+    btn.disabled = true; btn.textContent = 'Entrando…'; elErr.textContent = '';
+
+    sb.auth.signInWithPassword({
+      email: document.getElementById('correo').value.trim(),
+      password: document.getElementById('clave').value
+    }).then(function(r){
+      if(r.error){
+        elErr.textContent = /Invalid login/i.test(r.error.message)
+          ? 'Ese correo y esa contraseña no coinciden.'
+          : r.error.message;
+        btn.disabled = false; btn.textContent = 'Entrar';
+        return;
+      }
+      abrirPanel();
+    });
+  });
+
+  document.getElementById('btnSalir').addEventListener('click', function(){
+    sb.auth.signOut().then(function(){ location.reload(); });
+  });
+
+  function abrirPanel(){
+    elLogin.hidden = true;
+    elPanel.hidden = false;
+    elContenido.hidden = false;
+    cargar();
+  }
+
+  /* ═══ traer todo ═══ */
+  function cargar(){
+    sb.from(TABLA).select('*').order('creada_en', { ascending:false })
+      .then(function(r){
+        if(r.error){ console.error(r.error); return; }
+        datos = r.data || [];
+        pintarCupos(); pintarFiltros(); pintarLista();
+      });
+  }
+
+  function pintarCupos(){
+    var cont = document.getElementById('cupos');
+    cont.innerHTML = ['2X','3X'].map(function(g){
+      var dentro = datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
+      var barras = '';
+      for(var i=0;i<4;i++) barras += '<i class="' + (i < dentro ? 'lleno' : '') + '"></i>';
+      var libres = 4 - dentro;
+      return '<div class="cupo">' +
+        '<b>THRIVE · ' + g + '</b>' +
+        '<div class="barras">' + barras + '</div>' +
+        '<em>' + (libres === 0
+            ? 'Grupo completo'
+            : 'Quedan <s>' + libres + '</s> ' + (libres === 1 ? 'lugar' : 'lugares')) +
+        '</em></div>';
+    }).join('');
+  }
+
+  function pintarFiltros(){
+    var cont = document.getElementById('filtros');
+    var alertas = datos.filter(function(c){ return c.alerta_salud; }).length;
+    var botones = [['todas','Todas', datos.length]];
+    if(alertas) botones.push(['alerta','Revisar salud', alertas]);
+    ESTADOS.forEach(function(e){
+      var n = datos.filter(function(c){ return c.estado === e[0]; }).length;
+      if(n) botones.push([e[0], e[1], n]);
+    });
+
+    cont.innerHTML = botones.map(function(b){
+      return '<button class="pn-f" type="button" data-f="' + b[0] + '" aria-pressed="' +
+             (filtro === b[0]) + '">' + esc(b[1]) + '<i>' + b[2] + '</i></button>';
+    }).join('');
+
+    cont.querySelectorAll('.pn-f').forEach(function(b){
+      b.addEventListener('click', function(){
+        filtro = b.getAttribute('data-f');
+        pintarFiltros(); pintarLista();
+      });
+    });
+  }
+
+  function visibles(){
+    if(filtro === 'todas')  return datos;
+    if(filtro === 'alerta') return datos.filter(function(c){ return c.alerta_salud; });
+    return datos.filter(function(c){ return c.estado === filtro; });
+  }
+
+  function pintarLista(){
+    var cont = document.getElementById('lista');
+    var v = visibles();
+
+    if(!v.length){
+      cont.innerHTML = '<div class="pn-vacio">' + (datos.length
+        ? 'Nadie en este estado por ahora.'
+        : 'Todavía no ha llegado ninguna respuesta. Cuando alguien complete el formulario, aparece acá.') + '</div>';
+      return;
+    }
+
+    cont.innerHTML = v.map(function(c){
+      var cuando = new Date(c.creada_en).toLocaleDateString('es-HN',
+                    { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      var linea2 = [cuando];
+      if(c.referida_por) linea2.push('la invitó ' + c.referida_por);
+      if(c.grupo) linea2.push(c.grupo);
+
+      return '<button class="fila" type="button" data-id="' + esc(c.id) + '">' +
+        '<span class="l1">' +
+          (c.alerta_salud ? '<span class="alerta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>Revisar salud</span>' : '') +
+          '<span class="nom">' + esc(c.nombre) + '</span>' +
+          '<span class="pill ' + esc(c.estado) + '">' + esc(nombreEstado(c.estado)) + '</span>' +
+        '</span>' +
+        '<span class="l2">' + esc(linea2.join('  ·  ')) + '</span>' +
+      '</button>';
+    }).join('');
+
+    cont.querySelectorAll('.fila').forEach(function(f){
+      f.addEventListener('click', function(){ abrirFicha(f.getAttribute('data-id')); });
+    });
+  }
+
+  /* ═══ la ficha ═══ */
+  var elFicha = document.getElementById('ficha');
+  var elCaja  = document.getElementById('fichaCaja');
+
+  function abrirFicha(id){
+    var c = datos.filter(function(x){ return x.id === id; })[0];
+    if(!c) return;
+    var R = c.respuestas || {};
+
+    var qa = PREGUNTAS.map(function(q){
+      var k = q[0], v = R[k], det = R[k + '_detalle'];
+      var riesgo = RIESGO.indexOf(k) !== -1 && v === 'Sí.';
+      var texto = (v == null || v === '')
+        ? '<span class="vacio">Sin respuesta</span>'
+        : '<span>' + esc(v) + '</span>';
+      return '<div class="qa' + (riesgo ? ' riesgo' : '') + '">' +
+        '<p>' + esc(q[1]) + '</p>' + texto +
+        (det ? '<span class="det">' + esc(det) + '</span>' : '') +
+      '</div>';
+    }).join('');
+
+    var opciones = ESTADOS.map(function(e){
+      return '<option value="' + e[0] + '"' + (c.estado === e[0] ? ' selected' : '') + '>' + esc(e[1]) + '</option>';
+    }).join('');
+
+    var fechaLocal = c.clase_en ? new Date(c.clase_en).toISOString().slice(0,16) : '';
+
+    elCaja.innerHTML =
+      '<div class="ficha-top">' +
+        '<h2 id="fichaNom">' + esc(c.nombre) + '</h2>' +
+        '<button class="ficha-x" type="button" id="cerrar" aria-label="Cerrar">&times;</button>' +
+      '</div>' +
+
+      (c.alerta_salud
+        ? '<div class="aviso-salud"><b>Hablá con ella antes de agendarle la clase</b>' +
+          'Contestó que sí a una restricción médica o a síntomas durante el esfuerzo. ' +
+          'Está marcado en rojo más abajo.</div>'
+        : '') +
+
+      '<div class="ficha-sec">' +
+        '<h3>Su seguimiento</h3>' +
+        '<div class="ficha-campos">' +
+          '<label><span>Estado</span><select id="fEstado">' + opciones + '</select></label>' +
+          '<label><span>Grupo</span><select id="fGrupo">' +
+            '<option value=""' + (!c.grupo ? ' selected' : '') + '>Sin definir</option>' +
+            '<option value="2X"' + (c.grupo === '2X' ? ' selected' : '') + '>2X · martes y jueves</option>' +
+            '<option value="3X"' + (c.grupo === '3X' ? ' selected' : '') + '>3X · lunes, miércoles y viernes</option>' +
+          '</select></label>' +
+          '<label><span>Teléfono</span><input type="tel" id="fTel" value="' + esc(c.telefono || '') + '" placeholder="+504…"></label>' +
+          '<label><span>Clase de prueba</span><input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '"></label>' +
+        '</div>' +
+        '<div class="ficha-campos ancho" style="margin-top:14px;">' +
+          '<label><span>Tus notas · no las ve nadie más</span>' +
+          '<textarea id="fNotas" placeholder="Lo que conversaron, cómo le fue en la clase, qué quedó pendiente…">' + esc(c.notas || '') + '</textarea></label>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="ficha-sec"><h3>Lo que contestó</h3>' + qa + '</div>' +
+
+      '<div class="ficha-pie">' +
+        '<button class="pn-btn" type="button" id="fGuardar">Guardar</button>' +
+        '<span class="guardado" id="fEstadoGuardado"></span>' +
+      '</div>';
+
+    elFicha.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('cerrar').addEventListener('click', cerrarFicha);
+    document.getElementById('fGuardar').addEventListener('click', function(){ guardar(c.id, this); });
+  }
+
+  function cerrarFicha(){
+    elFicha.hidden = true;
+    document.body.style.overflow = '';
+  }
+  elFicha.addEventListener('click', function(e){ if(e.target === elFicha) cerrarFicha(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !elFicha.hidden) cerrarFicha(); });
+
+  function guardar(id, btn){
+    var aviso = document.getElementById('fEstadoGuardado');
+    var clase = document.getElementById('fClase').value;
+    btn.disabled = true; btn.textContent = 'Guardando…'; aviso.textContent = '';
+
+    sb.from(TABLA).update({
+      estado:   document.getElementById('fEstado').value,
+      grupo:    document.getElementById('fGrupo').value || null,
+      telefono: document.getElementById('fTel').value.trim() || null,
+      clase_en: clase ? new Date(clase).toISOString() : null,
+      notas:    document.getElementById('fNotas').value.trim() || null
+    }).eq('id', id).then(function(r){
+      btn.disabled = false; btn.textContent = 'Guardar';
+      if(r.error){ aviso.textContent = 'No se pudo guardar: ' + r.error.message; return; }
+      aviso.textContent = 'Guardado';
+      cargar();
+      setTimeout(function(){ aviso.textContent = ''; }, 2600);
+    });
+  }
+
+  /* ═══ si ya había sesión, entrar directo ═══ */
+  sb.auth.getSession().then(function(r){
+    if(r.data && r.data.session) abrirPanel();
+  });
+})();
+</script>
+</body>
+</html>

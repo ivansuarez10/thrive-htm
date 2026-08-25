@@ -18,16 +18,24 @@ window.THRIVE = {
      El dominio de Denisse es el .studio. No confundirlos. */
   baseUrl: 'https://healingthroughmovement.studio',
 
-  /* ── Guardar respuestas del screening ──
+  /* ── Supabase ──
      Mientras esté apagado, el formulario funciona completo pero las
-     respuestas no se guardan en ningún lado: se muestran en consola y
-     se ofrece mandarlas por WhatsApp. Sirve para probar el flujo sin
-     montar backend. Cuando Supabase esté listo, poner enabled:true. */
+     respuestas no se guardan: se muestran en consola y se ofrece
+     mandarlas por WhatsApp. Sirve para probar el flujo sin backend.
+
+     Para encenderlo:
+       1. Correr sitio/supabase/schema.sql en el SQL Editor
+       2. Pegar acá la URL y la clave anon (Settings → API)
+       3. enabled: true
+
+     La clave anon es PÚBLICA por diseño y va en el navegador. Lo que
+     protege los datos son las políticas RLS del schema, no la clave.
+     Nunca pegar acá la service_role. */
   supabase: {
     enabled: false,
     url: '',            // https://xxxxx.supabase.co
-    anonKey: '',        // la clave pública (anon), nunca la service_role
-    table: 'thrive_screening'
+    anonKey: '',        // la clave anon, nunca la service_role
+    table: 'candidatas'
   },
 
   /* ── Las ocho clientas que reciben link ──
