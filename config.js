@@ -13,8 +13,10 @@ window.THRIVE = {
   whatsapp: '50400000000',
 
   /* ── Dónde vive el sitio ──
-     Sin barra al final. Se usa para armar los links del screening. */
-  baseUrl: 'https://healingthroughmovement.com/thrive',
+     Sin barra al final. Se usa para armar los links que Denisse manda.
+     ⚠️ OJO: healingthroughmovement.COM es de otra empresa, no de HTM.
+     El dominio de Denisse es el .studio. No confundirlos. */
+  baseUrl: 'https://healingthroughmovement.studio',
 
   /* ── Guardar respuestas del screening ──
      Mientras esté apagado, el formulario funciona completo pero las
