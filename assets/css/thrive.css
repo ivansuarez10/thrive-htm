@@ -259,7 +259,29 @@ footer p{font-size:0.85rem;}
 .step{flex:1; display:flex; flex-direction:column; padding:clamp(34px,8vw,56px) 0 30px;}
 .step[hidden]{display:none;}
 .q-title{font-family:var(--display); font-weight:600; font-size:clamp(1.45rem,5.4vw,2rem); line-height:1.2; letter-spacing:-0.02em;}
-.q-help{margin-top:12px; font-size:0.94rem; color:var(--ink-3);}
+.q-help{margin-top:12px; font-size:0.94rem; color:var(--ink-2);}
+
+/* Nota que abre la sección de salud. Va antes del título porque tiene que
+   leerse ANTES de que ella decida cuánto contar, no después. */
+.q-nota{
+  margin-bottom:22px; padding:15px 17px;
+  background:var(--teal-pale); border-radius:12px;
+  font-size:0.92rem; line-height:1.55; color:var(--teal-deep);
+}
+
+/* Campo de una línea: nombre, quién refirió. */
+input.field.corta{min-height:0; padding:15px 18px;}
+
+/* Se despliega cuando marca un "Sí" en las de salud. */
+.detalle{margin-top:14px;}
+.detalle textarea.field{min-height:104px;}
+@media (prefers-reduced-motion:no-preference){
+  .detalle:not([hidden]){animation:abre 420ms var(--ease);}
+}
+@keyframes abre{
+  from{opacity:0; transform:translateY(-6px);}
+  to{opacity:1; transform:translateY(0);}
+}
 .q-body{margin-top:clamp(26px,5vw,34px); display:flex; flex-direction:column; gap:10px;}
 
 .opt{

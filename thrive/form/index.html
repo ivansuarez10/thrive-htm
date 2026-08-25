@@ -32,9 +32,10 @@
   <div class="check">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
   </div>
-  <h1 class="h2" style="margin-top:26px;">Listo, ya lo tengo</h1>
-  <p class="body" style="margin-top:18px;">Denisse revisa cada solicitud personalmente. Te escribe por WhatsApp para coordinar tu clase de prueba — normalmente el mismo día.</p>
-  <p class="body" style="margin-top:18px; color:var(--ink-3); font-size:0.94rem;">Podés cerrar esta ventana.</p>
+  <h1 class="h2" style="margin-top:26px;">Listo — ya me llegó</h1>
+  <p class="body" style="margin-top:18px;">Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.</p>
+  <p class="body" style="margin-top:18px;">Mientras tanto no tenés que hacer nada. Si algo cambia de tu lado, escribime nomás.</p>
+  <p class="body" style="margin-top:22px; font-size:0.94rem;">Nos vemos pronto,<br><strong>Denisse</strong> · Healing Through Movement</p>
 
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
@@ -54,43 +55,132 @@
      ⚠️ BORRADOR — pendiente validación de Denisse.
      ═══════════════════════════════════════════════════════ */
   var PREGUNTAS = [
+
+    /* ── Para conocerte ── */
     {
-      id:'actividad', tipo:'multi',
-      titulo:'¿Qué hacés hoy para moverte?',
-      ayuda:'Podés marcar varias.',
-      opciones:['Pilates','Tenis','Running','Caminatas','Gym','Nada por ahora','Otro']
+      id:'nombre', tipo:'corta', seccion:'Para conocerte',
+      titulo:'Nombre y apellido',
+      placeholder:'Como te llama la gente que te quiere'
     },
     {
-      id:'porque', tipo:'texto',
-      titulo:'¿Por qué querés incorporar fuerza ahora?',
+      id:'edad', tipo:'unica',
+      titulo:'Rango de edad',
+      /* Los rangos del borrador se solapaban (30-40 / 40-50): quien tuviera
+         40 no podía contestar bien. Estos no se tocan sin arreglar eso. */
+      opciones:['Menos de 30','30 – 39','40 – 49','50 – 59','60 o más']
+    },
+    {
+      id:'referida', tipo:'corta',
+      titulo:'¿Quién te compartió esta invitación a THRIVE?',
+      placeholder:'Su nombre'
+    },
+    {
+      id:'sobre_vos', tipo:'texto',
+      titulo:'Contame un poquito sobre vos. ¿A qué te dedicás y cómo se ve normalmente tu semana?',
+      placeholder:'Escribí lo que se te venga…'
+    },
+    {
+      id:'historia', tipo:'texto',
+      titulo:'Contame sobre tu historia con el ejercicio y el movimiento. ¿Qué actividades o deportes has practicado anteriormente y qué hacés actualmente?',
+      placeholder:'Aunque sea "nada por ahora" — eso también me sirve.'
+    },
+    {
+      id:'fuerza_exp', tipo:'unica',
+      titulo:'¿Qué experiencia has tenido específicamente con entrenamiento de fuerza o pesas?',
+      opciones:[
+        'Actualmente entreno fuerza de manera consistente.',
+        'He entrenado fuerza anteriormente, pero actualmente no soy consistente.',
+        'He usado pesas ocasionalmente, pero nunca he seguido una programación estructurada.',
+        'Mi actividad principal ha sido otra (Pilates, tenis, running, deportes) y tengo poca experiencia con pesas.',
+        'Prácticamente no tengo experiencia previa con entrenamiento de fuerza.'
+      ]
+    },
+    {
+      id:'porque_ahora', tipo:'texto',
+      titulo:'¿Qué te hizo querer incorporar —o retomar— entrenamiento de fuerza en este momento?',
       ayuda:'Contame con tus palabras. No hay respuesta correcta.',
       placeholder:'Escribí lo que se te venga…'
     },
     {
-      id:'historial', tipo:'unica',
-      titulo:'¿Has entrenado fuerza antes?',
-      opciones:['Nunca','Entrené antes y lo dejé','Entreno actualmente']
-    },
-    {
-      id:'salud', tipo:'texto', opcional:true,
-      titulo:'¿Hay algún dolor, lesión o condición que deba conocer antes de ponerte a entrenar?',
-      ayuda:'Si no hay nada, podés dejarlo en blanco y seguir.',
-      placeholder:'Por ejemplo: cirugía de rodilla hace tres años…'
-    },
-    {
       id:'meta', tipo:'texto',
-      titulo:'¿Qué te gustaría poder hacer en tres meses que hoy te cuesta?',
+      titulo:'¿Qué te gustaría lograr o desarrollar a través de tu entrenamiento?',
       ayuda:'Mientras más concreto, mejor.',
       placeholder:'Subir gradas sin quedarme sin aire, cargar a mi hijo…'
     },
+
+    /* ── Health screen ──
+       Van al final a propósito: para entonces ya se comprometió con el
+       proceso y contesta con más honestidad que si se lo preguntás de entrada. */
     {
-      id:'horario', tipo:'unica', cierre:true,
-      titulo:'¿Podés sostener el horario de 7:30 a.m. hasta el 15 de diciembre?',
-      opciones:['Sí, 3x — lunes, miércoles y viernes','Sí, 2x — martes y jueves','No estoy segura']
+      id:'dolor', tipo:'unica', seccion:'Para entrenarte segura',
+      nota:'Las siguientes cuatro preguntas las lee solo Denisse y no se comparten con nadie. Ninguna respuesta te deja fuera por sí sola — lo que cambia es cómo trabajamos, no si podés entrenar.',
+      titulo:'¿Tenés actualmente algún dolor, lesión o limitación física que pueda afectar tu entrenamiento?',
+      opciones:[
+        'No.',
+        {t:'Sí.', pide:'Contame dónde, desde cuándo, y cómo afecta hoy tu movimiento.'}
+      ]
+    },
+    {
+      id:'condicion', tipo:'unica',
+      titulo:'¿Tenés alguna condición médica o antecedente de salud que considerés importante que conozca antes de entrenar juntas?',
+      ayuda:'Por ejemplo: condición cardiovascular, presión arterial, diabetes, osteoporosis u osteopenia, condición neurológica u otra relevante.',
+      opciones:[
+        'No.',
+        {t:'Sí.', pide:'¿Cuál?'}
+      ]
+    },
+    {
+      id:'restriccion', tipo:'unica',
+      titulo:'¿Algún médico o profesional de salud te ha indicado actualmente alguna restricción para hacer ejercicio o entrenamiento de fuerza?',
+      opciones:[
+        'No.',
+        {t:'Sí.', pide:'Contame cuál.'},
+        'No estoy segura.'
+      ]
+    },
+    {
+      id:'sintomas', tipo:'unica',
+      titulo:'¿Alguna vez has tenido, durante el ejercicio o el esfuerzo físico, dolor u opresión en el pecho, desmayos, mareos importantes, falta de aire fuera de lo esperado o palpitaciones que te hayan preocupado?',
+      opciones:[
+        'No.',
+        {t:'Sí.', pide:'Contame brevemente qué pasó.'}
+      ]
+    },
+
+    /* ── Fit logístico ── */
+    {
+      id:'grupo', tipo:'unica', seccion:'Lo práctico',
+      titulo:'¿Cuál grupo te interesa?',
+      opciones:[
+        'THRIVE 2X — martes y jueves · 7:30 a.m. · $220/mes',
+        'THRIVE 3X — lunes, miércoles y viernes · 7:30 a.m. · $300/mes',
+        'Todavía no estoy segura.'
+      ]
+    },
+    {
+      id:'compromiso', tipo:'unica',
+      titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés comprometerte con ese horario del 15 de septiembre al 15 de diciembre?',
+      opciones:[
+        'Sí.',
+        'Tengo algo que quisiera conversar antes.',
+        'No estoy segura.'
+      ]
+    },
+    {
+      id:'algo_mas', tipo:'texto', opcional:true, cierre:true,
+      titulo:'¿Hay algo más que te gustaría que supiera antes de conocernos?',
+      ayuda:'Opcional. Si algo preferís contármelo hablando en vez de escribiéndolo, poné «prefiero contártelo» y lo vemos por WhatsApp.',
+      placeholder:'Podés dejarlo en blanco y enviar.'
     }
   ];
 
-  var CONSENTIMIENTO = 'Autorizo a Denisse a usar esta información para evaluar si THRIVE es adecuado para mí.';
+  var CONSENTIMIENTO = 'Autorizo a Denisse a usar esta información —incluida la de salud— para evaluar si THRIVE es adecuado para mí y para entrenarme de forma segura.';
+
+  /* Lo último que se lee antes de enviar. */
+  var ANTES_DE_ENVIAR = [
+    'Gracias por tomarte estos minutos.',
+    'Lo que escribiste acá lo leo yo, y me sirve para preparar tu clase y saber cómo acompañarte desde el primer día. No es un examen y no hay respuestas que te dejen fuera por sí solas.'
+  ];
 
   /* ═══ estado ═══ */
   var resp = {};
@@ -111,6 +201,21 @@
     step.hidden = true;
     step.dataset.idx = idx;
 
+    if(q.seccion){
+      var sec = document.createElement('p');
+      sec.className = 'kick';
+      sec.style.marginBottom = '18px';
+      sec.textContent = q.seccion;
+      step.appendChild(sec);
+    }
+
+    if(q.nota){
+      var nota = document.createElement('p');
+      nota.className = 'q-nota';
+      nota.textContent = q.nota;
+      step.appendChild(nota);
+    }
+
     var h = document.createElement('h1');
     h.className = 'q-title';
     h.textContent = q.titulo;
@@ -127,7 +232,23 @@
     body.className = 'q-body';
     step.appendChild(body);
 
-    if(q.tipo === 'texto'){
+    if(q.tipo === 'corta'){
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'field corta';
+      inp.placeholder = q.placeholder || '';
+      inp.setAttribute('aria-label', q.titulo);
+      inp.autocomplete = 'off';
+      inp.addEventListener('input', function(){
+        resp[q.id] = inp.value.trim();
+        pintarSiguiente(step, q);
+      });
+      inp.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' && resp[q.id]){ e.preventDefault(); ir(idx + 1); }
+      });
+      body.appendChild(inp);
+
+    } else if(q.tipo === 'texto'){
       var ta = document.createElement('textarea');
       ta.className = 'field';
       ta.placeholder = q.placeholder || '';
@@ -139,7 +260,9 @@
       body.appendChild(ta);
 
     } else {
-      q.opciones.forEach(function(txt){
+      q.opciones.forEach(function(op){
+        var txt  = (typeof op === 'string') ? op : op.t;
+        var pide = (typeof op === 'string') ? null : op.pide;
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'opt' + (q.tipo === 'multi' ? ' multi' : '');
@@ -160,18 +283,55 @@
             resp[q.id] = txt;
             body.querySelectorAll('.opt').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
             b.setAttribute('aria-pressed','true');
-            /* Las de opción única avanzan solas: baja el formulario
-               de ~14 toques a ~9. Las de escribir sí llevan botón. */
-            if(!q.cierre){ setTimeout(function(){ ir(idx + 1); }, 260); }
-            else pintarSiguiente(step, q);
+
+            /* Un si de salud abre su campo y NO avanza solo: lo que
+               importa de esa respuesta es el detalle, no el si. */
+            var det = step.querySelector('.detalle');
+            if(pide){
+              det.querySelector('textarea').placeholder = pide;
+              det.hidden = false;
+              setTimeout(function(){ det.querySelector('textarea').focus(); }, 60);
+              refrescarBoton(idx);
+            } else {
+              if(det){
+                det.hidden = true;
+                resp[q.id + '_detalle'] = '';
+                det.querySelector('textarea').value = '';
+              }
+              if(!q.cierre){ setTimeout(function(){ ir(idx + 1); }, 260); }
+              else pintarSiguiente(step, q);
+            }
           }
         });
         body.appendChild(b);
       });
+
+      /* campo condicional, oculto hasta que se elija un si */
+      if(q.opciones.some(function(o){ return typeof o !== 'string' && o.pide; })){
+        var det = document.createElement('div');
+        det.className = 'detalle';
+        det.hidden = true;
+        var dta = document.createElement('textarea');
+        dta.className = 'field';
+        dta.setAttribute('aria-label', 'Contame más');
+        dta.addEventListener('input', function(){
+          resp[q.id + '_detalle'] = dta.value.trim();
+          pintarSiguiente(step, q);
+        });
+        det.appendChild(dta);
+        body.appendChild(det);
+      }
     }
 
     /* consentimiento, solo en la última */
     if(q.cierre){
+      ANTES_DE_ENVIAR.forEach(function(t, n){
+        var pp = document.createElement('p');
+        pp.className = 'body';
+        pp.style.marginTop = n === 0 ? '34px' : '14px';
+        pp.textContent = t;
+        step.appendChild(pp);
+      });
       var cons = document.createElement('button');
       cons.type = 'button';
       cons.className = 'consent';
@@ -213,6 +373,11 @@
     var v = resp[q.id];
     var lleno = q.opcional ? true
       : (q.tipo === 'multi' ? (v && v.length) : (typeof v === 'string' ? v.length > 0 : !!v));
+
+    /* un si sin el detalle no sirve para entrenarla segura */
+    var det = step.querySelector('.detalle');
+    if(det && !det.hidden && !(resp[q.id + '_detalle'] || '').length) lleno = false;
+
     var ok = lleno && (!q.cierre || consiente);
     btn.disabled = !ok;
   }
@@ -222,7 +387,9 @@
     var q = PREGUNTAS[idx];
     var step = elSteps.children[idx];
     var foot = step.querySelector('.step-foot');
-    if(q.tipo === 'unica' && !q.cierre){ foot.hidden = true; return; }
+    var d = step.querySelector('.detalle');
+    var abierto = d && !d.hidden;
+    if(q.tipo === 'unica' && !q.cierre && !abierto){ foot.hidden = true; return; }
     foot.hidden = false;
     pintarSiguiente(step, q);
   }
@@ -260,9 +427,11 @@
     PREGUNTAS.forEach(function(q){
       var v = p.respuestas[q.id];
       if(Array.isArray(v)) v = v.join(', ');
+      var d = p.respuestas[q.id + '_detalle'];
       l.push('');
       l.push(q.titulo);
       l.push(v && String(v).length ? String(v) : '(sin respuesta)');
+      if(d && String(d).length) l.push('  -> ' + d);
     });
     return l.join('\n');
   }
