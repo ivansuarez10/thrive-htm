@@ -20,6 +20,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const raiz = __dirname;
 const tpl = fs.readFileSync(path.join(raiz, '_template-landing.html'), 'utf8');
@@ -108,7 +109,48 @@ for (const entrada of fs.readdirSync(path.join(raiz, 'thrive'), { withFileTypes:
 }
 if (barridas.length) console.log(`\n· barridas (ya no están en config): ${barridas.join(', ')}`);
 
-/* 5 · avisos que importan antes de publicar */
+/* 5 · sellar los assets con la huella de su contenido.
+   Sin esto, un navegador que ya visitó el sitio se queda con el CSS o el
+   JS viejo hasta diez minutos (Pages manda cache-control: max-age=600) y
+   ve el HTML nuevo sin sus estilos. Al cambiar la huella, la URL cambia y
+   el navegador está obligado a bajarlo de nuevo. */
+function huella(rel) {
+  const abs = path.join(raiz, rel);
+  if (!fs.existsSync(abs)) return null;
+  return crypto.createHash('sha1').update(fs.readFileSync(abs)).digest('hex').slice(0, 8);
+}
+
+const SELLOS = {
+  '/assets/css/thrive.css': huella('assets/css/thrive.css'),
+  '/assets/js/thrive.js':   huella('assets/js/thrive.js'),
+  '/config.js':             huella('config.js')
+};
+
+function htmlsDe(dir) {
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name === '.git' || e.name === 'node_modules') continue;
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) out.push(...htmlsDe(full));
+    else if (e.name.endsWith('.html') && e.name !== '_template-landing.html') out.push(full);
+  }
+  return out;
+}
+
+let sellados = 0;
+for (const f of htmlsDe(raiz)) {
+  let html = fs.readFileSync(f, 'utf8');
+  const antes = html;
+  for (const [ruta, sello] of Object.entries(SELLOS)) {
+    if (!sello) continue;
+    const re = new RegExp(ruta.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\?v=[a-f0-9]+)?', 'g');
+    html = html.replace(re, ruta + '?v=' + sello);
+  }
+  if (html !== antes) { fs.writeFileSync(f, html); sellados++; }
+}
+console.log(`\n· ${sellados} páginas selladas · css ${SELLOS['/assets/css/thrive.css']} · js ${SELLOS['/assets/js/thrive.js']} · config ${SELLOS['/config.js']}`);
+
+/* 6 · avisos que importan antes de publicar */
 console.log('');
 const pendientes = [];
 if (!CFG.whatsapp || /^5040+$/.test(CFG.whatsapp) || CFG.whatsapp === '50400000000')
