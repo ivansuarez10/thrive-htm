@@ -113,28 +113,31 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
      la letra tan lejos que el anillo se leía deshaciéndose en vez de
      armándose, y encima se salía del cuadro del sello.
 
-     El origen del giro NO es 50% 50%. El anillo no está centrado en su
-     propio lienzo: el punto que Denisse dibujó en el medio está a
-     49.62% 52.75%, casi 3% más abajo. Girando sobre el centro
-     geométrico las letras describían un arco que no era el del anillo y
-     llegaban torcidas. Medido: la dispersión de radios baja de 193 a
-     150 usando el punto como eje.
+     El eje de giro es 50% 50%: medido en el navegador, el punto que
+     Denisse dibujó en el medio cae exactamente ahí. (Una versión previa
+     lo puso en 52.75% por un cálculo hecho a mano sobre las coordenadas
+     del path; acumular trazos relativos así es aproximado y se desvió
+     casi 3%. getBoundingClientRect dice 50.00% y esa es la buena.)
 
      transform-box:view-box hace que esos porcentajes se lean contra el
-     viewBox del SVG. Y girando sobre el centro del anillo, la letra
+     viewBox del SVG. Girando sobre el centro del anillo, la letra
      conserva su inclinación tangente al círculo, que es como está
      dibujada. */
   .bv-sello .sl{
     opacity:0;
-    transform-box:view-box; transform-origin:49.62% 52.75%;
+    transform-box:view-box; transform-origin:50% 50%;
     animation:bv-letra-sello 940ms cubic-bezier(.16,.85,.24,1) forwards;
     animation-delay:calc(200ms + var(--n) * 100ms);
     will-change:transform, filter, opacity;
   }
+  /* El punto no barre: ES el centro. Girarlo sobre el eje del anillo
+     no significa nada, y con el más mínimo desvío entre su centro y el
+     eje describe un arquito que se ve como que entra corrido. Escala
+     sobre sí mismo y ya. */
   .bv-sello .sl-punto{
     opacity:0;
-    transform-box:view-box; transform-origin:49.62% 52.75%;
-    animation:bv-punto-sello 820ms cubic-bezier(.2,1.4,.4,1) 2480ms forwards;
+    transform-box:fill-box; transform-origin:center;
+    animation:bv-punto-sello 820ms cubic-bezier(.2,1.5,.4,1) 2480ms forwards;
     will-change:transform, filter, opacity;
   }
   /* Acá había un "asiento" del sello entero: 1.4 grados que se
@@ -159,11 +162,11 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 }
 
 @keyframes bv-punto-sello{
-  0%   { opacity:0;   transform:rotate(-46deg) scale(2.1); filter:blur(9px); }
+  0%   { opacity:0;   transform:scale(2.6); filter:blur(9px); }
   40%  { opacity:.3; }
   72%  { opacity:1; }
-  86%  { transform:rotate(3deg) scale(.88); filter:blur(0); }
-  100% { opacity:1;   transform:rotate(0deg) scale(1); filter:blur(0); }
+  86%  { transform:scale(.86); filter:blur(0); }
+  100% { opacity:1;   transform:scale(1); filter:blur(0); }
 }
 
 
