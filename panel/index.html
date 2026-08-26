@@ -2306,48 +2306,10 @@ body{background:var(--sand);}
     });
   }
 
-  /* ═══ los otros dos ejes de filtro ═══
-     Edad y horario son preguntas distintas de «dónde va en el
-     embudo», así que no pueden ser la misma tira de píldoras: leídas
-     juntas parecen alternativas del mismo grupo. */
+  /* Los rangos son los del formulario: no se tocan sin arreglar allá
+     primero, o el filtro deja de calzar con lo que ellas contestaron. */
   var EDADES = ['Menos de 30','30 – 39','40 – 49','50 – 59','60 o más'];
   var fEdad = '', fHorario = '';
-
-  function pintarFiltrosEdad(){
-    var cont = document.getElementById('filtrosEdad');
-    var b = [['','Cualquiera', datos.length]];
-    EDADES.forEach(function(e){
-      var n = datos.filter(function(c){ return (c.respuestas || {}).edad === e; }).length;
-      if(n) b.push([e, e, n]);
-    });
-    cont.innerHTML = b.map(function(x){
-      return '<button class="pn-f" type="button" data-e="' + esc(x[0]) + '" aria-pressed="' +
-             (fEdad === x[0]) + '">' + esc(x[1]) + '<i>' + x[2] + '</i></button>';
-    }).join('');
-    cont.querySelectorAll('[data-e]').forEach(function(x){
-      x.addEventListener('click', function(){
-        fEdad = x.getAttribute('data-e'); pintarFiltrosEdad(); pintarLista();
-      });
-    });
-  }
-
-  function pintarFiltrosHorario(){
-    var cont = document.getElementById('filtrosHorario');
-    function cuenta(g){ return datos.filter(function(c){ return grupoDe(c) === g; }).length; }
-    var b = [['','Cualquiera', datos.length],
-             ['2X','2X · ' + ajDias('2X'), cuenta('2X')],
-             ['3X','3X · ' + ajDias('3X'), cuenta('3X')],
-             ['?','Todavía no sabe', cuenta('')]];
-    cont.innerHTML = b.filter(function(x){ return x[0] === '' || x[2]; }).map(function(x){
-      return '<button class="pn-f" type="button" data-h="' + esc(x[0]) + '" aria-pressed="' +
-             (fHorario === x[0]) + '">' + esc(x[1]) + '<i>' + x[2] + '</i></button>';
-    }).join('');
-    cont.querySelectorAll('[data-h]').forEach(function(x){
-      x.addEventListener('click', function(){
-        fHorario = x.getAttribute('data-h'); pintarFiltrosHorario(); pintarLista();
-      });
-    });
-  }
 
   /* La columna `grupo` la llena el formulario desde la respuesta 13,
      pero alguien dada de alta a mano no la tiene. Cuando falta, se
