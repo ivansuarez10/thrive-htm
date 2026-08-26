@@ -39,6 +39,10 @@
   --marca:'Fraunces', ui-serif, Georgia, serif;
   --marca-ejes:'opsz' 144, 'SOFT' 30, 'WONK' 1;
 
+  /* La luz cálida de todo el sitio: una sola perilla. Subila o bajala
+     y cambia el ambiente entero. */
+  --luz:.42;
+
   --ease:cubic-bezier(.22,1,.36,1);
 
   /* Flotación. Sombras largas y muy suaves, teñidas de tinta y no de
@@ -488,44 +492,44 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 
 @media (min-width:720px){ .plans{grid-template-columns:1fr 1fr;} }
 
-/* ── el suelo de los planes ──
-   El precio es el filtro de la landing y hasta acá era otra sección
-   más: arena lisa, igual que «para quién». Un suelo que solo aparece
-   en este tramo lo convierte en un lugar.
+/* ═══ la luz de la casa ═══
+   Una sola fuente cálida para TODO el sitio, no un degradado por
+   sección. Va en position:fixed, así que al bajar la página la luz se
+   queda quieta —como la de una ventana— y no hay costuras entre
+   secciones, que era el problema de repetirla.
 
-   Va SIN color de base a propósito. El fondo del cuerpo lo pinta el JS
-   por sección (data-ground) y transiciona 900 ms; si acá se declarara
-   la arena otra vez, el borde de la sección se vería como una costura
-   contra ese fondo. Dejando los degradados solos, se apagan antes de
-   los bordes y se funden con lo que el cuerpo esté pintando.
+   Se mide en vmax y NO en % de la caja: en porcentaje, una ventana
+   ancha estira el radial hasta que su borde entra en cuadro, y eso era
+   la franja diagonal que aparecía a 1800 px. En vmax se comporta igual
+   a cualquier ancho.
 
-   La masa cálida va abajo a la izquierda, detrás de la mitad inferior
-   de las tarjetas, que es donde su sombra se apoya. Había un tercer
-   degradado en teal arriba a la derecha y se quitó: a la opacidad baja
-   que la marca aguanta no se lee como teal, se lee como neblina gris,
-   y ensuciaba el conjunto. Solo arcilla y una profundización de tinta
-   al pie — la calidez de THRIVE es cosa de las fotos, no de la paleta. */
-.sec-planes::before{
-  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-  /* Los centros van FUERA del cuadro a propósito: así solo se ve la
-     caída, que se lee como una luz que entra por el borde. Con el centro
-     adentro se ve la mancha y parece un degradado de plantilla.
+   Los centros van FUERA del encuadre: solo se ve la caída, que se lee
+   como luz entrando. Con el centro adentro se ve la mancha y parece
+   degradado de plantilla.
 
-     Y van a la altura de las TARJETAS (~35-70% del alto), no del pie.
-     La primera versión ponía la masa al 84% —debajo de todo— y el eco
-     al 6%, que es justo donde la máscara de abajo lo borra: entre las
-     dos decisiones el efecto desaparecía exactamente donde importa. */
+   Se apaga hacia rgba(192,138,99,0) y no hacia 'transparent': la palabra
+   transparent es rgba(0,0,0,0) —negro invisible— y ensucia el tono en
+   el camino. El mismo color a cero alfa es inequívoco.
+
+   Va en body::before, y las secciones se pintan encima: la sección
+   oscura la tapa sola, sin apagarla a mano. */
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:var(--luz);
   background:
-    radial-gradient(74% 64% at -6% 56%, rgba(192,138,99,.62), transparent 68%),
-    radial-gradient(60% 52% at 106% 32%, rgba(192,138,99,.34), transparent 70%),
-    radial-gradient(100% 44% at 50% 110%, rgba(30,29,26,.10), transparent 64%);
-  /* Va en un ::before y no en la sección para poder enmascararlo sin
-     tocar el texto. La máscara apaga el degradado contra los dos
-     bordes: si no, arriba a la derecha el color llega vivo al filo y
-     se ve una costura recta contra el fondo que pinta el JS. */
-  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
-  mask-image:linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+    radial-gradient(120vmax 92vmax at 108% -10%, rgba(192,138,99,.34), rgba(192,138,99,0) 60%),
+    radial-gradient(104vmax 84vmax at -14% 104%, rgba(192,138,99,.24), rgba(192,138,99,0) 58%);
 }
+
+/* Un grano casi invisible. Sin él, una caída tan tenue y tan larga se
+   escalona en bandas: 8 bits de color no alcanzan. El grano rompe el
+   escalón y a la vista no existe. */
+body::after{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
 /* El contenido queda por encima del degradado. */
 .sec-planes > *{position:relative; z-index:1;}
 
