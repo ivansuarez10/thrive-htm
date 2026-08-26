@@ -58,6 +58,38 @@
     a.rel = 'noopener';
   });
 
+  /* ───────── los videos de fondo ─────────
+     autoplay muted debería bastar, pero varios navegadores lo ignoran o
+     lo posponen. Se arrancan cuando entran en pantalla y se pausan al
+     salir: así ninguno gasta batería ni datos fuera de vista. Si el
+     navegador igual se niega, queda el poster, que es una foto fija.
+     Quien pidió menos movimiento no ve video: el CSS lo oculta. */
+  (function () {
+    var videos = [].slice.call(document.querySelectorAll('video[data-plx], .band video'));
+    if (!videos.length) return;
+
+    if (reduced) {
+      videos.forEach(function (v) { try { v.pause(); v.removeAttribute('autoplay'); } catch (e) {} });
+      return;
+    }
+
+    function intentar(v) {
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { /* el poster cubre el caso */ });
+    }
+
+    if (!('IntersectionObserver' in window)) { videos.forEach(intentar); return; }
+
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting) intentar(e.target);
+        else { try { e.target.pause(); } catch (err) {} }
+      });
+    }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+    videos.forEach(function (v) { obs.observe(v); });
+  })();
+
   /* ───────── entradas ─────────
      Regla dura: una visitante nunca debe ver una sección en blanco.
      Si la página no puede hacer scroll por sí misma —incrustada en un

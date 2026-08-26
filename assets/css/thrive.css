@@ -79,6 +79,80 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .body{font-size:1.05rem; color:var(--ink-2);}
 .body strong{color:var(--ink); font-weight:700;}
 
+
+/* ═══ bienvenida del formulario ═══
+   Un solo momento con autoría: el sello llega girando hasta su lugar
+   —un anillo que se acomoda— y recién ahí THRIVE se resuelve letra por
+   letra, con el mismo gesto que abre la landing. No bloquea: cuando la
+   secuencia termina, el botón queda esperando el tiempo que ella quiera. */
+.bienve{
+  position:fixed; inset:0; z-index:80;
+  display:grid; place-items:center; padding:28px;
+  background:var(--linen);
+  transition:opacity 620ms var(--ease), visibility 0s linear 620ms;
+}
+.bienve[hidden]{display:none;}
+.bienve.se-va{opacity:0; visibility:hidden; pointer-events:none;}
+.bv-in{width:min(440px,100%); text-align:center;}
+
+.bv-sello{width:clamp(96px,22vw,132px); height:auto; margin:0 auto;}
+@media (prefers-reduced-motion:no-preference){
+  .bv-sello{
+    opacity:0; transform:rotate(-26deg) scale(.82);
+    animation:bv-sello 1100ms var(--ease) 120ms forwards;
+  }
+}
+@keyframes bv-sello{ to{ opacity:1; transform:none; } }
+
+.bv-word{
+  display:flex; justify-content:center; gap:.06em; margin-top:26px;
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(2rem,9vw,2.9rem); line-height:1; letter-spacing:.06em;
+}
+.bv-word i{font-style:normal; display:inline-block;}
+@media (prefers-reduced-motion:no-preference){
+  .bv-word i{
+    opacity:0; transform:translateY(14px);
+    animation:bv-letra 620ms var(--ease) forwards;
+    animation-delay:calc(760ms + var(--i) * 62ms);
+  }
+}
+@keyframes bv-letra{ to{ opacity:1; transform:none; } }
+
+.bv-hola{
+  margin-top:30px; font-family:var(--display); font-weight:600;
+  font-size:clamp(1.35rem,5vw,1.75rem); letter-spacing:-.02em; color:var(--ink);
+}
+@media (prefers-reduced-motion:no-preference){
+  .bv-hola{opacity:0; animation:bv-sube 640ms var(--ease) 1240ms forwards;}
+}
+.bv-txt{
+  margin-top:12px; font-size:1rem; color:var(--ink-2); text-wrap:pretty;
+}
+@media (prefers-reduced-motion:no-preference){
+  .bv-txt{opacity:0; animation:bv-sube 640ms var(--ease) 1400ms forwards;}
+}
+.bv-cta{
+  margin-top:32px; width:100%;
+}
+@media (prefers-reduced-motion:no-preference){
+  .bv-cta{opacity:0; animation:bv-sube 640ms var(--ease) 1560ms forwards;}
+}
+.bv-firma{
+  margin-top:20px; font-family:var(--mono); font-size:.68rem;
+  letter-spacing:.08em; color:var(--ink-2);
+}
+@media (prefers-reduced-motion:no-preference){
+  .bv-firma{opacity:0; animation:bv-fade 620ms ease-out 1820ms forwards;}
+}
+@keyframes bv-sube{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+@keyframes bv-fade{ to{opacity:1;} }
+
+/* Quien pidió menos movimiento recibe la misma pantalla, ya resuelta:
+   el estado final es el de por defecto y la animación solo se aplica
+   dentro de prefers-reduced-motion:no-preference. Así, si el navegador
+   nunca corre la animación, igual se ve todo. */
+
 /* ═══ movimiento ═══
    Cuatro gestos y nada más. Todos respetan prefers-reduced-motion. */
 .mask{display:block; overflow:hidden; padding-bottom:0.14em; margin-bottom:-0.14em;}
@@ -195,6 +269,23 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 }
 .nuance p{font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,3.4vw,1.4rem); line-height:1.4; font-weight:500;}
 .nuance p span{color:var(--ink-3);}
+
+/* ── media animada ──
+   Las fotos que se animan se sirven como video en bucle, sin sonido y
+   con autoplay: es lo mismo que hace fisioprohb.com.br. Se comporta
+   exactamente igual que un <img> dentro de su marco.
+   playsinline es obligatorio: sin él, iOS abre el video a pantalla
+   completa al reproducir y se come la página. */
+.shot video, .band video{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+/* Quien pidió menos movimiento no debería recibir un bucle infinito.
+   El poster queda como imagen fija. */
+@media (prefers-reduced-motion:reduce){
+  .shot video, .band video{display:none;}
+  .shot video + img.poster, .band video + img.poster{display:block;}
+}
+.shot img.poster, .band img.poster{display:none;}
 
 /* ── qué recibís ──
    La lista que justifica el precio. Va ANTES de los planes a propósito:
@@ -372,6 +463,54 @@ textarea.field{min-height:130px;}
 .when .k{font-family:var(--mono); font-size:0.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--teal-deep);}
 .when .d{font-family:var(--display); font-weight:600; font-size:clamp(1.4rem,5vw,1.9rem); line-height:1.15; letter-spacing:-0.02em;}
 .when .t{font-family:var(--mono); font-size:0.95rem; color:var(--ink-2);}
+
+/* ═══ la confirmación llega, no aparece ═══
+   Mismo gesto que abre la landing: el sello se asienta, el saludo sube
+   desde detrás de su propio borde, y la fecha entra flotando. Es lo
+   único que se anima en esta página; el resto son datos y se leen. */
+@media (prefers-reduced-motion:no-preference){
+  .confirm .seal.entra{opacity:0; transform:scale(.86); animation:cf-sello 900ms var(--ease) 80ms forwards;}
+}
+@keyframes cf-sello{ to{ opacity:1; transform:none; } }
+
+.confirm .saludo .mask > span{display:block;}
+@media (prefers-reduced-motion:no-preference){
+  .confirm .saludo .mask > span{transform:translateY(106%); animation:cf-sube 900ms var(--ease) 520ms forwards;}
+}
+@keyframes cf-sube{ to{ transform:none; } }
+
+/* La fecha es el dato que vino a buscar: se despega del papel y se
+   queda respirando, muy despacio, para que el ojo vuelva a ella. */
+.when.flota{border:none; box-shadow:var(--flota-2);}
+@media (prefers-reduced-motion:no-preference){
+  .when.flota{opacity:0; transform:translateY(20px);}
+}
+@keyframes cf-flota-in{ to{ opacity:1; transform:none; } }
+.when.flota::after{
+  content:''; position:absolute; inset:auto 8% -14px 8%; height:22px;
+  background:radial-gradient(closest-side, rgba(36,137,157,.20), transparent 72%);
+}
+@media (prefers-reduced-motion:no-preference){
+  .when.flota::after{opacity:0; animation:cf-sombra 900ms var(--ease) 860ms forwards;}
+}
+@keyframes cf-sombra{ to{ opacity:1; } }
+.when{position:relative;}
+
+@media (prefers-reduced-motion:no-preference){
+  .when.flota{ animation:cf-flota-in 900ms var(--ease) 860ms forwards, cf-respira 6s ease-in-out 1800ms infinite; }
+}
+@keyframes cf-respira{
+  0%,100%{ transform:translateY(0); box-shadow:var(--flota-2); }
+  50%    { transform:translateY(-5px); box-shadow:var(--flota-3); }
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .confirm .btn-row, .confirm .detail{opacity:0; animation:cf-fade 760ms var(--ease) 1120ms forwards;}
+}
+@keyframes cf-fade{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+
+
+
 .detail{margin-top:clamp(30px,6vw,44px); display:flex; flex-direction:column; gap:26px;}
 .detail h3{font-family:var(--mono); font-size:0.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px;}
 .detail p{font-size:1.05rem; color:var(--ink-2);}

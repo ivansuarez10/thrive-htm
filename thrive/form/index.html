@@ -21,10 +21,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=5989b9c2">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=28c69efd">
 </head>
 
 <body>
+
+
+<!-- ══════════ BIENVENIDA ══════════
+     El formulario es una herramienta: la animación no bloquea, presenta.
+     Ella entra cuando toca el botón, y no se repite si vuelve atrás. -->
+<div class="bienve" id="bienve">
+  <div class="bv-in">
+    <img class="bv-sello" src="/assets/img/seal.svg" alt="" width="132" height="132">
+
+    <span class="bv-word" aria-hidden="true"><i style="--i:0">T</i><i style="--i:1">H</i><i style="--i:2">R</i><i style="--i:3">I</i><i style="--i:4">V</i><i style="--i:5">E</i></span>
+
+    <h1 class="bv-hola">Bienvenida<span id="bvNombre"></span>.</h1>
+    <p class="bv-txt">Antes de tu clase de prueba quiero conocerte un poco. Son quince preguntas y cinco minutos, y las leo yo.</p>
+
+    <button class="cta bv-cta" type="button" id="bvEmpezar">Empezar</button>
+    <p class="bv-firma">Denisse Suazo · Healing Through Movement</p>
+  </div>
+</div>
 
 <div class="form-shell" id="shell">
 
@@ -53,7 +71,7 @@
 </div>
 
 <script src="/config.js?v=29b04b78"></script>
-<script src="/assets/js/thrive.js?v=2cd50214"></script>
+<script src="/assets/js/thrive.js?v=fdc1e8a8"></script>
 <script>
 (function(){
   'use strict';
@@ -207,6 +225,32 @@
   var resp = {};
   var consiente = false;
   var i = 0;
+
+  /* ═══ bienvenida ═══
+     Se salta sola si ya la vio en esta sesión: presentarse dos veces a
+     la misma persona es cobrarle el tiempo dos veces. */
+  var elBienve = document.getElementById('bienve');
+  if (elBienve) {
+    var yaEntro = false;
+    try { yaEntro = sessionStorage.getItem('thrive-bienve') === '1'; } catch (e) {}
+
+    if (yaEntro) {
+      elBienve.hidden = true;
+    } else {
+      /* El nombre de quien la invitó vuelve el saludo suyo, no de nadie. */
+      var quien = (window.THRIVE_RT && window.THRIVE_RT.referida) || '';
+      var elNom = document.getElementById('bvNombre');
+      if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
+
+      document.getElementById('bvEmpezar').addEventListener('click', function () {
+        try { sessionStorage.setItem('thrive-bienve', '1'); } catch (e) {}
+        elBienve.classList.add('se-va');
+        setTimeout(function () { elBienve.hidden = true; }, 640);
+        var f = elSteps.children[0] && elSteps.children[0].querySelector('.field');
+        if (f) setTimeout(function () { f.focus(); }, 700);
+      });
+    }
+  }
 
   var elSteps = document.getElementById('steps');
   var elCount = document.getElementById('count');
