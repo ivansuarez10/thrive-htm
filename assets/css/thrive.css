@@ -440,6 +440,39 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 
 @media (min-width:720px){ .plans{grid-template-columns:1fr 1fr;} }
 
+/* ── el suelo de los planes ──
+   El precio es el filtro de la landing y hasta acá era otra sección
+   más: arena lisa, igual que «para quién». Un suelo que solo aparece
+   en este tramo lo convierte en un lugar.
+
+   Va SIN color de base a propósito. El fondo del cuerpo lo pinta el JS
+   por sección (data-ground) y transiciona 900 ms; si acá se declarara
+   la arena otra vez, el borde de la sección se vería como una costura
+   contra ese fondo. Dejando los degradados solos, se apagan antes de
+   los bordes y se funden con lo que el cuerpo esté pintando.
+
+   La masa cálida va abajo a la izquierda, detrás de la mitad inferior
+   de las tarjetas, que es donde su sombra se apoya. Había un tercer
+   degradado en teal arriba a la derecha y se quitó: a la opacidad baja
+   que la marca aguanta no se lee como teal, se lee como neblina gris,
+   y ensuciaba el conjunto. Solo arcilla y una profundización de tinta
+   al pie — la calidez de THRIVE es cosa de las fotos, no de la paleta. */
+.sec-planes::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(66% 54% at 2% 84%, rgba(192,138,99,.52), transparent 64%),
+    radial-gradient(58% 40% at 96% 6%, rgba(192,138,99,.22), transparent 66%),
+    radial-gradient(92% 58% at 54% 114%, rgba(30,29,26,.11), transparent 60%);
+  /* Va en un ::before y no en la sección para poder enmascararlo sin
+     tocar el texto. La máscara apaga el degradado contra los dos
+     bordes: si no, arriba a la derecha el color llega vivo al filo y
+     se ve una costura recta contra el fondo que pinta el JS. */
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+}
+/* El contenido queda por encima del degradado. */
+.sec-planes > *{position:relative; z-index:1;}
+
 .terms{margin-top:26px; padding-top:22px; border-top:1px solid var(--line-soft); display:flex; flex-direction:column; gap:9px;}
 .terms p{font-family:var(--mono); font-size:0.76rem; color:var(--ink-2);}
 .terms p span{color:var(--ink-2);}
