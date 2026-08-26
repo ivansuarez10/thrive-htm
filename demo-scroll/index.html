@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THRIVE · Small Group Strength Training for Women</title>
+<title>THRIVE · demo de scroll</title>
 <meta name="description" content="Entrenamiento de fuerza en grupo pequeño para mujeres. Máximo 4 por grupo, 7:30 a.m., en Tegucigalpa. Primera edición, por invitación.">
 <meta name="robots" content="noindex, nofollow">
 
@@ -25,6 +25,46 @@
 <link rel="preload" as="image" href="/assets/img/hero.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="/assets/css/thrive.css?v=2ff97b6a">
+
+<style>
+/* ── el demo: revelado en las dos direcciones ── */
+body.dosvias .up{opacity:0; transform:translateY(20px);}
+body.dosvias .up.in{opacity:1; transform:none;}
+body.dosvias .up.desde-arriba{transform:translateY(-20px);}
+body.dosvias .up.desde-arriba.in{transform:none;}
+
+body.dosvias .mask > span{transform:translateY(106%);}
+body.dosvias .mask.in > span{transform:none;}
+body.dosvias .mask.desde-arriba > span{transform:translateY(-106%);}
+body.dosvias .mask.desde-arriba.in > span{transform:none;}
+
+body.dosvias .stag > *{opacity:0; transform:translateY(24px);}
+body.dosvias .stag.in > *{opacity:1; transform:none;}
+/* faltaba: el escalonado también tiene que venir desde arriba cuando
+   el bloque salió por arriba, si no la mitad de la página ignora la
+   dirección del scroll y el efecto se siente inconsistente */
+body.dosvias .stag.desde-arriba > *{transform:translateY(-24px);}
+body.dosvias .stag.desde-arriba.in > *{transform:none;}
+
+/* ── el interruptor del demo ── */
+.demo-sw{
+  position:fixed; left:50%; transform:translateX(-50%); bottom:18px; z-index:200;
+  display:flex; gap:4px; padding:4px; border-radius:999px;
+  background:rgba(250,248,244,.94); box-shadow:var(--flota-2);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+}
+.demo-sw button{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-2); padding:11px 15px; border-radius:999px; cursor:pointer; white-space:nowrap;
+  transition:background 240ms var(--ease), color 240ms var(--ease);
+}
+.demo-sw button[aria-pressed="true"]{background:var(--ink); color:var(--linen);}
+.demo-nota{
+  position:fixed; left:50%; transform:translateX(-50%); bottom:70px; z-index:200;
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; color:var(--ink-2);
+  background:rgba(250,248,244,.9); padding:6px 12px; border-radius:999px; white-space:nowrap;
+}
+</style>
 </head>
 
 <body>
@@ -229,5 +269,64 @@
 
 <script src="/config.js?v=29b04b78"></script>
 <script src="/assets/js/thrive.js?v=fdc1e8a8"></script>
+
+<div class="demo-nota" id="demoNota">Como está publicado hoy</div>
+<div class="demo-sw" role="group" aria-label="Modo de revelado">
+  <button type="button" id="swUna" aria-pressed="true">Una vía</button>
+  <button type="button" id="swDos" aria-pressed="false">Dos vías</button>
+</div>
+
+<script>
+/* ═══ demo: revelado en las dos direcciones ═══
+   Cuando un bloque sale de pantalla vuelve a esconderse, y al volver a
+   entrar se revela otra vez — desde arriba o desde abajo según de qué
+   lado venga. Solo corre en modo "dos vías"; en "una vía" manda el JS
+   normal del sitio. */
+(function(){
+  var bloques = [].slice.call(document.querySelectorAll('.up, .stag, .mask'));
+  var activo = false;
+  var io = null;
+
+  function encender(){
+    if(io) return;
+    document.body.classList.add('dosvias');
+    io = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        var el = e.target;
+        if(e.isIntersecting){
+          el.classList.add('in');
+        } else {
+          /* de qué lado se fue decide de qué lado vuelve */
+          var arriba = e.boundingClientRect.top < 0;
+          el.classList.toggle('desde-arriba', arriba);
+          el.classList.remove('in');
+        }
+      });
+    }, { threshold: 0, rootMargin: '-6% 0px -12% 0px' });
+    bloques.forEach(function(b){ io.observe(b); });
+    activo = true;
+  }
+
+  function apagar(){
+    if(io){ io.disconnect(); io = null; }
+    document.body.classList.remove('dosvias');
+    bloques.forEach(function(b){ b.classList.add('in'); b.classList.remove('desde-arriba'); });
+    activo = false;
+  }
+
+  var una = document.getElementById('swUna'), dos = document.getElementById('swDos');
+  var nota = document.getElementById('demoNota');
+  una.addEventListener('click', function(){
+    una.setAttribute('aria-pressed','true'); dos.setAttribute('aria-pressed','false');
+    nota.textContent = 'Como está publicado hoy';
+    apagar();
+  });
+  dos.addEventListener('click', function(){
+    dos.setAttribute('aria-pressed','true'); una.setAttribute('aria-pressed','false');
+    nota.textContent = 'Subí y bajá: las secciones entran y salen';
+    encender();
+  });
+})();
+</script>
 </body>
 </html>
