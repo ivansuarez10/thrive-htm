@@ -459,16 +459,24 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    al pie — la calidez de THRIVE es cosa de las fotos, no de la paleta. */
 .sec-planes::before{
   content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  /* Los centros van FUERA del cuadro a propósito: así solo se ve la
+     caída, que se lee como una luz que entra por el borde. Con el centro
+     adentro se ve la mancha y parece un degradado de plantilla.
+
+     Y van a la altura de las TARJETAS (~35-70% del alto), no del pie.
+     La primera versión ponía la masa al 84% —debajo de todo— y el eco
+     al 6%, que es justo donde la máscara de abajo lo borra: entre las
+     dos decisiones el efecto desaparecía exactamente donde importa. */
   background:
-    radial-gradient(66% 54% at 2% 84%, rgba(192,138,99,.52), transparent 64%),
-    radial-gradient(58% 40% at 96% 6%, rgba(192,138,99,.22), transparent 66%),
-    radial-gradient(92% 58% at 54% 114%, rgba(30,29,26,.11), transparent 60%);
+    radial-gradient(74% 64% at -6% 56%, rgba(192,138,99,.62), transparent 68%),
+    radial-gradient(60% 52% at 106% 32%, rgba(192,138,99,.34), transparent 70%),
+    radial-gradient(100% 44% at 50% 110%, rgba(30,29,26,.10), transparent 64%);
   /* Va en un ::before y no en la sección para poder enmascararlo sin
      tocar el texto. La máscara apaga el degradado contra los dos
      bordes: si no, arriba a la derecha el color llega vivo al filo y
      se ve una costura recta contra el fondo que pinta el JS. */
-  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%);
-  mask-image:linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
 }
 /* El contenido queda por encima del degradado. */
 .sec-planes > *{position:relative; z-index:1;}
