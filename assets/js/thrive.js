@@ -59,10 +59,25 @@
   });
 
   /* ───────── los videos de fondo ─────────
-     autoplay muted debería bastar, pero varios navegadores lo ignoran o
-     lo posponen. Se arrancan cuando entran en pantalla y se pausan al
-     salir: así ninguno gasta batería ni datos fuera de vista. Si el
-     navegador igual se niega, queda el poster, que es una foto fija.
+     Son fotos que se mueven, no reproductores: nunca deben mostrar un
+     botón de play. `autoplay muted playsinline` debería bastar y no
+     basta — el navegador puede negarse por batería, por datos, o porque
+     la pestaña nació en segundo plano.
+
+     La estrategia es insistir y, si igual se niega, disimular:
+
+     1. `muted` se pone como PROPIEDAD y no solo como atributo. Safari
+        mira la propiedad en el momento de play(), y no siempre coinciden.
+     2. Se arrancan al entrar en pantalla y se pausan al salir, para no
+        gastar batería ni datos fuera de vista.
+     3. Si play() se rechaza, el video queda anotado y se reintenta con
+        el primer gesto de la visitante y cada vez que la pestaña vuelve
+        al frente: casi todos los bloqueos se levantan ahí.
+     4. Lo que no se levanta con nada es el **Modo de bajo consumo de
+        iOS**. A los 3 segundos se acepta la derrota y se cambia el video
+        por su poster —una foto fija, que se ve deliberada— en vez de
+        dejar el botón de play, que se ve roto.
+
      Quien pidió menos movimiento no ve video: el CSS lo oculta. */
   (function () {
     var videos = [].slice.call(document.querySelectorAll('video[data-plx], .band video'));
@@ -73,10 +88,47 @@
       return;
     }
 
+    /* Los que alguna vez se negaron. No se vacía al rendirse: si más
+       tarde la visitante toca la pantalla, se les vuelve a dar. */
+    var caidos = [];
+
+    function anotar(v) { if (caidos.indexOf(v) < 0) caidos.push(v); }
+
     function intentar(v) {
-      var p = v.play();
-      if (p && p.catch) p.catch(function () { /* el poster cubre el caso */ });
+      try {
+        v.muted = true;
+        v.defaultMuted = true;
+        v.playsInline = true;
+      } catch (e) {}
+
+      var p;
+      try { p = v.play(); } catch (e) { anotar(v); return; }
+      if (!p || !p.then) return;
+
+      p.then(function () {
+        v.classList.remove('sin-auto');
+        var k = caidos.indexOf(v);
+        if (k >= 0) caidos.splice(k, 1);
+      }).catch(function () { anotar(v); });
     }
+
+    function reintentar() {
+      caidos.slice().forEach(intentar);
+    }
+
+    /* Un gesto levanta casi todo. No se usa `once`: el Modo de bajo
+       consumo puede apagarse a mitad de la visita y ahí sí arranca. */
+    ['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
+      addEventListener(ev, reintentar, { passive: true });
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') reintentar();
+    });
+
+    /* La derrota, a los 3 s: el poster ocupa el lugar del video. */
+    setTimeout(function () {
+      caidos.forEach(function (v) { v.classList.add('sin-auto'); });
+    }, 3000);
 
     if (!('IntersectionObserver' in window)) { videos.forEach(intentar); return; }
 

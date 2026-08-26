@@ -394,7 +394,33 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
   .shot video, .band video{display:none;}
   .shot video + img.poster, .band video + img.poster{display:block;}
 }
-.shot img.poster, .band img.poster{display:none;}
+/* El poster tiene que ocupar EXACTAMENTE el lugar del video, con el
+   mismo recorte y el mismo desborde del parallax. Sin esto entraba en
+   flujo normal y quedaba con su tamaño natural dentro de un marco de
+   otra proporción: se notaba el cambio. Valía ya para el caso de
+   movimiento reducido; ahora vale también cuando el autoplay se niega. */
+.shot img.poster, .band img.poster{
+  display:none;
+  position:absolute; inset:-9% 0; width:100%; height:118%; object-fit:cover;
+}
+
+/* ── que no se note que es un <video> ──
+   Cuando el navegador bloquea el autoplay, iOS dibuja SU propio botón de
+   play encima. Es lo único que delata que esto no es una foto, y es lo
+   que se veía. Se apaga el control y se le quitan los eventos de puntero:
+   estos videos son imágenes, no reproductores. */
+.shot video, .band video{pointer-events:none;}
+.shot video::-webkit-media-controls, .band video::-webkit-media-controls{display:none !important;}
+.shot video::-webkit-media-controls-start-playback-button,
+.band video::-webkit-media-controls-start-playback-button{
+  display:none !important; -webkit-appearance:none; opacity:0;
+}
+
+/* Y si el navegador se planta de verdad —el Modo de bajo consumo de iOS
+   no lo levanta ni con un gesto del usuario— el video se retira y queda
+   el poster. Una foto fija se ve deliberada; un botón de play se ve roto. */
+.shot video.sin-auto, .band video.sin-auto{display:none;}
+.shot video.sin-auto + img.poster, .band video.sin-auto + img.poster{display:block;}
 
 /* ── qué recibís ──
    La lista que justifica el precio. Va ANTES de los planes a propósito:
