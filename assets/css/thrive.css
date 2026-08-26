@@ -41,7 +41,7 @@
 
   /* La luz cálida de todo el sitio: una sola perilla. Subila o bajala
      y cambia el ambiente entero. */
-  --luz:.42;
+  --luz:.85;
 
   --ease:cubic-bezier(.22,1,.36,1);
 

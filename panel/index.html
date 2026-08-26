@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=09d08f3a">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=bc5ade15">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -97,32 +97,53 @@ body{background:var(--sand);}
    casi. Sin esta linea el panel deja invitar de mas. */
 .cupo .camino{display:block; margin-top:5px; font-size:.86rem; color:var(--ink-2);}
 
-/* ── filtros ── */
-.pn-filtros{display:flex; gap:8px; flex-wrap:wrap; margin-top:26px;}
-/* En el telefono los ocho filtros ocupaban cinco renglones y empujaban
-   la lista fuera de la pantalla. Acá pasan a una sola fila que se
-   desliza: la barra se sale a los margenes para que el ultimo chip
-   no quede cortado contra el borde. */
-@media (max-width:640px){
-  .pn-filtros{
-    flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain;
-    scrollbar-width:none; -webkit-overflow-scrolling:touch;
-    margin-inline:calc(clamp(16px,4vw,28px) * -1);
-    padding-inline:clamp(16px,4vw,28px); padding-block:4px;
-  }
-  .pn-filtros::-webkit-scrollbar{display:none;}
-  .pn-f{flex:none; white-space:nowrap;}
+/* ── filtros ──
+   Eran tres tiras de píldoras, una por eje. Con ocho estados posibles
+   ocupaban tres renglones enteros para decir, casi siempre, «todas» —
+   mucho cartel para poca información, y en el teléfono empujaban la
+   lista fuera de la pantalla.
+   Un desplegable ocupa lo que ocupa su respuesta. Y en el teléfono
+   abre el selector del sistema, que es mejor que cualquier lista
+   que pueda dibujar acá. */
+.pn-controles{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:20px;}
+.pn-controles .pn-buscar{flex:1 1 240px; margin-top:0;}
+.filtros-fila{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+.filtro{
+  position:relative; display:inline-flex; align-items:center; gap:10px;
+  background:var(--white); border-radius:999px; padding:8px 34px 8px 15px;
+  box-shadow:var(--flota-1); cursor:pointer;
+  transition:box-shadow 260ms var(--ease), transform 260ms var(--ease);
 }
-.pn-f{
-  font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink-2); background:var(--white); border:none;
-  padding:11px 15px; border-radius:999px; cursor:pointer;
-  box-shadow:var(--flota-1);
-  transition:color 220ms var(--ease), background 220ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease);
+.filtro:hover{box-shadow:var(--flota-2); transform:translateY(-2px);}
+.filtro:focus-within{box-shadow:0 0 0 3px var(--teal-pale), var(--flota-2);}
+.filtro > span{
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--teal-deep); white-space:nowrap;
 }
-.pn-f:hover{color:var(--ink); transform:translateY(-3px); box-shadow:var(--flota-2);}
-.pn-f[aria-pressed="true"]{background:var(--ink); color:var(--linen); box-shadow:var(--flota-2);}
-.pn-f i{font-style:normal; opacity:.6; margin-left:6px;}
+.filtro select{
+  appearance:none; -webkit-appearance:none;
+  background:none; border:none; font:inherit; font-size:.92rem; color:var(--ink);
+  padding:0; cursor:pointer; max-width:min(46vw,230px);
+  text-overflow:ellipsis;
+}
+.filtro select:focus{outline:none;}
+/* La flecha se dibuja con dos bordes: es un afijo de formulario, no un
+   icono del sistema de iconos, y así hereda el color de cada estado. */
+.filtro::after{
+  content:''; position:absolute; right:15px; top:50%;
+  width:7px; height:7px; pointer-events:none;
+  border-right:1.6px solid currentColor; border-bottom:1.6px solid currentColor;
+  transform:translateY(-70%) rotate(45deg);
+  color:var(--ink-3);
+}
+/* Puesto se ve puesto, igual que la píldora encendida de antes. */
+.filtro.puesto{background:var(--ink);}
+.filtro.puesto > span{color:rgba(250,248,244,.62);}
+.filtro.puesto select{color:var(--linen);}
+.filtro.puesto::after{color:rgba(250,248,244,.7);}
+.filtro.puesto select option{color:var(--ink); background:var(--white);}
+
 
 /* ── lista ── */
 .pn-lista{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
@@ -446,25 +467,6 @@ body{background:var(--sand);}
 }
 .pn-nuevas button:hover{background:rgba(250,248,244,.26);}
 
-/* ── filtros agrupados ──
-   Tres ejes distintos —dónde va, qué edad, qué horario— no pueden ser
-   una sola tira de píldoras: se leen como alternativas del mismo
-   grupo cuando no lo son. */
-.pn-ejes{display:flex; flex-direction:column; gap:12px; margin-top:20px;}
-.eje{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
-.eje > b{
-  flex:none; width:76px; font-family:var(--mono); font-size:.6rem;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--teal-deep);
-}
-.eje .pn-filtros{margin-top:0; flex:1 1 300px;}
-@media (max-width:640px){
-  .eje{flex-direction:column; gap:7px;}
-  .eje > b{width:auto;}
-  /* `flex:1 1 300px` mide sobre el eje principal, y acá el eje pasó a
-     ser vertical: los 300px dejaban de ser ancho y se volvían ALTO.
-     Las píldoras se estiraban a media pantalla. */
-  .eje .pn-filtros{width:100%; flex:none; align-items:center;}
-}
 
 /* La barra se partía en tres renglones en el teléfono: marca, después
    el índice, y «Salir» solo abajo. Con la rejilla, marca y salir
@@ -868,15 +870,18 @@ body{background:var(--sand);}
         <h1>Invitadas <i id="cuenta"></i></h1>
         <p class="sub">Todas las que están en el embudo, desde la que apenas recibió el link hasta la que ya entró. Tocá a cualquiera para ver su ficha completa.</p>
 
-        <label class="pn-buscar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="buscar" placeholder="Buscar por nombre" autocomplete="off" aria-label="Buscar por nombre">
-        </label>
+        <div class="pn-controles">
+          <label class="pn-buscar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="buscar" placeholder="Buscar por nombre" autocomplete="off" aria-label="Buscar por nombre">
+          </label>
 
-        <div class="pn-ejes">
-          <div class="eje"><b>Dónde va</b><div class="pn-filtros" id="filtros"></div></div>
-          <div class="eje"><b>Edad</b><div class="pn-filtros" id="filtrosEdad"></div></div>
-          <div class="eje"><b>Horario</b><div class="pn-filtros" id="filtrosHorario"></div></div>
+          <div class="filtros-fila">
+            <label class="filtro" id="wrapEstado"><span>Dónde va</span><select id="selEstado" aria-label="Filtrar por dónde va"></select></label>
+            <label class="filtro" id="wrapEdad"><span>Edad</span><select id="selEdad" aria-label="Filtrar por edad"></select></label>
+            <label class="filtro" id="wrapHorario"><span>Horario</span><select id="selHorario" aria-label="Filtrar por horario"></select></label>
+            <button class="pn-txt" type="button" id="limpiarFiltros" hidden>Limpiar</button>
+          </div>
         </div>
 
         <div class="pn-lista" id="lista"></div>
@@ -1596,28 +1601,91 @@ body{background:var(--sand);}
     cont.innerHTML = tiles.join('');
   }
 
+  /* ═══ los tres filtros ═══
+     Un desplegable por eje. Los eventos se enganchan UNA vez, al
+     arrancar: los <select> sobreviven a cada repintado —solo se les
+     cambian las opciones— así que volver a engancharlos en cada
+     pintada dejaría oyentes duplicados disparando de a montones. */
+  function opcion(v, txt, n, puesto){
+    return '<option value="' + esc(v) + '"' + (puesto === v ? ' selected' : '') + '>' +
+           esc(txt) + (n == null ? '' : ' · ' + n) + '</option>';
+  }
+  function marcar(id, puesto){
+    document.getElementById(id).classList.toggle('puesto', !!puesto);
+  }
+
   function pintarFiltros(){
-    var cont = document.getElementById('filtros');
     var alertas = datos.filter(function(c){ return c.alerta_salud; }).length;
-    var botones = [['todas','Todas', datos.length]];
-    if(alertas) botones.push(['alerta','Revisar salud', alertas]);
+    var ops = [opcion('todas', 'Todas', datos.length, filtro)];
+    if(alertas) ops.push(opcion('alerta', 'Revisar salud', alertas, filtro));
     ESTADOS.forEach(function(e){
       var n = datos.filter(function(c){ return c.estado === e[0]; }).length;
-      if(n) botones.push([e[0], e[1], n]);
+      if(n) ops.push(opcion(e[0], e[1], n, filtro));
     });
-
-    cont.innerHTML = botones.map(function(b){
-      return '<button class="pn-f" type="button" data-f="' + b[0] + '" aria-pressed="' +
-             (filtro === b[0]) + '">' + esc(b[1]) + '<i>' + b[2] + '</i></button>';
-    }).join('');
-
-    cont.querySelectorAll('.pn-f').forEach(function(b){
-      b.addEventListener('click', function(){
-        filtro = b.getAttribute('data-f');
-        pintarFiltros(); pintarLista();
-      });
-    });
+    /* Si el filtro puesto se quedó sin nadie —ella movió a la última—
+       la opción desaparecería y el <select> mostraría otra cosa sin
+       que el filtro haya cambiado. Se vuelve a «todas». */
+    if(ops.join('').indexOf('value="' + filtro + '"') === -1){
+      filtro = 'todas';
+      ops[0] = opcion('todas', 'Todas', datos.length, 'todas');
+    }
+    document.getElementById('selEstado').innerHTML = ops.join('');
+    marcar('wrapEstado', filtro !== 'todas');
+    pintarLimpiar();
   }
+
+  function pintarFiltrosEdad(){
+    var ops = [opcion('', 'Cualquiera', datos.length, fEdad)];
+    EDADES.forEach(function(e){
+      var n = datos.filter(function(c){ return (c.respuestas || {}).edad === e; }).length;
+      if(n) ops.push(opcion(e, e, n, fEdad));
+    });
+    if(fEdad && ops.join('').indexOf('value="' + fEdad + '"') === -1) fEdad = '';
+    document.getElementById('selEdad').innerHTML = ops.join('');
+    marcar('wrapEdad', !!fEdad);
+    pintarLimpiar();
+  }
+
+  function pintarFiltrosHorario(){
+    function cuenta(g){ return datos.filter(function(c){ return grupoDe(c) === g; }).length; }
+    var pares = [['2X','2X · ' + ajDias('2X')], ['3X','3X · ' + ajDias('3X')], ['?','Todavía no sabe']];
+    var ops = [opcion('', 'Cualquiera', datos.length, fHorario)];
+    pares.forEach(function(x){
+      var n = cuenta(x[0] === '?' ? '' : x[0]);
+      if(n) ops.push(opcion(x[0], x[1], n, fHorario));
+    });
+    if(fHorario && ops.join('').indexOf('value="' + fHorario + '"') === -1) fHorario = '';
+    document.getElementById('selHorario').innerHTML = ops.join('');
+    marcar('wrapHorario', !!fHorario);
+    pintarLimpiar();
+  }
+
+  function hayFiltro(){
+    return filtro !== 'todas' || !!fEdad || !!fHorario || !!busqueda;
+  }
+  function pintarLimpiar(){
+    document.getElementById('limpiarFiltros').hidden = !hayFiltro();
+  }
+
+  (function(){
+    function repintar(){
+      pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
+    }
+    document.getElementById('selEstado').addEventListener('change', function(){
+      filtro = this.value; repintar();
+    });
+    document.getElementById('selEdad').addEventListener('change', function(){
+      fEdad = this.value; repintar();
+    });
+    document.getElementById('selHorario').addEventListener('change', function(){
+      fHorario = this.value; repintar();
+    });
+    document.getElementById('limpiarFiltros').addEventListener('click', function(){
+      filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = '';
+      document.getElementById('buscar').value = '';
+      repintar();
+    });
+  })();
 
   /* Buscar sin tildes y sin mayúsculas: nadie escribe «Lucía» con tilde
      cuando está apurada. */
@@ -1688,7 +1756,7 @@ body{background:var(--sand);}
 
   document.getElementById('buscar').addEventListener('input', function(){
     busqueda = this.value.trim();
-    pintarLista();
+    pintarLista(); pintarLimpiar();
   });
 
   /* ═══ la ficha ═══ */
