@@ -171,6 +171,21 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .stag.in > *:nth-child(3){transition-delay:200ms}
 .stag.in > *:nth-child(4){transition-delay:280ms}
 
+/* ── revelado en las dos direcciones ──
+   La clase la pone el JS solo cuando el observador está activo. Si no
+   llega a activarse, estas reglas nunca aplican y todo queda visible
+   por el estado normal de arriba: la página no puede quedarse en blanco.
+
+   'desde-arriba' invierte el origen del gesto: un bloque que salió por
+   el techo vuelve bajando, no subiendo. Sin esto el scroll hacia arriba
+   se siente al revés. */
+body.dosvias .up.desde-arriba{transform:translateY(-20px);}
+body.dosvias .up.desde-arriba.in{transform:none;}
+body.dosvias .mask.desde-arriba > span{transform:translateY(-106%);}
+body.dosvias .mask.desde-arriba.in > span{transform:none;}
+body.dosvias .stag.desde-arriba > *{transform:translateY(-24px);}
+body.dosvias .stag.desde-arriba.in > *{transform:none;}
+
 @media (prefers-reduced-motion: reduce){
   body{transition:none;}
   .mask > span{transform:none !important; transition:none !important;}

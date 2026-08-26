@@ -90,49 +90,66 @@
     videos.forEach(function (v) { obs.observe(v); });
   })();
 
-  /* ───────── entradas ─────────
-     Regla dura: una visitante nunca debe ver una sección en blanco.
-     Si la página no puede hacer scroll por sí misma —incrustada en un
-     contenedor que crece hasta el alto del contenido— nada bajo la
-     primera pantalla entraría nunca en viewport. Ahí se muestra todo. */
+  /* ───────── entradas, en las dos direcciones ─────────
+     Los bloques entran al aparecer y se vuelven a esconder al salir, y
+     regresan desde el lado por el que se fueron: si bajás vienen desde
+     abajo, si subís vienen desde arriba.
+
+     Regla dura del proyecto que sigue mandando: una visitante nunca debe
+     ver una sección en blanco. Por eso hay tres salidas de emergencia —
+     sin IntersectionObserver, sin scroll propio, o si el observador
+     nunca llegó a disparar— y en las tres se muestra todo y se deja
+     quieto para siempre. */
   var pend = [].slice.call(document.querySelectorAll('.up, .stag, .mask'));
 
-  function mostrar(el) { el.classList.add('in'); }
-
-  function noHaceScrollSola() {
-    var d = document.scrollingElement || document.documentElement;
-    return d.scrollHeight <= innerHeight + 4;
+  function mostrarTodoYFijar() {
+    document.body.classList.remove('dosvias');
+    pend.forEach(function (el) { el.classList.add('in'); el.classList.remove('desde-arriba'); });
   }
 
-  function barrer() {
-    var todo = noHaceScrollSola();
-    var linea = (innerHeight || 800) * 0.94;
-    for (var i = pend.length - 1; i >= 0; i--) {
-      var el = pend[i];
-      if (el.classList.contains('in')) { pend.splice(i, 1); continue; }
-      /* Basta con que haya cruzado la línea de entrada. No se exige que
-         siga en pantalla: con scroll rápido, un salto de teclado o una
-         posición restaurada, un bloque puede pasar de "abajo" a "arriba"
-         sin aparecer nunca en un cuadro — y quedaría invisible. */
-      if (todo || el.getBoundingClientRect().top < linea) { mostrar(el); pend.splice(i, 1); }
-    }
-  }
+  /* No se pregunta si la página hace scroll: al primer pintado todavía
+     no cargaron fuentes ni imágenes, la página es corta, y apagar el
+     modo ahí lo apagaba para siempre. El observador resuelve ese caso
+     solo — si todo cabe en pantalla, todo intersecta y todo se revela. */
+  if (reduced || !('IntersectionObserver' in window) || !pend.length) {
+    mostrarTodoYFijar();
+  } else {
+    document.body.classList.add('dosvias');
+    var algunoEntro = false;
 
-  if (reduced || !('IntersectionObserver' in window)) {
-    pend.forEach(mostrar);
-  } else if (pend.length) {
-    var io = new IntersectionObserver(function (en) {
-      en.forEach(function (e) {
-        if (e.isIntersecting) { mostrar(e.target); io.unobserve(e.target); }
+    var io = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        var el = e.target;
+        if (e.isIntersecting) {
+          algunoEntro = true;
+          el.classList.add('in');
+        } else {
+          /* de qué lado se fue decide de qué lado vuelve */
+          el.classList.toggle('desde-arriba', e.boundingClientRect.top < 0);
+          el.classList.remove('in');
+        }
       });
     }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+
     pend.forEach(function (el) { io.observe(el); });
 
-    addEventListener('scroll', barrer, { passive: true });
-    addEventListener('resize', barrer);
-    addEventListener('load', barrer);
-    barrer();
-    [400, 1200, 2500].forEach(function (t) { setTimeout(barrer, t); });
+    /* Tercera salida: si el observador no marca ni un bloque, algo lo
+       bloqueó y la página quedaría en blanco. Se abandona el modo.
+
+       Pero el reloj solo corre con la pestaña a la vista. Un link de
+       WhatsApp puede abrirse en segundo plano, y ahí el observador no
+       dispara por diseño, no por falla: contar ese tiempo apagaría el
+       efecto antes de que nadie llegue a mirar la página. */
+    var reloj = null;
+    function armarRelojDeSeguridad() {
+      if (document.visibilityState !== 'visible' || reloj || algunoEntro) return;
+      reloj = setTimeout(function () {
+        if (!algunoEntro) { io.disconnect(); mostrarTodoYFijar(); }
+      }, 2500);
+    }
+    armarRelojDeSeguridad();
+    document.addEventListener('visibilitychange', armarRelojDeSeguridad);
+
   }
 
   /* ───────── el fondo cambia por sección ─────────
