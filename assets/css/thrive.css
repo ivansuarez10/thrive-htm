@@ -211,11 +211,15 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   background:var(--teal); color:#fff;
   border-radius:999px; padding:16px 30px;
   font-weight:700; font-size:1rem;
-  transition:background 240ms var(--ease), transform 240ms var(--ease);
+  /* Despegado del papel, como el cuadro de la fecha: sin borde, sobre
+     una sombra larga y suave. Al acercarse sube y la sombra crece. */
+  box-shadow:var(--flota-2);
+  transition:background 240ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
   cursor:pointer;
 }
-.cta:hover{background:var(--teal-deep); transform:translateY(-2px);}
-.cta:disabled{background:var(--line); color:var(--ink-3); cursor:not-allowed; transform:none;}
+.cta:hover{background:var(--teal-deep); transform:translateY(-4px); box-shadow:var(--flota-3);}
+.cta:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
+.cta:disabled{background:var(--line); color:var(--ink-3); cursor:not-allowed; transform:none; box-shadow:none;}
 .cta svg{width:19px; height:19px; flex:none;}
 .cta-fine{display:block; margin-top:14px; font-family:var(--mono); font-size:0.66rem; letter-spacing:.09em; color:var(--ink-3);}
 .cta-wrap{margin-top:clamp(34px,6vw,48px);}
@@ -329,11 +333,13 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .plan .price small{font-family:var(--sans); font-size:0.85rem; font-weight:600; color:var(--ink-2);}
 .plan-cta{
   margin-top:22px; align-self:stretch; text-align:center;
-  padding:15px 20px; border-radius:999px; border:1px solid var(--line);
+  padding:16px 20px; border-radius:999px; border:none;
+  background:var(--linen); box-shadow:var(--flota-1);
   font-weight:600; font-size:0.95rem; color:var(--ink);
-  transition:background 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease);
+  transition:background 300ms var(--ease), color 300ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
-.plan-cta:hover{background:var(--teal-deep); border-color:var(--teal-deep); color:var(--white);}
+.plan-cta:hover{background:var(--teal-deep); color:var(--white); transform:translateY(-4px); box-shadow:var(--flota-3);}
+.plan-cta:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
 
 /* La escasez es real —cuatro por grupo— así que se dice sin adornos. */
 .cierre-fecha{
@@ -522,11 +528,13 @@ textarea.field{min-height:130px;}
 .btn-row .cta{justify-content:center;}
 .btn-ghost{
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  border:1.5px solid var(--line); border-radius:999px; padding:15px 28px;
+  border:none; border-radius:999px; padding:16px 28px;
+  background:var(--white); box-shadow:var(--flota-1);
   font-weight:700; font-size:0.96rem; color:var(--ink-2);
-  transition:border-color 220ms var(--ease), color 220ms var(--ease);
+  transition:color 220ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
-.btn-ghost:hover{border-color:var(--ink-3); color:var(--ink);}
+.btn-ghost:hover{color:var(--ink); transform:translateY(-4px); box-shadow:var(--flota-2);}
+.btn-ghost:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
 .btn-ghost svg{width:18px; height:18px;}
 .cta.wa{background:var(--wa);}
 .cta.wa:hover{background:#1E6B58;}

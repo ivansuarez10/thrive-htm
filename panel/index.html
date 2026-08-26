@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=28c69efd">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=e518a5eb">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -44,11 +44,13 @@ body{background:var(--sand);}
 .pn-campo input:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-pale);}
 .pn-btn{
   width:100%; margin-top:22px; background:var(--ink); color:var(--linen);
-  font-weight:600; font-size:.98rem; padding:14px; border-radius:999px; cursor:pointer;
-  transition:background 240ms var(--ease), opacity 240ms var(--ease);
+  font-weight:600; font-size:.98rem; padding:15px; border-radius:999px; cursor:pointer;
+  box-shadow:var(--flota-2);
+  transition:background 240ms var(--ease), opacity 240ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
-.pn-btn:hover{background:var(--teal-deep);}
-.pn-btn:disabled{opacity:.5; cursor:default;}
+.pn-btn:hover{background:var(--teal-deep); transform:translateY(-4px); box-shadow:var(--flota-3);}
+.pn-btn:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
+.pn-btn:disabled{opacity:.5; cursor:default; transform:none; box-shadow:var(--flota-1);}
 .pn-error{margin-top:14px; font-size:.9rem; color:#8A2F2F; min-height:1.2em;}
 
 /* ── barra ── */
@@ -94,22 +96,25 @@ body{background:var(--sand);}
 .pn-filtros{display:flex; gap:8px; flex-wrap:wrap; margin-top:26px;}
 .pn-f{
   font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink-2); background:var(--white); border:1px solid var(--line-soft);
-  padding:10px 14px; border-radius:999px; cursor:pointer;
-  transition:all 220ms var(--ease);
+  color:var(--ink-2); background:var(--white); border:none;
+  padding:11px 15px; border-radius:999px; cursor:pointer;
+  box-shadow:var(--flota-1);
+  transition:color 220ms var(--ease), background 220ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease);
 }
-.pn-f:hover{color:var(--ink);}
-.pn-f[aria-pressed="true"]{background:var(--ink); color:var(--linen); border-color:var(--ink);}
+.pn-f:hover{color:var(--ink); transform:translateY(-3px); box-shadow:var(--flota-2);}
+.pn-f[aria-pressed="true"]{background:var(--ink); color:var(--linen); box-shadow:var(--flota-2);}
 .pn-f i{font-style:normal; opacity:.6; margin-left:6px;}
 
 /* ── lista ── */
 .pn-lista{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
 .fila{
-  background:var(--white); border:1px solid var(--line-soft); border-radius:14px;
-  padding:17px 20px; display:grid; gap:4px; cursor:pointer; text-align:left; width:100%;
-  transition:box-shadow 260ms var(--ease), transform 260ms var(--ease);
+  background:var(--white); border:none; border-radius:14px;
+  padding:18px 20px; display:grid; gap:4px; cursor:pointer; text-align:left; width:100%;
+  box-shadow:var(--flota-1);
+  transition:box-shadow 300ms var(--ease), transform 300ms var(--ease);
 }
-.fila:hover{box-shadow:var(--flota-2); transform:translateY(-2px);}
+.fila:hover{box-shadow:var(--flota-3); transform:translateY(-4px);}
+.fila:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
 .fila .l1{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
 .fila .nom{font-family:var(--display); font-weight:600; font-size:1.08rem; letter-spacing:-.01em;}
 .fila .l2{font-family:var(--mono); font-size:.74rem; color:var(--ink-2);}

@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=28c69efd">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=e518a5eb">
 </head>
 
 <body>
@@ -231,25 +231,18 @@
      la misma persona es cobrarle el tiempo dos veces. */
   var elBienve = document.getElementById('bienve');
   if (elBienve) {
-    var yaEntro = false;
-    try { yaEntro = sessionStorage.getItem('thrive-bienve') === '1'; } catch (e) {}
+    /* Se muestra SIEMPRE, en cada visita: es la presentación de la marca
+       antes de pedirle nada a nadie. Decisión de Ivan, 26 ago 2026. */
+    var quien = (window.THRIVE_RT && window.THRIVE_RT.referida) || '';
+    var elNom = document.getElementById('bvNombre');
+    if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
 
-    if (yaEntro) {
-      elBienve.hidden = true;
-    } else {
-      /* El nombre de quien la invitó vuelve el saludo suyo, no de nadie. */
-      var quien = (window.THRIVE_RT && window.THRIVE_RT.referida) || '';
-      var elNom = document.getElementById('bvNombre');
-      if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
-
-      document.getElementById('bvEmpezar').addEventListener('click', function () {
-        try { sessionStorage.setItem('thrive-bienve', '1'); } catch (e) {}
-        elBienve.classList.add('se-va');
-        setTimeout(function () { elBienve.hidden = true; }, 640);
-        var f = elSteps.children[0] && elSteps.children[0].querySelector('.field');
-        if (f) setTimeout(function () { f.focus(); }, 700);
-      });
-    }
+    document.getElementById('bvEmpezar').addEventListener('click', function () {
+      elBienve.classList.add('se-va');
+      setTimeout(function () { elBienve.hidden = true; }, 640);
+      var f = elSteps.children[0] && elSteps.children[0].querySelector('.field');
+      if (f) setTimeout(function () { f.focus(); }, 700);
+    });
   }
 
   var elSteps = document.getElementById('steps');
