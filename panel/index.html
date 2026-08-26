@@ -312,7 +312,9 @@ body{background:var(--sand);}
 .tarea.salud .tarea-nom{color:#6E2323;}
 .tarea-motivo{margin-top:7px; font-size:.96rem; line-height:1.55; color:var(--ink-2); max-width:56ch;}
 .tarea.salud .tarea-motivo{color:#7A2828;}
-.tarea-hacer{display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:none;}
+/* Con «Elegir mensaje» pasaron a ser tres botones y flex:none les
+   prohibía envolver: en el teléfono se salían de la tarjeta. */
+.tarea-hacer{display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:1 1 auto; min-width:0;}
 
 /* El WhatsApp es el producto: para grupos de cuatro, que la primera
    respuesta venga de una persona es lo que se está vendiendo. Por eso
@@ -412,6 +414,10 @@ body{background:var(--sand);}
 }
 .pn-nav button[aria-current="page"] em{background:var(--linen); color:var(--ink);}
 
+/* thrive.css le da a todo <section> el aire de una sección de landing
+   —clamp(72px,13vw,140px)—. Las vistas del panel son <section> y
+   heredaban 119px de vacío encima del titular. */
+.vista{padding:0;}
 .vista > h1{
   margin-top:clamp(28px,6vw,44px);
   font-family:var(--display); font-weight:500;
@@ -558,6 +564,218 @@ body{background:var(--sand);}
 }
 .aj-aviso b{display:block; font-weight:700; margin-bottom:4px;}
 
+/* ═══════════════════════════════════════════════════════════
+   LA CÁSCARA: barra lateral fija
+
+   El índice estaba arriba, en una tira de pestañas. Con cuatro
+   secciones y un teléfono de por medio se partía en renglones y
+   empujaba el contenido fuera de la pantalla.
+
+   Acá el índice vive a la izquierda, siempre visible, agrupado por
+   lo que cada sección es: el día, la gente, el programa. Los grupos
+   no son decoración — son la razón por la que cuatro elementos no
+   se leen como cuatro alternativas del mismo tipo.
+
+   En el teléfono la barra no cabe y se convierte en una tira de
+   abajo, que es donde llega el pulgar.
+   ═══════════════════════════════════════════════════════════ */
+.pn-app{display:block;}
+
+.pn-lado{
+  position:fixed; inset:14px auto 14px 14px; width:252px; z-index:40;
+  background:var(--white); border-radius:22px; box-shadow:var(--flota-2);
+  /* Sin transición a propósito: animar width recalcula el diseño en
+     cada cuadro y del otro lado hay una lista larga. Plegar es un
+     clic, no necesita viaje. */
+  display:flex; flex-direction:column; overflow:auto;
+}
+.pn-main{margin-left:280px; min-width:0;}
+
+/* Plegada: solo los iconos. Es de la referencia y se gana el sitio —
+   en una pantalla de 13" el calendario de la ficha agradece 180px. */
+.pn-app.plegado .pn-lado{width:74px;}
+.pn-app.plegado .pn-main{margin-left:102px;}
+.pn-app.plegado .lado-rotulo,
+.pn-app.plegado .pn-lado b,
+.pn-app.plegado .lado-nav span,
+.pn-app.plegado .lado-quien,
+.pn-app.plegado .lado-salir span{display:none;}
+.pn-app.plegado .lado-top{justify-content:center;}
+.pn-app.plegado .lado-nav button{justify-content:center; padding-inline:0;}
+.pn-app.plegado .lado-pie{align-items:center;}
+/* Plegada no hay renglón donde poner el contador al lado: se monta
+   sobre el icono. Sigue diciendo cuántas, que es el dato — un punto
+   solo diría «algo pasó» y obligaría a desplegar para saber qué. */
+.pn-app.plegado .lado-nav button{position:relative;}
+.pn-app.plegado .lado-nav em{
+  position:absolute; top:3px; right:11px;
+  font-size:.52rem; padding:1px 4px; min-width:14px; text-align:center;
+  box-shadow:0 0 0 2px var(--white);
+}
+.pn-app.plegado .lado-nav button[aria-current="page"] em{box-shadow:0 0 0 2px var(--linen);}
+
+.lado-top{
+  display:flex; align-items:center; gap:10px;
+  padding:20px 18px 6px;
+}
+.lado-top img{width:30px; height:30px; flex:none;}
+.lado-top b{font-family:var(--display); font-weight:600; font-size:1.04rem; letter-spacing:-.01em; margin-right:auto;}
+.lado-plegar{
+  flex:none; padding:7px; border-radius:9px; cursor:pointer; color:var(--ink-3);
+  transition:color 200ms var(--ease), background 200ms var(--ease);
+}
+.lado-plegar:hover{color:var(--ink); background:var(--sand);}
+.lado-plegar svg{width:17px; height:17px; display:block;}
+.pn-app.plegado .lado-plegar{display:none;}
+
+.lado-rotulo{
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-3);
+  padding:22px 20px 8px;
+}
+.lado-nav{display:flex; flex-direction:column; gap:2px; padding:0 12px;}
+.lado-nav button{
+  display:flex; align-items:center; gap:11px; width:100%;
+  font:inherit; font-size:.95rem; color:var(--ink-2); text-align:left;
+  background:none; border:none; cursor:pointer;
+  padding:10px 12px; border-radius:11px;
+  transition:color 200ms var(--ease), background 200ms var(--ease);
+}
+.lado-nav button svg{width:18px; height:18px; flex:none;}
+.lado-nav button span{margin-right:auto; white-space:nowrap;}
+.lado-nav button:hover{color:var(--ink); background:var(--sand);}
+.lado-nav button[aria-current="page"]{
+  color:var(--ink); background:var(--linen);
+  box-shadow:inset 0 0 0 1px var(--line-soft), var(--flota-1);
+  font-weight:600;
+}
+.lado-nav em{
+  font-style:normal; font-family:var(--mono); font-size:.6rem;
+  padding:2px 7px; border-radius:999px; background:var(--teal); color:var(--white);
+}
+
+.lado-pie{
+  margin-top:auto; padding:18px 14px 16px;
+  display:flex; flex-direction:column; gap:4px;
+  border-top:1px solid var(--line-soft);
+}
+.lado-cuenta{display:flex; align-items:center; gap:11px; padding:8px 10px;}
+.lado-cuenta .ini{
+  flex:none; width:34px; height:34px; border-radius:50%;
+  background:var(--teal-pale); color:var(--teal-deep);
+  display:grid; place-items:center;
+  font-family:var(--display); font-weight:600; font-size:.94rem;
+}
+.lado-quien{min-width:0;}
+.lado-quien b{display:block; font-family:var(--sans); font-weight:600; font-size:.9rem; letter-spacing:0;}
+.lado-quien span{display:block; font-size:.76rem; color:var(--ink-3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.lado-salir{
+  display:flex; align-items:center; gap:11px; width:100%;
+  font:inherit; font-size:.9rem; color:var(--ink-2);
+  background:none; border:none; cursor:pointer; text-align:left;
+  padding:10px 12px; border-radius:11px;
+  transition:color 200ms var(--ease), background 200ms var(--ease);
+}
+.lado-salir svg{width:17px; height:17px; flex:none;}
+.lado-salir:hover{color:var(--ink); background:var(--sand);}
+
+/* ── migas + título de la vista ── */
+.main-top{
+  position:sticky; top:0; z-index:30;
+  background:rgba(240,235,227,.9);
+  -webkit-backdrop-filter:saturate(180%) blur(12px); backdrop-filter:saturate(180%) blur(12px);
+  padding:16px clamp(16px,3vw,32px);
+  border-bottom:1px solid var(--line-soft);
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.migas{
+  display:flex; align-items:center; gap:8px; margin-right:auto;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.migas b{color:var(--ink); font-weight:500;}
+.migas svg{width:11px; height:11px;}
+.main-fecha{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--ink-2);}
+
+/* ── la fila de indicadores ──
+   De la referencia. Se gana el sitio porque los cuatro números son
+   los que deciden si hoy hay que invitar a alguien más: los dos
+   cupos con sus barras, quién está en camino y qué falta hacer. */
+.pn-tiles{
+  display:grid; gap:12px; margin-top:24px;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+}
+.tile{
+  background:var(--white); border-radius:16px; padding:18px 20px;
+  box-shadow:var(--flota-1); display:flex; flex-direction:column; gap:10px;
+}
+.tile-top{display:flex; align-items:center; gap:9px;}
+.tile-top .ico{
+  flex:none; width:30px; height:30px; border-radius:9px;
+  background:var(--linen); color:var(--teal-deep);
+  display:grid; place-items:center;
+}
+.tile-top .ico svg{width:15px; height:15px;}
+.tile-top b{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-2);
+}
+.tile .cifra{
+  font-family:var(--display); font-weight:500; font-size:1.9rem;
+  letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums;
+}
+.tile .pie{font-size:.86rem; color:var(--ink-2); line-height:1.45;}
+.tile .barras{display:flex; gap:5px;}
+.tile .barras i{flex:1; height:8px; border-radius:999px; background:var(--sand);}
+.tile .barras i.lleno{background:var(--teal);}
+.tile.urge .ico{background:#F6E3E3; color:#8A2F2F;}
+/* En el teléfono, cuatro tarjetas apiladas se comían la pantalla entera
+   antes de que ella viera un solo pendiente. De dos en dos caben las
+   cuatro y todavía asoma la primera tarea. */
+@media (max-width:640px){
+  .pn-tiles{grid-template-columns:1fr 1fr; gap:10px;}
+  .tile{padding:14px 15px; gap:8px;}
+  .tile-top{gap:7px;}
+  .tile-top .ico{width:26px; height:26px; border-radius:8px;}
+  .tile-top b{font-size:.54rem; letter-spacing:.1em;}
+  .tile .cifra{font-size:1.6rem;}
+  .tile .pie{font-size:.78rem;}
+  .tile .barras i{height:7px;}
+}
+
+/* ── el teléfono: la barra se va abajo ── */
+.pn-abajo{display:none;}
+@media (max-width:899px){
+  .pn-lado{display:none;}
+  .pn-main, .pn-app.plegado .pn-main{margin-left:0;}
+  .main-top{padding-inline:clamp(14px,4vw,20px);}
+  .pn-shell{padding-bottom:104px;}   /* que la tira no tape el final */
+
+  .pn-abajo{
+    display:grid; grid-auto-flow:column; grid-auto-columns:1fr;
+    position:fixed; left:10px; right:10px; bottom:10px; z-index:50;
+    background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:saturate(180%) blur(14px); backdrop-filter:saturate(180%) blur(14px);
+    border-radius:20px; box-shadow:var(--flota-3);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  }
+  .pn-abajo button{
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    font:inherit; font-size:.68rem; color:var(--ink-3);
+    background:none; border:none; cursor:pointer; padding:7px 4px; border-radius:13px;
+    position:relative;
+    transition:color 200ms var(--ease), background 200ms var(--ease);
+  }
+  .pn-abajo button svg{width:20px; height:20px;}
+  .pn-abajo button[aria-current="page"]{color:var(--ink); background:var(--linen);}
+  .pn-abajo em{
+    position:absolute; top:2px; left:calc(50% + 6px);
+    font-style:normal; font-family:var(--mono); font-size:.54rem;
+    min-width:15px; padding:1px 4px; border-radius:999px;
+    background:var(--teal); color:var(--white); text-align:center;
+  }
+}
+
 .pn-apagado{
   margin-top:24px; background:var(--white); border-radius:16px;
   padding:26px 24px; box-shadow:var(--flota-1);
@@ -592,18 +810,41 @@ body{background:var(--sand);}
 </div>
 
 <!-- ══════════ PANEL ══════════ -->
-<div id="panel" hidden>
-  <div class="pn-top">
-    <div class="pn-top-in">
-      <div class="pn-marca">
-        <img src="/assets/img/seal.svg" alt="" width="26" height="26">
-        <b>THRIVE</b>
-      </div>
-      <nav class="pn-nav" id="nav" aria-label="Secciones del panel"></nav>
-      <button class="pn-salir" type="button" id="btnSalir">Salir</button>
-    </div>
-  </div>
+<div id="panel" class="pn-app" hidden>
 
+  <!-- ══════════ LA BARRA ══════════ -->
+  <aside class="pn-lado">
+    <div class="lado-top">
+      <img src="/assets/img/seal.svg" alt="" width="30" height="30">
+      <b>THRIVE</b>
+      <button class="lado-plegar" type="button" id="btnPlegar" aria-label="Plegar la barra" title="Plegar la barra">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+      </button>
+    </div>
+
+    <div id="ladoNav"></div>
+
+    <div class="lado-pie">
+      <div class="lado-cuenta">
+        <span class="ini" id="cuentaIni" aria-hidden="true">D</span>
+        <span class="lado-quien"><b>Denisse</b><span id="cuentaCorreo">&nbsp;</span></span>
+      </div>
+      <button class="lado-salir" type="button" id="btnSalir">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+        <span>Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════ EL CONTENIDO ══════════ -->
+  <div class="pn-main">
+    <div class="main-top">
+      <p class="migas">THRIVE
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        <b id="migaVista">Hoy</b>
+      </p>
+      <span class="main-fecha" id="mainFecha"></span>
+    </div>
   <div class="pn-shell">
     <div id="apagado" hidden></div>
 
@@ -612,6 +853,7 @@ body{background:var(--sand);}
       <!-- ══════ HOY ══════ -->
       <section class="vista" data-vista="hoy">
         <div class="pn-dia" id="dia"></div>
+        <div class="pn-tiles" id="tiles"></div>
         <div class="pn-nuevas" id="nuevas" hidden></div>
         <div class="pn-toca" id="toca"></div>
         <div class="pn-limpio" id="limpio" hidden>
@@ -619,10 +861,6 @@ body{background:var(--sand);}
           <span>Nadie está esperando nada tuyo ahora mismo.</span>
         </div>
 
-        <div class="pn-seccion">
-          <h2>Los cupos</h2>
-          <div class="pn-cupos" id="cupos"></div>
-        </div>
       </section>
 
       <!-- ══════ INVITADAS ══════ -->
@@ -740,7 +978,10 @@ body{background:var(--sand);}
       </section>
 
     </div>
+    </div>
   </div>
+
+  <nav class="pn-abajo" id="abajo" aria-label="Secciones del panel"></nav>
 </div>
 
 <!-- ══════════ HOJA DE MENSAJES ══════════ -->
@@ -1062,12 +1303,42 @@ body{background:var(--sand);}
     sb.auth.signOut().then(function(){ location.reload(); });
   });
 
+  /* La barra plegada se recuerda: si alguien la plegó fue porque
+     quería el espacio, y volver a desplegarla en cada visita convierte
+     una preferencia en una tarea. */
+  var elApp = document.getElementById('panel');
+  try{
+    if(localStorage.getItem('thrive-panel-plegado') === '1') elApp.classList.add('plegado');
+  }catch(e){ /* navegador sin almacenamiento: se queda desplegada */ }
+
+  document.getElementById('btnPlegar').addEventListener('click', function(){
+    elApp.classList.add('plegado');
+    try{ localStorage.setItem('thrive-panel-plegado','1'); }catch(e){}
+  });
+  /* Plegada, el sello es el que la devuelve: es lo único que queda
+     visible arriba y ya es el botón de «volver al principio». */
+  document.querySelector('.lado-top img').addEventListener('click', function(){
+    if(!elApp.classList.contains('plegado')) return;
+    elApp.classList.remove('plegado');
+    try{ localStorage.setItem('thrive-panel-plegado','0'); }catch(e){}
+  });
+
+  function pintarCuenta(){
+    sb.auth.getUser().then(function(r){
+      var correo = r && r.data && r.data.user && r.data.user.email;
+      if(correo) document.getElementById('cuentaCorreo').textContent = correo;
+    }).catch(function(){});
+    var f = fechaLarga(new Date());
+    document.getElementById('mainFecha').textContent = f.charAt(0).toUpperCase() + f.slice(1);
+  }
+
   function abrirPanel(){
     var b = document.getElementById('btnEntrar');
     if(b){ b.disabled = false; b.textContent = 'Entrar'; }
     elLogin.hidden = true;
     elPanel.hidden = false;
     elContenido.hidden = false;
+    pintarCuenta();
     irA('hoy');
     cargar();
   }
@@ -1184,8 +1455,12 @@ body{background:var(--sand);}
     var t = tareas();
     var libres = libresPorGrupo();
     var total = libres[0] + libres[1];
-    var fecha = fechaLarga(new Date());
-    fecha = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+    /* La fecha la dice la cabecera de la vista; repetirla acá era
+       decir dos veces lo mismo a dos centímetros de distancia. */
+    function lugares(n){
+      return n === 0 ? 'Los dos grupos están completos.'
+           :  'Quedan ' + enLetras(n) + ' ' + (n === 1 ? 'lugar' : 'lugares') + ' entre los dos grupos.';
+    }
 
     var titular, resto;
     if(!datos.length){
@@ -1193,14 +1468,10 @@ body{background:var(--sand);}
       resto = 'Cuando alguien complete el formulario aparece acá, y también podés agregarla a mano más abajo.';
     }else if(!t.length){
       titular = 'Todo al día.';
-      resto = fecha + ' · ' + (total === 0
-        ? 'Los dos grupos están completos.'
-        : 'Quedan ' + enLetras(total) + ' ' + (total === 1 ? 'lugar' : 'lugares') + ' entre los dos grupos.');
+      resto = lugares(total);
     }else{
       titular = t.length === 1 ? 'Tenés un pendiente.' : 'Tenés ' + enLetras(t.length) + ' pendientes.';
-      resto = fecha + ' · ' + (total === 0
-        ? 'Los dos grupos están completos.'
-        : 'Quedan ' + enLetras(total) + ' ' + (total === 1 ? 'lugar' : 'lugares') + ' entre los dos grupos.');
+      resto = lugares(total);
     }
 
     document.getElementById('dia').innerHTML =
@@ -1279,28 +1550,50 @@ body{background:var(--sand);}
     });
   }
 
+  /* ═══ la fila de indicadores ═══
+     Cuatro números, y son los cuatro que deciden si hoy hay que
+     invitar a alguien más: los dos cupos con sus barras, cuánta
+     gente sigue viva en el embudo, y qué falta hacer. */
   function pintarCupos(){
-    var cont = document.getElementById('cupos');
-    cont.innerHTML = ['2X','3X'].map(function(g){
-      var dentro  = datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
-      var camino  = datos.filter(function(c){
+    var cont = document.getElementById('tiles');
+    var tope = ajCupos();
+
+    var tiles = ['2X','3X'].map(function(g){
+      var dentro = datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
+      var camino = datos.filter(function(c){
         return c.grupo === g && (c.estado === 'clase_agendada' || c.estado === 'vino');
       }).length;
-      var tope = ajCupos();
+      var libres = tope - dentro;
       var barras = '';
       for(var i=0;i<tope;i++) barras += '<i class="' + (i < dentro ? 'lleno' : '') + '"></i>';
-      var libres = tope - dentro;
-      return '<div class="cupo">' +
-        '<b>THRIVE · ' + g + '</b>' +
+      return '<div class="tile">' +
+        '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>THRIVE ' + g + '</b></div>' +
         '<div class="barras">' + barras + '</div>' +
-        '<em>' + (libres === 0
-            ? 'Grupo completo'
-            : 'Quedan <s>' + libres + '</s> ' + (libres === 1 ? 'lugar' : 'lugares')) +
-          (camino
-            ? '<span class="camino">' + camino + (camino === 1 ? ' en camino' : ' en camino') + '</span>'
-            : '') +
-        '</em></div>';
-    }).join('');
+        '<span class="pie">' + (libres <= 0 ? 'Grupo completo' :
+            'Quedan <b style="color:var(--ink)">' + libres + '</b> ' + (libres === 1 ? 'lugar' : 'lugares')) +
+          (camino ? ' · ' + camino + ' en camino' : '') + '</span>' +
+      '</div>';
+    });
+
+    /* Vivas en el embudo: ni las que ya entraron ni las que no siguieron. */
+    var vivas = datos.filter(function(c){
+      return c.estado !== 'adentro' && c.estado !== 'no';
+    }).length;
+    tiles.push('<div class="tile">' +
+      '<div class="tile-top"><span class="ico">' + svg('invitadas', 2) + '</span><b>En el embudo</b></div>' +
+      '<span class="cifra">' + vivas + '</span>' +
+      '<span class="pie">' + (vivas === 1 ? 'mujer en camino a una clase' : 'mujeres en camino a una clase') + '</span>' +
+    '</div>');
+
+    var t = tareas().length;
+    tiles.push('<div class="tile' + (t ? ' urge' : '') + '">' +
+      '<div class="tile-top"><span class="ico">' + svg('hoy', 2) + '</span><b>Pendientes</b></div>' +
+      '<span class="cifra">' + t + '</span>' +
+      '<span class="pie">' + (t === 0 ? 'nadie está esperando nada' :
+          (t === 1 ? 'cosa que resolver hoy' : 'cosas que resolver hoy')) + '</span>' +
+    '</div>');
+
+    cont.innerHTML = tiles.join('');
   }
 
   function pintarFiltros(){
@@ -1843,22 +2136,57 @@ body{background:var(--sand);}
      «Hoy» abre primero porque es la única que tiene urgencia. Las
      otras tres se visitan cuando hace falta, no cada vez.
      ═══════════════════════════════════════════════════════════ */
+  var ICO = {
+    hoy:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 16 2 2 4-4"/>',
+    invitadas:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
+    clientas:'<path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m16 11 2 2 4-4"/>',
+    ajustes:'<path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-4M20 13V3M1 15h6M9 8h6M17 17h6"/>'
+  };
+  function svg(v, w){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) +
+           '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICO[v] + '</svg>';
+  }
+
+  /* El tercer valor abre un grupo. Los grupos no son decoración: son
+     la razón por la que cuatro elementos no se leen como cuatro
+     alternativas del mismo tipo. Hoy es el trabajo, las dos del medio
+     son personas, Ajustes es configuración. */
   var VISTAS = [
-    ['hoy',       'Hoy'],
-    ['invitadas', 'Invitadas'],
-    ['clientas',  'Clientas'],
-    ['ajustes',   'Ajustes']
+    ['hoy',       'Hoy',       'Su día'],
+    ['invitadas', 'Invitadas', 'La gente'],
+    ['clientas',  'Clientas',  ''],
+    ['ajustes',   'Ajustes',   'El programa']
   ];
   var vista = 'hoy';
 
   function pintarNav(){
     var n = nuevasDesdeLaUltimaVez().length;
-    document.getElementById('nav').innerHTML = VISTAS.map(function(v){
+
+    var lado = '', abierto = false;
+    VISTAS.forEach(function(v){
+      if(v[2]){
+        if(abierto) lado += '</div>';
+        lado += '<p class="lado-rotulo">' + esc(v[2]) + '</p><div class="lado-nav">';
+        abierto = true;
+      }
+      lado += '<button type="button" data-v="' + v[0] + '"' +
+              (vista === v[0] ? ' aria-current="page"' : '') + '>' +
+              svg(v[0]) + '<span>' + esc(v[1]) + '</span>' +
+              (v[0] === 'hoy' && n ? '<em>' + n + '</em>' : '') + '</button>';
+    });
+    if(abierto) lado += '</div>';
+    document.getElementById('ladoNav').innerHTML = lado;
+
+    /* En el teléfono la barra no cabe, y una gaveta que hay que abrir
+       para cambiar de sección es un peaje. Abajo es donde llega el pulgar. */
+    document.getElementById('abajo').innerHTML = VISTAS.map(function(v){
       return '<button type="button" data-v="' + v[0] + '"' +
-             (vista === v[0] ? ' aria-current="page"' : '') + '>' + esc(v[1]) +
+             (vista === v[0] ? ' aria-current="page"' : '') + '>' +
+             svg(v[0], 1.9) + esc(v[1]) +
              (v[0] === 'hoy' && n ? '<em>' + n + '</em>' : '') + '</button>';
     }).join('');
-    document.getElementById('nav').querySelectorAll('[data-v]').forEach(function(b){
+
+    document.querySelectorAll('#ladoNav [data-v], #abajo [data-v]').forEach(function(b){
       b.addEventListener('click', function(){ irA(b.getAttribute('data-v')); });
     });
   }
@@ -1868,6 +2196,8 @@ body{background:var(--sand);}
     document.querySelectorAll('.vista').forEach(function(s){
       s.hidden = s.getAttribute('data-vista') !== v;
     });
+    var nombre = VISTAS.filter(function(x){ return x[0] === v; })[0];
+    document.getElementById('migaVista').textContent = nombre ? nombre[1] : '';
     pintarNav();
     window.scrollTo(0, 0);
     if(v === 'clientas') pintarClientas();
