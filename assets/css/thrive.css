@@ -277,6 +277,21 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .shot .plx{position:absolute; inset:-9% 0; width:100%; height:118%; object-fit:cover; will-change:transform;}
 .shot.hero{aspect-ratio:16/10;}
 .shot.metodo{aspect-ratio:4/3;}
+/* ── la frase que releva al botón ──
+   El hero dejó de terminar en una puerta (26 ago 2026). La línea que
+   estaba en la cita del método se MUDÓ acá: no se copió — repetirla a
+   dos mil pixeles de distancia en la misma página la gasta.
+
+   Bodoni itálica y no la geométrica: es la regla del sistema, el serif
+   nunca encabeza pero sí remata. Y sin firma debajo: quien abre esto
+   recibió el link de Denisse, así que ya sabe de quién es. */
+.abre-frase{
+  margin-top:clamp(28px,5vw,46px);
+  max-width:34ch; text-align:center; text-wrap:pretty;
+  font-family:var(--serif); font-style:italic; font-weight:500;
+  font-size:clamp(1.12rem,3.2vw,1.45rem); line-height:1.4; color:var(--ink);
+}
+
 .photo-note{
   font-family:var(--mono); font-size:0.6rem; letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink-2); margin-top:9px;
