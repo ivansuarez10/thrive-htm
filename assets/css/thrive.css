@@ -104,51 +104,65 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .bv-sello .sl, .bv-sello .sl-punto{fill:var(--teal);}
 
 @media (prefers-reduced-motion:no-preference){
-  /* Cada letra llega y se asienta con un rebote corto, como las piezas
-     del logo que mandó Ivan de referencia: no es un fundido, es un
-     objeto que aterriza. El orden lo fija --n en el SVG, que va en el
-     sentido de lectura: arranca en la h de "healing", abajo a la
-     izquierda, y cierra con la t de "movement". */
+  /* ═══ el anillo se escribe barriendo ═══
+     Las letras no aparecen donde van: LLEGAN. Cada una entra por
+     detrás de su posición y barre por la circunferencia hasta encajar,
+     como cuentas que corren por un hilo.
+
+     El arco es de 17 grados y no más: a este radio, 34 grados mandaban
+     la letra tan lejos que el anillo se leía deshaciéndose en vez de
+     armándose, y encima se salía del cuadro del sello.
+
+     La clave es transform-box:view-box — así el origen del giro es el
+     centro del sello y no el centro de cada letra. Girando sobre el
+     centro, la letra además conserva su inclinación tangente al
+     círculo, que es como está dibujada. */
   .bv-sello .sl{
     opacity:0;
-    transform-box:fill-box; transform-origin:center;
-    animation:bv-letra-sello 700ms cubic-bezier(.2,.9,.25,1) forwards;
-    animation-delay:calc(180ms + var(--n) * 95ms);
+    transform-box:view-box; transform-origin:50% 50%;
+    animation:bv-letra-sello 940ms cubic-bezier(.16,.85,.24,1) forwards;
+    animation-delay:calc(200ms + var(--n) * 100ms);
     will-change:transform, filter, opacity;
   }
-  /* Al terminar se suelta el will-change: mantenerlo en 17 caminos
-     después de la animación deja capas de GPU vivas sin necesidad. */
-  .bv-sello.listo .sl{will-change:auto;}
-  /* El punto del centro cae cuando el anillo ya casi cerró: es el
-     remate, no un participante más. */
   .bv-sello .sl-punto{
-    opacity:0; transform:scale(0);
-    transform-box:fill-box; transform-origin:center;
-    animation:bv-punto-sello 720ms cubic-bezier(.34,1.62,.64,1) 2060ms forwards;
+    opacity:0;
+    transform-box:view-box; transform-origin:50% 50%;
+    animation:bv-punto-sello 820ms cubic-bezier(.2,1.4,.4,1) 2480ms forwards;
+    will-change:transform, filter, opacity;
   }
+  /* El sello entero se acomoda al final: un grado y medio que se
+     endereza. Es el "clic" de la pieza al asentar. */
+  .bv-sello .sello-vivo{
+    animation:bv-sello-asienta 900ms cubic-bezier(.22,1,.3,1) 2900ms forwards;
+  }
+  .bv-sello.listo .sl,
+  .bv-sello.listo .sl-punto{will-change:auto;}
 }
-/* Llega desde adelante: grande y fuera de foco, y se asienta en su
-   sitio. El desenfoque es lo que vende la profundidad — sin él, una
-   letra que encoge se lee como un rebote, no como algo que se acerca.
-   Pasa apenas por debajo de su tamaño final antes de quedarse quieta. */
+
 @keyframes bv-letra-sello{
-  0%   { opacity:0;   transform:scale(1.85); filter:blur(7px); }
-  /* La opacidad va DETRÁS de la escala a propósito. A 1.85x la letra
-     tapa a sus vecinas, y con ocho en vuelo a la vez el anillo se
-     ensucia. Entrando casi transparente en la fase grande, se ve la
-     profundidad pero no el choque. */
-  30%  { opacity:.28; }
-  62%  { opacity:1; }
-  74%  { transform:scale(.965); filter:blur(0); }
-  100% { opacity:1;   transform:scale(1); filter:blur(0); }
+  0%   { opacity:0;   transform:rotate(-17deg) scale(1.26); filter:blur(6px); }
+  /* La opacidad va detrás del recorrido: mientras barre está casi
+     transparente, así diecisiete letras en vuelo no se ensucian entre
+     ellas. Se vuelve sólida en el último tramo, ya cerca de su sitio. */
+  26%  { opacity:.22; }
+  70%  { opacity:1; }
+  84%  { transform:rotate(1.1deg) scale(.988); filter:blur(0); }
+  100% { opacity:1;   transform:rotate(0deg) scale(1); filter:blur(0); }
 }
-/* El punto llega igual, para que pertenezca a la misma escena. */
+
 @keyframes bv-punto-sello{
-  0%   { opacity:0;   transform:scale(2.4); filter:blur(9px); }
-  38%  { opacity:.3; }
-  66%  { opacity:1; }
-  78%  { transform:scale(.9); filter:blur(0); }
-  100% { opacity:1;   transform:scale(1); filter:blur(0); }
+  0%   { opacity:0;   transform:rotate(-46deg) scale(2.1); filter:blur(9px); }
+  40%  { opacity:.3; }
+  72%  { opacity:1; }
+  86%  { transform:rotate(3deg) scale(.88); filter:blur(0); }
+  100% { opacity:1;   transform:rotate(0deg) scale(1); filter:blur(0); }
+}
+
+@keyframes bv-sello-asienta{
+  0%   { transform:rotate(1.4deg); }
+  100% { transform:rotate(0deg); }
+}
+
 }
 
 .bv-word{
@@ -161,7 +175,7 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   .bv-word i{
     opacity:0; transform:translateY(14px);
     animation:bv-letra 620ms var(--ease) forwards;
-    animation-delay:calc(2340ms + var(--i) * 68ms);
+    animation-delay:calc(3560ms + var(--i) * 72ms);
   }
 }
 @keyframes bv-letra{ to{ opacity:1; transform:none; } }
@@ -171,26 +185,26 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   font-size:clamp(1.35rem,5vw,1.75rem); letter-spacing:-.02em; color:var(--ink);
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-hola{opacity:0; animation:bv-sube 700ms var(--ease) 2900ms forwards;}
+  .bv-hola{opacity:0; animation:bv-sube 740ms var(--ease) 4120ms forwards;}
 }
 .bv-txt{
   margin-top:12px; font-size:1rem; color:var(--ink-2); text-wrap:pretty;
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-txt{opacity:0; animation:bv-sube 700ms var(--ease) 3060ms forwards;}
+  .bv-txt{opacity:0; animation:bv-sube 740ms var(--ease) 4290ms forwards;}
 }
 .bv-cta{
   margin-top:32px; width:100%;
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-cta{opacity:0; animation:bv-sube 700ms var(--ease) 3220ms forwards;}
+  .bv-cta{opacity:0; animation:bv-sube 740ms var(--ease) 4460ms forwards;}
 }
 .bv-firma{
   margin-top:20px; font-family:var(--mono); font-size:.68rem;
   letter-spacing:.08em; color:var(--ink-2);
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-firma{opacity:0; animation:bv-fade 680ms ease-out 3440ms forwards;}
+  .bv-firma{opacity:0; animation:bv-fade 700ms ease-out 4680ms forwards;}
 }
 @keyframes bv-sube{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
 @keyframes bv-fade{ to{opacity:1;} }

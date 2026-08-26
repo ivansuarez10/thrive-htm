@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=bee9f8a7">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=a69a62c3">
 </head>
 
 <body>
@@ -1547,14 +1547,29 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     setTimeout(function () {
       var sello = elBienve.querySelector('.bv-sello');
       if (sello) sello.classList.add('listo');
-    }, 2600);
+    }, 3300);
 
-    document.getElementById('bvEmpezar').addEventListener('click', function () {
+    function entrar() {
+      if (elBienve.classList.contains('se-va')) return;
       elBienve.classList.add('se-va');
       setTimeout(function () { elBienve.hidden = true; }, 640);
       var f = elSteps.children[0] && elSteps.children[0].querySelector('.field');
       if (f) setTimeout(function () { f.focus(); }, 700);
-    });
+    }
+
+    document.getElementById('bvEmpezar').addEventListener('click', entrar);
+
+    /* La secuencia completa dura 4.5 s antes de que aparezca el botón.
+       Es una presentación de marca, no un peaje: al segundo, tocar en
+       cualquier parte de la pantalla ya entra. Quien quiera mirarla la
+       mira; quien vino a llenar el formulario, entra. */
+    setTimeout(function () {
+      elBienve.addEventListener('click', function (e) {
+        if (e.target.closest('#bvEmpezar')) return;
+        entrar();
+      });
+      elBienve.style.cursor = 'pointer';
+    }, 1000);
   }
 
   var elSteps = document.getElementById('steps');
