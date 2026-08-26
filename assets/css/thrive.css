@@ -95,14 +95,32 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .bienve.se-va{opacity:0; visibility:hidden; pointer-events:none;}
 .bv-in{width:min(440px,100%); text-align:center;}
 
-.bv-sello{width:clamp(96px,22vw,132px); height:auto; margin:0 auto;}
+.bv-sello{width:clamp(150px,44vw,208px); margin:0 auto;}
+.bv-sello .sello-vivo{width:100%; height:auto; display:block; overflow:visible;}
+.bv-sello .sl, .bv-sello .sl-punto{fill:var(--teal);}
+
 @media (prefers-reduced-motion:no-preference){
-  .bv-sello{
-    opacity:0; transform:rotate(-26deg) scale(.82);
-    animation:bv-sello 1100ms var(--ease) 120ms forwards;
+  /* Cada letra llega y se asienta con un rebote corto, como las piezas
+     del logo que mandó Ivan de referencia: no es un fundido, es un
+     objeto que aterriza. El orden lo fija --n en el SVG, que va en el
+     sentido de lectura: arranca en la h de "healing", abajo a la
+     izquierda, y cierra con la t de "movement". */
+  .bv-sello .sl{
+    opacity:0; transform:scale(.55);
+    transform-box:fill-box; transform-origin:center;
+    animation:bv-letra-sello 640ms cubic-bezier(.34,1.5,.64,1) forwards;
+    animation-delay:calc(180ms + var(--n) * 95ms);
+  }
+  /* El punto del centro cae cuando el anillo ya casi cerró: es el
+     remate, no un participante más. */
+  .bv-sello .sl-punto{
+    opacity:0; transform:scale(0);
+    transform-box:fill-box; transform-origin:center;
+    animation:bv-punto-sello 720ms cubic-bezier(.34,1.62,.64,1) 2060ms forwards;
   }
 }
-@keyframes bv-sello{ to{ opacity:1; transform:none; } }
+@keyframes bv-letra-sello{ to{opacity:1; transform:none;} }
+@keyframes bv-punto-sello{ to{opacity:1; transform:none;} }
 
 .bv-word{
   display:flex; justify-content:center; gap:.06em; margin-top:26px;
@@ -114,7 +132,7 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   .bv-word i{
     opacity:0; transform:translateY(14px);
     animation:bv-letra 620ms var(--ease) forwards;
-    animation-delay:calc(760ms + var(--i) * 62ms);
+    animation-delay:calc(2340ms + var(--i) * 68ms);
   }
 }
 @keyframes bv-letra{ to{ opacity:1; transform:none; } }
@@ -124,26 +142,26 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   font-size:clamp(1.35rem,5vw,1.75rem); letter-spacing:-.02em; color:var(--ink);
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-hola{opacity:0; animation:bv-sube 640ms var(--ease) 1240ms forwards;}
+  .bv-hola{opacity:0; animation:bv-sube 700ms var(--ease) 2900ms forwards;}
 }
 .bv-txt{
   margin-top:12px; font-size:1rem; color:var(--ink-2); text-wrap:pretty;
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-txt{opacity:0; animation:bv-sube 640ms var(--ease) 1400ms forwards;}
+  .bv-txt{opacity:0; animation:bv-sube 700ms var(--ease) 3060ms forwards;}
 }
 .bv-cta{
   margin-top:32px; width:100%;
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-cta{opacity:0; animation:bv-sube 640ms var(--ease) 1560ms forwards;}
+  .bv-cta{opacity:0; animation:bv-sube 700ms var(--ease) 3220ms forwards;}
 }
 .bv-firma{
   margin-top:20px; font-family:var(--mono); font-size:.68rem;
   letter-spacing:.08em; color:var(--ink-2);
 }
 @media (prefers-reduced-motion:no-preference){
-  .bv-firma{opacity:0; animation:bv-fade 620ms ease-out 1820ms forwards;}
+  .bv-firma{opacity:0; animation:bv-fade 680ms ease-out 3440ms forwards;}
 }
 @keyframes bv-sube{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
 @keyframes bv-fade{ to{opacity:1;} }
