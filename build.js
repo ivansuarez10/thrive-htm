@@ -163,6 +163,8 @@ if (!CFG.clase || !CFG.clase.mapa)
   pendientes.push('Falta el link de la ficha de HTM en Google Maps — sin él la confirmación no lleva a nadie al estudio.');
 if (!CFG.clase || !CFG.clase.direccion)
   pendientes.push('Falta la dirección exacta: Google Calendar no puede abrir navegación sin ella.');
+if (!CFG.clase || !CFG.clase.fechaConfirmada)
+  pendientes.push(`La fecha de la clase de prueba ("${CFG.clase && CFG.clase.fecha}") sigue sin confirmar por Denisse.`);
 
 if (pendientes.length) {
   console.log('Antes de publicar:');

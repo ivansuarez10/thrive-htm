@@ -78,7 +78,7 @@
   </div>
 </footer>
 
-<script src="/config.js?v=29b04b78"></script>
+<script src="/config.js?v=6920220b"></script>
 <script src="/assets/js/thrive.js?v=34c24f75"></script>
 <script>
 (function(){
@@ -130,12 +130,9 @@
         '',
         'Healing Through Movement · move. heal. thrive.'
       ].filter(function(x){ return x !== null; }).join('\n'),
-      /* Google Calendar reconoce esto como ubicación y abre navegación.
-         Si la dirección sigue pendiente, mejor mandar solo el lugar que
-         una nota que Calendar no sabe interpretar. */
-      location: [C.direccion, C.lugar].filter(function(d){
-        return d && !/pendiente/i.test(d);
-      }).join(', ') || (C.lugar || '')
+      /* Cadena geocodificable para que Calendar ponga un pin de verdad.
+         Si no está, se cae a lo que haya, pero sin repetir la avenida. */
+      location: C.direccionCalendario || C.direccion || C.lugar || ''
     });
     cal.href = 'https://calendar.google.com/calendar/render?' + p.toString();
   } else {

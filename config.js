@@ -56,15 +56,27 @@ window.THRIVE = {
 
   /* ── Clase de prueba ──
      Lo que se muestra en la página de confirmación.
-     ⚠️ PENDIENTE — fecha y dirección exacta de Denisse. */
+     ⚠️ PENDIENTE — la FECHA de la clase de prueba sigue siendo de relleno. */
   clase: {
+    /* ⚠️ Poner en true cuando Denisse confirme fecha y hora reales.
+       Mientras esté en false, build.js lo avisa antes de publicar. */
+    fechaConfirmada: false,
     fecha: 'Sábado 6 de septiembre',
     hora: '7:30 a.m.',
     duracion: 60,                                  // minutos, para el calendario
     inicioISO: '2026-09-06T07:30:00-06:00',        // Honduras es UTC−6, sin horario de verano
     lugar: 'Healing Through Movement · Ave. Los Próceres, Tegucigalpa',
-    direccion: '',                                 // ⚠️ dirección exacta, pendiente de Denisse
-    mapa: '',                                      // ⚠️ link de la ficha de HTM en Google Maps
+    /* De la ficha verificada de Google Maps. Se confirmó que es la de
+       Denisse y no un homónimo porque el teléfono de la ficha (8891-2039)
+       es el mismo WhatsApp del sitio. */
+    direccion: 'Av. Los Próceres, Tegucigalpa 11101, Francisco Morazán',
+    mapa: 'https://www.google.com/maps/place/Healing+Through+Movement+by+Denisse+Suazo/@14.1024003,-87.1808674,17z',
+    /* Lo que va en el campo 'ubicación' de Google Calendar. Tiene que ser
+       geocodificable: nombre del negocio + dirección, sin separadores
+       decorativos. Si se arma juntando 'lugar' y 'direccion' sale la
+       avenida repetida y un '·' que Google no interpreta, y el evento
+       queda sin pin. */
+    direccionCalendario: 'Healing Through Movement by Denisse Suazo, Av. Los Próceres, Tegucigalpa 11101, Honduras',
     llevar: 'Traé ropa cómoda, tu toalla, grip socks y tu botella con agua. Y vení con toda tu energía para comenzar.'
   },
 
