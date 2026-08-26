@@ -62,10 +62,10 @@ window.THRIVE = {
     hora: '7:30 a.m.',
     duracion: 60,                                  // minutos, para el calendario
     inicioISO: '2026-09-06T07:30:00-06:00',        // Honduras es UTC−6, sin horario de verano
-    lugar: 'Ave. Los Próceres, Tegucigalpa',
-    direccion: 'Dirección exacta pendiente',
-    mapa: '',                                      // link de Google Maps
-    llevar: 'Ropa cómoda, grip socks y agua.'
+    lugar: 'Healing Through Movement · Ave. Los Próceres, Tegucigalpa',
+    direccion: '',                                 // ⚠️ dirección exacta, pendiente de Denisse
+    mapa: '',                                      // ⚠️ link de la ficha de HTM en Google Maps
+    llevar: 'Traé ropa cómoda, tu toalla, grip socks y tu botella con agua. Y vení con toda tu energía para comenzar.'
   },
 
   /* ── Estado de los cupos ──

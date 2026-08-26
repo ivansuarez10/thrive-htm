@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=f997bf09">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=5989b9c2">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -266,7 +266,7 @@ body{background:var(--sand);}
   <div class="ficha-caja" id="fichaCaja"></div>
 </div>
 
-<script src="/config.js?v=aaeb9103"></script>
+<script src="/config.js?v=29b04b78"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (function(){
@@ -296,7 +296,7 @@ body{background:var(--sand);}
       '<ol>' +
         '<li>Crear el proyecto en Supabase y correr <code>sitio/supabase/schema.sql</code> en el SQL Editor.</li>' +
         '<li>Crear la usuaria de Denisse en <b>Authentication → Users</b>, con <b>Auto Confirm</b>, y apagar <b>Enable email signups</b>.</li>' +
-        '<li>Pegar la URL y la clave anon en <code>sitio/config.js?v=aaeb9103</code> y poner <code>enabled: true</code>.</li>' +
+        '<li>Pegar la URL y la clave anon en <code>sitio/config.js?v=29b04b78</code> y poner <code>enabled: true</code>.</li>' +
       '</ol>';
     return;
   }
@@ -353,6 +353,7 @@ body{background:var(--sand);}
     ['sintomas',     '¿Dolor de pecho, desmayos o palpitaciones al esforzarte?'],
     ['grupo',        '¿Cuál grupo te interesa?'],
     ['compromiso',   '¿Podés sostener el horario hasta el 15 de diciembre?'],
+    ['imagen',       '¿Autoriza fotos y videos?'],
     ['algo_mas',     '¿Algo más que quisiera que sepa?']
   ];
   var SALUD = ['dolor','condicion','restriccion','sintomas'];

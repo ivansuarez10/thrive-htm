@@ -196,108 +196,60 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .nuance p{font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,3.4vw,1.4rem); line-height:1.4; font-weight:500;}
 .nuance p span{color:var(--ink-3);}
 
-/* ── el interruptor de plazo ── */
-.switch{
-  margin-top:clamp(28px,5vw,38px);
-  display:inline-flex; gap:4px; padding:4px;
-  background:var(--white); border:1px solid var(--line-soft);
-  border-radius:999px; box-shadow:var(--flota-1);
+/* ── qué recibís ──
+   La lista que justifica el precio. Va ANTES de los planes a propósito:
+   primero qué recibís, después cuánto cuesta. */
+.incluye{
+  list-style:none; margin:clamp(30px,5vw,42px) 0 0; padding:0;
+  display:grid; gap:22px;
 }
-.sw-opt{
-  display:inline-flex; align-items:center; gap:8px;
-  font-family:var(--mono); font-size:0.72rem; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--ink-2); padding:12px 18px; border-radius:999px; cursor:pointer;
-  transition:color 260ms var(--ease), background 260ms var(--ease);
+@media (min-width:720px){ .incluye{grid-template-columns:1fr 1fr; gap:26px 44px;} }
+.incluye li{display:flex; align-items:flex-start; gap:14px;}
+.incluye .tic{width:19px; height:19px; flex:none; margin-top:4px; color:var(--teal);}
+.incluye li > span{display:block;}
+.incluye li b{
+  display:block; font-family:var(--display); font-weight:600; font-size:1.04rem;
+  letter-spacing:-.01em; color:var(--ink); margin-bottom:5px;
 }
-.sw-opt:hover{color:var(--ink);}
-.sw-opt[aria-pressed="true"]{background:var(--ink); color:var(--linen);}
-.sw-tag{
-  font-size:0.66rem; letter-spacing:.06em; padding:3px 7px; border-radius:999px;
-  background:var(--teal-pale); color:var(--teal-deep);
-  transition:background 260ms var(--ease), color 260ms var(--ease);
-}
-.sw-opt[aria-pressed="true"] .sw-tag{background:var(--teal); color:var(--white);}
+.incluye li span span, .incluye li > span{font-size:0.96rem; color:var(--ink-2); text-wrap:pretty;}
 
-/* ── las tarjetas ── */
-.plans{
-  display:grid; grid-template-columns:1fr; gap:16px;
-  /* Aire suficiente para que el rótulo del hover, que sale por encima
-     del borde de la tarjeta, no se monte sobre el interruptor. */
-  margin-top:clamp(56px,7vw,68px);
-  align-items:start;
-}
+/* ── las tarjetas de plan ──
+   Limpias a propósito: días, hora, precio y botón. Los beneficios ya
+   se explicaron arriba; repetirlos acá los devaluaba. */
+.plans{display:grid; grid-template-columns:1fr; gap:16px; margin-top:clamp(34px,6vw,48px); align-items:start;}
 .plan{
-  position:relative;
   background:var(--white); border:1px solid var(--line-soft); border-radius:18px;
-  padding:clamp(26px,5vw,34px); display:flex; flex-direction:column; gap:9px;
+  padding:clamp(28px,5vw,36px); display:flex; flex-direction:column; gap:9px;
   box-shadow:var(--flota-2);
   transition:transform 420ms var(--ease), box-shadow 420ms var(--ease), border-color 420ms var(--ease);
 }
-
-/* El rótulo asoma desde abajo del borde superior al acercarse. */
-.plan-tag{
-  position:absolute; left:0; right:0; top:0;
-  padding:9px 20px 13px; border-radius:18px 18px 0 0;
-  background:var(--teal-pale); color:var(--teal-deep);
-  font-family:var(--mono); font-size:0.64rem; letter-spacing:.12em; text-transform:uppercase;
-  text-align:center;
-  transform:translateY(-100%); opacity:0;
-  transition:transform 460ms var(--ease), opacity 300ms var(--ease);
-  pointer-events:none;
-}
 @media (hover:hover){
   .plan:hover{transform:translateY(-8px); box-shadow:var(--flota-3); border-color:var(--teal-pale);}
-  .plan:hover .plan-tag{transform:translateY(-100%) translateY(-2px); opacity:1;}
-  .plan:focus-within{transform:translateY(-8px); box-shadow:var(--flota-3);}
-  .plan:focus-within .plan-tag{transform:translateY(-100%) translateY(-2px); opacity:1;}
+  .plan:hover .plan-cta{background:var(--teal); border-color:var(--teal); color:var(--white);}
 }
-
+.plan:focus-within{transform:translateY(-8px); box-shadow:var(--flota-3);}
 .plan .pn{font-family:var(--mono); font-size:0.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-deep);}
 .plan .days{font-family:var(--mono); font-size:0.86rem; color:var(--ink-2);}
-
-/* El precio cambia de plazo: los dos montos se apilan y solo uno se ve. */
-.plan .price{display:grid; margin-top:8px;}
-.plan .monto{
-  grid-area:1/1; display:flex; align-items:baseline; gap:8px;
-  transition:opacity 300ms var(--ease), transform 340ms var(--ease);
-}
-.plan .monto b{
-  font-family:var(--display); font-weight:600; font-size:2.5rem; line-height:1;
+.plan .price{display:flex; align-items:baseline; gap:8px; margin-top:8px;}
+.plan .price b{
+  font-family:var(--display); font-weight:600; font-size:2.6rem; line-height:1;
   letter-spacing:-0.02em; font-variant-numeric:tabular-nums;
 }
-.plan .monto small{font-family:var(--sans); font-size:0.85rem; font-weight:600; color:var(--ink-2);}
-.plan .monto.oculto{opacity:0; transform:translateY(6px); pointer-events:none;}
-
-.plan .ahorro{
-  font-family:var(--mono); font-size:0.74rem; color:var(--teal-deep);
-  margin-top:2px;
-}
-.plan .ahorro b{font-weight:500;}
-
-.plan .for{font-size:0.96rem; color:var(--ink-2); margin-top:6px;}
-
-/* ── qué incluye ── */
-.incluye{
-  list-style:none; margin:16px 0 0; padding:18px 0 0;
-  border-top:1px solid var(--line-soft);
-  display:flex; flex-direction:column; gap:11px;
-}
-.incluye li{display:flex; align-items:flex-start; gap:11px; font-size:0.94rem; color:var(--ink-2); text-wrap:pretty;}
-.incluye li:first-child{color:var(--ink); font-weight:600;}
-.incluye .tic{width:17px; height:17px; flex:none; margin-top:3px; color:var(--teal);}
-
-/* ── el botón de cada tarjeta ── */
+.plan .price small{font-family:var(--sans); font-size:0.85rem; font-weight:600; color:var(--ink-2);}
 .plan-cta{
   margin-top:22px; align-self:stretch; text-align:center;
-  padding:14px 20px; border-radius:999px;
-  border:1px solid var(--line);
+  padding:15px 20px; border-radius:999px; border:1px solid var(--line);
   font-weight:600; font-size:0.95rem; color:var(--ink);
   transition:background 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease);
 }
-@media (hover:hover){
-  .plan:hover .plan-cta{background:var(--teal); border-color:var(--teal); color:var(--white);}
-  .plan-cta:hover{background:var(--teal-deep); border-color:var(--teal-deep);}
+.plan-cta:hover{background:var(--teal-deep); border-color:var(--teal-deep); color:var(--white);}
+
+/* La escasez es real —cuatro por grupo— así que se dice sin adornos. */
+.cierre-fecha{
+  margin-top:22px; font-family:var(--mono); font-size:0.78rem;
+  color:var(--ink-2); line-height:1.6;
 }
+.cierre-fecha b{color:var(--ink); font-weight:500;}
 
 @media (min-width:720px){ .plans{grid-template-columns:1fr 1fr;} }
 

@@ -27,10 +27,12 @@
   /* ───────── mensaje de WhatsApp ─────────
      El nombre va pre-llenado a propósito: el borrador original tenía
      un espacio en blanco y la gente lo manda sin llenar. */
+  /* El CTA general es para quien todavía no eligió frecuencia: no debe
+     nombrar ninguna. Los botones de cada plan sí la nombran. */
   function textoWhatsApp() {
     var de = referida ? ' de parte de ' + referida : '';
     return 'Hola, Denisse! Recibí una invitación a THRIVE' + de +
-           ' y me gustaría probar una clase. Me interesa el grupo de 2x / 3x por semana.';
+           ' y me gustaría probar una clase.';
   }
 
   function linkWhatsApp(texto) {
@@ -38,52 +40,22 @@
     return 'https://wa.me/' + num + '?text=' + encodeURIComponent(texto || textoWhatsApp());
   }
 
-  /* ───────── plazo de pago ─────────
-     Mes a mes o los tres meses por adelantado. Lo que elija acá viaja
-     en el mensaje de WhatsApp: si ya decidió, Denisse no se lo vuelve
-     a preguntar. */
-  var plazo = 'mes';
-
+  /* ───────── botones de WhatsApp ─────────
+     Cada plan abre su propio mensaje: si ya eligió frecuencia, Denisse
+     no se lo vuelve a preguntar. El CTA general queda para quien todavía
+     no sabe cuál le sirve. */
   function textoPlan(plan) {
     var de = referida ? ' de parte de ' + referida : '';
-    var comoPaga = (plazo === 'trimestre')
-      ? ' Quiero pagar los tres meses por adelantado.'
-      : ' Quiero pagar mes a mes.';
     return 'Hola, Denisse! Recibí una invitación a THRIVE' + de +
-           ' y me interesa el grupo de ' + plan + '.' + comoPaga +
-           ' ¿Cómo hago para la clase de prueba?';
+           ' y me interesa probar la opción ' + plan + '.';
   }
 
-  function pintarBotones() {
-    document.querySelectorAll('[data-wa]').forEach(function (a) {
-      var plan = a.getAttribute('data-wa-plan');
-      var texto = plan ? textoPlan(plan) : (a.getAttribute('data-wa-text') || '');
-      a.href = linkWhatsApp(texto);
-      a.target = '_blank';
-      a.rel = 'noopener';
-    });
-  }
-  pintarBotones();
-
-  var opciones = document.querySelectorAll('.sw-opt');
-  opciones.forEach(function (b) {
-    b.addEventListener('click', function () {
-      plazo = b.getAttribute('data-plazo');
-      opciones.forEach(function (o) {
-        o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
-      });
-      var tri = (plazo === 'trimestre');
-      document.querySelectorAll('.plan').forEach(function (card) {
-        var montos = card.querySelectorAll('.monto');
-        if (montos.length === 2) {
-          montos[0].classList.toggle('oculto', tri);
-          montos[1].classList.toggle('oculto', !tri);
-        }
-        var ah = card.querySelector('.ahorro');
-        if (ah) ah.hidden = !tri;
-      });
-      pintarBotones();
-    });
+  document.querySelectorAll('[data-wa]').forEach(function (a) {
+    var plan = a.getAttribute('data-wa-plan');
+    var texto = plan ? textoPlan(plan) : (a.getAttribute('data-wa-text') || '');
+    a.href = linkWhatsApp(texto);
+    a.target = '_blank';
+    a.rel = 'noopener';
   });
 
   /* ───────── entradas ─────────

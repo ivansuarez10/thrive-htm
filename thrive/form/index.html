@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=f997bf09">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=5989b9c2">
 </head>
 
 <body>
@@ -52,8 +52,8 @@
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
 
-<script src="/config.js?v=aaeb9103"></script>
-<script src="/assets/js/thrive.js?v=df32d3d7"></script>
+<script src="/config.js?v=29b04b78"></script>
+<script src="/assets/js/thrive.js?v=2cd50214"></script>
 <script>
 (function(){
   'use strict';
@@ -170,11 +170,21 @@
     },
     {
       id:'compromiso', tipo:'unica',
-      titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés comprometerte con ese horario del 15 de septiembre al 15 de diciembre?',
+      titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés comprometerte con ese horario del 16 de septiembre al 15 de diciembre?',
       opciones:[
         'Sí.',
         'Tengo algo que quisiera conversar antes.',
         'No estoy segura.'
+      ]
+    },
+    {
+      id:'imagen', tipo:'unica',
+      titulo:'Durante la clase de prueba podríamos tomar algunas fotografías o videos del entrenamiento. ¿Autorizás que aparezcas en contenido de Healing Through Movement?',
+      ayuda:'Tu respuesta no afecta en absoluto tu participación. Si decís que no, se graba solo contenido donde no aparezcas o no seas identificable.',
+      opciones:[
+        'Sí, autorizo fotografías y videos.',
+        'Sí, pero prefiero que no se muestre mi rostro.',
+        'No autorizo que se utilice mi imagen.'
       ]
     },
     {
@@ -430,19 +440,11 @@
     };
   }
 
-  function resumenTexto(p){
-    var l = ['Respuestas del screening de THRIVE', ''];
-    if(p.referida_por) l.push('Me invitó: ' + p.referida_por);
-    PREGUNTAS.forEach(function(q){
-      var v = p.respuestas[q.id];
-      if(Array.isArray(v)) v = v.join(', ');
-      var d = p.respuestas[q.id + '_detalle'];
-      l.push('');
-      l.push(q.titulo);
-      l.push(v && String(v).length ? String(v) : '(sin respuesta)');
-      if(d && String(d).length) l.push('  -> ' + d);
-    });
-    return l.join('\n');
+  /* Antes esto mandaba el formulario ENTERO por WhatsApp, información de
+     salud incluida. Las respuestas ya llegaron por el formulario: no hay
+     ninguna razón para duplicarlas en un canal que no controlamos. */
+  function textoCoordinar(){
+    return 'Hola, Denisse! Acabo de completar el formulario de THRIVE y me gustaría coordinar mi clase de prueba.';
   }
 
   function enviar(btn){
@@ -496,9 +498,9 @@
     var a = document.createElement('a');
     a.className = 'cta wa';
     a.setAttribute('data-wa','');
-    a.href = (window.THRIVE_RT ? window.THRIVE_RT.linkWhatsApp(resumenTexto(payload)) : '#');
+    a.href = (window.THRIVE_RT ? window.THRIVE_RT.linkWhatsApp(textoCoordinar()) : '#');
     a.target = '_blank'; a.rel = 'noopener';
-    a.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.4-5.3-4.6-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg> Mandarle mis respuestas por WhatsApp';
+    a.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.4-5.3-4.6-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg> Coordinar mi clase de prueba por WhatsApp';
     cont.appendChild(a);
   }
 

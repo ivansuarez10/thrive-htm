@@ -160,9 +160,9 @@ if (!/^https:\/\/healingthroughmovement\.studio$/.test((CFG.baseUrl || '').repla
 if (!CFG.supabase || !CFG.supabase.enabled)
   pendientes.push('Supabase apagado: el screening funciona pero las respuestas no se guardan.');
 if (!CFG.clase || !CFG.clase.mapa)
-  pendientes.push('Falta el link de Google Maps de la clase.');
-if (!CFG.clase || /pendiente/i.test(CFG.clase.direccion || ''))
-  pendientes.push('Falta la dirección exacta del estudio.');
+  pendientes.push('Falta el link de la ficha de HTM en Google Maps — sin él la confirmación no lleva a nadie al estudio.');
+if (!CFG.clase || !CFG.clase.direccion)
+  pendientes.push('Falta la dirección exacta: Google Calendar no puede abrir navegación sin ella.');
 
 if (pendientes.length) {
   console.log('Antes de publicar:');

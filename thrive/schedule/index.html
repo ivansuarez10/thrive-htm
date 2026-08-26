@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=f997bf09">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=5989b9c2">
 </head>
 
 <body>
@@ -53,7 +53,7 @@
       <h3>Dónde</h3>
       <p id="lugar">—</p>
       <p id="direccion" class="sub"></p>
-      <p style="margin-top:10px;"><a id="mapa" class="kick" style="text-transform:none; letter-spacing:.04em; border-bottom:1px solid var(--line);" href="#" target="_blank" rel="noopener" hidden>Ver en el mapa →</a></p>
+      <p style="margin-top:10px;"><a id="mapa" class="kick" style="text-transform:none; letter-spacing:.04em; border-bottom:1px solid var(--line);" href="#" target="_blank" rel="noopener" hidden>Abrir ubicación en Google Maps →</a></p>
     </div>
     <div>
       <h3>Qué traer</h3>
@@ -61,7 +61,7 @@
     </div>
     <div>
       <h3>Antes de llegar</h3>
-      <p>Llegá <b>diez minutos antes</b>. Vamos a conversar un momento antes de empezar para saber desde dónde venís.</p>
+      <p>Si podés, llegá <b>entre 5 y 10 minutos antes</b>. Vamos a conversar brevemente antes de comenzar, para conocerte y saber desde dónde venís.</p>
     </div>
   </div>
 
@@ -76,8 +76,8 @@
   </div>
 </footer>
 
-<script src="/config.js?v=aaeb9103"></script>
-<script src="/assets/js/thrive.js?v=df32d3d7"></script>
+<script src="/config.js?v=29b04b78"></script>
+<script src="/assets/js/thrive.js?v=2cd50214"></script>
 <script>
 (function(){
   'use strict';
@@ -121,8 +121,19 @@
       action:'TEMPLATE',
       text:'Clase de prueba — THRIVE',
       dates: ini + '/' + fin,
-      details:'Healing Through Movement. ' + (C.llevar || ''),
-      location: [C.direccion, C.lugar].filter(Boolean).join(', ')
+      details:[
+        'THRIVE · Small Group Strength Training for Women',
+        '',
+        C.llevar || '',
+        '',
+        'Healing Through Movement · move. heal. thrive.'
+      ].filter(function(x){ return x !== null; }).join('\n'),
+      /* Google Calendar reconoce esto como ubicación y abre navegación.
+         Si la dirección sigue pendiente, mejor mandar solo el lugar que
+         una nota que Calendar no sabe interpretar. */
+      location: [C.direccion, C.lugar].filter(function(d){
+        return d && !/pendiente/i.test(d);
+      }).join(', ') || (C.lugar || '')
     });
     cal.href = 'https://calendar.google.com/calendar/render?' + p.toString();
   } else {
