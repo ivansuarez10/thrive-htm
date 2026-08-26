@@ -43,6 +43,13 @@
 }
 
 *{box-sizing:border-box;}
+
+/* El atributo hidden tiene que ganarle a cualquier display de clase.
+   Sin esto un .cta o un .mapa marcados hidden se siguen viendo: la
+   regla del navegador ([hidden]{display:none}) pierde por especificidad
+   contra .cta{display:inline-flex}. Nos mordió en la confirmación,
+   donde el botón del calendario aparecía sin fecha que agendar. */
+[hidden]{display:none !important;}
 html{-webkit-text-size-adjust:100%; background:var(--linen);}
 body{
   margin:0;
@@ -466,7 +473,10 @@ footer p{font-size:0.85rem;}
   font-family:var(--mono); font-size:0.72rem; letter-spacing:.06em; color:var(--ink-2);
   padding:8px 0; cursor:pointer;
 }
-.form-top .back[hidden]{visibility:hidden; display:block;}
+/* Excepción deliberada al [hidden] global de arriba: el botón de
+   atrás se apaga pero sigue ocupando su lugar, o el encabezado del
+   formulario salta cada vez que aparece y desaparece. */
+.form-top .back[hidden]{visibility:hidden; display:block !important;}
 .form-top .count{font-family:var(--mono); font-size:0.72rem; letter-spacing:.08em; color:var(--teal-deep); font-variant-numeric:tabular-nums;}
 .bar{height:3px; border-radius:99px; background:var(--line-soft); overflow:hidden; margin-top:14px;}
 /* Escala en vez de animar el ancho: animar width recalcula layout en
@@ -544,81 +554,200 @@ textarea.field{min-height:130px;}
   display:flex; align-items:center; justify-content:center;
 }
 .check svg{width:26px; height:26px;}
-.when{
-  margin-top:clamp(30px,6vw,44px); border:1.5px solid var(--teal); border-radius:10px;
-  background:var(--teal-pale); padding:clamp(22px,5vw,28px);
-  display:flex; flex-direction:column; gap:6px;
-}
-.when .k{font-family:var(--mono); font-size:0.64rem; letter-spacing:.14em; text-transform:uppercase; color:var(--teal-deep);}
-.when .d{font-family:var(--display); font-weight:600; font-size:clamp(1.4rem,5vw,1.9rem); line-height:1.15; letter-spacing:-0.02em;}
-.when .t{font-family:var(--mono); font-size:0.95rem; color:var(--ink-2);}
+/* ═══════════════════════════════════════════════════════════
+   EL PASE — la confirmación de la clase de prueba
+   Dirección A, decidida el 26 ago 2026. Esto no es una página que
+   se lee: es un pase que se guarda. Foto arriba, tarjeta blanca
+   montada encima, y el sello de HTM cerrando el troquel.
 
-/* ═══ la confirmación llega, no aparece ═══
-   Mismo gesto que abre la landing: el sello se asienta, el saludo sube
-   desde detrás de su propio borde, y la fecha entra flotando. Es lo
-   único que se anima en esta página; el resto son datos y se leen. */
+   El sello FIRMA AL PIE, a 64 px, y no en el troquel ni sobre la foto.
+   Decisión de Ivan, 26 ago 2026: a ese tamaño el anillo de letras se
+   lee, que es media gracia del sello de Denisse, y el pie queda como
+   una firma completa —marca, lema, persona— en vez de un emblema
+   apretado en la perforación. Sobre la foto queda a merced del
+   encuadre: el día que entre la foto real de HTM puede desaparecer.
+   ═══════════════════════════════════════════════════════════ */
+.pase{max-width:430px; margin:0 auto;}
+
+.pase-foto{position:relative; margin:0; height:clamp(200px,54vw,250px); overflow:hidden;}
+.pase-foto img{display:block; width:100%; height:100%; object-fit:cover; object-position:74% center;}
+/* El degradado no decora: apoya la tarjeta blanca sobre el lino para
+   que su borde superior no corte la foto en seco. El encuadre al 74 %
+   es lo que trae el ladrillo con luz en vez de la ventana quemada. */
+.pase-foto::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(180deg, rgba(30,29,26,.22) 0%, rgba(30,29,26,0) 40%, rgba(250,248,244,.92) 100%);
+}
+
+.tarjeta{
+  --pad-tarjeta:24px;
+  position:relative; z-index:2; margin:-58px 18px 0;
+  background:var(--white); border-radius:22px; box-shadow:var(--flota-3);
+  padding:26px var(--pad-tarjeta) 24px;
+}
+.tarjeta .saludo{
+  font-family:var(--display); font-weight:600; font-size:1.2rem;
+  line-height:1.2; letter-spacing:-0.02em; text-wrap:balance;
+}
+
+/* El día de la semana manda: «¿el sábado? ah, este sábado». Antes iba
+   chiquito en itálica arriba y el mes se llevaba el tamaño. */
+.pase-fecha{margin-top:18px;}
+.f-dia{font-family:var(--display); font-weight:600; font-size:2.4rem; line-height:1.02; letter-spacing:-0.035em;}
+.f-mes{font-family:var(--serif); font-style:italic; font-weight:400; font-size:1.4rem; color:var(--ink-2); margin-top:2px; letter-spacing:-0.005em;}
+
+/* La cuenta regresiva va pegada al reloj, no flotando sola entre el
+   reloj y el botón. Ahí sirve más que la duración de la clase. */
+.reloj{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; padding-top:14px; border-top:1px solid var(--line);}
+.reloj .h{font-family:var(--mono); font-weight:500; font-size:1.06rem; color:var(--ink);}
+.reloj .c{padding:5px 12px; border-radius:999px; background:var(--teal-pale); font-family:var(--mono); font-size:0.69rem; letter-spacing:.04em; color:var(--teal-deep); white-space:nowrap;}
+
+/* Dentro de la tarjeta blanca el botón va en tinta y no en teal: es el
+   ancla de la página y compite con la fecha si se pone de color. */
+.tarjeta .cta{justify-content:center; width:100%; margin-top:22px; padding:16px 22px; background:var(--ink); font-size:0.97rem;}
+.tarjeta .cta:hover{background:#000;}
+/* El .ics funciona en cualquier teléfono; el link de Google es para
+   quien vive en Google Calendar. Ninguno de los dos miente sobre el otro. */
+.alterna{
+  display:block; width:fit-content; margin:14px auto 0;
+  font-family:var(--mono); font-size:0.68rem; letter-spacing:.04em;
+  color:var(--ink-2); border-bottom:1px solid var(--line);
+  transition:color 240ms var(--ease), border-color 240ms var(--ease);
+}
+.alterna:hover{color:var(--ink); border-bottom-color:var(--ink-3);}
+
+/* La perforación. Las dos muescas se comen el borde de la tarjeta y el
+   sello cae en el centro del troquel, como el lacre que lo cierra. */
+.rasga{
+  position:relative; margin:26px calc(-1 * var(--pad-tarjeta)) 8px; height:1px;
+  background:repeating-linear-gradient(90deg, var(--line) 0 5px, transparent 5px 11px);
+}
+.rasga::before,.rasga::after{content:''; position:absolute; top:-9px; width:18px; height:18px; border-radius:50%; background:var(--linen);}
+.rasga::before{left:-9px;}
+.rasga::after{right:-9px;}
+/* Ordenadas por cuándo las necesita: dónde queda, a qué hora llegar,
+   con quiénes va a estar, qué llevar. */
+.datos{display:flex; flex-direction:column; margin:0;}
+.dato{display:grid; grid-template-columns:64px minmax(0,1fr); gap:14px; padding:13px 0; border-bottom:1px solid var(--line-soft); align-items:baseline;}
+.dato:last-child{border-bottom:none; padding-bottom:0;}
+.dato dt{font-family:var(--mono); font-size:0.64rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2);}
+.dato dd{margin:0; font-size:0.92rem; color:var(--ink-2); line-height:1.5; text-wrap:pretty;}
+.dato dd b{color:var(--ink); font-weight:700;}
+.dato dd .sub{display:block;}
+.mapa{display:inline-block; margin-top:6px; font-family:var(--mono); font-size:0.68rem; letter-spacing:.03em; color:var(--teal-deep); border-bottom:1px solid var(--line);}
+.mapa:hover{border-bottom-color:var(--teal-deep);}
+
+.pase-cola{padding:30px 26px 40px; text-align:center;}
+.salida{display:block; width:fit-content; margin:0 auto; font-size:0.88rem; color:var(--ink-2); border-bottom:1px solid transparent; transition:color 300ms var(--ease), border-color 300ms var(--ease);}
+.salida:hover{color:var(--ink); border-bottom-color:var(--line);}
+/* Firma centrada: marca, lema, persona. 64 px es el mínimo al que el
+   anillo de letras deja de ser una mancha y se lee. */
+.pase-pie{margin-top:34px; padding-top:26px; border-top:1px solid var(--line-soft);
+  display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;}
+.pase-pie .sello{display:block; margin-bottom:8px;}
+.pase-pie .sello img{display:block; width:64px; height:64px; filter:var(--relieve-sello);}
+.pase-pie .mvt{font-family:var(--mono); font-size:0.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-2);}
+.pase-pie p{font-size:0.82rem; color:var(--ink-2);}
+.pase-pie .nota-foto{font-family:var(--mono); font-size:0.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); margin-top:6px;}
+
+/* Sin fecha confirmada la página no inventa una: dice lo que sabe y
+   manda a la única persona que puede resolverlo. */
+.pase.sin-fecha .f-dia{font-size:1.5rem; letter-spacing:-0.02em;}
+
+/* En pantalla ancha el pase deja de ser una columna estirada y se
+   vuelve un objeto: se despega del borde y redondea la cabecera. */
+@media (min-width:560px){
+  .pase{margin-top:clamp(30px,5vw,60px);}
+  .pase-foto{border-radius:24px 24px 0 0;}
+}
+
+/* ── 720px+ · la columna de 430 se queda corta ──
+   En una tablet, 430 px en medio de la pantalla se lee como un teléfono
+   puesto ahí. Se ensancha a 560 y la foto crece con ella. */
+@media (min-width:720px){
+  .pase{max-width:560px;}
+  .pase-foto{height:clamp(240px,34vw,300px);}
+  .tarjeta{--pad-tarjeta:30px; margin:-72px 22px 0;}
+  .tarjeta .cta{width:auto; min-width:280px; margin-inline:auto;}
+}
+
+/* ── 1020px+ · el pase se acuesta ──
+   En pantalla ancha la misma tarjeta en vertical se ve como una captura
+   de teléfono agrandada. Acostada —foto de canto, datos al lado— vuelve
+   a ser lo que es: un pase. Mismo HTML, otra rejilla. */
+@media (min-width:1020px){
+  /* Centrado con margin auto y NO con justify-content:center: cuando el
+     contenido pasa el alto de la pantalla, center recorta el borde de
+     arriba y ese trozo queda inalcanzable. */
+  body.pag-pase{min-height:100dvh; display:flex; flex-direction:column;}
+  .pase{max-width:960px; margin-block:auto; padding:clamp(40px,6vh,72px) 32px;}
+
+  .pase-obj{
+    display:grid; grid-template-columns:minmax(270px,330px) minmax(0,1fr);
+    background:var(--white); border-radius:28px; box-shadow:var(--flota-3); overflow:hidden;
+  }
+  /* En vertical el encuadre al 74 % cae sobre ladrillo plano; el 46 %
+     agarra el haz de luz, que es de donde sale la calidez. */
+  .pase-foto{height:100%; min-height:480px; border-radius:0;}
+  .pase-foto img{object-position:46% center;}
+  .pase-foto::after{background:linear-gradient(90deg, rgba(30,29,26,.20) 0%, rgba(30,29,26,0) 42%, rgba(30,29,26,.06) 100%);}
+
+  .tarjeta{--pad-tarjeta:clamp(34px,3.2vw,46px); margin:0; padding:var(--pad-tarjeta);
+    background:transparent; box-shadow:none; border-radius:0;}
+  .tarjeta .saludo{font-size:1.42rem;}
+  .f-dia{font-size:clamp(2.5rem,3.4vw,3rem);}
+  .f-mes{font-size:clamp(1.45rem,2vw,1.75rem);}
+  .tarjeta .cta{width:auto; min-width:0; margin-inline:0; display:inline-flex; padding-inline:34px;}
+  .alterna{margin-inline:0;}
+
+  /* Adentro de la tarjeta acostada el troquel es un separador, no un
+     borde: las dos muescas no tienen contra qué recortarse. */
+  .rasga::before,.rasga::after{display:none;}
+
+  /* Con la tarjeta acostada la medida da ~60 caracteres, que es donde se
+     lee cómodo; el rótulo puede respirar. */
+  .dato{grid-template-columns:78px minmax(0,1fr); gap:20px; padding:15px 0;}
+
+  .pase-cola{padding:34px 0 0;}
+}
+
+/* ── el teléfono acostado ──
+   A 390 px de alto una foto de 287 se come tres cuartos de la pantalla
+   antes de que se vea la fecha. */
+@media (max-width:1019px) and (max-height:560px){
+  .pase-foto{height:clamp(118px,34vh,180px);}
+  .tarjeta{margin-top:-46px;}
+  .pase{margin-top:0;}
+}
+
+/* Pantalla ancha pero baja: centrar verticalmente esconde el botón. */
+@media (min-width:1020px) and (max-height:700px){
+  body.pag-pase{display:block; min-height:0;}
+  .pase{margin-block:0;}
+  .pase-foto{min-height:0;}
+}
+
+/* ═══ el pase llega, no aparece ═══
+   Un solo gesto encadenado: la foto se asienta, la tarjeta sube, el
+   saludo asoma desde detrás de su borde y el sello cae en el troquel.
+   Después de eso no se mueve nada más: lo que queda son datos y se leen. */
 @media (prefers-reduced-motion:no-preference){
-  .confirm .seal.entra{opacity:0; transform:scale(.86); animation:cf-sello 900ms var(--ease) 80ms forwards;}
+  .pase-foto img{animation:pa-foto 1200ms var(--ease) both;}
+  .tarjeta{animation:pa-sube 900ms var(--ease) 160ms both;}
+  .pase .saludo .mask > span{transform:translateY(106%); animation:pa-linea 900ms var(--ease) 520ms forwards;}
+  .pase .datos, .pase-cola{animation:pa-fondo 760ms var(--ease) 1100ms both;}
+  /* La sombra del sello CRECE: arranca en drop-shadow transparente y no
+     en 'none', porque de none a drop-shadow no todos los navegadores
+     interpolan y ahí vuelve el salto. */
+  .pase-pie .sello img{filter:drop-shadow(1px 3px 3px rgba(13,61,71,0)); animation:pa-relieve 820ms var(--ease) 1240ms forwards;}
 }
-@keyframes cf-sello{ to{ opacity:1; transform:none; } }
-
-.confirm .saludo .mask > span{display:block;}
-@media (prefers-reduced-motion:no-preference){
-  .confirm .saludo .mask > span{transform:translateY(106%); animation:cf-sube 900ms var(--ease) 520ms forwards;}
-}
-@keyframes cf-sube{ to{ transform:none; } }
-
-/* La fecha es el dato que vino a buscar: se despega del papel y se
-   queda respirando, muy despacio, para que el ojo vuelva a ella. */
-.when.flota{border:none; box-shadow:var(--flota-2);}
-@media (prefers-reduced-motion:no-preference){
-  .when.flota{opacity:0; transform:translateY(20px);}
-}
-@keyframes cf-flota-in{ to{ opacity:1; transform:none; } }
-.when.flota::after{
-  content:''; position:absolute; inset:auto 8% -14px 8%; height:22px;
-  background:radial-gradient(closest-side, rgba(36,137,157,.20), transparent 72%);
-}
-@media (prefers-reduced-motion:no-preference){
-  .when.flota::after{opacity:0; animation:cf-sombra 900ms var(--ease) 860ms forwards;}
-}
-@keyframes cf-sombra{ to{ opacity:1; } }
-.when{position:relative;}
-
-@media (prefers-reduced-motion:no-preference){
-  .when.flota{ animation:cf-flota-in 900ms var(--ease) 860ms forwards, cf-respira 6s ease-in-out 1800ms infinite; }
-}
-@keyframes cf-respira{
-  0%,100%{ transform:translateY(0); box-shadow:var(--flota-2); }
-  50%    { transform:translateY(-5px); box-shadow:var(--flota-3); }
-}
-
-@media (prefers-reduced-motion:no-preference){
-  .confirm .btn-row, .confirm .detail{opacity:0; animation:cf-fade 760ms var(--ease) 1120ms forwards;}
-}
-@keyframes cf-fade{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
-
-
-
-.detail{margin-top:clamp(30px,6vw,44px); display:flex; flex-direction:column; gap:26px;}
-.detail h3{font-family:var(--mono); font-size:0.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-2); margin-bottom:8px;}
-.detail p{font-size:1.05rem; color:var(--ink-2);}
-.detail p b{color:var(--ink); font-weight:700;}
-/* La dirección exacta va debajo del lugar: subordinada por tamaño y por
-   color, no solo por color — si no, las dos líneas pesan igual. */
-.detail p.sub{font-size:0.85rem; color:var(--ink-2); margin-top:5px;}
+@keyframes pa-foto{ from{ opacity:0; transform:scale(1.06); } to{ opacity:1; transform:none; } }
+@keyframes pa-sube{ from{ opacity:0; transform:translateY(26px); } to{ opacity:1; transform:none; } }
+@keyframes pa-linea{ to{ transform:none; } }
+@keyframes pa-relieve{ to{ filter:var(--relieve-sello); } }
+@keyframes pa-fondo{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
 .btn-row{display:flex; flex-direction:column; gap:11px; margin-top:clamp(30px,6vw,40px);}
 .btn-row .cta{justify-content:center;}
-.btn-ghost{
-  display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  border:none; border-radius:999px; padding:16px 28px;
-  background:var(--white); box-shadow:var(--flota-1);
-  font-weight:700; font-size:0.96rem; color:var(--ink-2);
-  transition:color 220ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
-}
-.btn-ghost:hover{color:var(--ink); transform:translateY(-4px); box-shadow:var(--flota-2);}
-.btn-ghost:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
-.btn-ghost svg{width:18px; height:18px;}
 .cta.wa{background:var(--wa);}
 .cta.wa:hover{background:#1E6B58;}
 

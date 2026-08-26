@@ -21,122 +21,247 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=5087fd12">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=377c2530">
 </head>
 
-<body>
+<body class="pag-pase">
 
-<div class="confirm">
+<!-- ══════════════════════════════════════════════════════════
+     El pase. La foto arriba, la tarjeta montada encima, y el
+     sello cerrando el troquel — adentro de la tarjeta, para que
+     sobreviva a la captura de pantalla.
+     ══════════════════════════════════════════════════════════ -->
+<article class="pase" id="pase">
 
-  <img class="seal entra" src="/assets/img/seal.svg" alt="Healing Through Movement" width="64" height="64">
+  <div class="pase-obj">
 
-  <h1 class="h2 saludo" style="margin-top:12px;">
-    <span class="mask"><span id="saludo">Te esperamos.</span></span>
-  </h1>
+  <figure class="pase-foto">
+    <img src="/assets/img/espacio.jpg" alt="Luz de mañana sobre una pared de ladrillo" width="1240" height="531" fetchpriority="high">
+  </figure>
 
-  <div class="when flota">
-    <span class="k">Cuándo</span>
-    <span class="d" id="fecha">—</span>
-    <span class="t" id="hora">—</span>
-  </div>
+  <div class="tarjeta">
 
-  <div class="btn-row">
-    <a class="cta" id="cal" href="#" target="_blank" rel="noopener">
+    <h1 class="saludo"><span class="mask"><span id="saludo">Te esperamos.</span></span></h1>
+
+    <div class="pase-fecha">
+      <div class="f-dia" id="fDia">Fecha por confirmar</div>
+      <div class="f-mes" id="fMes" hidden></div>
+    </div>
+
+    <div class="reloj">
+      <span class="h" id="hora">—</span>
+      <span class="c" id="cuenta" hidden></span>
+    </div>
+
+    <a class="cta" id="cal" href="#" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
-      Agregar a Google Calendar
+      Agregar a mi calendario
     </a>
-    <a class="btn-ghost" data-wa data-wa-text="Hola, Denisse! No voy a poder llegar a la clase de prueba." href="#">
-      Avisar si no puedo llegar
-    </a>
+    <a class="alterna" id="gcal" href="#" target="_blank" rel="noopener" hidden>Abrir en Google Calendar</a>
+
+    <div class="rasga"></div>
+
+    <dl class="datos">
+      <div class="dato">
+        <dt>Dónde</dt>
+        <dd><b id="lugar">—</b><span class="sub">Estudio privado, con parqueo</span><a class="mapa" id="mapa" href="#" target="_blank" rel="noopener" hidden>Abrir en Maps →</a></dd>
+      </div>
+      <div class="dato">
+        <dt>Llegá</dt>
+        <dd id="llega">Llegá unos minutos antes: conversamos un poco antes de empezar.</dd>
+      </div>
+      <div class="dato">
+        <dt>Quiénes</dt>
+        <dd>Vos y <b>tres mujeres más</b>. Nunca somos más de cuatro.</dd>
+      </div>
+      <div class="dato">
+        <dt>Llevá</dt>
+        <dd id="llevar">—</dd>
+      </div>
+    </dl>
+
   </div>
 
-  <div class="detail">
-    <div>
-      <h3>Dónde</h3>
-      <p id="lugar">—</p>
-      <p id="direccion" class="sub"></p>
-      <p style="margin-top:10px;"><a id="mapa" class="kick" style="text-transform:none; letter-spacing:.04em; border-bottom:1px solid var(--line);" href="#" target="_blank" rel="noopener" hidden>Abrir ubicación en Google Maps →</a></p>
-    </div>
-    <div>
-      <h3>Qué traer</h3>
-      <p id="llevar">—</p>
-    </div>
-    <div>
-      <h3>Antes de llegar</h3>
-      <p>Si podés, llegá <b>entre 5 y 10 minutos antes</b>. Vamos a conversar brevemente antes de comenzar, para conocerte y saber desde dónde venís.</p>
+  </div>
+
+  <div class="pase-cola">
+    <a class="salida" data-wa data-wa-text="Hola, Denisse! Es sobre mi clase de prueba." href="#">¿Te surgió algo? Escribile a Denisse</a>
+    <div class="pase-pie">
+      <span class="sello"><img src="/assets/img/seal.svg" alt="Healing Through Movement" width="64" height="64"></span>
+      <span class="mvt">Move. Heal. Thrive.</span>
+      <p>Denisse Suazo · Active Life Professional</p>
+      <p class="nota-foto">Foto de referencia · pendiente sesión de HTM</p>
     </div>
   </div>
 
-</div>
-
-<footer style="background:transparent; color:var(--ink-3); padding-bottom:clamp(50px,9vw,80px);">
-  <div class="confirm" style="padding-top:0; padding-bottom:0;">
-    <div class="inner" style="border-top:1px solid var(--line-soft); padding-top:26px; display:flex; flex-direction:column; gap:6px;">
-      <span class="mvt" style="font-family:var(--mono); font-size:0.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--clay);">Move. Heal. Thrive.</span>
-      <p style="font-size:0.85rem;">Denisse Suazo · Active Life Professional</p>
-    </div>
-  </div>
-</footer>
+</article>
 
 <script src="/config.js?v=6920220b"></script>
 <script src="/assets/js/thrive.js?v=34c24f75"></script>
 <script>
 (function(){
   'use strict';
-  var C = (window.THRIVE && window.THRIVE.clase) || {};
 
-  /* El nombre viene del link que manda Denisse: /clase/?n=Ana */
+  var C  = (window.THRIVE && window.THRIVE.clase) || {};
+  var ZH = 'America/Tegucigalpa';   /* Honduras es UTC−6 todo el año */
+  var $  = function(id){ return document.getElementById(id); };
+
+  /* ── el nombre viene del link que manda Denisse: /thrive/schedule/?n=Ana ── */
   var nombre = '';
   try{
     var raw = new URLSearchParams(location.search).get('n');
     nombre = (window.THRIVE_RT && window.THRIVE_RT.limpiarNombre(raw)) || '';
   }catch(e){}
-  if(nombre) document.getElementById('saludo').textContent = 'Te esperamos, ' + nombre + '.';
+  if(nombre) $('saludo').textContent = 'Te esperamos, ' + nombre + '.';
 
-  document.getElementById('fecha').textContent = C.fecha || 'Fecha por confirmar';
-  document.getElementById('hora').textContent  = C.hora  || '';
-  document.getElementById('lugar').textContent = C.lugar || '';
-  document.getElementById('direccion').textContent = C.direccion || '';
-  document.getElementById('llevar').textContent = C.llevar || '';
+  /* ── los datos que no dependen de la fecha ── */
+  var lugar = String(C.lugar || '');
+  var corte = lugar.indexOf('·');
+  $('lugar').textContent = (corte > -1 ? lugar.slice(corte + 1) : lugar).trim() || 'Por confirmar';
+  $('llevar').textContent = C.llevar || 'Ropa cómoda, toalla, grip socks y agua.';
 
-  if(C.mapa){
-    var m = document.getElementById('mapa');
-    m.href = C.mapa; m.hidden = false;
+  if(C.mapa){ var m = $('mapa'); m.href = C.mapa; m.hidden = false; }
+
+  /* ═══ la fecha ═══
+     Se calcula desde inicioISO y no desde el texto de config: así el
+     día de la semana, la cuenta regresiva, la hora de llegada y la de
+     salida no pueden contradecirse entre ellas. */
+  var inicio = C.inicioISO ? new Date(C.inicioISO) : null;
+  if(inicio && isNaN(inicio.getTime())) inicio = null;
+
+  function fmt(opciones){
+    return new Intl.DateTimeFormat('es-HN', Object.assign({ timeZone: ZH }, opciones));
+  }
+  function reloj(d){
+    return fmt({ hour:'numeric', minute:'2-digit', hour12:true })
+      .format(d).replace(/\s*a\.?\s*m\.?/i, ' a.m.').replace(/\s*p\.?\s*m\.?/i, ' p.m.');
+  }
+  /* Días de calendario en Honduras, no milisegundos partidos: si no,
+     una clase de mañana temprano dice «hoy» a las 11 de la noche. */
+  function diaHN(d){
+    var p = fmt({ year:'numeric', month:'2-digit', day:'2-digit' }).formatToParts(d);
+    var v = {};
+    p.forEach(function(x){ v[x.type] = x.value; });
+    return Date.UTC(+v.year, +v.month - 1, +v.day);
   }
 
-  /* ── Google Calendar ──
-     Un link pre-llenado, no una invitación real: cero autenticación,
-     cero backend, funciona desde cualquier teléfono. */
-  function comoUTC(iso, sumarMin){
-    var d = new Date(iso);
-    if(isNaN(d)) return null;
-    if(sumarMin) d = new Date(d.getTime() + sumarMin*60000);
-    return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-  }
-
-  var ini = comoUTC(C.inicioISO);
-  var fin = comoUTC(C.inicioISO, C.duracion || 60);
-  var cal = document.getElementById('cal');
-
-  if(ini && fin){
-    var p = new URLSearchParams({
-      action:'TEMPLATE',
-      text:'Clase de prueba — THRIVE',
-      dates: ini + '/' + fin,
-      details:[
-        'THRIVE · Small Group Strength Training for Women',
-        '',
-        C.llevar || '',
-        '',
-        'Healing Through Movement · move. heal. thrive.'
-      ].filter(function(x){ return x !== null; }).join('\n'),
-      /* Cadena geocodificable para que Calendar ponga un pin de verdad.
-         Si no está, se cae a lo que haya, pero sin repetir la avenida. */
-      location: C.direccionCalendario || C.direccion || C.lugar || ''
-    });
-    cal.href = 'https://calendar.google.com/calendar/render?' + p.toString();
+  if(!inicio){
+    /* Sin fecha válida la página no inventa una. */
+    $('pase').classList.add('sin-fecha');
+    $('fDia').textContent = C.fecha || 'Fecha por confirmar';
+    $('hora').textContent = C.hora || 'Denisse te confirma la hora por WhatsApp';
   } else {
-    cal.setAttribute('hidden','');
+    var partes = fmt({ weekday:'long', day:'numeric' }).formatToParts(inicio);
+    var dia = '', num = '';
+    partes.forEach(function(p){
+      if(p.type === 'weekday') dia = p.value;
+      if(p.type === 'day')     num = p.value;
+    });
+    $('fDia').textContent = dia + ' ' + num;
+    $('fMes').textContent = 'de ' + fmt({ month:'long' }).format(inicio);
+    $('fMes').hidden = false;
+
+    $('hora').textContent = C.hora || reloj(inicio);
+
+    /* la cuenta regresiva, pegada al reloj */
+    var faltan = Math.round((diaHN(inicio) - diaHN(new Date())) / 86400000);
+    var texto = faltan > 1 ? 'en ' + faltan + ' días'
+              : faltan === 1 ? 'mañana'
+              : faltan === 0 ? 'hoy' : '';
+    if(texto){ $('cuenta').textContent = texto; $('cuenta').hidden = false; }
+
+    /* llegar diez minutos antes y saber a qué hora sale */
+    var llega = new Date(inicio.getTime() - 10*60000);
+    var fin   = new Date(inicio.getTime() + (C.duracion || 60)*60000);
+    $('llega').innerHTML = '<b>' + reloj(llega) + '</b> Conversamos unos minutos antes de empezar. ' +
+                           'Terminamos a las ' + reloj(fin);
+  }
+
+  /* ═══ el calendario ═══
+     Dos caminos porque los teléfonos son dos mundos. El botón baja un
+     .ics, que entra en el calendario de cualquier teléfono — incluido
+     el del iPhone, donde el link de Google solo abre el navegador. El
+     link de abajo es para quien vive dentro de Google Calendar. */
+  if(inicio){
+    var fin2 = new Date(inicio.getTime() + (C.duracion || 60)*60000);
+    var lugarCal = C.direccionCalendario || C.direccion || C.lugar || '';
+    var titulo = 'Clase de prueba — THRIVE';
+    var detalle = 'THRIVE · Small Group Strength Training for Women\n\n' +
+                  (C.llevar || '') + '\n\n' +
+                  'Healing Through Movement · move. heal. thrive.';
+
+    function utc(d){ return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''); }
+
+    /* Google Calendar: un link pre-llenado, sin autenticación ni backend */
+    var g = new URLSearchParams({
+      action:'TEMPLATE',
+      text: titulo,
+      dates: utc(inicio) + '/' + utc(fin2),
+      details: detalle,
+      location: lugarCal
+    });
+    var gcal = $('gcal');
+    gcal.href = 'https://calendar.google.com/calendar/render?' + g.toString();
+    gcal.hidden = false;
+
+    /* .ics — RFC 5545: escapar , ; \ y los saltos, y doblar a 75 octetos */
+    function esc(t){
+      return String(t).replace(/\\/g,'\\\\').replace(/([,;])/g,'\\$1').replace(/\r?\n/g,'\\n');
+    }
+    /* El doblado se mide en OCTETOS, no en caracteres: en español casi
+       toda línea larga trae tildes, y una tilde son dos octetos. Contar
+       caracteres deja líneas de más de 75 octetos, que es justo lo que
+       el formato prohíbe. */
+    var octetos = window.TextEncoder
+      ? function(s){ return new TextEncoder().encode(s).length; }
+      : function(s){ return unescape(encodeURIComponent(s)).length; };
+
+    function doblar(linea){
+      if(octetos(linea) <= 75) return linea;
+      var partes = [], actual = '', tope = 75;
+      for(var i = 0; i < linea.length; i++){
+        var siguiente = actual + linea[i];
+        if(octetos(siguiente) > tope){ partes.push(actual); actual = linea[i]; tope = 74; }
+        else { actual = siguiente; }
+      }
+      partes.push(actual);
+      return partes.join('\r\n ');
+    }
+    /* UID estable: si lo agrega dos veces, el calendario actualiza el
+       mismo evento en vez de dejarle dos clases el mismo día. */
+    var ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Healing Through Movement//THRIVE//ES',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'UID:thrive-' + utc(inicio) + '@healingthroughmovement.studio',
+      'DTSTAMP:' + utc(new Date()),
+      'DTSTART:' + utc(inicio),
+      'DTEND:' + utc(fin2),
+      'SUMMARY:' + esc(titulo),
+      'LOCATION:' + esc(lugarCal),
+      'DESCRIPTION:' + esc(detalle),
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].map(doblar).join('\r\n') + '\r\n';
+
+    var cal = $('cal');
+    try{
+      var url = URL.createObjectURL(new Blob([ics], { type:'text/calendar;charset=utf-8' }));
+      cal.href = url;
+      cal.setAttribute('download', 'clase-thrive.ics');
+      cal.hidden = false;
+    }catch(e){
+      /* Sin Blob, Google queda como única vía y sube a botón. */
+      cal.href = gcal.href;
+      cal.target = '_blank';
+      cal.rel = 'noopener';
+      cal.lastChild.textContent = ' Agregar a Google Calendar';
+      cal.hidden = false;
+      gcal.hidden = true;
+    }
   }
 })();
 </script>
