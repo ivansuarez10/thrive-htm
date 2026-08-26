@@ -8,8 +8,8 @@
 <link rel="icon" href="/assets/img/seal.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=0bde4dbe">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=bcbff95c">
 
 <style>
   /* ═══════════════════════════════════════════════════════════
@@ -37,14 +37,14 @@
   /* ── THRIVE letra por letra, con el tracking asentándose ── */
   .abre-word{
     display:block; margin-top:clamp(26px,4vh,46px);
-    font-family:var(--display); font-weight:600;
+    font-family:var(--marca); font-weight:400; font-variation-settings:var(--marca-ejes);
     font-size:clamp(2.6rem,11vw,6.4rem); line-height:1;
-    letter-spacing:.34em; text-indent:.34em;      /* el indent compensa el tracking del final */
+    letter-spacing:.2em; text-indent:.2em;        /* el indent compensa el tracking del final */
     animation:asienta 1600ms var(--ease) .35s both;
   }
   @keyframes asienta{
-    from{letter-spacing:.34em; text-indent:.34em;}
-    to  {letter-spacing:.14em; text-indent:.14em;}
+    from{letter-spacing:.2em; text-indent:.2em;}
+    to  {letter-spacing:.02em; text-indent:.02em;}
   }
   .abre-word i{
     display:inline-block; font-style:normal;
@@ -124,7 +124,7 @@
   @media (prefers-reduced-motion: reduce){
     .abre-sello, .abre-word, .abre-word i, .abre-tag, .abre-sub,
     .abre-cue, .abre-foto .shot{animation:none !important; opacity:1 !important; transform:none !important;}
-    .abre-word{letter-spacing:.14em; text-indent:.14em;}
+    .abre-word{letter-spacing:.02em; text-indent:.02em;}
     .abre-linea .mask > span{transform:none !important; animation:none !important;}
     .abre-cue .riel::after{animation:none !important;}
   }
@@ -156,7 +156,7 @@
 <section class="abre" id="abre" data-ground="linen">
   <img class="abre-sello" src="/assets/img/seal.svg" alt="Healing Through Movement" width="168" height="168">
 
-  <span class="abre-word" aria-label="THRIVE"><i style="--i:0">T</i><i style="--i:1">H</i><i style="--i:2">R</i><i style="--i:3">I</i><i style="--i:4">V</i><i style="--i:5">E</i></span>
+  <span class="abre-word" aria-label="THRIVE"><i style="--i:0">t</i><i style="--i:1">h</i><i style="--i:2">r</i><i style="--i:3">i</i><i style="--i:4">v</i><i style="--i:5">e</i></span>
   <span class="abre-tag">Small Group Strength for Women</span>
 
   <h1 class="abre-linea">

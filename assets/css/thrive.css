@@ -29,6 +29,16 @@
   --sans:'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mono:'DM Mono', ui-monospace, SFMono-Regular, monospace;
 
+  /* ── la palabra THRIVE ──
+     Vive en su propio token porque es la MARCA, no un titular: si Denisse
+     elige otra, se cambia acá y en ningún otro lado. Fraunces en minúscula,
+     decidido el 26 ago 2026 — alto contraste como el sello de HTM pero con
+     carne en los trazos, que para un programa de fuerza importa.
+     La palabra va en minúscula solo como LOGOTIPO. En texto corrido sigue
+     siendo THRIVE en mayúscula: 'THRIVE 2X', 'THRIVE 3X'. */
+  --marca:'Fraunces', ui-serif, Georgia, serif;
+  --marca-ejes:'opsz' 144, 'SOFT' 30, 'WONK' 1;
+
   --ease:cubic-bezier(.22,1,.36,1);
 
   /* Flotación. Sombras largas y muy suaves, teñidas de tinta y no de
@@ -176,13 +186,10 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   100% { opacity:1;   transform:scale(1); filter:blur(0); }
 }
 
-
-}
-
 .bv-word{
-  display:flex; justify-content:center; gap:.06em; margin-top:26px;
-  font-family:var(--display); font-weight:600;
-  font-size:clamp(2rem,9vw,2.9rem); line-height:1; letter-spacing:.06em;
+  display:flex; justify-content:center; gap:0; margin-top:24px;
+  font-family:var(--marca); font-weight:400; font-variation-settings:var(--marca-ejes);
+  font-size:clamp(2.2rem,10vw,3.2rem); line-height:1; letter-spacing:.01em;
 }
 .bv-word i{font-style:normal; display:inline-block;}
 @media (prefers-reduced-motion:no-preference){
@@ -977,14 +984,16 @@ textarea.field{min-height:130px;}
   /* ── THRIVE letra por letra, con el tracking asentándose ── */
   .abre-word{
     display:block; margin-top:clamp(26px,4vh,46px);
-    font-family:var(--display); font-weight:600;
+    font-family:var(--marca); font-weight:400; font-variation-settings:var(--marca-ejes);
     font-size:clamp(2.6rem,11vw,6.4rem); line-height:1;
-    letter-spacing:.34em; text-indent:.34em;      /* el indent compensa el tracking del final */
+    letter-spacing:.2em; text-indent:.2em;        /* el indent compensa el tracking del final */
     animation:asienta 1600ms var(--ease) .35s both;
   }
+  /* Un logotipo en minúscula no aguanta el tracking que aguantaban las
+     mayúsculas: se asienta en .02em y no en .14em. */
   @keyframes asienta{
-    from{letter-spacing:.34em; text-indent:.34em;}
-    to  {letter-spacing:.14em; text-indent:.14em;}
+    from{letter-spacing:.2em; text-indent:.2em;}
+    to  {letter-spacing:.02em; text-indent:.02em;}
   }
   .abre-word i{
     display:inline-block; font-style:normal;
@@ -1064,7 +1073,7 @@ textarea.field{min-height:130px;}
   @media (prefers-reduced-motion: reduce){
     .abre-sello, .abre-word, .abre-word i, .abre-tag, .abre-sub,
     .abre-cue, .abre-foto .shot{animation:none !important; opacity:1 !important; transform:none !important;}
-    .abre-word{letter-spacing:.14em; text-indent:.14em;}
+    .abre-word{letter-spacing:.02em; text-indent:.02em;}
     .abre-linea .mask > span{transform:none !important; animation:none !important;}
     .abre-cue .riel::after{animation:none !important;}
   }
