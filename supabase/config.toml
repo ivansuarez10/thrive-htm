@@ -14,6 +14,10 @@ additional_redirect_urls = ["https://healingthroughmovement.studio/panel"]
 # La usuaria de Denisse se crea a mano desde el panel de Supabase.
 enable_signup = false
 
+# Supabase NO acepta menos de 6: la API rechaza el push con
+# "Expected a value greater than or equal to 6". No es configurable.
+minimum_password_length = 6
+
 [auth.email]
 # OJO: acá 'enable_signup' NO es "permitir registrarse" — el CLI lo mapea
 # a "el correo está habilitado como método". Ponerlo en false apaga

@@ -21,7 +21,7 @@ body{background:var(--sand);}
   width:min(380px,100%); background:var(--white); border-radius:18px;
   padding:clamp(28px,6vw,38px); box-shadow:var(--flota-2);
 }
-.pn-login img{width:56px; height:56px; margin-bottom:22px;}
+.pn-login img{width:56px; height:56px; margin:0 auto 22px; display:block;}
 .pn-login h1{font-family:var(--display); font-weight:600; font-size:1.5rem; letter-spacing:-.02em;}
 .pn-login p{margin-top:8px; font-size:.94rem; color:var(--ink-2);}
 .pn-campo{display:block; margin-top:18px;}
@@ -294,7 +294,24 @@ body{background:var(--sand);}
     return;
   }
 
-  var sb = window.supabase.createClient(CFG.url, CFG.anonKey);
+  /* El candado de navigator.locks que usa el SDK se traba si quedó otra
+     pestaña del panel abierta, y entonces signInWithPassword no resuelve
+     nunca: el botón se queda en "Entrando…" para siempre. Acá entra una
+     sola persona desde un solo lugar, así que el candado no aporta nada
+     y se reemplaza por uno que ejecuta y ya. */
+  var sb = window.supabase.createClient(CFG.url, CFG.anonKey, {
+    auth: { lock: function(nombre, msEspera, fn){ return fn(); } }
+  });
+
+  /* Ninguna espera puede ser infinita frente a una persona. */
+  function conLimite(promesa, ms){
+    return Promise.race([
+      promesa,
+      new Promise(function(_, rechazar){
+        setTimeout(function(){ rechazar(new Error('TIEMPO')); }, ms);
+      })
+    ]);
+  }
 
   /* ═══ los estados, en el orden del flujo ═══ */
   var ESTADOS = [
@@ -349,18 +366,25 @@ body{background:var(--sand);}
     var btn = document.getElementById('btnEntrar');
     btn.disabled = true; btn.textContent = 'Entrando…'; elErr.textContent = '';
 
-    sb.auth.signInWithPassword({
+    function devolverBoton(){ btn.disabled = false; btn.textContent = 'Entrar'; }
+
+    conLimite(sb.auth.signInWithPassword({
       email: document.getElementById('correo').value.trim(),
       password: document.getElementById('clave').value
-    }).then(function(r){
+    }), 15000).then(function(r){
       if(r.error){
         elErr.textContent = /Invalid login/i.test(r.error.message)
           ? 'Ese correo y esa contraseña no coinciden.'
           : r.error.message;
-        btn.disabled = false; btn.textContent = 'Entrar';
+        devolverBoton();
         return;
       }
       abrirPanel();
+    }).catch(function(e){
+      elErr.textContent = (e && e.message === 'TIEMPO')
+        ? 'Está tardando demasiado. Revisá tu internet y probá otra vez.'
+        : 'No se pudo conectar con el servidor. Probá otra vez.';
+      devolverBoton();
     });
   });
 
@@ -563,9 +587,9 @@ body{background:var(--sand);}
   }
 
   /* ═══ si ya había sesión, entrar directo ═══ */
-  sb.auth.getSession().then(function(r){
+  conLimite(sb.auth.getSession(), 8000).then(function(r){
     if(r.data && r.data.session) abrirPanel();
-  });
+  }).catch(function(){ /* sin sesión previa: queda la pantalla de entrar */ });
 })();
 </script>
 </body>
