@@ -36,6 +36,10 @@
   --flota-1:0 2px 4px -2px rgba(30,29,26,.05), 0 8px 18px -8px rgba(30,29,26,.08);
   --flota-2:0 4px 10px -4px rgba(30,29,26,.06), 0 22px 44px -18px rgba(30,29,26,.16);
   --flota-3:0 8px 20px -8px rgba(30,29,26,.08), 0 44px 80px -32px rgba(30,29,26,.24);
+  /* El relieve del sello, elegido el 26 ago 2026. Se usa drop-shadow de
+     CSS y no un filtro SVG: así vale igual para el <img> del sello y para
+     el SVG en línea de la intro, sin duplicar definiciones por página. */
+  --relieve-sello:drop-shadow(1px 3px 3px rgba(13,61,71,.42));
 }
 
 *{box-sizing:border-box;}
@@ -794,3 +798,17 @@ textarea.field{min-height:130px;}
     .abre-linea .mask > span{transform:none !important; animation:none !important;}
     .abre-cue .riel::after{animation:none !important;}
   }
+
+/* ── el sello, en relieve ──
+   Va donde el fondo es claro. En la sección oscura NO: una sombra
+   oscura sobre tinta no se ve, y meterle un halo claro sería otro
+   efecto distinto, no el mismo relieve. */
+.abre-sello,
+.confirm .seal,
+.pn-login > img,
+.pn-marca img{filter:var(--relieve-sello);}
+
+/* En la intro se pone al final: durante la animación cada letra ya
+   lleva su propio desenfoque, y encimarle una sombra de grupo son dos
+   filtros compuestos por cuadro en 17 caminos. */
+.bv-sello.listo .sello-vivo{filter:var(--relieve-sello);}
