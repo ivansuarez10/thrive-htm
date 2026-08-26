@@ -12,6 +12,13 @@
 <link rel="stylesheet" href="/assets/css/thrive.css?v=f997bf09">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
+
+/* Cualquier display: que le pongamos a un bloque le gana al atributo
+   hidden del navegador, y el bloque se queda visible aunque el código
+   crea que lo escondió. Ya pasó con la tarjeta de login: entraba bien
+   pero seguía tapando el panel. Esta línea lo cierra para siempre. */
+[hidden]{display:none !important;}
+
 body{background:var(--sand);}
 .pn-shell{max-width:1120px; margin:0 auto; padding:0 clamp(16px,4vw,28px) 80px;}
 
@@ -393,6 +400,8 @@ body{background:var(--sand);}
   });
 
   function abrirPanel(){
+    var b = document.getElementById('btnEntrar');
+    if(b){ b.disabled = false; b.textContent = 'Entrar'; }
     elLogin.hidden = true;
     elPanel.hidden = false;
     elContenido.hidden = false;
