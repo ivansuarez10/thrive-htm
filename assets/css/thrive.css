@@ -518,29 +518,58 @@ footer p{font-size:0.85rem;}
    atrás se apaga pero sigue ocupando su lugar, o el encabezado del
    formulario salta cada vez que aparece y desaparece. */
 .form-top .back[hidden]{visibility:hidden; display:block !important;}
-.form-top .count{font-family:var(--mono); font-size:0.72rem; letter-spacing:.08em; color:var(--teal-deep); font-variant-numeric:tabular-nums;}
-.bar{height:3px; border-radius:99px; background:var(--line-soft); overflow:hidden; margin-top:14px;}
+.form-top .count{font-family:var(--mono); font-size:0.72rem; letter-spacing:.08em; color:var(--teal-deep); font-variant-numeric:tabular-nums; text-align:right;}
+
+/* Cuatro tramos, uno por parte. «Pregunta 12 de 16» dice «esto es
+   largo»; cuatro tramos dicen dónde estás y cuánto falta sin que
+   tengas que contar preguntas. */
+.tramos{display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-top:14px;}
+.tramo{height:3px; border-radius:99px; background:var(--line-soft); overflow:hidden;}
 /* Escala en vez de animar el ancho: animar width recalcula layout en
    cada cuadro. scaleX se compone en GPU y no toca el layout. */
-.bar i{
+.tramo i{
   display:block; height:100%; width:100%;
   background:var(--teal); border-radius:99px;
   transform:scaleX(0); transform-origin:left center;
   transition:transform 520ms var(--ease);
 }
 
-.step{flex:1; display:flex; flex-direction:column; padding:clamp(34px,8vw,56px) 0 30px;}
+/* #steps tiene que estirarse o el flex:1 de .step no vale nada: sin
+   esto la pregunta queda pegada arriba y media pantalla vacía abajo. */
+#steps{flex:1; display:flex; flex-direction:column; min-height:0;}
+.step{flex:1; display:flex; flex-direction:column; padding:clamp(28px,6vw,44px) 0 24px;}
 .step[hidden]{display:none;}
-.q-title{font-family:var(--display); font-weight:600; font-size:clamp(1.45rem,5.4vw,2rem); line-height:1.2; letter-spacing:-0.02em;}
-.q-help{margin-top:12px; font-size:0.94rem; color:var(--ink-2);}
+/* El cuerpo se centra en lo que sobra; el pie se queda abajo. */
+.q-cuerpo{margin-block:auto; width:100%;}
 
-/* Nota que abre la sección de salud. Va antes del título porque tiene que
-   leerse ANTES de que ella decida cuánto contar, no después. */
-.q-nota{
-  margin-bottom:22px; padding:15px 17px;
-  background:var(--teal-pale); border-radius:12px;
-  font-size:0.92rem; line-height:1.55; color:var(--teal-deep);
+/* El cuerpo del titular responde al LARGO de la pregunta. La de los
+   síntomas tiene 202 caracteres: al mismo tamaño que «Nombre y
+   apellido» es un muro de siete líneas que nadie lee entero. */
+.q-title{font-family:var(--display); font-weight:600; letter-spacing:-0.025em; text-wrap:balance;}
+.q-title.corta{font-size:clamp(1.75rem,7vw,2.3rem); line-height:1.08;}
+.q-title.media{font-size:clamp(1.45rem,5.6vw,1.85rem); line-height:1.14;}
+.q-title.larga{font-size:clamp(1.16rem,4.4vw,1.4rem); line-height:1.32; letter-spacing:-0.015em;}
+
+/* La voz de Denisse: un hilo de arcilla y la itálica del logo. Antes era
+   gris chiquito y se leía como letra menuda legal. */
+.q-help{
+  margin-top:16px; padding-left:16px; border-left:1px solid var(--clay);
+  font-family:var(--serif); font-style:italic;
+  font-size:clamp(1rem,3.9vw,1.08rem); line-height:1.5; color:var(--ink-2);
 }
+
+/* ── la pantalla de parte ──
+   Una pausa entre bloques. Acá vive la promesa de privacidad de la
+   sección de salud, que antes era un recuadro celeste arriba de una
+   pregunta: el formato exacto que la gente skimea sin leer. */
+.parte{text-align:center; margin-block:auto;}
+.parte img{width:56px; height:56px; margin:0 auto 22px; display:block; filter:var(--relieve-sello);}
+.parte .num{font-family:var(--mono); font-size:0.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--teal-deep);}
+.parte h2{margin-top:12px; font-family:var(--display); font-weight:600;
+  font-size:clamp(1.9rem,7.6vw,2.5rem); line-height:1.06; letter-spacing:-0.03em; text-wrap:balance;}
+.parte h2 em{font-family:var(--serif); font-style:italic; font-weight:500;}
+.parte p{margin-top:18px; font-size:1.05rem; color:var(--ink-2); text-wrap:pretty;}
+.parte p + p{margin-top:12px;}
 
 /* Campo de una línea: nombre, quién refirió. */
 input.field.corta{min-height:0; padding:15px 18px;}
@@ -581,11 +610,14 @@ textarea.field{min-height:130px;}
 .consent{
   display:flex; gap:12px; align-items:flex-start; margin-top:18px;
   font-size:0.88rem; color:var(--ink-2); cursor:pointer; line-height:1.5;
+  /* Un <button> trae text-align:center de fábrica: sin esto el texto
+     del consentimiento sale centrado y se lee como un error. */
+  text-align:left;
 }
 .consent .mark{width:18px; height:18px; border-radius:4px; border:1.5px solid var(--line); flex:none; margin-top:2px; transition:all 180ms var(--ease);}
 .consent[aria-checked="true"] .mark{border-color:var(--teal); background:var(--teal); box-shadow:inset 0 0 0 3px var(--teal-pale);}
 
-.step-foot{margin-top:auto; padding-top:30px;}
+.step-foot{padding-top:26px;}
 .err{color:var(--clay); font-size:0.86rem; margin-top:12px; min-height:1.2em;}
 
 /* ═══ confirmación ═══ */
@@ -857,7 +889,9 @@ textarea.field{min-height:130px;}
 
   /* ── el screening respira ── */
   .form-shell{max-width:640px;}
-  .q-title{font-size:clamp(1.9rem,2.4vw,2.4rem);}
+  .q-title.corta{font-size:2.5rem;}
+  .q-title.media{font-size:2rem;}
+  .q-title.larga{font-size:1.5rem;}
   .opt{font-size:1.04rem; padding:17px 20px;}
 
   /* ── confirmación ── */

@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=f3bb8398">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=e012c478">
 </head>
 
 <body>
@@ -1350,9 +1350,9 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
   <div class="form-top">
     <button class="back" id="back" type="button" hidden>← atrás</button>
-    <span class="count" id="count">Pregunta 1 de 6</span>
+    <span class="count" id="count"></span>
   </div>
-  <div class="bar"><i id="bar"></i></div>
+  <div class="tramos" id="tramos" aria-hidden="true"></div>
 
   <!-- las pantallas se generan desde el arreglo PREGUNTAS -->
   <div id="steps"></div>
@@ -1443,8 +1443,10 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
        Van al final a propósito: para entonces ya se comprometió con el
        proceso y contesta con más honestidad que si se lo preguntás de entrada. */
     {
+      /* La nota que abría esta pregunta se mudó a la pantalla de la
+         parte 3: ahí tiene una pantalla entera en vez de un recuadro
+         que se pasa de largo. El texto es el mismo de Denisse. */
       id:'dolor', tipo:'unica',
-      nota:'Las siguientes cuatro preguntas las lee solo Denisse y no se comparten con nadie. Ninguna respuesta te deja fuera por sí sola. Lo que cambia es cómo trabajamos, no si podés entrenar.',
       titulo:'¿Tenés actualmente algún dolor, lesión o limitación física que pueda afectar tu entrenamiento?',
       opciones:[
         'No.',
@@ -1574,40 +1576,138 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
   var elSteps = document.getElementById('steps');
   var elCount = document.getElementById('count');
-  var elBar   = document.getElementById('bar');
+  var elTramos= document.getElementById('tramos');
   var elBack  = document.getElementById('back');
   var elShell = document.getElementById('shell');
   var elListo = document.getElementById('listo');
 
+  /* ═══ las cuatro partes ═══
+     Las preguntas de Denisse ya venían en cuatro bloques de cuatro
+     —conocerte, historia, salud, práctico— y en ese orden a propósito:
+     lo fácil primero, la salud cuando ya se comprometió con el proceso.
+     Lo único nuevo es que ahora ella lo VE.
+
+     La parte 1 no lleva pantalla propia: esa es la bienvenida, que ya
+     la presentó. Poner otra ceremonia con sello justo después sería
+     cobrarle la entrada dos veces.
+
+     'hasta' es el id de la última pregunta de cada parte, no un índice:
+     si mañana Denisse mete una pregunta en medio, los bloques siguen
+     cuadrando solos. */
+  var PARTES = [
+    {
+      hasta:'sobre_vos', nombre:'Para conocerte', titulo:null
+    },
+    {
+      hasta:'meta', nombre:'Tu historia',
+      titulo:'Tu historia con el <em>movimiento</em>.',
+      texto:['Cuatro preguntas sobre de dónde venís y qué querés poder hacer. No hay respuestas correctas: «nada por ahora» también me sirve.']
+    },
+    {
+      hasta:'sintomas', nombre:'Salud',
+      titulo:'Ahora, tu <em>salud</em>.',
+      /* El texto es el mismo que antes iba en un recuadro celeste arriba
+         de la primera pregunta de salud. Acá tiene una pantalla entera. */
+      texto:[
+        'Estas cuatro las leo solo yo y no se comparten con nadie.',
+        'Ninguna respuesta te deja fuera por sí sola. Lo que cambia es cómo trabajamos, no si podés entrenar.'
+      ]
+    },
+    {
+      hasta:'algo_mas', nombre:'Lo práctico',
+      titulo:'Y lo <em>práctico</em>.',
+      texto:['Las últimas cuatro: qué grupo te sirve, si el horario te calza, y una sobre fotos.']
+    }
+  ];
+
+  /* La lista de navegación: pantallas de parte y de pregunta, en orden. */
+  var PANTALLAS = [];
+  (function(){
+    var desde = 0;
+    PARTES.forEach(function(parte, n){
+      var fin = -1;
+      for(var k = desde; k < PREGUNTAS.length; k++){
+        if(PREGUNTAS[k].id === parte.hasta){ fin = k; break; }
+      }
+      /* Red de seguridad: si alguien renombra un id, la parte se come
+         lo que queda en vez de dejar preguntas fuera del formulario. */
+      if(fin === -1) fin = PREGUNTAS.length - 1;
+      if(parte.titulo) PANTALLAS.push({ tipo:'parte', parte:parte, n:n });
+      for(var j = desde; j <= fin; j++){
+        PANTALLAS.push({
+          tipo:'q', q:PREGUNTAS[j], n:n,
+          en:(j - desde + 1), de:(fin - desde + 1)
+        });
+      }
+      desde = fin + 1;
+    });
+  })();
+
+  /* Un tramo por parte. */
+  var tramos = [];
+  PARTES.forEach(function(){
+    var t = document.createElement('span'); t.className = 'tramo';
+    var barra = document.createElement('i');
+    t.appendChild(barra); elTramos.appendChild(t); tramos.push(barra);
+  });
+
   /* ═══ construir las pantallas ═══ */
-  PREGUNTAS.forEach(function(q, idx){
+  PANTALLAS.forEach(function(pantalla, pIdx){
     var step = document.createElement('div');
     step.className = 'step';
     step.hidden = true;
-    step.dataset.idx = idx;
+    step.dataset.idx = pIdx;
 
-    if(q.nota){
-      var nota = document.createElement('p');
-      nota.className = 'q-nota';
-      nota.textContent = q.nota;
-      step.appendChild(nota);
+    if(pantalla.tipo === 'parte'){
+      var parte = pantalla.parte;
+      var caja = document.createElement('div');
+      caja.className = 'parte';
+      caja.innerHTML =
+        '<img src="/assets/img/seal.svg" alt="" width="56" height="56" aria-hidden="true">' +
+        '<div class="num">Parte ' + (pantalla.n + 1) + ' de ' + PARTES.length + '</div>' +
+        '<h2>' + parte.titulo + '</h2>' +
+        parte.texto.map(function(t){ return '<p>' + t + '</p>'; }).join('');
+      step.appendChild(caja);
+
+      var pieParte = document.createElement('div');
+      pieParte.className = 'step-foot';
+      var seguir = document.createElement('button');
+      seguir.type = 'button';
+      seguir.className = 'cta';
+      seguir.textContent = 'Seguir';
+      seguir.addEventListener('click', function(){ ir(pIdx + 1); });
+      pieParte.appendChild(seguir);
+      step.appendChild(pieParte);
+
+      elSteps.appendChild(step);
+      return;
     }
 
+    var q = pantalla.q;
+
+    /* El cuerpo se centra en lo que sobra de pantalla; el pie se queda
+       abajo. Sin este envoltorio la pregunta queda pegada al techo. */
+    var cuerpo = document.createElement('div');
+    cuerpo.className = 'q-cuerpo';
+    step.appendChild(cuerpo);
+
     var h = document.createElement('h1');
-    h.className = 'q-title';
+    /* El cuerpo del titular sale del largo de la pregunta. */
+    var largo = q.titulo.length;
+    h.className = 'q-title ' + (largo < 42 ? 'corta' : largo < 105 ? 'media' : 'larga');
     h.textContent = q.titulo;
-    step.appendChild(h);
+    cuerpo.appendChild(h);
 
     if(q.ayuda){
       var help = document.createElement('p');
       help.className = 'q-help';
       help.textContent = q.ayuda;
-      step.appendChild(help);
+      cuerpo.appendChild(help);
     }
 
     var body = document.createElement('div');
     body.className = 'q-body';
-    step.appendChild(body);
+    cuerpo.appendChild(body);
 
     if(q.tipo === 'corta'){
       var inp = document.createElement('input');
@@ -1621,7 +1721,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
         pintarSiguiente(step, q);
       });
       inp.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' && resp[q.id]){ e.preventDefault(); ir(idx + 1); }
+        if(e.key === 'Enter' && resp[q.id]){ e.preventDefault(); ir(pIdx + 1); }
       });
       body.appendChild(inp);
 
@@ -1661,21 +1761,21 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
             body.querySelectorAll('.opt').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
             b.setAttribute('aria-pressed','true');
 
-            /* Un si de salud abre su campo y NO avanza solo: lo que
-               importa de esa respuesta es el detalle, no el si. */
+            /* Un sí de salud abre su campo y NO avanza solo: lo que
+               importa de esa respuesta es el detalle, no el sí. */
             var det = step.querySelector('.detalle');
             if(pide){
               det.querySelector('textarea').placeholder = pide;
               det.hidden = false;
               setTimeout(function(){ det.querySelector('textarea').focus(); }, 60);
-              refrescarBoton(idx);
+              refrescarBoton(pIdx);
             } else {
               if(det){
                 det.hidden = true;
                 resp[q.id + '_detalle'] = '';
                 det.querySelector('textarea').value = '';
               }
-              if(!q.cierre){ setTimeout(function(){ ir(idx + 1); }, 260); }
+              if(!q.cierre){ setTimeout(function(){ ir(pIdx + 1); }, 260); }
               else pintarSiguiente(step, q);
             }
           }
@@ -1683,7 +1783,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
         body.appendChild(b);
       });
 
-      /* campo condicional, oculto hasta que se elija un si */
+      /* campo condicional, oculto hasta que se elija un sí */
       if(q.opciones.some(function(o){ return typeof o !== 'string' && o.pide; })){
         var det = document.createElement('div');
         det.className = 'detalle';
@@ -1705,9 +1805,9 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       ANTES_DE_ENVIAR.forEach(function(t, n){
         var pp = document.createElement('p');
         pp.className = 'body';
-        pp.style.marginTop = n === 0 ? '34px' : '14px';
+        pp.style.marginTop = n === 0 ? '30px' : '14px';
         pp.textContent = t;
-        step.appendChild(pp);
+        cuerpo.appendChild(pp);
       });
       var cons = document.createElement('button');
       cons.type = 'button';
@@ -1721,7 +1821,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
         cons.setAttribute('aria-checked', consiente ? 'true' : 'false');
         pintarSiguiente(step, q);
       });
-      step.appendChild(cons);
+      cuerpo.appendChild(cons);
     }
 
     var foot = document.createElement('div');
@@ -1732,7 +1832,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     next.textContent = q.cierre ? 'Enviar' : 'Siguiente';
     next.addEventListener('click', function(){
       if(q.cierre) enviar(next);
-      else ir(idx + 1);
+      else ir(pIdx + 1);
     });
     foot.appendChild(next);
     var err = document.createElement('p');
@@ -1751,7 +1851,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     var lleno = q.opcional ? true
       : (q.tipo === 'multi' ? (v && v.length) : (typeof v === 'string' ? v.length > 0 : !!v));
 
-    /* un si sin el detalle no sirve para entrenarla segura */
+    /* un sí sin el detalle no sirve para entrenarla segura */
     var det = step.querySelector('.detalle');
     if(det && !det.hidden && !(resp[q.id + '_detalle'] || '').length) lleno = false;
 
@@ -1760,9 +1860,11 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
   }
 
   /* Las de opción única sin cierre no muestran botón: avanzan al tocar */
-  function refrescarBoton(idx){
-    var q = PREGUNTAS[idx];
-    var step = elSteps.children[idx];
+  function refrescarBoton(p){
+    var pantalla = PANTALLAS[p];
+    if(!pantalla || pantalla.tipo !== 'q') return;
+    var q = pantalla.q;
+    var step = elSteps.children[p];
     var foot = step.querySelector('.step-foot');
     var d = step.querySelector('.detalle');
     var abierto = d && !d.hidden;
@@ -1771,13 +1873,25 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     pintarSiguiente(step, q);
   }
 
+  function pintarTramos(p){
+    for(var c = 0; c < PARTES.length; c++){
+      var v = c < p.n ? 1
+            : c > p.n ? 0
+            : (p.tipo === 'parte' ? 0 : p.en / p.de);
+      tramos[c].style.transform = 'scaleX(' + v + ')';
+    }
+  }
+
   function ir(n){
-    if(n >= PREGUNTAS.length) n = PREGUNTAS.length - 1;
+    if(n >= PANTALLAS.length) n = PANTALLAS.length - 1;
     if(n < 0) n = 0;
     for(var k = 0; k < elSteps.children.length; k++) elSteps.children[k].hidden = (k !== n);
     i = n;
-    elCount.textContent = (n === PREGUNTAS.length - 1) ? 'Última pregunta' : ('Pregunta ' + (n+1) + ' de ' + PREGUNTAS.length);
-    elBar.style.transform = 'scaleX(' + ((n+1) / PREGUNTAS.length) + ')';
+    var p = PANTALLAS[n];
+    /* En la pantalla de parte el rótulo repetiría el titular. */
+    elCount.textContent = p.tipo === 'parte' ? ''
+      : (PARTES[p.n].nombre + ' · ' + p.en + ' de ' + p.de);
+    pintarTramos(p);
     elBack.hidden = (n === 0);
     refrescarBoton(n);
     var f = elSteps.children[n].querySelector('.field');
