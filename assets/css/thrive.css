@@ -808,7 +808,17 @@ textarea.field{min-height:130px;}
 .pn-login > img,
 .pn-marca img{filter:var(--relieve-sello);}
 
-/* En la intro se pone al final: durante la animación cada letra ya
-   lleva su propio desenfoque, y encimarle una sombra de grupo son dos
-   filtros compuestos por cuadro en 17 caminos. */
+/* En la intro la sombra no se enciende: CRECE.
+   Antes se aplicaba de golpe con un temporizador y el sello se veía
+   plano un rato y de pronto con sombra encima, como una capa que se
+   monta. Ahora arranca en transparente y se funde mientras el anillo
+   termina de asentarse, así el relieve es parte de la misma llegada.
+
+   El estado de partida se declara como drop-shadow transparente y no
+   como 'none': de none a drop-shadow no todos los navegadores
+   interpolan, y ahí volvería el salto. */
+.bv-sello .sello-vivo{
+  filter:drop-shadow(0 0 0 rgba(13,61,71,0));
+  transition:filter 820ms var(--ease);
+}
 .bv-sello.listo .sello-vivo{filter:var(--relieve-sello);}

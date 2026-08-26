@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=8805784b">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=bee9f8a7">
 </head>
 
 <body>
@@ -1539,12 +1539,15 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     var elNom = document.getElementById('bvNombre');
     if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
 
-    /* Cuando el sello termina de armarse se suelta el will-change: 17
-       capas de GPU vivas sin animación en curso son memoria regalada. */
+    /* A los 2.6 s: la última letra ya aterrizó (2.4 s) y el punto está
+       cayendo. Ahí entra la sombra, que tarda 820 ms en crecer, así que
+       termina junto con el punto. Se lee como una sola llegada.
+       De paso se suelta el will-change: 17 capas de GPU vivas sin
+       animación en curso son memoria regalada. */
     setTimeout(function () {
       var sello = elBienve.querySelector('.bv-sello');
       if (sello) sello.classList.add('listo');
-    }, 3000);
+    }, 2600);
 
     document.getElementById('bvEmpezar').addEventListener('click', function () {
       elBienve.classList.add('se-va');
