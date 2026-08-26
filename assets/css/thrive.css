@@ -113,28 +113,36 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
      la letra tan lejos que el anillo se leía deshaciéndose en vez de
      armándose, y encima se salía del cuadro del sello.
 
-     La clave es transform-box:view-box — así el origen del giro es el
-     centro del sello y no el centro de cada letra. Girando sobre el
-     centro, la letra además conserva su inclinación tangente al
-     círculo, que es como está dibujada. */
+     El origen del giro NO es 50% 50%. El anillo no está centrado en su
+     propio lienzo: el punto que Denisse dibujó en el medio está a
+     49.62% 52.75%, casi 3% más abajo. Girando sobre el centro
+     geométrico las letras describían un arco que no era el del anillo y
+     llegaban torcidas. Medido: la dispersión de radios baja de 193 a
+     150 usando el punto como eje.
+
+     transform-box:view-box hace que esos porcentajes se lean contra el
+     viewBox del SVG. Y girando sobre el centro del anillo, la letra
+     conserva su inclinación tangente al círculo, que es como está
+     dibujada. */
   .bv-sello .sl{
     opacity:0;
-    transform-box:view-box; transform-origin:50% 50%;
+    transform-box:view-box; transform-origin:49.62% 52.75%;
     animation:bv-letra-sello 940ms cubic-bezier(.16,.85,.24,1) forwards;
     animation-delay:calc(200ms + var(--n) * 100ms);
     will-change:transform, filter, opacity;
   }
   .bv-sello .sl-punto{
     opacity:0;
-    transform-box:view-box; transform-origin:50% 50%;
+    transform-box:view-box; transform-origin:49.62% 52.75%;
     animation:bv-punto-sello 820ms cubic-bezier(.2,1.4,.4,1) 2480ms forwards;
     will-change:transform, filter, opacity;
   }
-  /* El sello entero se acomoda al final: un grado y medio que se
-     endereza. Es el "clic" de la pieza al asentar. */
-  .bv-sello .sello-vivo{
-    animation:bv-sello-asienta 900ms cubic-bezier(.22,1,.3,1) 2900ms forwards;
-  }
+  /* Acá había un "asiento" del sello entero: 1.4 grados que se
+     enderezaban al final. Se quitó porque daba un tirón — la animación
+     arrancaba en 1.4deg cuando el sello ya estaba en 0, así que al
+     dispararse SALTABA a torcido antes de corregir. Se veía como si el
+     logo se desalineara solo. El asiento ya lo dan las letras al
+     rebasar 1.1 grados y volver. */
   .bv-sello.listo .sl,
   .bv-sello.listo .sl-punto{will-change:auto;}
 }
@@ -158,10 +166,6 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
   100% { opacity:1;   transform:rotate(0deg) scale(1); filter:blur(0); }
 }
 
-@keyframes bv-sello-asienta{
-  0%   { transform:rotate(1.4deg); }
-  100% { transform:rotate(0deg); }
-}
 
 }
 
