@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=377c2530">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=f3bb8398">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -74,7 +74,9 @@ body{background:var(--sand);}
 .pn-salir:hover{color:var(--ink); background:var(--white);}
 
 /* ── cupos ── */
-.pn-cupos{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:24px;}
+/* Dos por fila se parten en el telefono: «Quedan 3 lugares» ya
+   entraba justo, y «en camino» lo empujo a cuatro renglones. */
+.pn-cupos{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:24px;}
 .cupo{
   background:var(--white); border-radius:16px; padding:20px 22px;
   box-shadow:var(--flota-1);
@@ -91,9 +93,26 @@ body{background:var(--sand);}
 .cupo .barras i.lleno{background:var(--teal);}
 .cupo em{display:block; margin-top:12px; font-style:normal; font-size:.9rem; color:var(--ink-2);}
 .cupo em s{color:var(--ink); font-weight:700; text-decoration:none;}
+/* Quien tiene la clase agendada o ya vino todavia no ocupa cupo, pero
+   casi. Sin esta linea el panel deja invitar de mas. */
+.cupo .camino{display:block; margin-top:5px; font-size:.86rem; color:var(--ink-2);}
 
 /* ── filtros ── */
 .pn-filtros{display:flex; gap:8px; flex-wrap:wrap; margin-top:26px;}
+/* En el telefono los ocho filtros ocupaban cinco renglones y empujaban
+   la lista fuera de la pantalla. Acá pasan a una sola fila que se
+   desliza: la barra se sale a los margenes para que el ultimo chip
+   no quede cortado contra el borde. */
+@media (max-width:640px){
+  .pn-filtros{
+    flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    margin-inline:calc(clamp(16px,4vw,28px) * -1);
+    padding-inline:clamp(16px,4vw,28px); padding-block:4px;
+  }
+  .pn-filtros::-webkit-scrollbar{display:none;}
+  .pn-f{flex:none; white-space:nowrap;}
+}
 .pn-f{
   font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
   color:var(--ink-2); background:var(--white); border:none;
@@ -159,11 +178,14 @@ body{background:var(--sand);}
   .ficha-caja{align-self:center; width:min(700px,94vw); border-radius:22px; max-height:88svh;}
 }
 .ficha-top{
-  position:sticky; top:0; background:var(--linen); padding:22px 0 14px;
-  display:flex; align-items:flex-start; gap:14px; border-bottom:1px solid var(--line-soft);
+  position:sticky; top:0; z-index:2; background:var(--linen); padding:22px 0 14px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  border-bottom:1px solid var(--line-soft);
 }
 .ficha-top h2{font-family:var(--display); font-weight:600; font-size:1.5rem; letter-spacing:-.02em; margin-right:auto;}
-.ficha-x{font-size:1.4rem; line-height:1; color:var(--ink-2); padding:4px 10px; border-radius:8px; cursor:pointer;}
+.wa.chico{padding:9px 15px; font-size:.86rem; box-shadow:none;}
+.wa.chico svg{width:14px; height:14px;}
+.ficha-x{flex:none; font-size:1.4rem; line-height:1; color:var(--ink-2); padding:4px 10px; border-radius:8px; cursor:pointer;}
 .ficha-x:hover{background:var(--sand); color:var(--ink);}
 
 .aviso-salud{
@@ -187,15 +209,16 @@ body{background:var(--sand);}
   font-size:.96rem; color:var(--ink-2);
 }
 
-.ficha-campos{display:grid; gap:14px; grid-template-columns:1fr 1fr;}
-.ficha-campos label{display:block;}
+.ficha-campos{display:grid; gap:14px; grid-template-columns:1fr;}
+@media (min-width:600px){ .ficha-campos{grid-template-columns:1fr 1fr;} }
+.ficha-campos label{display:block; min-width:0;}
 .ficha-campos.ancho{grid-template-columns:1fr;}
 .ficha-campos span{
   display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.14em;
   text-transform:uppercase; color:var(--teal-deep); margin-bottom:6px;
 }
 .ficha-campos select,.ficha-campos input,.ficha-campos textarea{
-  width:100%; font:inherit; font-size:.98rem; color:var(--ink);
+  width:100%; min-width:0; font:inherit; font-size:.98rem; color:var(--ink);
   background:var(--white); border:1px solid var(--line); border-radius:11px; padding:12px 14px;
 }
 .ficha-campos textarea{min-height:110px; resize:vertical; line-height:1.55;}
@@ -209,6 +232,159 @@ body{background:var(--sand);}
 }
 .ficha-pie .pn-btn{width:auto; margin:0; padding:13px 26px;}
 .guardado{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--teal-deep);}
+
+/* ── alta a mano ──
+   Las que todavía no llenaron el formulario no existían en ningún lado:
+   los estados 'invitada' y 'escribio' estaban en la base y en los filtros,
+   pero no había forma de escribirlos. Sin esto el panel es la bandeja de
+   entrada del formulario; con esto es el embudo completo. */
+.pn-alta{margin-top:22px; display:flex; justify-content:flex-start; align-items:center; gap:12px; flex-wrap:wrap;}
+.pn-btn.chico{width:auto; margin-top:0; padding:12px 22px; font-size:.9rem;}
+.pn-caja{
+  margin-top:14px; background:var(--white); border-radius:16px;
+  box-shadow:var(--flota-2); padding:22px 24px 24px;
+}
+.pn-caja h2{font-family:var(--display); font-weight:600; font-size:1.06rem; letter-spacing:-.015em;}
+.pn-caja .ayuda{margin-top:7px; font-size:.9rem; color:var(--ink-2);}
+.pn-caja-pie{display:flex; align-items:center; gap:14px; margin-top:20px; flex-wrap:wrap;}
+.pn-txt{
+  background:none; border:none; font:inherit; font-size:.92rem; color:var(--ink-2);
+  cursor:pointer; padding:6px 2px; border-bottom:1px solid transparent;
+  transition:color 200ms var(--ease), border-color 200ms var(--ease);
+}
+.pn-txt:hover{color:var(--ink); border-bottom-color:var(--line);}
+.ficha-campos.tres{grid-template-columns:1fr;}
+@media(min-width:720px){ .ficha-campos.tres{grid-template-columns:1fr 1fr 1fr;} }
+
+/* ── los links que ella manda ──
+   Escritos a mano eran la fuente de error más tonta: un link mal tecleado
+   se ve igual que uno bueno hasta que la clienta lo abre. */
+.ficha-links{display:flex; flex-direction:column; gap:10px; margin-top:14px;}
+.link-fila{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  background:var(--white); border-radius:12px; padding:12px 14px;
+}
+.link-fila .link-que{flex:1 1 200px; min-width:0;}
+.link-fila .link-que b{display:block; font-size:.92rem; font-weight:700;}
+.link-fila .link-que code{
+  display:block; font-family:var(--mono); font-size:.68rem; color:var(--ink-2);
+  margin-top:3px; overflow-wrap:anywhere;
+}
+.pn-copiar{
+  flex:none; font:inherit; font-family:var(--mono); font-size:.68rem; letter-spacing:.08em;
+  text-transform:uppercase; cursor:pointer; padding:9px 15px; border-radius:999px;
+  border:1px solid var(--line); background:var(--linen); color:var(--ink-2);
+  transition:color 200ms var(--ease), border-color 200ms var(--ease), transform 260ms var(--ease);
+}
+.pn-copiar:hover{color:var(--ink); border-color:var(--ink-3); transform:translateY(-2px);}
+.pn-copiar.listo{color:var(--teal-deep); border-color:var(--teal); background:var(--teal-pale);}
+.pn-copiar:disabled{opacity:.55; cursor:default; transform:none;}
+.link-fila.pendiente{background:var(--sand);}
+.link-fila .falta{display:block; font-size:.86rem; color:var(--ink-2); margin-top:3px;}
+
+/* ── el encabezado del día ──
+   El panel abría en los cupos: un dato de inventario, no una instrucción.
+   Lo primero que ve ahora es cuántas mujeres están esperando algo de ella. */
+.pn-dia{margin-top:clamp(28px,6vw,44px);}
+.pn-dia h1{
+  margin-top:10px; font-family:var(--display); font-weight:500;
+  font-size:clamp(1.7rem,5.2vw,2.5rem); line-height:1.12; letter-spacing:-.03em;
+  text-wrap:balance; max-width:19ch;
+}
+.pn-dia .resto{margin-top:12px; font-size:1rem; color:var(--ink-2); line-height:1.6; max-width:52ch;}
+
+/* ── lo que te toca ──
+   La lista estaba ordenada por cuándo llegó cada una, que es el orden en
+   que a Denisse le sirve menos. Esta pila está ordenada por urgencia y
+   cada mujer aparece UNA sola vez, en su motivo más apremiante. */
+.pn-toca{display:flex; flex-direction:column; gap:12px; margin-top:26px;}
+.tarea{
+  background:var(--white); border-radius:16px; box-shadow:var(--flota-2);
+  padding:20px 22px; display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap;
+}
+.tarea.salud{background:#FBEFEF;}
+.tarea-que{flex:1 1 260px; min-width:0;}
+.tarea-nom{
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+  font-family:var(--display); font-weight:600; font-size:1.14rem; letter-spacing:-.015em;
+}
+.tarea-nom svg{width:15px; height:15px; flex:none; color:#8A2F2F;}
+.tarea.salud .tarea-nom{color:#6E2323;}
+.tarea-motivo{margin-top:7px; font-size:.96rem; line-height:1.55; color:var(--ink-2); max-width:56ch;}
+.tarea.salud .tarea-motivo{color:#7A2828;}
+.tarea-hacer{display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:none;}
+
+/* El WhatsApp es el producto: para grupos de cuatro, que la primera
+   respuesta venga de una persona es lo que se está vendiendo. Por eso
+   el botón vive acá y no escondido detrás de la ficha. */
+.wa{
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--wa); color:#fff; font-weight:600; font-size:.94rem;
+  padding:12px 20px; border-radius:999px; box-shadow:var(--flota-1);
+  transition:transform 300ms var(--ease), box-shadow 300ms var(--ease), background 240ms var(--ease);
+}
+.wa:hover{transform:translateY(-3px); box-shadow:var(--flota-2); background:#1F6D5A;}
+.wa:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
+.wa svg{width:16px; height:16px; flex:none;}
+
+/* Acción secundaria: mismo peso visual que el filtro apagado, para que
+   nunca compita con el botón verde. */
+.mini{
+  font:inherit; font-size:.9rem; color:var(--ink-2); cursor:pointer;
+  background:var(--linen); border:1px solid var(--line);
+  padding:11px 17px; border-radius:999px;
+  transition:color 200ms var(--ease), border-color 200ms var(--ease), transform 260ms var(--ease);
+}
+.tarea.salud .mini{background:rgba(255,255,255,.62); border-color:rgba(122,40,40,.18); color:#7A2828;}
+.mini:hover{color:var(--ink); border-color:var(--ink-3); transform:translateY(-2px);}
+.tarea.salud .mini:hover{color:#5E1D1D; border-color:rgba(122,40,40,.4);}
+.mini:disabled{opacity:.5; cursor:default; transform:none;}
+
+/* Todo al día: la pila desaparece entera en vez de dejar una tarjeta
+   vacía ocupando el lugar de las urgencias. */
+.pn-limpio{
+  margin-top:26px; display:flex; align-items:center; gap:14px;
+  font-size:.98rem; color:var(--ink-2);
+}
+.pn-limpio svg{width:20px; height:20px; color:var(--teal); flex:none;}
+
+@media (prefers-reduced-motion:no-preference){
+  .tarea{animation:tarea-entra 520ms var(--ease) backwards; animation-delay:calc(var(--i,0) * 70ms);}
+  @keyframes tarea-entra{
+    from{opacity:0; transform:translateY(12px); filter:blur(5px);}
+    to{opacity:1; transform:none; filter:blur(0);}
+  }
+}
+
+/* ── el resto del panel, ordenado debajo ── */
+.pn-seccion{margin-top:clamp(34px,7vw,52px);}
+.pn-seccion > h2{
+  font-family:var(--display); font-weight:600; font-size:1.16rem; letter-spacing:-.02em;
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+}
+.pn-seccion > h2 i{font-style:normal; font-family:var(--mono); font-size:.72rem; color:var(--ink-2); letter-spacing:.08em;}
+
+.pn-buscar{display:block; position:relative; margin-top:14px;}
+.pn-buscar input{
+  width:100%; font:inherit; font-size:.98rem; color:var(--ink);
+  background:var(--white); border:1px solid var(--line); border-radius:12px;
+  padding:13px 15px 13px 42px;
+  transition:border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.pn-buscar input::placeholder{color:var(--ink-2);}
+.pn-buscar input:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-pale);}
+.pn-buscar svg{
+  position:absolute; left:15px; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; color:var(--ink-3); pointer-events:none;
+}
+
+/* Lo que le falta a cada ficha, visible sin abrirla: sin teléfono no hay
+   WhatsApp, y sin fecha el link del pase no se puede ni copiar. */
+.falta-chip{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; background:var(--linen);
+  border:1px solid var(--line); color:var(--ink-2);
+}
 
 .pn-apagado{
   margin-top:24px; background:var(--white); border-radius:16px;
@@ -259,9 +435,49 @@ body{background:var(--sand);}
     <div id="apagado" hidden></div>
 
     <div id="contenido" hidden>
-      <div class="pn-cupos" id="cupos"></div>
-      <div class="pn-filtros" id="filtros"></div>
-      <div class="pn-lista" id="lista"></div>
+      <div class="pn-dia" id="dia"></div>
+      <div class="pn-toca" id="toca"></div>
+      <div class="pn-limpio" id="limpio" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <span>Nadie está esperando nada tuyo ahora mismo.</span>
+      </div>
+
+      <div class="pn-seccion">
+        <h2>Los cupos</h2>
+        <div class="pn-cupos" id="cupos"></div>
+      </div>
+
+      <div class="pn-seccion">
+        <h2>Todas <i id="cuenta"></i></h2>
+
+        <label class="pn-buscar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="buscar" placeholder="Buscar por nombre" autocomplete="off" aria-label="Buscar por nombre">
+        </label>
+
+        <div class="pn-filtros" id="filtros"></div>
+        <div class="pn-lista" id="lista"></div>
+
+        <div class="pn-alta">
+          <button class="pn-btn chico" type="button" id="btnAlta" aria-expanded="false" aria-controls="cajaAlta">Agregar a alguien</button>
+          <button class="pn-copiar" type="button" id="btnInvitacion">Copiar link de invitación</button>
+        </div>
+
+        <div class="pn-caja" id="cajaAlta" hidden>
+          <h2>Agregar a alguien a mano</h2>
+          <p class="ayuda">Para las que todavía no llenaron el formulario. Entra como <b>invitada</b>, y desde su ficha la vas moviendo.</p>
+          <div class="ficha-campos tres" style="margin-top:18px;">
+            <label><span>Nombre y apellido</span><input type="text" id="aNombre" maxlength="120" autocomplete="off"></label>
+            <label><span>Teléfono</span><input type="tel" id="aTel" placeholder="+504…" autocomplete="off"></label>
+            <label><span>Quién la invitó</span><input type="text" id="aRef" maxlength="40" autocomplete="off"></label>
+          </div>
+          <div class="pn-caja-pie">
+            <button class="pn-btn chico" type="button" id="aGuardar">Agregar</button>
+            <button class="pn-txt" type="button" id="aCancelar">Cancelar</button>
+            <span class="guardado" id="aAviso" role="status"></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -271,7 +487,7 @@ body{background:var(--sand);}
   <div class="ficha-caja" id="fichaCaja"></div>
 </div>
 
-<script src="/config.js?v=6920220b"></script>
+<script src="/config.js?v=881bb8eb"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (function(){
@@ -301,7 +517,7 @@ body{background:var(--sand);}
       '<ol>' +
         '<li>Crear el proyecto en Supabase y correr <code>sitio/supabase/schema.sql</code> en el SQL Editor.</li>' +
         '<li>Crear la usuaria de Denisse en <b>Authentication → Users</b>, con <b>Auto Confirm</b>, y apagar <b>Enable email signups</b>.</li>' +
-        '<li>Pegar la URL y la clave anon en <code>sitio/config.js?v=6920220b</code> y poner <code>enabled: true</code>.</li>' +
+        '<li>Pegar la URL y la clave anon en <code>sitio/config.js?v=881bb8eb</code> y poner <code>enabled: true</code>.</li>' +
       '</ol>';
     return;
   }
@@ -323,6 +539,180 @@ body{background:var(--sand);}
         setTimeout(function(){ rechazar(new Error('TIEMPO')); }, ms);
       })
     ]);
+  }
+
+  /* ═══ la hora de la clase, siempre en hora de Honduras ═══
+     El campo datetime-local habla en hora local del navegador, pero la
+     base guarda UTC. Antes se pintaba con toISOString() —o sea UTC— y se
+     leía como local: cada vez que Denisse abría una ficha y guardaba, la
+     clase se corría seis horas. Honduras es UTC−6 todo el año, sin
+     horario de verano, así que el desfase es fijo y se puede fijar acá
+     en vez de depender de dónde esté el navegador. */
+  var HN_MIN = -6 * 60;
+  function aInputHN(iso){
+    var d = new Date(iso);
+    if(isNaN(d.getTime())) return '';
+    return new Date(d.getTime() + HN_MIN * 60000).toISOString().slice(0,16);
+  }
+  function deInputHN(valor){
+    var d = new Date(valor + ':00-06:00');
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
+  /* Los dias se cuentan por dia de CALENDARIO en Honduras, no restando
+     milisegundos: si no, una clase de manana a las 7:30 dice «hoy»
+     cuando Denisse abre el panel a las once de la noche. */
+  function diaHN(iso){
+    var d = new Date(iso);
+    if(isNaN(d.getTime())) return null;
+    return Math.floor((d.getTime() + HN_MIN * 60000) / 86400000);
+  }
+  function diasHasta(iso){
+    var a = diaHN(iso), b = diaHN(new Date().toISOString());
+    return (a === null) ? null : (a - b);
+  }
+  function diasDesde(iso){
+    var n = diasHasta(iso);
+    return (n === null) ? null : -n;
+  }
+  function hace(n){
+    if(n === null) return 'hace un tiempo';
+    if(n <= 0) return 'hoy';
+    if(n === 1) return 'ayer';
+    return 'hace ' + n + ' días';
+  }
+  function enCuanto(n){
+    if(n <= 0) return 'hoy';
+    if(n === 1) return 'mañana';
+    return 'en ' + n + ' días';
+  }
+  var LETRAS = ['cero','una','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez'];
+  function enLetras(n){ return n <= 10 ? LETRAS[n] : String(n); }
+
+  function horaDe(iso){
+    try{
+      return new Intl.DateTimeFormat('es-HN', {
+        hour:'numeric', minute:'2-digit', hour12:true, timeZone:'America/Tegucigalpa'
+      }).format(new Date(iso)).replace(/\s+/g,' ').replace('a. m.','a.m.').replace('p. m.','p.m.');
+    }catch(e){ return ''; }
+  }
+  /* «7:30 a.m.» ya termina en punto: sin esto la frase queda «a. m..» */
+  function punto(t){ return String(t).replace(/\.+$/,'') + '.'; }
+  function fechaLarga(d){
+    try{
+      return new Intl.DateTimeFormat('es-HN', {
+        weekday:'long', day:'numeric', month:'long', timeZone:'America/Tegucigalpa'
+      }).format(d);
+    }catch(e){ return ''; }
+  }
+
+  function primerNombre(c){
+    return String(c.nombre || '').trim().split(/\s+/)[0] || '';
+  }
+
+  /* ═══ el WhatsApp, dentro del panel ═══
+     El producto de THRIVE es que la primera respuesta venga de una
+     persona. Tener el teléfono guardado en una ficha y que ella lo
+     copie a mano al otro app es donde se pierde ese producto.
+     El mensaje va escrito pero WhatsApp lo abre EDITABLE: es un punto
+     de partida, no algo que se manda solo. */
+  function telE164(c){
+    var t = String(c.telefono || '').replace(/\D/g, '');
+    if(!t) return '';
+    if(t.length === 8) t = '504' + t;   /* Honduras sin código de país */
+    return t;
+  }
+  function waLink(c, mensaje){
+    var t = telE164(c);
+    if(!t) return '';
+    return 'https://wa.me/' + t + (mensaje ? '?text=' + encodeURIComponent(mensaje) : '');
+  }
+
+  var MSG = {
+    salud: function(n){
+      /* A propósito NO menciona salud por escrito: eso se conversa, no se
+         manda por un canal que ella no controla. */
+      return 'Hola ' + n + ', soy Denisse de Healing Through Movement. Leí tus respuestas y ' +
+             'me gustaría que conversemos un momento antes de agendarte la clase de prueba. ' +
+             '¿Cuándo te queda bien?';
+    },
+    esperando: function(n){
+      return 'Hola ' + n + ', soy Denisse de Healing Through Movement. Ya vi tus respuestas — ' +
+             'gracias por tomarte el tiempo de contestarlas. ¿Cuándo podemos conversar?';
+    },
+    formulario: function(n, link){
+      return 'Hola ' + n + ', soy Denisse de Healing Through Movement. Antes de tu clase de ' +
+             'prueba me gustaría conocerte un poco. Son unas preguntas cortas: ' + link;
+    },
+    recordatorio: function(n, cuando, link){
+      return 'Hola ' + n + ', te recuerdo tu clase de prueba, es ' + cuando + '. ' +
+             'Acá está todo — dirección, hora y qué llevar: ' + link;
+    },
+    despues: function(n){
+      return 'Hola ' + n + ', ¿cómo te sentiste con la clase? Me gustaría saber qué te pareció.';
+    }
+  };
+
+  /* ═══ los dos links que Denisse manda ═══
+     Se arman solos desde la ficha. El del formulario lleva quién la
+     invitó, para que ese dato no dependa de que la clienta lo escriba.
+     El del pase lleva su nombre y —si ya tiene clase agendada— la fecha
+     de ELLA: sin eso la página muestra la fecha global de config.js y le
+     miente a todas menos a una. */
+  var BASE = String((window.THRIVE && window.THRIVE.baseUrl) || '').replace(/\/$/, '');
+
+  function formLink(c){
+    return BASE + '/thrive/form/' + (c.referida_por ? '?de=' + encodeURIComponent(c.referida_por) : '');
+  }
+  function tieneClase(c){
+    if(!c.clase_en) return false;
+    var d = new Date(c.clase_en);
+    return !isNaN(d.getTime());
+  }
+  function paseLink(c){
+    var corto = primerNombre(c);
+    return BASE + '/thrive/schedule/?n=' + encodeURIComponent(corto) +
+      (tieneClase(c) ? '&d=' + new Date(c.clase_en).toISOString().replace('.000','') : '');
+  }
+
+  function linksDe(c){
+    return [
+      { que:'El formulario', falta:'', url:formLink(c) },
+      { que:'El pase de su clase',
+        /* Sin fecha no se puede copiar. El pase ya no cae a la fecha global
+           de config.js —la asigna Denisse una por una—, así que mandarlo
+           antes de asignarle día es mandarle un pase en blanco. */
+        falta: tieneClase(c) ? '' : 'Ponele arriba la fecha de su clase y guardá. El link la lleva adentro.',
+        url: paseLink(c) }
+    ];
+  }
+
+  function copiar(texto){
+    /* El viejo truco del textarea fuera de vista. */
+    function aLaAntigua(){
+      return new Promise(function(ok, mal){
+        try{
+          var t = document.createElement('textarea');
+          t.value = texto;
+          t.setAttribute('readonly','');
+          t.style.cssText = 'position:fixed; top:-100px; opacity:0;';
+          document.body.appendChild(t);
+          t.select();
+          var listo = document.execCommand('copy');
+          document.body.removeChild(t);
+          listo ? ok() : mal(new Error('execCommand dijo que no'));
+        }catch(e){ mal(e); }
+      });
+    }
+
+    /* Ojo: no basta con preguntar si la API existe. Existe y IGUAL falla
+       —permiso denegado, documento sin foco, Safari con sus cosas— y
+       antes eso caía directo al mensaje de error sin intentar el
+       respaldo. Ahora el rechazo también cae al textarea. */
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(texto).catch(aLaAntigua);
+    }
+    return aLaAntigua();
   }
 
   /* ═══ los estados, en el orden del flujo ═══ */
@@ -366,6 +756,7 @@ body{background:var(--sand);}
 
   var datos = [];
   var filtro = 'todas';
+  var busqueda = '';
 
   var esc = function(v){
     return String(v == null ? '' : v)
@@ -420,14 +811,201 @@ body{background:var(--sand);}
       .then(function(r){
         if(r.error){ console.error(r.error); return; }
         datos = r.data || [];
-        pintarCupos(); pintarFiltros(); pintarLista();
+        pintarDia(); pintarToca(); pintarCupos(); pintarFiltros(); pintarLista();
       });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     LO QUE TE TOCA
+
+     El panel estaba ordenado por cuándo llegó cada mujer, que es el
+     orden en que a Denisse le sirve menos: ella lo abre de noche, en el
+     teléfono, al lado del WhatsApp, y necesita saber a quién le escribe
+     ahora. Acá cada candidata aparece UNA sola vez, en su motivo más
+     urgente, y con el botón que lo resuelve al lado.
+     Las que no piden nada —adentro con grupo, en lista de espera, las
+     que no siguieron— no aparecen. Esta pila se vacía, y vacía es la
+     respuesta correcta.
+     ═══════════════════════════════════════════════════════════ */
+  function tareaDe(c){
+    var n = primerNombre(c);
+    var e = c.estado;
+    var conClase = tieneClase(c);
+    var dClase = conClase ? diasHasta(c.clase_en) : null;
+    var yaPasó = conClase && new Date(c.clase_en).getTime() < Date.now();
+
+    if(c.alerta_salud && e === 'formulario'){
+      return { c:c, prio:1, salud:true,
+        motivo:'Contestó que sí a una restricción médica o a síntomas al esforzarse. Hablá con ella antes de agendarle la clase.',
+        wa:{ texto:'Escribirle', mensaje:MSG.salud(n) } };
+    }
+
+    if(e === 'formulario'){
+      return { c:c, prio:2,
+        motivo:'Llenó el formulario ' + hace(diasDesde(c.creada_en)) + ' y sigue esperando.',
+        wa:{ texto:'Escribirle', mensaje:MSG.esperando(n) } };
+    }
+
+    if(e === 'clase_agendada' && yaPasó){
+      return { c:c, prio:3,
+        motivo:'Su clase era ' + hace(-dClase) + '. Falta saber si vino.',
+        botones:[ { texto:'Vino', campos:{ estado:'vino' } },
+                  { texto:'No vino', campos:{ estado:'no' } } ] };
+    }
+
+    if(e === 'clase_agendada' && dClase !== null && dClase <= 1){
+      return { c:c, prio:4,
+        motivo:punto('Su clase es ' + enCuanto(dClase) + ' a las ' + horaDe(c.clase_en)),
+        wa:{ texto:'Recordarle', mensaje:MSG.recordatorio(n, enCuanto(dClase), paseLink(c)) } };
+    }
+
+    if(e === 'vino'){
+      return { c:c, prio:5,
+        motivo:'Vino a la clase ' + (dClase !== null ? hace(-dClase) : 'ya') + '. Falta saber si entra.',
+        wa:{ texto:'Preguntarle', mensaje:MSG.despues(n) } };
+    }
+
+    if(e === 'invitada' || e === 'escribio'){
+      return { c:c, prio:6,
+        motivo:'Todavía no ha llenado el formulario.',
+        wa:{ texto:'Mandarle el formulario', mensaje:MSG.formulario(n, formLink(c)) } };
+    }
+
+    /* Adentro sin grupo no cuenta en los cupos: el panel diría que hay
+       lugar donde ya no lo hay. */
+    if(e === 'adentro' && !c.grupo){
+      return { c:c, prio:7,
+        motivo:'Está adentro pero sin grupo, así que no cuenta en los cupos.',
+        botones:[ { texto:'Ponerla en 2X', campos:{ grupo:'2X' } },
+                  { texto:'Ponerla en 3X', campos:{ grupo:'3X' } } ] };
+    }
+
+    return null;
+  }
+
+  function tareas(){
+    var out = [];
+    datos.forEach(function(c){
+      var t = tareaDe(c);
+      if(t) out.push(t);
+    });
+    /* Primero la urgencia; dentro de la misma urgencia, la que lleva
+       más tiempo esperando. */
+    out.sort(function(a, b){
+      if(a.prio !== b.prio) return a.prio - b.prio;
+      return new Date(a.c.creada_en) - new Date(b.c.creada_en);
+    });
+    return out;
+  }
+
+  function libresPorGrupo(){
+    return ['2X','3X'].map(function(g){
+      return 4 - datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
+    });
+  }
+
+  function pintarDia(){
+    var t = tareas();
+    var libres = libresPorGrupo();
+    var total = libres[0] + libres[1];
+    var fecha = fechaLarga(new Date());
+    fecha = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+
+    var titular, resto;
+    if(!datos.length){
+      titular = 'Todavía no ha llegado nadie.';
+      resto = 'Cuando alguien complete el formulario aparece acá, y también podés agregarla a mano más abajo.';
+    }else if(!t.length){
+      titular = 'Todo al día.';
+      resto = fecha + ' · ' + (total === 0
+        ? 'Los dos grupos están completos.'
+        : 'Quedan ' + enLetras(total) + ' ' + (total === 1 ? 'lugar' : 'lugares') + ' entre los dos grupos.');
+    }else{
+      titular = t.length === 1 ? 'Tenés un pendiente.' : 'Tenés ' + enLetras(t.length) + ' pendientes.';
+      resto = fecha + ' · ' + (total === 0
+        ? 'Los dos grupos están completos.'
+        : 'Quedan ' + enLetras(total) + ' ' + (total === 1 ? 'lugar' : 'lugares') + ' entre los dos grupos.');
+    }
+
+    document.getElementById('dia').innerHTML =
+      '<h1>' + esc(titular) + '</h1><p class="resto">' + esc(resto) + '</p>';
+  }
+
+  var ICONO_ALERTA =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">' +
+    '<path d="M12 9v4M12 17h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
+
+  var ICONO_WA =
+    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.74.46 3.44 1.32 4.94L2.1 22l5.36-1.4a9.8 9.8 0 0 0 4.58 1.17h.01c5.43 0 9.84-4.4 9.84-9.84 0-2.63-1.02-5.1-2.88-6.96A9.78 9.78 0 0 0 12.04 2Zm0 17.98h-.01a8.2 8.2 0 0 1-4.16-1.14l-.3-.18-3.1.81.83-3.02-.2-.31a8.13 8.13 0 0 1-1.25-4.3c0-4.51 3.68-8.18 8.2-8.18 2.19 0 4.25.85 5.8 2.4a8.14 8.14 0 0 1 2.4 5.79c0 4.52-3.68 8.19-8.2 8.19Zm4.5-6.13c-.25-.13-1.46-.72-1.69-.8-.22-.09-.39-.13-.55.12s-.63.8-.77.96c-.14.17-.28.19-.53.06-.24-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.1-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.09-.17.04-.31-.02-.44-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.17 1.71 2.62 4.15 3.67.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.46-.6 1.66-1.17.21-.58.21-1.07.15-1.17-.06-.11-.22-.17-.47-.3Z"/></svg>';
+
+  function pintarToca(){
+    var t = tareas();
+    var cont = document.getElementById('toca');
+    var limpio = document.getElementById('limpio');
+
+    /* Sin pendientes la pila no deja una tarjeta vacía: desaparece, y en
+       su lugar queda una sola línea. */
+    limpio.hidden = !(datos.length && !t.length);
+
+    cont.innerHTML = t.map(function(x, i){
+      var c = x.c;
+      var hacer = '';
+
+      if(x.wa){
+        var url = waLink(c, x.wa.mensaje);
+        hacer += url
+          ? '<a class="wa" href="' + esc(url) + '" target="_blank" rel="noopener">' + ICONO_WA + esc(x.wa.texto) + '</a>'
+          /* Sin teléfono no hay WhatsApp, y decirlo acá es más útil que un
+             botón que no hace nada. La ficha es donde se arregla. */
+          : '<button class="mini" type="button" data-ficha="' + esc(c.id) + '">Ponerle el teléfono</button>';
+      }
+      (x.botones || []).forEach(function(b){
+        hacer += '<button class="mini" type="button" data-id="' + esc(c.id) +
+                 '" data-campos="' + esc(JSON.stringify(b.campos)) + '">' + esc(b.texto) + '</button>';
+      });
+      hacer += '<button class="mini" type="button" data-ficha="' + esc(c.id) + '">Ver ficha</button>';
+
+      return '<article class="tarea' + (x.salud ? ' salud' : '') + '" style="--i:' + i + '">' +
+        '<div class="tarea-que">' +
+          '<h3 class="tarea-nom">' + (x.salud ? ICONO_ALERTA : '') + esc(c.nombre) + '</h3>' +
+          '<p class="tarea-motivo">' + esc(x.motivo) + '</p>' +
+        '</div>' +
+        '<div class="tarea-hacer">' + hacer + '</div>' +
+      '</article>';
+    }).join('');
+
+    cont.querySelectorAll('[data-ficha]').forEach(function(b){
+      b.addEventListener('click', function(){ abrirFicha(b.getAttribute('data-ficha')); });
+    });
+    cont.querySelectorAll('[data-campos]').forEach(function(b){
+      b.addEventListener('click', function(){
+        accion(b.getAttribute('data-id'), JSON.parse(b.getAttribute('data-campos')), b);
+      });
+    });
+  }
+
+  /* Un cambio de estado desde la pila: sin abrir la ficha y sin Guardar.
+     Es la operación más frecuente del panel y costaba tres pasos. */
+  function accion(id, campos, btn){
+    var antes = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Un momento…';
+    sb.from(TABLA).update(campos).eq('id', id).then(function(r){
+      if(r.error){
+        btn.disabled = false; btn.textContent = 'No se pudo — probá otra vez';
+        setTimeout(function(){ btn.textContent = antes; }, 3000);
+        return;
+      }
+      cargar();
+    });
   }
 
   function pintarCupos(){
     var cont = document.getElementById('cupos');
     cont.innerHTML = ['2X','3X'].map(function(g){
-      var dentro = datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
+      var dentro  = datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
+      var camino  = datos.filter(function(c){
+        return c.grupo === g && (c.estado === 'clase_agendada' || c.estado === 'vino');
+      }).length;
       var barras = '';
       for(var i=0;i<4;i++) barras += '<i class="' + (i < dentro ? 'lleno' : '') + '"></i>';
       var libres = 4 - dentro;
@@ -437,6 +1015,9 @@ body{background:var(--sand);}
         '<em>' + (libres === 0
             ? 'Grupo completo'
             : 'Quedan <s>' + libres + '</s> ' + (libres === 1 ? 'lugar' : 'lugares')) +
+          (camino
+            ? '<span class="camino">' + camino + (camino === 1 ? ' en camino' : ' en camino') + '</span>'
+            : '') +
         '</em></div>';
     }).join('');
   }
@@ -464,20 +1045,36 @@ body{background:var(--sand);}
     });
   }
 
+  /* Buscar sin tildes y sin mayúsculas: nadie escribe «Lucía» con tilde
+     cuando está apurada. */
+  function plano(v){
+    return String(v == null ? '' : v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  }
+
   function visibles(){
-    if(filtro === 'todas')  return datos;
-    if(filtro === 'alerta') return datos.filter(function(c){ return c.alerta_salud; });
-    return datos.filter(function(c){ return c.estado === filtro; });
+    var v = datos;
+    if(filtro === 'alerta')      v = v.filter(function(c){ return c.alerta_salud; });
+    else if(filtro !== 'todas')  v = v.filter(function(c){ return c.estado === filtro; });
+    if(busqueda){
+      var q = plano(busqueda);
+      v = v.filter(function(c){
+        return plano(c.nombre).indexOf(q) !== -1 || plano(c.referida_por).indexOf(q) !== -1;
+      });
+    }
+    return v;
   }
 
   function pintarLista(){
     var cont = document.getElementById('lista');
     var v = visibles();
+    document.getElementById('cuenta').textContent = datos.length ? datos.length : '';
 
     if(!v.length){
-      cont.innerHTML = '<div class="pn-vacio">' + (datos.length
-        ? 'Nadie en este estado por ahora.'
-        : 'Todavía no ha llegado ninguna respuesta. Cuando alguien complete el formulario, aparece acá.') + '</div>';
+      cont.innerHTML = '<div class="pn-vacio">' + (
+        busqueda ? 'Ninguna con ese nombre.'
+        : datos.length ? 'Nadie en este estado por ahora.'
+        : 'Todavía no ha llegado ninguna respuesta. Cuando alguien complete el formulario, aparece acá.'
+      ) + '</div>';
       return;
     }
 
@@ -488,11 +1085,19 @@ body{background:var(--sand);}
       if(c.referida_por) linea2.push('la invitó ' + c.referida_por);
       if(c.grupo) linea2.push(c.grupo);
 
+      /* Lo que le falta, visible sin abrir la ficha: sin teléfono no hay
+         WhatsApp, y sin fecha el link del pase ni se puede copiar. */
+      var faltas = '';
+      if(!telE164(c)) faltas += '<span class="falta-chip">Sin teléfono</span>';
+      if((c.estado === 'clase_agendada' || c.estado === 'vino') && !tieneClase(c))
+        faltas += '<span class="falta-chip">Sin fecha</span>';
+
       return '<button class="fila" type="button" data-id="' + esc(c.id) + '">' +
         '<span class="l1">' +
-          (c.alerta_salud ? '<span class="alerta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>Revisar salud</span>' : '') +
+          (c.alerta_salud ? '<span class="alerta">' + ICONO_ALERTA + 'Revisar salud</span>' : '') +
           '<span class="nom">' + esc(c.nombre) + '</span>' +
           '<span class="pill ' + esc(c.estado) + '">' + esc(nombreEstado(c.estado)) + '</span>' +
+          faltas +
         '</span>' +
         '<span class="l2">' + esc(linea2.join('  ·  ')) + '</span>' +
       '</button>';
@@ -502,6 +1107,11 @@ body{background:var(--sand);}
       f.addEventListener('click', function(){ abrirFicha(f.getAttribute('data-id')); });
     });
   }
+
+  document.getElementById('buscar').addEventListener('input', function(){
+    busqueda = this.value.trim();
+    pintarLista();
+  });
 
   /* ═══ la ficha ═══ */
   var elFicha = document.getElementById('ficha');
@@ -528,11 +1138,12 @@ body{background:var(--sand);}
       return '<option value="' + e[0] + '"' + (c.estado === e[0] ? ' selected' : '') + '>' + esc(e[1]) + '</option>';
     }).join('');
 
-    var fechaLocal = c.clase_en ? new Date(c.clase_en).toISOString().slice(0,16) : '';
+    var fechaLocal = c.clase_en ? aInputHN(c.clase_en) : '';
 
     elCaja.innerHTML =
       '<div class="ficha-top">' +
         '<h2 id="fichaNom">' + esc(c.nombre) + '</h2>' +
+        (waLink(c, '') ? '<a class="wa chico" href="' + esc(waLink(c, '')) + '" target="_blank" rel="noopener">' + ICONO_WA + 'WhatsApp</a>' : '') +
         '<button class="ficha-x" type="button" id="cerrar" aria-label="Cerrar">&times;</button>' +
       '</div>' +
 
@@ -552,11 +1163,28 @@ body{background:var(--sand);}
             '<option value="3X"' + (c.grupo === '3X' ? ' selected' : '') + '>3X · lunes, miércoles y viernes</option>' +
           '</select></label>' +
           '<label><span>Teléfono</span><input type="tel" id="fTel" value="' + esc(c.telefono || '') + '" placeholder="+504…"></label>' +
-          '<label><span>Clase de prueba</span><input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '"></label>' +
+          '<label><span>Clase de prueba · hora de Honduras</span><input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '"></label>' +
         '</div>' +
         '<div class="ficha-campos ancho" style="margin-top:14px;">' +
           '<label><span>Tus notas · no las ve nadie más</span>' +
           '<textarea id="fNotas" placeholder="Lo que conversaron, cómo le fue en la clase, qué quedó pendiente…">' + esc(c.notas || '') + '</textarea></label>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="ficha-sec">' +
+        '<h3>Los links que le mandás</h3>' +
+        '<div class="ficha-links">' +
+          linksDe(c).map(function(l){
+            return '<div class="link-fila' + (l.falta ? ' pendiente' : '') + '">' +
+              '<span class="link-que"><b>' + esc(l.que) + '</b>' +
+                (l.falta ? '<span class="falta">' + esc(l.falta) + '</span>'
+                         : '<code>' + esc(l.url) + '</code>') +
+              '</span>' +
+              (l.falta
+                ? '<button class="pn-copiar" type="button" disabled>Sin fecha</button>'
+                : '<button class="pn-copiar" type="button" data-copiar="' + esc(l.url) + '">Copiar</button>') +
+            '</div>';
+          }).join('') +
         '</div>' +
       '</div>' +
 
@@ -569,6 +1197,19 @@ body{background:var(--sand);}
 
     elFicha.hidden = false;
     document.body.style.overflow = 'hidden';
+
+    elCaja.querySelectorAll('.pn-copiar').forEach(function(b){
+      b.addEventListener('click', function(){
+        copiar(b.getAttribute('data-copiar')).then(function(){
+          b.textContent = 'Copiado';
+          b.classList.add('listo');
+          setTimeout(function(){ b.textContent = 'Copiar'; b.classList.remove('listo'); }, 2200);
+        }).catch(function(){
+          b.textContent = 'Copialo a mano';
+          setTimeout(function(){ b.textContent = 'Copiar'; }, 2600);
+        });
+      });
+    });
 
     document.getElementById('cerrar').addEventListener('click', cerrarFicha);
     document.getElementById('fGuardar').addEventListener('click', function(){ guardar(c.id, this); });
@@ -590,7 +1231,7 @@ body{background:var(--sand);}
       estado:   document.getElementById('fEstado').value,
       grupo:    document.getElementById('fGrupo').value || null,
       telefono: document.getElementById('fTel').value.trim() || null,
-      clase_en: clase ? new Date(clase).toISOString() : null,
+      clase_en: clase ? deInputHN(clase) : null,
       notas:    document.getElementById('fNotas').value.trim() || null
     }).eq('id', id).then(function(r){
       btn.disabled = false; btn.textContent = 'Guardar';
@@ -600,6 +1241,78 @@ body{background:var(--sand);}
       setTimeout(function(){ aviso.textContent = ''; }, 2600);
     });
   }
+
+  /* ═══ el link de invitación ═══
+     Uno solo y sin personalizar (decisión del 26 ago 2026): quién la
+     recomendó lo captura la pregunta 3 del cuestionario, así que no hace
+     falta una landing horneada por clienta. */
+  (function(){
+    var b = document.getElementById('btnInvitacion');
+    if(!b) return;
+    var link = BASE + '/thrive/';
+    b.addEventListener('click', function(){
+      copiar(link).then(function(){
+        b.textContent = 'Copiado';
+        b.classList.add('listo');
+        setTimeout(function(){ b.textContent = 'Copiar link de invitación'; b.classList.remove('listo'); }, 2200);
+      }).catch(function(){
+        b.textContent = link;
+        setTimeout(function(){ b.textContent = 'Copiar link de invitación'; }, 4000);
+      });
+    });
+  })();
+
+  /* ═══ agregar a alguien a mano ═══
+     La política RLS «denisse agrega a mano» ya lo permitía; lo que no
+     existía era la puerta. Nace en 'invitada' y con origen 'manual',
+     que es justo lo que la distingue de las que llegaron solas. */
+  var elAlta = document.getElementById('cajaAlta');
+  var elBtnAlta = document.getElementById('btnAlta');
+  var elAviso = document.getElementById('aAviso');
+
+  function abrirAlta(abrir){
+    elAlta.hidden = !abrir;
+    elBtnAlta.setAttribute('aria-expanded', String(abrir));
+    elBtnAlta.hidden = abrir;
+    if(abrir) document.getElementById('aNombre').focus();
+    else { elAviso.textContent = ''; }
+  }
+
+  elBtnAlta.addEventListener('click', function(){ abrirAlta(true); });
+  document.getElementById('aCancelar').addEventListener('click', function(){
+    ['aNombre','aTel','aRef'].forEach(function(id){ document.getElementById(id).value = ''; });
+    abrirAlta(false);
+  });
+
+  document.getElementById('aGuardar').addEventListener('click', function(){
+    var btn = this;
+    var nombre = document.getElementById('aNombre').value.trim();
+    var tel    = document.getElementById('aTel').value.trim();
+    var ref    = document.getElementById('aRef').value.trim();
+
+    /* El mismo largo que exige la base, dicho antes de viajar. */
+    if(nombre.length < 2){
+      elAviso.textContent = 'Falta el nombre.';
+      document.getElementById('aNombre').focus();
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Agregando…'; elAviso.textContent = '';
+
+    sb.from(TABLA).insert({
+      nombre: nombre.slice(0,120),
+      telefono: tel || null,
+      referida_por: ref || null,
+      origen: 'manual',
+      estado: 'invitada'
+    }).then(function(r){
+      btn.disabled = false; btn.textContent = 'Agregar';
+      if(r.error){ elAviso.textContent = 'No se pudo agregar: ' + r.error.message; return; }
+      ['aNombre','aTel','aRef'].forEach(function(id){ document.getElementById(id).value = ''; });
+      abrirAlta(false);
+      cargar();
+    });
+  });
 
   /* ═══ si ya había sesión, entrar directo ═══ */
   conLimite(sb.auth.getSession(), 8000).then(function(r){

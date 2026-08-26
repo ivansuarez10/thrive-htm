@@ -694,6 +694,10 @@ textarea.field{min-height:130px;}
 /* Sin fecha confirmada la página no inventa una: dice lo que sabe y
    manda a la única persona que puede resolverlo. */
 .pase.sin-fecha .f-dia{font-size:1.5rem; letter-spacing:-0.02em;}
+/* Sin fecha, la línea del reloj deja de ser un dato y pasa a ser una
+   frase. El mono es para medir —horas, precios, rótulos—; una oración
+   en mono se lee como una máquina hablando. */
+.pase.sin-fecha .reloj .h{font-family:var(--sans); font-weight:400; font-size:0.95rem; color:var(--ink-2);}
 
 /* En pantalla ancha el pase deja de ser una columna estirada y se
    vuelve un objeto: se despega del borde y redondea la cabecera. */

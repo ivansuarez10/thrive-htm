@@ -38,28 +38,41 @@ window.THRIVE = {
     table: 'candidatas'
   },
 
-  /* ── Las ocho clientas que reciben link ──
-     slug: lo que va en la URL, en minúscula y sin tildes ni espacios.
-     nombre: como aparece en el mensaje de WhatsApp.
-     Al agregar o quitar a alguien acá, correr:  node build.js
-     ⚠️ PENDIENTE — nombres de ejemplo, faltan los reales. */
-  referidas: [
-    { slug: 'margaret', nombre: 'Margaret' },
-    { slug: 'isabela',  nombre: 'Isabela'  },
-    { slug: 'ana',      nombre: 'Ana'      },
-    { slug: 'lucia',    nombre: 'Lucía'    },
-    { slug: 'carla',    nombre: 'Carla'    },
-    { slug: 'sofia',    nombre: 'Sofía'    },
-    { slug: 'renata',   nombre: 'Renata'   },
-    { slug: 'valeria',  nombre: 'Valeria'  }
-  ],
+  /* ── El link de invitación ──
+     DECISIÓN del 26 ago 2026: el link es UNO SOLO y sin personalizar.
+     Denisse comparte https://healingthroughmovement.studio/thrive y ya.
+
+     Antes esta lista horneaba una landing por clienta (/thrive/ana) para
+     que el mensaje de WhatsApp saliera con «de parte de Ana». Se apagó
+     porque **la pregunta 3 del cuestionario ya captura quién la
+     recomendó**, que era el dato que se quería. Un link general es una
+     cosa menos que mantener y una menos que equivocar.
+
+     La maquinaria NO se borró, solo se dejó vacía: si algún día se
+     quieren links por persona, se vuelven a poner acá y `node build.js`
+     los hornea de nuevo. Y el soporte de ?de=Ana en la URL sigue vivo en
+     thrive.js, así que un link personalizado suelto funciona sin
+     necesidad de horneado.
+
+     Al vaciar esta lista, build.js barre las carpetas de las clientas
+     que ya no están. Eso es lo que se quiere. */
+  referidas: [],
 
   /* ── Clase de prueba ──
      Lo que se muestra en la página de confirmación.
      ⚠️ PENDIENTE — la FECHA de la clase de prueba sigue siendo de relleno. */
   clase: {
-    /* ⚠️ Poner en true cuando Denisse confirme fecha y hora reales.
-       Mientras esté en false, build.js lo avisa antes de publicar. */
+    /* ⚠️ LA FECHA YA NO VIVE ACÁ (26 ago 2026).
+       Denisse le asigna la clase de prueba a cada clienta a mano desde el
+       panel, y el link del pase lleva SU fecha adentro (?d=…). La página
+       de confirmación NO lee 'fecha', 'hora', 'inicioISO' ni
+       'fechaConfirmada': sin fecha en el link dice que falta, en vez de
+       mostrarle a alguien la fecha de otra.
+
+       Se dejan escritos porque son el registro de lo último que se habló
+       —dos días de prueba, de fin de semana— y porque borrarlos ahora
+       rompería cualquier página que todavía los lea. No son la verdad de
+       nadie: la verdad es 'clase_en' de cada candidata, en la base. */
     fechaConfirmada: false,
     fecha: 'Sábado 6 de septiembre',
     hora: '7:30 a.m.',

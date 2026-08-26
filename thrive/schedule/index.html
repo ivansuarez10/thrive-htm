@@ -21,15 +21,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=377c2530">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=f3bb8398">
 </head>
 
 <body class="pag-pase">
 
 <!-- ══════════════════════════════════════════════════════════
-     El pase. La foto arriba, la tarjeta montada encima, y el
-     sello cerrando el troquel — adentro de la tarjeta, para que
-     sobreviva a la captura de pantalla.
+     El pase. La foto arriba, la tarjeta montada encima, el troquel
+     limpio, y el sello firmando al pie a 64 px — decisión de Ivan
+     del 26 ago 2026: a ese tamaño el anillo de letras se lee, que
+     es media gracia del sello de Denisse.
      ══════════════════════════════════════════════════════════ -->
 <article class="pase" id="pase">
 
@@ -96,7 +97,7 @@
 
 </article>
 
-<script src="/config.js?v=6920220b"></script>
+<script src="/config.js?v=881bb8eb"></script>
 <script src="/assets/js/thrive.js?v=34c24f75"></script>
 <script>
 (function(){
@@ -126,8 +127,23 @@
      Se calcula desde inicioISO y no desde el texto de config: así el
      día de la semana, la cuenta regresiva, la hora de llegada y la de
      salida no pueden contradecirse entre ellas. */
-  var inicio = C.inicioISO ? new Date(C.inicioISO) : null;
-  if(inicio && isNaN(inicio.getTime())) inicio = null;
+  /* ═══ la fecha viene del link, y de ningún otro lado ═══
+     Denisse le asigna la clase de prueba a cada clienta a mano, así que
+     la única fecha verdadera para quien abre esta página es la que el
+     panel metió en su link (?d=…).
+
+     NO hay respaldo a la fecha de config.js, y eso es deliberado: el
+     respaldo solo se activaría cuando ella copia el link antes de
+     asignarle día — justo el momento en que mostrar una fecha ajena hace
+     más daño. Sin fecha, la página lo dice; no inventa una. */
+  var inicio = null;
+  try{
+    var crudo = new URLSearchParams(location.search).get('d');
+    if(crudo){
+      var probable = new Date(crudo);
+      if(!isNaN(probable.getTime())) inicio = probable;
+    }
+  }catch(e){}
 
   function fmt(opciones){
     return new Intl.DateTimeFormat('es-HN', Object.assign({ timeZone: ZH }, opciones));
@@ -148,8 +164,8 @@
   if(!inicio){
     /* Sin fecha válida la página no inventa una. */
     $('pase').classList.add('sin-fecha');
-    $('fDia').textContent = C.fecha || 'Fecha por confirmar';
-    $('hora').textContent = C.hora || 'Denisse te confirma la hora por WhatsApp';
+    $('fDia').textContent = 'Falta tu fecha';
+    $('hora').textContent = 'Denisse te la confirma por WhatsApp';
   } else {
     var partes = fmt({ weekday:'long', day:'numeric' }).formatToParts(inicio);
     var dia = '', num = '';
@@ -161,7 +177,7 @@
     $('fMes').textContent = 'de ' + fmt({ month:'long' }).format(inicio);
     $('fMes').hidden = false;
 
-    $('hora').textContent = C.hora || reloj(inicio);
+    $('hora').textContent = reloj(inicio);
 
     /* la cuenta regresiva, pegada al reloj */
     var faltan = Math.round((diaHN(inicio) - diaHN(new Date())) / 86400000);

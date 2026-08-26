@@ -163,8 +163,15 @@ if (!CFG.clase || !CFG.clase.mapa)
   pendientes.push('Falta el link de la ficha de HTM en Google Maps — sin él la confirmación no lleva a nadie al estudio.');
 if (!CFG.clase || !CFG.clase.direccion)
   pendientes.push('Falta la dirección exacta: Google Calendar no puede abrir navegación sin ella.');
-if (!CFG.clase || !CFG.clase.fechaConfirmada)
-  pendientes.push(`La fecha de la clase de prueba ("${CFG.clase && CFG.clase.fecha}") sigue sin confirmar por Denisse.`);
+/* El aviso de los nombres de ejemplo murió con la lista: desde el 26 ago
+   el link de invitación es uno solo y sin personalizar, así que no hay
+   nombres que confirmar. Si alguna vez vuelven las landings por clienta,
+   este aviso vuelve con ellas. */
+
+/* La fecha de la clase de prueba ya no vive acá: Denisse se la asigna a
+   cada clienta desde el panel, y el link del pase la lleva adentro. Este
+   aviso avisaba de una fecha global que la página ya no lee, así que era
+   una alarma falsa en cada build. */
 
 if (pendientes.length) {
   console.log('Antes de publicar:');

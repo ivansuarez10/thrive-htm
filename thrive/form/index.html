@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=377c2530">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=f3bb8398">
 </head>
 
 <body>
@@ -1372,7 +1372,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
 
-<script src="/config.js?v=6920220b"></script>
+<script src="/config.js?v=881bb8eb"></script>
 <script src="/assets/js/thrive.js?v=34c24f75"></script>
 <script>
 (function(){
@@ -1794,9 +1794,16 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
        que no se equivoca. */
     var refiere = (window.THRIVE_RT && window.THRIVE_RT.referida)
                   || resp.referida || null;
+    /* La 13 ya dice qué grupo quiere. Sin esto la columna queda en null,
+       Denisse vuelve a teclear lo que la clienta ya contestó, y la vista
+       'cupos' —que cuenta por grupo— dice ocho libres para siempre.
+       'Todavía no estoy segura' se queda en null a propósito: es null. */
+    var g = /^THRIVE (2X|3X)/.exec(resp.grupo || '');
+
     return {
       nombre: resp.nombre || 'Sin nombre',
       referida_por: refiere,
+      grupo: g ? g[1] : null,
       respuestas: resp,
       consentimiento: consiente,
       origen: 'formulario',

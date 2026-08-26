@@ -96,7 +96,7 @@ drop policy if exists "cualquiera puede enviar el formulario"  on public.candida
 drop policy if exists "denisse lee todo"                        on public.candidatas;
 drop policy if exists "denisse edita todo"                      on public.candidatas;
 drop policy if exists "denisse agrega a mano"                   on public.candidatas;
-drop policy if exists "denisse borra"                           on public.candidatas;
+-- (la de borrar ya no se crea; ver el candado más abajo)
 
 -- El formulario es público: no hay login antes de contestar.
 -- Solo INSERT, y solo con lo que el formulario manda.
@@ -122,8 +122,34 @@ create policy "denisse edita todo"
 create policy "denisse agrega a mano"
   on public.candidatas for insert to authenticated with check (true);
 
-create policy "denisse borra"
-  on public.candidatas for delete to authenticated using (true);
+-- ⚠️ La política de borrado se RETIRÓ el 26 ago 2026. Nada en la
+-- aplicación borra: el panel no tiene botón y el formulario solo
+-- inserta. Si vuelve a hacer falta, se agrega a mano y con motivo.
+drop policy if exists "denisse borra" on public.candidatas;
+
+-- ── el candado ───────────────────────────────────────────
+-- El 26 de agosto alguien limpiando datos de prueba corrió
+-- «delete from candidatas» sin where y se llevó las cuatro filas,
+-- incluido el registro real de Denisse. La RLS no lo impidió porque
+-- el editor SQL del dashboard corre como DUEÑO, y al dueño la RLS
+-- no le aplica. Un trigger sí le aplica.
+--
+-- Borrar sigue siendo posible, pero hay que declararlo en la misma
+-- transacción. Esa fricción es exactamente el punto.
+create or replace function public.no_borrar_candidatas()
+returns trigger language plpgsql as $$
+begin
+  if coalesce(current_setting('app.borrar_candidatas', true), '') = 'si' then
+    return old;
+  end if;
+  raise exception 'Las candidatas no se borran.'
+    using hint = 'Para dar de baja a alguien poné estado = ''no''. Si de verdad hay que borrar: begin; set local app.borrar_candidatas = ''si''; delete ...; commit;';
+end $$;
+
+drop trigger if exists candidatas_no_borrar on public.candidatas;
+create trigger candidatas_no_borrar
+  before delete on public.candidatas
+  for each row execute function public.no_borrar_candidatas();
 
 -- ── cupos: 4 por grupo, 8 en total ────────────────────────
 -- Vista para que el panel no tenga que contar en el navegador.
