@@ -106,11 +106,15 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
      sentido de lectura: arranca en la h de "healing", abajo a la
      izquierda, y cierra con la t de "movement". */
   .bv-sello .sl{
-    opacity:0; transform:scale(.55);
+    opacity:0;
     transform-box:fill-box; transform-origin:center;
-    animation:bv-letra-sello 640ms cubic-bezier(.34,1.5,.64,1) forwards;
+    animation:bv-letra-sello 700ms cubic-bezier(.2,.9,.25,1) forwards;
     animation-delay:calc(180ms + var(--n) * 95ms);
+    will-change:transform, filter, opacity;
   }
+  /* Al terminar se suelta el will-change: mantenerlo en 17 caminos
+     después de la animación deja capas de GPU vivas sin necesidad. */
+  .bv-sello.listo .sl{will-change:auto;}
   /* El punto del centro cae cuando el anillo ya casi cerró: es el
      remate, no un participante más. */
   .bv-sello .sl-punto{
@@ -119,8 +123,29 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
     animation:bv-punto-sello 720ms cubic-bezier(.34,1.62,.64,1) 2060ms forwards;
   }
 }
-@keyframes bv-letra-sello{ to{opacity:1; transform:none;} }
-@keyframes bv-punto-sello{ to{opacity:1; transform:none;} }
+/* Llega desde adelante: grande y fuera de foco, y se asienta en su
+   sitio. El desenfoque es lo que vende la profundidad — sin él, una
+   letra que encoge se lee como un rebote, no como algo que se acerca.
+   Pasa apenas por debajo de su tamaño final antes de quedarse quieta. */
+@keyframes bv-letra-sello{
+  0%   { opacity:0;   transform:scale(1.85); filter:blur(7px); }
+  /* La opacidad va DETRÁS de la escala a propósito. A 1.85x la letra
+     tapa a sus vecinas, y con ocho en vuelo a la vez el anillo se
+     ensucia. Entrando casi transparente en la fase grande, se ve la
+     profundidad pero no el choque. */
+  30%  { opacity:.28; }
+  62%  { opacity:1; }
+  74%  { transform:scale(.965); filter:blur(0); }
+  100% { opacity:1;   transform:scale(1); filter:blur(0); }
+}
+/* El punto llega igual, para que pertenezca a la misma escena. */
+@keyframes bv-punto-sello{
+  0%   { opacity:0;   transform:scale(2.4); filter:blur(9px); }
+  38%  { opacity:.3; }
+  66%  { opacity:1; }
+  78%  { transform:scale(.9); filter:blur(0); }
+  100% { opacity:1;   transform:scale(1); filter:blur(0); }
+}
 
 .bv-word{
   display:flex; justify-content:center; gap:.06em; margin-top:26px;
