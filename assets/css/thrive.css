@@ -695,10 +695,16 @@ textarea.field{min-height:130px;}
 .pase{max-width:430px; margin:0 auto;}
 
 .pase-foto{position:relative; margin:0; height:clamp(200px,54vw,250px); overflow:hidden;}
-.pase-foto img{display:block; width:100%; height:100%; object-fit:cover; object-position:74% center;}
+.pase-foto img{display:block; width:100%; height:100%; object-fit:cover; object-position:center 45%;}
 /* El degradado no decora: apoya la tarjeta blanca sobre el lino para
-   que su borde superior no corte la foto en seco. El encuadre al 74 %
-   es lo que trae el ladrillo con luz en vez de la ventana quemada. */
+   que su borde superior no corte la foto en seco.
+
+   El encuadre cambió con la foto (27 ago 2026). Antes era una imagen
+   de archivo horizontal y el 74 % servía para traer el ladrillo con luz
+   en vez de la ventana quemada. Ahora es el estudio real, y la fuente
+   es VERTICAL: dentro de una franja ancha el recorte manda en el eje
+   Y, no en el X, así que el porcentaje horizontal dejó de hacer nada.
+   El 45 % vertical es lo que centra la pelota y la repisa. */
 .pase-foto::after{
   content:''; position:absolute; inset:0; pointer-events:none;
   background:linear-gradient(180deg, rgba(30,29,26,.22) 0%, rgba(30,29,26,0) 40%, rgba(250,248,244,.92) 100%);
@@ -818,7 +824,9 @@ textarea.field{min-height:130px;}
   /* En vertical el encuadre al 74 % cae sobre ladrillo plano; el 46 %
      agarra el haz de luz, que es de donde sale la calidez. */
   .pase-foto{height:100%; min-height:480px; border-radius:0;}
-  .pase-foto img{object-position:46% center;}
+  /* Con la tarjeta acostada el marco se vuelve alto y la foto vertical
+     entra casi entera: acá el centro basta. */
+  .pase-foto img{object-position:center;}
   .pase-foto::after{background:linear-gradient(90deg, rgba(30,29,26,.20) 0%, rgba(30,29,26,0) 42%, rgba(30,29,26,.06) 100%);}
 
   .tarjeta{--pad-tarjeta:clamp(34px,3.2vw,46px); margin:0; padding:var(--pad-tarjeta);
