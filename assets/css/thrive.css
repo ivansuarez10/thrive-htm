@@ -327,6 +327,13 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
      por abajo justo donde está el escalón. */
   width:100vw; border-radius:0; aspect-ratio:2/3; max-height:92svh;
 }
+/* ⚠️ 100vw INCLUYE la barra de desplazamiento; el ancho de la ventana no.
+   En un escritorio con barra clásica el hero sobresalía 33 px y la página
+   entera se podía correr de lado — medido: scrollWidth 1353 contra 1320.
+   Se recorta acá, en el contenedor que ya mide exactamente el ancho útil.
+   `clip` y no `hidden` a propósito: `hidden` crea un contenedor de scroll
+   y rompería el `position:sticky` de .metodo-media, unas secciones abajo. */
+.abre-foto{overflow-x:clip;}
 .shot.metodo{aspect-ratio:4/3;}
 /* ── la frase que releva al botón ──
    El hero dejó de terminar en una puerta (26 ago 2026). La línea que

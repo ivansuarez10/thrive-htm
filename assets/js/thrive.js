@@ -404,13 +404,17 @@
      No se activa en producción: solo en localhost. */
   if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) {
     (function () {
-      var vigilar = ['assets/css/thrive.css', 'assets/js/thrive.js'];
-      var base = location.pathname.replace(/\/[^\/]*$/, '/');
-      var raiz = base.indexOf('/i/') === 0 ? '../../' : (base === '/' ? '' : '../');
+      /* ⚠️ Rutas ABSOLUTAS, como todo lo demás del sitio. Antes se
+         calculaba un '../' contando niveles, y con eso el vigilante
+         pedía /thrive/assets/... desde /thrive/form/: 404 cada 1.2 s,
+         para siempre. Dos consecuencias — la recarga en vivo nunca
+         funcionó en el formulario ni en el pase, y la consola quedaba
+         tan llena de 404 que tapaba los errores de verdad. */
+      var vigilar = ['/assets/css/thrive.css', '/assets/js/thrive.js'];
       var sello = {};
       function mirar(primera) {
         vigilar.forEach(function (f) {
-          fetch(raiz + f, { method: 'HEAD', cache: 'no-store' })
+          fetch(f, { method: 'HEAD', cache: 'no-store' })
             .then(function (r) {
               var t = r.headers.get('last-modified') || r.headers.get('etag') || '';
               if (primera) { sello[f] = t; return; }
