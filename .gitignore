@@ -1,2 +1,8 @@
 node_modules
 supabase/.temp/
+
+# Mis archivos de prueba: copias del panel con datos inventados que sirven
+# para verlo sin sesión. No son del proyecto y no van al repo, que es
+# PÚBLICO. Se colaron una vez con un `git add -A` de otra sesión.
+_pv.html
+_preview-*.html
