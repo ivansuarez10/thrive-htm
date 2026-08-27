@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=53bed559">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=14e1fb08">
 </head>
 
 <body class="pag-pase">
@@ -37,7 +37,15 @@
   <div class="pase-obj">
 
   <figure class="pase-foto">
-    <img src="/assets/img/arbol.jpg" alt="El árbol grande de la entrada: la copa abierta sobre el camino de tierra que lleva al estudio" width="720" height="1280" fetchpriority="high">
+    <!-- Dos encuadres del mismo árbol, no dos fotos. En el teléfono el marco
+         es una franja ancha y bajita y pide el árbol entero; acostado el pase,
+         el marco se vuelve una columna alta y estrecha (330×724) y ahí el
+         recorte vertical —tronco abajo, todo el follaje subiendo— es el que
+         llena. El teléfono nunca baja el archivo de escritorio. -->
+    <picture>
+      <source media="(min-width:1020px)" srcset="/assets/img/arbol-alto.jpg" width="660" height="1448">
+      <img src="/assets/img/arbol.jpg" alt="El árbol grande de la entrada: la copa abierta sobre el camino de tierra que lleva al estudio" width="720" height="1280" fetchpriority="high">
+    </picture>
   </figure>
 
   <div class="tarjeta">
