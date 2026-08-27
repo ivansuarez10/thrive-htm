@@ -6,6 +6,15 @@
 (function () {
   'use strict';
 
+  /* ───────── recargar devuelve al principio ─────────
+     Por defecto el navegador restaura la posición de scroll al recargar,
+     y acá eso rompe la puesta en escena: la apertura se anima una sola
+     vez al cargar, así que quien recarga a media página cae en un tramo
+     con la animación ya consumida y sin haber visto el principio. Se
+     apaga la restauración y se vuelve arriba antes del primer pintado. */
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+  if (!location.hash) window.scrollTo(0, 0);
+
   var CFG = window.THRIVE || {};
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
