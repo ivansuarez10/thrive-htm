@@ -811,16 +811,23 @@ textarea.field{min-height:130px;}
 .pase{max-width:430px; margin:0 auto;}
 
 .pase-foto{position:relative; margin:0; height:clamp(200px,54vw,250px); overflow:hidden;}
-.pase-foto img{display:block; width:100%; height:100%; object-fit:cover; object-position:center 45%;}
+.pase-foto img{display:block; width:100%; height:100%; object-fit:cover; object-position:center 72%;}
 /* El degradado no decora: apoya la tarjeta blanca sobre el lino para
    que su borde superior no corte la foto en seco.
 
-   El encuadre cambió con la foto (27 ago 2026). Antes era una imagen
-   de archivo horizontal y el 74 % servía para traer el ladrillo con luz
-   en vez de la ventana quemada. Ahora es el estudio real, y la fuente
-   es VERTICAL: dentro de una franja ancha el recorte manda en el eje
-   Y, no en el X, así que el porcentaje horizontal dejó de hacer nada.
-   El 45 % vertical es lo que centra la pelota y la repisa. */
+   El encuadre va atado a la foto y cambió dos veces el 27 ago 2026.
+   Primero fue una imagen de archivo horizontal (74 % traía el ladrillo
+   con luz en vez de la ventana quemada). Después el interior del
+   estudio, ya vertical: dentro de una franja ancha el recorte manda en
+   el eje Y y no en el X, así que el porcentaje horizontal dejó de hacer
+   nada, y el 45 % centraba la pelota y la repisa.
+
+   Ahora la foto es el árbol de la entrada, y el 45 % dejaba la banda
+   entera dentro de la copa: puras ramas, ningún suelo, ninguna pista de
+   a dónde llega uno. El 72 % baja el recorte hasta el tronco y el
+   camino de tierra — que es lo que la clienta va a reconocer cuando
+   llegue. En la columna vertical de 1020px+ el mismo 72 % apenas
+   desplaza el encuadre, porque ahí sobra muy poco alto que recortar. */
 .pase-foto::after{
   content:''; position:absolute; inset:0; pointer-events:none;
   background:linear-gradient(180deg, rgba(30,29,26,.22) 0%, rgba(30,29,26,0) 40%, rgba(250,248,244,.92) 100%);
@@ -1033,7 +1040,12 @@ textarea.field{min-height:130px;}
      abierto pide aire: a 880 el grupo se leía apretado. Ojo con el techo:
      la fuente mide 720 px de ancho, así que a este marco se la amplía
      1.6x. Más que esto empieza a verse blanda. */
-  .abre-foto .abre-shot{aspect-ratio:16/9; max-height:82svh;}
+  /* 16:10 y no 16:9, con techo alto: el video está codificado en 16:10,
+     así que con esta proporción la caja no recorta NADA y se ve el cuadro
+     entero. A 16:9 se comía 90 filas de la fuente por arriba y por abajo,
+     y eso le cortaba la cabeza a las dos mujeres del frente.
+     El alto de escena pasa de 360 a 450 filas: un 25% más de cuarto. */
+  .abre-foto .abre-shot{aspect-ratio:16/10; max-height:96svh;}
 
   /* ── los cuatro perfiles en rejilla ── */
   .profiles{
