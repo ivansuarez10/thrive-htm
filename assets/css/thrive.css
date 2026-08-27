@@ -301,7 +301,7 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
   transition:transform 600ms var(--ease), box-shadow 600ms var(--ease);
 }
 .shot .plx{position:absolute; inset:-9% 0; width:100%; height:118%; object-fit:cover; will-change:transform;}
-".shot.hero{aspect-ratio:16/10;}
+.shot.hero{aspect-ratio:16/10;}
 
 /* ── el hero, de borde a borde ──
    Decisión de Ivan, 27 ago 2026: el hero se ve a pantalla completa y no
@@ -404,7 +404,9 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 
    El color es --ink-2 y no --ink-3: a 10 px en versalitas, el gris claro
    da 3.7 sobre blanco y no alcanza. */
-.metodo-riel{margin:0 0 clamp(26px,3.4vw,34px);}
+/* El margen va ARRIBA: las capacidades cuelgan de la foto. Era margen
+   inferior cuando vivían encima de ella. */
+.metodo-riel{margin:clamp(18px,2.4vw,26px) 0 0;}
 .metodo-riel .cap{
   font-family:var(--mono); font-size:0.63rem; letter-spacing:.26em;
   text-transform:uppercase; color:var(--ink-2);
@@ -1044,19 +1046,17 @@ textarea.field{min-height:130px;}
     display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
     column-gap:clamp(44px,5vw,88px); align-items:start;
     margin-top:clamp(44px,4vw,64px);
-    /* sitio para el riel, que va absoluto contra este borde */
-    position:relative; padding-left:56px;
   }
 
-  /* El riel se pone de pie y corre por el margen. La rotación de 180°
-     sobre el modo vertical hace que se lea de abajo hacia arriba: así se
-     llena hacia arriba mientras se baja, siguiendo al contenido. */
-  .metodo-grid .metodo-riel{
-    position:absolute; left:0; top:0; bottom:0; width:34px; margin:0;
-    writing-mode:vertical-rl; transform:rotate(180deg);
-    flex-wrap:nowrap; justify-content:flex-start; align-items:center;
-    white-space:nowrap;
-  }
+  /* Las capacidades van ACOSTADAS y debajo de la foto (Ivan, 27 ago 2026).
+     Antes corrían de pie por el margen izquierdo, en vertical y giradas
+     180°, con 56 px de sangría en la rejilla reservados para ellas. Ese
+     margen se fue con el riel.
+
+     No hace falta nada acá para acostarlas: el estado normal de
+     .metodo-riel ya es horizontal y envuelve. Lo que sí importa es que
+     ahora viven DENTRO de .metodo-media, que es lo pegajoso — así bajan
+     pegadas a la imagen en vez de subir por detrás de ella. */
   .metodo-media{position:sticky; top:clamp(40px,6vw,80px);}
   .shot.metodo{aspect-ratio:3/4;}
   .metodo-copy .facts{margin-top:0;}
