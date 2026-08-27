@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="/assets/img/hero.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=53bed559">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=9e62e73b">
 </head>
 
 <body>
@@ -144,9 +144,23 @@
   </div>
 </section>
 
-<!-- ══════════ BANDA ══════════ -->
+<!-- ══════════ BANDA ══════════
+     El estudio real, recortado de la foto vertical del espacio (27 ago 2026).
+
+     Antes acá corría un video animado desde una foto de STOCK: un salón vacío
+     con parquet, ventanales y un cadillac de Pilates. O sea el lema de la marca
+     madre de Denisse escrito sobre la sala de otra persona. Se cambia por su
+     sala, aunque el precio sea perder el movimiento del video: la parallax de
+     data-plx alcanza para que respire, y una foto verdadera pesa más que una
+     falsa que se mueve.
+
+     El lema NO va centrado: el sello queda en el centro del encuadre y su
+     anillo ya dice «healing through movement». Ponerle «Move. Heal. Thrive.»
+     encima sería decir lo mismo dos veces y taparlo para hacerlo. Baja al pie
+     de la banda, donde el fondo está tranquilo, y se lee sello → lema. -->
 <div class="band">
-  <video class="plx" data-plx autoplay loop muted playsinline preload="metadata" poster="/assets/img/banda-poster.jpg" width="1040" height="444"><source src="/assets/video/banda.mp4" type="video/mp4"></video><img class="poster" src="/assets/img/banda-poster.jpg" alt="" width="1040" height="444">
+  <img class="plx" data-plx src="/assets/img/banda.jpg" width="1040" height="444"
+       alt="El estudio de Healing Through Movement, con el sello de la marca iluminado sobre la chimenea">
   <div class="veil"></div>
   <div class="line"><p>Move. Heal. Thrive.</p></div>
 </div>
@@ -168,9 +182,16 @@
 
 <!-- ══════════ PLANES ══════════ -->
 <section class="sec-planes" data-ground="sand">
-  <div class="wide">
+  <!-- Decisión de Ivan, 27 ago 2026: el TEXTO de esta sección se alinea con
+       el resto de la página —el mismo borde que todos los titulares— y solo
+       las tarjetas usan el ancho grande. Por eso hay tres contenedores en
+       vez de uno: wrap para el titular, wide para las tarjetas, wrap otra
+       vez para los términos. -->
+  <div class="wrap">
     <h2 class="h2 up" style="max-width:20ch;">Elegí cómo querés hacer fuerza parte de tu semana</h2>
+  </div>
 
+  <div class="wide">
     <div class="plans stag">
 
       <div class="plan" data-plan="2X">
@@ -188,7 +209,9 @@
       </div>
 
     </div>
+  </div>
 
+  <div class="wrap">
     <div class="terms up">
       <p>Compromiso inicial de 3 meses · <span>pago mensual</span></p>
       <p>Primer período · <span>16 septiembre — 15 diciembre</span></p>
