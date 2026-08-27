@@ -1915,6 +1915,9 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
     return {
       nombre: resp.nombre || 'Sin nombre',
+      /* Explícito y no por defecto: el día que exista el segundo programa,
+         su formulario tiene que mandar el suyo, y esta línea es el recordatorio. */
+      programa: 'thrive',
       referida_por: refiere,
       grupo: g ? g[1] : null,
       respuestas: resp,
