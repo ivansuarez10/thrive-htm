@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THRIVE · panel</title>
+<title>Healing Through Movement · panel</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/img/seal.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=bc5ade15">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=d0deab7d">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -630,6 +630,71 @@ body{background:var(--sand);}
 .lado-plegar svg{width:17px; height:17px; display:block;}
 .pn-app.plegado .lado-plegar{display:none;}
 
+/* ── el selector de programa ──
+   El panel es de HTM, no de THRIVE. Vive arriba de todo porque es el
+   que decide qué significan las otras cuatro secciones: cambiar de
+   programa cambia la gente, el embudo y las tareas. */
+.prog{position:relative; margin:14px 12px 2px;}
+.prog-btn{
+  display:flex; align-items:center; gap:10px; width:100%;
+  font:inherit; text-align:left; cursor:pointer;
+  background:var(--linen); border:1px solid var(--line-soft);
+  border-radius:13px; padding:10px 12px;
+  transition:border-color 200ms var(--ease), background 200ms var(--ease);
+}
+.prog-btn:hover{border-color:var(--line); background:var(--sand);}
+.prog-btn .marca{
+  flex:none; width:30px; height:30px; border-radius:9px;
+  background:var(--ink); color:var(--linen);
+  display:grid; place-items:center;
+  font-family:var(--display); font-weight:600; font-size:.8rem; letter-spacing:-.02em;
+}
+.prog-btn .quien{min-width:0; margin-right:auto;}
+.prog-btn .quien b{display:block; font-family:var(--display); font-weight:600; font-size:.94rem; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.prog-btn .quien span{display:block; font-size:.72rem; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.prog-btn .flecha{
+  flex:none; width:7px; height:7px; margin-right:3px;
+  border-right:1.6px solid var(--ink-3); border-bottom:1.6px solid var(--ink-3);
+  transform:translateY(-2px) rotate(45deg);
+}
+.prog-menu{
+  position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:20;
+  background:var(--white); border-radius:14px; box-shadow:var(--flota-3);
+  padding:6px; display:flex; flex-direction:column; gap:2px;
+}
+.prog-menu[hidden]{display:none;}
+.prog-menu button{
+  display:flex; align-items:center; gap:9px; width:100%;
+  font:inherit; font-size:.9rem; text-align:left; cursor:pointer;
+  background:none; border:none; padding:9px 10px; border-radius:10px;
+  transition:background 180ms var(--ease);
+}
+.prog-menu button:hover{background:var(--sand);}
+.prog-menu button[aria-current="true"]{background:var(--linen); font-weight:600;}
+.prog-menu .marca{
+  flex:none; width:24px; height:24px; border-radius:7px;
+  background:var(--sand); color:var(--ink-2);
+  display:grid; place-items:center;
+  font-family:var(--display); font-weight:600; font-size:.66rem;
+}
+.prog-menu button[aria-current="true"] .marca{background:var(--ink); color:var(--linen);}
+.prog-menu i{
+  font-style:normal; font-family:var(--mono); font-size:.5rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--clay); margin-left:auto;
+}
+.pn-app.plegado .prog{margin-inline:12px;}
+.pn-app.plegado .prog-btn{justify-content:center; padding-inline:0;}
+.pn-app.plegado .prog-btn .quien,
+.pn-app.plegado .prog-btn .flecha{display:none;}
+.pn-app.plegado .prog-menu{left:0; right:auto; width:216px;}
+
+/* Aviso de embudo provisional: se ve en Invitadas y en Ajustes. */
+.prov{
+  margin-top:18px; background:#F6EFE7; color:#7A5334;
+  border-radius:14px; padding:15px 17px; font-size:.92rem; line-height:1.6;
+}
+.prov b{display:block; font-weight:700; margin-bottom:3px;}
+
 .lado-rotulo{
   font-family:var(--mono); font-size:.58rem; letter-spacing:.16em;
   text-transform:uppercase; color:var(--ink-3);
@@ -791,10 +856,13 @@ body{background:var(--sand);}
 <body>
 
 <!-- ══════════ ENTRAR ══════════ -->
+<!-- El panel es de HTM, no de THRIVE. THRIVE es UN programa adentro; mañana
+     hay más y todos caen acá. Renombrado el 27 ago 2026, mientras era barato:
+     con siete programas y la costumbre de Denisse ya formada, no lo sería. -->
 <div class="pn-login" id="login">
   <form id="formLogin" autocomplete="on">
     <img src="/assets/img/seal.svg" alt="" width="56" height="56">
-    <h1>Panel de THRIVE</h1>
+    <h1>El panel de HTM</h1>
     <p>Las respuestas de las candidatas, sus estados y tus notas.</p>
 
     <label class="pn-campo">
@@ -818,10 +886,15 @@ body{background:var(--sand);}
   <aside class="pn-lado">
     <div class="lado-top">
       <img src="/assets/img/seal.svg" alt="" width="30" height="30">
-      <b>THRIVE</b>
+      <b>HTM</b>
       <button class="lado-plegar" type="button" id="btnPlegar" aria-label="Plegar la barra" title="Plegar la barra">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
       </button>
+    </div>
+
+    <div class="prog">
+      <button class="prog-btn" type="button" id="progBtn" aria-haspopup="true" aria-expanded="false" aria-controls="progMenu"></button>
+      <div class="prog-menu" id="progMenu" hidden role="menu"></div>
     </div>
 
     <div id="ladoNav"></div>
@@ -841,7 +914,7 @@ body{background:var(--sand);}
   <!-- ══════════ EL CONTENIDO ══════════ -->
   <div class="pn-main">
     <div class="main-top">
-      <p class="migas">THRIVE
+      <p class="migas"><span id="migaProg">HTM</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
         <b id="migaVista">Hoy</b>
       </p>
@@ -867,8 +940,9 @@ body{background:var(--sand);}
 
       <!-- ══════ INVITADAS ══════ -->
       <section class="vista" data-vista="invitadas" hidden>
-        <h1>Invitadas <i id="cuenta"></i></h1>
-        <p class="sub">Todas las que están en el embudo, desde la que apenas recibió el link hasta la que ya entró. Tocá a cualquiera para ver su ficha completa.</p>
+        <h1 id="invTit">Invitadas <i id="cuenta"></i></h1>
+        <p class="sub" id="invSub">Todas las que están en el embudo. Tocá a cualquiera para ver su ficha completa.</p>
+        <p class="prov" id="invProvisional" hidden></p>
 
         <div class="pn-controles">
           <label class="pn-buscar">
@@ -936,43 +1010,36 @@ body{background:var(--sand);}
       <!-- ══════ AJUSTES ══════ -->
       <section class="vista" data-vista="ajustes" hidden>
         <h1>Ajustes</h1>
-        <p class="sub">Los datos del programa. Lo que cambiés acá es lo que el panel usa para armar tus mensajes y tus links.</p>
+        <p class="sub">Lo tuyo es lo mismo en todos los programas. Lo de abajo cambia según cuál tengas abierto.</p>
 
         <div class="aj-grupo">
-          <h2>Cómo te escriben</h2>
+          <h2>Tu información</h2>
           <div class="ficha-campos">
             <label><span>Tu WhatsApp · solo dígitos con 504</span><input type="tel" id="ajWhatsapp" placeholder="50488912039" inputmode="numeric"></label>
-          </div>
-        </div>
-
-        <div class="aj-grupo">
-          <h2>Los grupos</h2>
-          <div class="ficha-campos">
-            <label><span>Hora</span><input type="text" id="ajHora" placeholder="7:30 a.m."></label>
-            <label><span>Cupos por grupo</span><input type="number" id="ajCupos" min="1" max="12"></label>
-            <label><span>Días del 2X</span><input type="text" id="ajDias2" placeholder="martes y jueves"></label>
-            <label><span>Días del 3X</span><input type="text" id="ajDias3" placeholder="lunes, miércoles y viernes"></label>
-            <label><span>Precio 2X · dólares al mes</span><input type="number" id="ajPrecio2" min="0"></label>
-            <label><span>Precio 3X · dólares al mes</span><input type="number" id="ajPrecio3" min="0"></label>
-            <label><span>El período arranca</span><input type="date" id="ajInicio"></label>
-            <label><span>Y termina</span><input type="date" id="ajFin"></label>
-          </div>
-        </div>
-
-        <div class="aj-grupo">
-          <h2>El estudio</h2>
-          <div class="ficha-campos ancho">
-            <label><span>Dirección</span><input type="text" id="ajDireccion" placeholder="Ave. Los Próceres, Tegucigalpa"></label>
+            <label><span>Dirección del estudio</span><input type="text" id="ajDireccion" placeholder="Ave. Los Próceres, Tegucigalpa"></label>
           </div>
           <div class="ficha-campos ancho" style="margin-top:14px;">
             <label><span>Link de Google Maps</span><input type="url" id="ajMapa" placeholder="https://maps.app.goo.gl/…"></label>
           </div>
         </div>
 
+        <div class="aj-grupo">
+          <h2 id="ajProgTit">Este programa</h2>
+          <div class="ficha-campos">
+            <label><span>Hora</span><input type="text" id="ajHora" placeholder="7:30 a.m."></label>
+            <label id="ajCuposCaja"><span>Cupos por grupo</span><input type="number" id="ajCupos" min="1" max="12"></label>
+            <label><span>Arranca</span><input type="date" id="ajInicio"></label>
+            <label><span>Termina</span><input type="date" id="ajFin"></label>
+          </div>
+          <div id="ajGrupos"></div>
+        </div>
+
         <div class="ficha-pie" style="position:static; border-top:none;">
           <button class="pn-btn" type="button" id="ajGuardar" style="width:auto; margin:0; padding:13px 26px;">Guardar ajustes</button>
           <span class="guardado" id="ajAviso" role="status"></span>
         </div>
+
+        <p class="prov" id="ajProvisional" hidden></p>
 
         <p class="aj-aviso">
           <b>Ojo: el sitio público todavía no lee esto.</b>
@@ -1006,7 +1073,10 @@ body{background:var(--sand);}
   'use strict';
 
   var CFG = (window.THRIVE && window.THRIVE.supabase) || {};
-  var TABLA = CFG.table || 'candidatas';
+  /* `candidatas` sigue existiendo como vista para que el formulario
+     público no se entere de nada, pero el panel escribe en las
+     tablas de verdad. */
+  var TABLA = 'inscripciones';
 
   var elLogin = document.getElementById('login');
   var elPanel = document.getElementById('panel');
@@ -1160,6 +1230,9 @@ body{background:var(--sand);}
       return 'Hola ' + n + ', te recuerdo tu clase de prueba, es ' + cuando + '. ' +
              'Acá está todo — dirección, hora y qué llevar: ' + link;
     },
+    recordatorioSimple: function(n, cuando){
+      return 'Hola ' + n + ', te recuerdo tu sesión, es ' + cuando + '. Nos vemos.';
+    },
     despues: function(n){
       return 'Hola ' + n + ', ¿cómo te sentiste con la clase? Me gustaría saber qué te pareció.';
     }
@@ -1174,7 +1247,7 @@ body{background:var(--sand);}
   var BASE = String((window.THRIVE && window.THRIVE.baseUrl) || '').replace(/\/$/, '');
 
   function formLink(c){
-    return BASE + '/thrive/form/' + (c.referida_por ? '?de=' + encodeURIComponent(c.referida_por) : '');
+    return BASE + (prog.ruta_form || '/') + (c.referida_por ? '?de=' + encodeURIComponent(c.referida_por) : '');
   }
   function tieneClase(c){
     if(!c.clase_en) return false;
@@ -1183,20 +1256,21 @@ body{background:var(--sand);}
   }
   function paseLink(c){
     var corto = primerNombre(c);
-    return BASE + '/thrive/schedule/?n=' + encodeURIComponent(corto) +
+    return BASE + (prog.ruta_pase || '/') + '?n=' + encodeURIComponent(corto) +
       (tieneClase(c) ? '&d=' + new Date(c.clase_en).toISOString().replace('.000','') : '');
   }
 
   function linksDe(c){
-    return [
-      { que:'El formulario', falta:'', url:formLink(c) },
+    var pila = [];
+    if(prog.ruta_form) pila.push({ que:'El formulario', falta:'', url:formLink(c) });
+    if(prog.ruta_pase) pila.push(
       { que:'El pase de su clase',
         /* Sin fecha no se puede copiar. El pase ya no cae a la fecha global
            de config.js —la asigna Denisse una por una—, así que mandarlo
            antes de asignarle día es mandarle un pase en blanco. */
         falta: tieneClase(c) ? '' : 'Ponele arriba la fecha de su clase y guardá. El link la lleva adentro.',
-        url: paseLink(c) }
-    ];
+        url: paseLink(c) });
+    return pila;
   }
 
   function copiar(texto){
@@ -1227,21 +1301,44 @@ body{background:var(--sand);}
     return aLaAntigua();
   }
 
-  /* ═══ los estados, en el orden del flujo ═══ */
-  var ESTADOS = [
-    ['formulario',     'Llenó el formulario'],
-    ['escribio',       'Escribió'],
-    ['invitada',       'Invitada'],
-    ['clase_agendada', 'Clase agendada'],
-    ['vino',           'Vino a la clase'],
-    ['adentro',        'Adentro'],
-    ['lista_espera',   'Lista de espera'],
-    ['no',             'No siguió']
-  ];
-  var nombreEstado = function(v){
-    for(var i=0;i<ESTADOS.length;i++) if(ESTADOS[i][0]===v) return ESTADOS[i][1];
-    return v;
-  };
+  /* ═══════════════════════════════════════════════════════════
+     LOS PROGRAMAS
+
+     El panel es de HTM, no de THRIVE. Cada programa trae su propio
+     embudo desde la base, así que los estados dejaron de ser una
+     constante del archivo: un taller de un día no tiene «clase de
+     prueba» y forzársela sería ponerle a Denisse una casilla que no
+     significa nada.
+     ═══════════════════════════════════════════════════════════ */
+  var PROGRAMAS = [];
+  var prog = null;          /* el programa activo, la fila entera */
+
+  function estadosDe(){
+    return (prog && prog.estados) || [];
+  }
+  function nombreEstado(v){
+    var e = estadosDe().filter(function(x){ return x.id === v; })[0];
+    return e ? e.nombre : v;
+  }
+  /* De un estado que cierra ya no se espera nada: quien entró o quien
+     dijo que no, no vuelve a aparecer como pendiente. */
+  function cierra(v){
+    var e = estadosDe().filter(function(x){ return x.id === v; })[0];
+    return !!(e && e.cierra);
+  }
+  function primerEstado(){
+    var e = estadosDe()[0];
+    return e ? e.id : null;
+  }
+  /* Lo propio del programa: cupos, grupos, hora. THRIVE los trae; los
+     otros tres todavía no, y el panel tiene que aguantarlo. */
+  function pAj(campo, respaldo){
+    var a = (prog && prog.ajustes) || {};
+    var v = a[campo];
+    return (v === null || v === undefined || v === '') ? respaldo : v;
+  }
+  function grupos(){ return pAj('grupos', []); }
+  function esThrive(){ return prog && prog.id === 'thrive'; }
 
   /* Las 15 preguntas, para mostrar la respuesta junto a su pregunta.
      El orden importa: es el mismo en que ella las contestó. */
@@ -1348,24 +1445,110 @@ body{background:var(--sand);}
     cargar();
   }
 
-  /* ═══ traer todo ═══ */
+  /* ═══ traer todo ═══
+     Cada fila que pinta el panel es una INSCRIPCIÓN —persona × programa—
+     con los datos de la persona pegados encima. Se aplanan `nombre` y
+     `telefono` a propósito: son los dos campos que toca media pantalla,
+     y hacer que cada sitio escriba `c.persona.nombre` no compra nada. */
   function cargar(){
-    /* Los ajustes van primero porque de ellos salen los rótulos —los
-       días de cada grupo, los cupos— que pintan todo lo demás. */
-    return cargarAjustes()
+    return cargarProgramas()
+      .then(cargarAjustes)
       .then(cargarClientas)
       .then(function(){
-        return sb.from(TABLA).select('*').order('creada_en', { ascending:false });
+        if(!prog) return { data: [] };
+        return sb.from('inscripciones')
+          .select('*, persona:personas(id,nombre,telefono,notas,es_clienta,activa)')
+          .eq('programa_id', prog.id)
+          .order('creada_en', { ascending:false });
       })
       .then(function(r){
         if(r.error){ console.error(r.error); return; }
-        datos = r.data || [];
-        pintarNav(); pintarDia(); pintarNuevas(); pintarToca(); pintarCupos();
+        datos = (r.data || []).map(function(i){
+          var per = i.persona || {};
+          i.nombre   = per.nombre || 'Sin nombre';
+          i.telefono = per.telefono || null;
+          return i;
+        });
+        pintarPrograma(); pintarNav(); pintarDia(); pintarNuevas();
+        pintarToca(); pintarCupos();
         pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
         if(vista === 'clientas') pintarClientas();
         if(vista === 'ajustes')  volcarAjustes();
       });
   }
+
+  function cargarProgramas(){
+    if(PROGRAMAS.length) return Promise.resolve();
+    return sb.from('programas').select('*').eq('activo', true).order('orden')
+      .then(function(r){
+        if(r.error){ console.error('programas:', r.error.message); return; }
+        PROGRAMAS = r.data || [];
+        var guardado = null;
+        try{ guardado = localStorage.getItem('thrive-programa'); }catch(e){}
+        prog = PROGRAMAS.filter(function(p){ return p.id === guardado; })[0] || PROGRAMAS[0] || null;
+      });
+  }
+
+  /* ═══ el selector de programa ═══ */
+  function iniciales(nombre){
+    var t = String(nombre || '').trim();
+    if(/^[0-9]/.test(t)) return t.slice(0,3);          /* «1:1» se queda como es */
+    var partes = t.split(/\s+/).filter(Boolean);
+    return (partes.length > 1 ? partes[0][0] + partes[1][0] : t.slice(0,2)).toUpperCase();
+  }
+
+  function pintarPrograma(){
+    if(!prog) return;
+    document.getElementById('progBtn').innerHTML =
+      '<span class="marca">' + esc(iniciales(prog.nombre)) + '</span>' +
+      '<span class="quien"><b>' + esc(prog.nombre) + '</b>' +
+        '<span>' + esc(prog.subtitulo || 'Programa') + '</span></span>' +
+      '<span class="flecha"></span>';
+
+    document.getElementById('progMenu').innerHTML = PROGRAMAS.map(function(p){
+      return '<button type="button" role="menuitem" data-p="' + esc(p.id) + '"' +
+             (p.id === prog.id ? ' aria-current="true"' : '') + '>' +
+             '<span class="marca">' + esc(iniciales(p.nombre)) + '</span>' +
+             esc(p.nombre) + (p.provisional ? '<i>Por definir</i>' : '') + '</button>';
+    }).join('');
+
+    var mp = document.getElementById('migaProg');
+    if(mp) mp.textContent = prog.nombre;
+
+    var bi = document.getElementById('btnInvitacion');
+    if(bi) bi.hidden = !prog.ruta_form;
+
+    document.getElementById('progMenu').querySelectorAll('[data-p]').forEach(function(b){
+      b.addEventListener('click', function(){ irAlPrograma(b.getAttribute('data-p')); });
+    });
+  }
+
+  function irAlPrograma(id){
+    var p = PROGRAMAS.filter(function(x){ return x.id === id; })[0];
+    if(!p) return;
+    prog = p;
+    try{ localStorage.setItem('thrive-programa', id); }catch(e){}
+    menuPrograma(false);
+    /* Los filtros son del programa que se deja atrás: sus estados no
+       existen en el que entra, y el disparador de la base lo rechazaría
+       igual. Se limpian antes de repintar. */
+    filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = '';
+    var b = document.getElementById('buscar'); if(b) b.value = '';
+    datos = [];
+    cargar();
+  }
+
+  function menuPrograma(abrir){
+    var m = document.getElementById('progMenu');
+    m.hidden = !abrir;
+    document.getElementById('progBtn').setAttribute('aria-expanded', String(abrir));
+  }
+  document.getElementById('progBtn').addEventListener('click', function(e){
+    e.stopPropagation();
+    menuPrograma(document.getElementById('progMenu').hidden);
+  });
+  document.addEventListener('click', function(){ menuPrograma(false); });
+  document.getElementById('progMenu').addEventListener('click', function(e){ e.stopPropagation(); });
 
   /* ═══════════════════════════════════════════════════════════
      LO QUE TE TOCA
@@ -1379,7 +1562,70 @@ body{background:var(--sand);}
      que no siguieron— no aparecen. Esta pila se vacía, y vacía es la
      respuesta correcta.
      ═══════════════════════════════════════════════════════════ */
+  function siguienteEstado(id){
+    var l = estadosDe();
+    for(var i=0;i<l.length-1;i++) if(l[i].id === id) return l[i+1];
+    return null;
+  }
+
   function tareaDe(c){
+    /* Antes que nada, la excepción: «adentro» cierra el embudo pero sin
+       grupo no cuenta en los cupos, así que sigue siendo un pendiente. */
+    if(esThrive() && c.estado === 'adentro' && !c.grupo){
+      return { c:c, prio:7,
+        motivo:'Está adentro pero sin grupo, así que no cuenta en los cupos.',
+        botones: grupos().map(function(g){
+          return { texto:'Ponerla en ' + g.id, campos:{ grupo:g.id } };
+        }) };
+    }
+    /* De un estado que cierra no se espera nada más. */
+    if(cierra(c.estado)) return null;
+    return esThrive() ? tareaThrive(c) : tareaGenerica(c);
+  }
+
+  /* ═══ el embudo de cualquier programa ═══
+     Los otros tres programas no tienen clase de prueba ni grupos de
+     cuatro, y sus guiones no están escritos. Lo que sí es cierto en
+     todos: alguien con alerta de salud, alguien que lleva días parado
+     en el mismo casillero, y una sesión que ya pasó o que es mañana. */
+  function tareaGenerica(c){
+    var n = primerNombre(c);
+    var sig = siguienteEstado(c.estado);
+    var pasar = sig ? [{ texto:'Pasar a «' + sig.nombre + '»', campos:{ estado:sig.id } }] : [];
+
+    if(c.alerta_salud){
+      return { c:c, prio:1, salud:true,
+        motivo:'Contestó que sí a una restricción médica o a síntomas al esforzarse. Hablá con ella antes de ponerla a entrenar.',
+        wa:{ texto:'Escribirle', mensaje:MSG.salud(n) } };
+    }
+
+    var conFecha = tieneClase(c);
+    var dClase = conFecha ? diasHasta(c.clase_en) : null;
+
+    if(conFecha && new Date(c.clase_en).getTime() < Date.now()){
+      return { c:c, prio:3,
+        motivo:'Su sesión era ' + hace(-dClase) + '. Falta saber si vino.',
+        botones: pasar.concat([{ texto:'No siguió', campos:{ estado:'no' } }]) };
+    }
+    if(conFecha && dClase !== null && dClase <= 1){
+      return { c:c, prio:4,
+        motivo:punto('Su sesión es ' + enCuanto(dClase) + ' a las ' + horaDe(c.clase_en)),
+        wa:{ texto:'Recordarle', mensaje:MSG.recordatorioSimple(n, enCuanto(dClase)) } };
+    }
+
+    /* Parada hace días en el mismo casillero. Tres es el corte: menos
+       es apuro, más ya es que se enfrió. */
+    var quieta = diasDesde(c.actualizada_en || c.creada_en);
+    if(quieta !== null && quieta >= 3){
+      return { c:c, prio:2,
+        motivo:'Lleva ' + quieta + ' días en «' + nombreEstado(c.estado) + '».',
+        wa:{ texto:'Escribirle', mensaje:MSG.esperando(n) },
+        botones: pasar };
+    }
+    return null;
+  }
+
+  function tareaThrive(c){
     var n = primerNombre(c);
     var e = c.estado;
     var conClase = tieneClase(c);
@@ -1423,15 +1669,6 @@ body{background:var(--sand);}
         wa:{ texto:'Mandarle el formulario', mensaje:MSG.formulario(n, formLink(c)) } };
     }
 
-    /* Adentro sin grupo no cuenta en los cupos: el panel diría que hay
-       lugar donde ya no lo hay. */
-    if(e === 'adentro' && !c.grupo){
-      return { c:c, prio:7,
-        motivo:'Está adentro pero sin grupo, así que no cuenta en los cupos.',
-        botones:[ { texto:'Ponerla en 2X', campos:{ grupo:'2X' } },
-                  { texto:'Ponerla en 3X', campos:{ grupo:'3X' } } ] };
-    }
-
     return null;
   }
 
@@ -1451,20 +1688,27 @@ body{background:var(--sand);}
   }
 
   function libresPorGrupo(){
-    return ['2X','3X'].map(function(g){
-      return ajCupos() - datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
+    return grupos().map(function(g){
+      return ajCupos() - datos.filter(function(c){
+        return c.grupo === g.id && cierra(c.estado) && c.estado !== 'no';
+      }).length;
     });
   }
 
   function pintarDia(){
     var t = tareas();
     var libres = libresPorGrupo();
-    var total = libres[0] + libres[1];
+    var total = libres.reduce(function(a,b){ return a + b; }, 0);
+    var hayCupos = libres.length > 0;
     /* La fecha la dice la cabecera de la vista; repetirla acá era
        decir dos veces lo mismo a dos centímetros de distancia. */
     function lugares(n){
-      return n === 0 ? 'Los dos grupos están completos.'
-           :  'Quedan ' + enLetras(n) + ' ' + (n === 1 ? 'lugar' : 'lugares') + ' entre los dos grupos.';
+      /* Un programa sin grupos no tiene «lugares» que contar: decir
+         «quedan cero» sería mentir en la dirección más confusa. */
+      if(!hayCupos) return prog ? (prog.subtitulo || prog.nombre) : '';
+      if(n === 0) return 'Todos los grupos están completos.';
+      return 'Quedan ' + enLetras(n) + ' ' + (n === 1 ? 'lugar' : 'lugares') +
+             (libres.length > 1 ? ' entre los grupos.' : ' en el grupo.');
     }
 
     var titular, resto;
@@ -1545,7 +1789,7 @@ body{background:var(--sand);}
   function accion(id, campos, btn){
     var antes = btn.textContent;
     btn.disabled = true; btn.textContent = 'Un momento…';
-    sb.from(TABLA).update(campos).eq('id', id).then(function(r){
+    sb.from('inscripciones').update(campos).eq('id', id).then(function(r){
       if(r.error){
         btn.disabled = false; btn.textContent = 'No se pudo — probá otra vez';
         setTimeout(function(){ btn.textContent = antes; }, 3000);
@@ -1562,41 +1806,47 @@ body{background:var(--sand);}
   function pintarCupos(){
     var cont = document.getElementById('tiles');
     var tope = ajCupos();
+    var tiles = [];
 
-    var tiles = ['2X','3X'].map(function(g){
-      var dentro = datos.filter(function(c){ return c.grupo === g && c.estado === 'adentro'; }).length;
-      var camino = datos.filter(function(c){
-        return c.grupo === g && (c.estado === 'clase_agendada' || c.estado === 'vino');
-      }).length;
+    /* Los cupos por grupo existen donde el programa declara grupos. El
+       1:1 no tiene y el taller tampoco: ahí una barra de «3 de 4» no
+       significaría nada. */
+    grupos().forEach(function(g){
+      var dentro = datos.filter(function(c){ return c.grupo === g.id && cierra(c.estado) && c.estado !== 'no'; }).length;
+      var camino = datos.filter(function(c){ return c.grupo === g.id && !cierra(c.estado); }).length;
       var libres = tope - dentro;
       var barras = '';
       for(var i=0;i<tope;i++) barras += '<i class="' + (i < dentro ? 'lleno' : '') + '"></i>';
-      return '<div class="tile">' +
-        '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>THRIVE ' + g + '</b></div>' +
+      tiles.push('<div class="tile">' +
+        '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>' + esc(prog.nombre + ' ' + g.id) + '</b></div>' +
         '<div class="barras">' + barras + '</div>' +
         '<span class="pie">' + (libres <= 0 ? 'Grupo completo' :
             'Quedan <b style="color:var(--ink)">' + libres + '</b> ' + (libres === 1 ? 'lugar' : 'lugares')) +
-          (camino ? ' · ' + camino + ' en camino' : '') + '</span>' +
-      '</div>';
+          (camino ? ' · ' + camino + ' en camino' : '') + '</span></div>');
     });
 
-    /* Vivas en el embudo: ni las que ya entraron ni las que no siguieron. */
-    var vivas = datos.filter(function(c){
-      return c.estado !== 'adentro' && c.estado !== 'no';
-    }).length;
+    var vivas = datos.filter(function(c){ return !cierra(c.estado); }).length;
     tiles.push('<div class="tile">' +
       '<div class="tile-top"><span class="ico">' + svg('invitadas', 2) + '</span><b>En el embudo</b></div>' +
       '<span class="cifra">' + vivas + '</span>' +
-      '<span class="pie">' + (vivas === 1 ? 'mujer en camino a una clase' : 'mujeres en camino a una clase') + '</span>' +
-    '</div>');
+      '<span class="pie">' + (vivas === 1 ? 'persona sin resolver' : 'personas sin resolver') + '</span></div>');
+
+    /* Sin grupos sobra un lugar en la fila, y el número que falta es
+       cuánta gente ya cerró bien: entró, pagó, participó. */
+    if(!grupos().length){
+      var cerradas = datos.filter(function(c){ return cierra(c.estado) && c.estado !== 'no'; }).length;
+      tiles.push('<div class="tile">' +
+        '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>Cerradas</b></div>' +
+        '<span class="cifra">' + cerradas + '</span>' +
+        '<span class="pie">' + (cerradas === 1 ? 'llegó hasta el final' : 'llegaron hasta el final') + '</span></div>');
+    }
 
     var t = tareas().length;
     tiles.push('<div class="tile' + (t ? ' urge' : '') + '">' +
       '<div class="tile-top"><span class="ico">' + svg('hoy', 2) + '</span><b>Pendientes</b></div>' +
       '<span class="cifra">' + t + '</span>' +
       '<span class="pie">' + (t === 0 ? 'nadie está esperando nada' :
-          (t === 1 ? 'cosa que resolver hoy' : 'cosas que resolver hoy')) + '</span>' +
-    '</div>');
+          (t === 1 ? 'cosa que resolver hoy' : 'cosas que resolver hoy')) + '</span></div>');
 
     cont.innerHTML = tiles.join('');
   }
@@ -1611,16 +1861,17 @@ body{background:var(--sand);}
            esc(txt) + (n == null ? '' : ' · ' + n) + '</option>';
   }
   function marcar(id, puesto){
-    document.getElementById(id).classList.toggle('puesto', !!puesto);
+    var el = document.getElementById(id);
+    if(el) el.classList.toggle('puesto', !!puesto);
   }
 
   function pintarFiltros(){
     var alertas = datos.filter(function(c){ return c.alerta_salud; }).length;
     var ops = [opcion('todas', 'Todas', datos.length, filtro)];
     if(alertas) ops.push(opcion('alerta', 'Revisar salud', alertas, filtro));
-    ESTADOS.forEach(function(e){
-      var n = datos.filter(function(c){ return c.estado === e[0]; }).length;
-      if(n) ops.push(opcion(e[0], e[1], n, filtro));
+    estadosDe().forEach(function(e){
+      var n = datos.filter(function(c){ return c.estado === e.id; }).length;
+      if(n) ops.push(opcion(e.id, e.nombre, n, filtro));
     });
     /* Si el filtro puesto se quedó sin nadie —ella movió a la última—
        la opción desaparecería y el <select> mostraría otra cosa sin
@@ -1647,8 +1898,13 @@ body{background:var(--sand);}
   }
 
   function pintarFiltrosHorario(){
+    /* Sin grupos no hay eje de horario que filtrar. */
+    var caja = document.getElementById('wrapHorario');
+    if(caja) caja.hidden = !grupos().length;
+    if(!grupos().length){ fHorario = ''; return; }
     function cuenta(g){ return datos.filter(function(c){ return grupoDe(c) === g; }).length; }
-    var pares = [['2X','2X · ' + ajDias('2X')], ['3X','3X · ' + ajDias('3X')], ['?','Todavía no sabe']];
+    var pares = grupos().map(function(g){ return [g.id, g.id + (g.dias ? ' · ' + g.dias : '')]; })
+                        .concat([['?','Todavía no sabe']]);
     var ops = [opcion('', 'Cualquiera', datos.length, fHorario)];
     pares.forEach(function(x){
       var n = cuenta(x[0] === '?' ? '' : x[0]);
@@ -1780,8 +2036,8 @@ body{background:var(--sand);}
       '</div>';
     }).join('');
 
-    var opciones = ESTADOS.map(function(e){
-      return '<option value="' + e[0] + '"' + (c.estado === e[0] ? ' selected' : '') + '>' + esc(e[1]) + '</option>';
+    var opciones = estadosDe().map(function(e){
+      return '<option value="' + esc(e.id) + '"' + (c.estado === e.id ? ' selected' : '') + '>' + esc(e.nombre) + '</option>';
     }).join('');
 
     var fechaLocal = c.clase_en ? aInputHN(c.clase_en) : '';
@@ -1804,13 +2060,21 @@ body{background:var(--sand);}
         '<h3>Su seguimiento</h3>' +
         '<div class="ficha-campos">' +
           '<label><span>Estado</span><select id="fEstado">' + opciones + '</select></label>' +
-          '<label><span>Grupo</span><select id="fGrupo">' +
-            '<option value=""' + (!c.grupo ? ' selected' : '') + '>Sin definir</option>' +
-            '<option value="2X"' + (c.grupo === '2X' ? ' selected' : '') + '>2X · martes y jueves</option>' +
-            '<option value="3X"' + (c.grupo === '3X' ? ' selected' : '') + '>3X · lunes, miércoles y viernes</option>' +
-          '</select></label>' +
+          /* Sin grupos declarados el campo no aparece: preguntarle a
+             Denisse en qué grupo va alguien del taller de caídas es
+             pedirle que llene una casilla que no significa nada. */
+          (grupos().length
+            ? '<label><span>Grupo</span><select id="fGrupo">' +
+                '<option value=""' + (!c.grupo ? ' selected' : '') + '>Sin definir</option>' +
+                grupos().map(function(g){
+                  return '<option value="' + esc(g.id) + '"' + (c.grupo === g.id ? ' selected' : '') + '>' +
+                         esc(g.id + (g.dias ? ' · ' + g.dias : '')) + '</option>';
+                }).join('') +
+              '</select></label>'
+            : '') +
           '<label><span>Teléfono</span><input type="tel" id="fTel" value="' + esc(c.telefono || '') + '" placeholder="+504…"></label>' +
-          '<label><span>Clase de prueba · hora de Honduras</span><input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '"></label>' +
+          '<label><span>' + (prog.ruta_pase ? 'Clase de prueba' : 'Primera sesión') +
+            ' · hora de Honduras</span><input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '"></label>' +
         '</div>' +
         '<div class="ficha-campos ancho" style="margin-top:14px;">' +
           '<label><span>Tus notas · no las ve nadie más</span>' +
@@ -1818,6 +2082,7 @@ body{background:var(--sand);}
         '</div>' +
       '</div>' +
 
+      (prog.ruta_form || prog.ruta_pase ?
       '<div class="ficha-sec">' +
         '<h3>Los links que le mandás</h3>' +
         '<div class="ficha-links">' +
@@ -1833,9 +2098,9 @@ body{background:var(--sand);}
             '</div>';
           }).join('') +
         '</div>' +
-      '</div>' +
+      '</div>' : '') +
 
-      '<div class="ficha-sec"><h3>Lo que contestó</h3>' + qa + '</div>' +
+      (Object.keys(R).length ? '<div class="ficha-sec"><h3>Lo que contestó</h3>' + qa + '</div>' : '') +
 
       '<div class="ficha-pie">' +
         '<button class="pn-btn" type="button" id="fGuardar">Guardar</button>' +
@@ -1881,13 +2146,24 @@ body{background:var(--sand);}
     var clase = document.getElementById('fClase').value;
     btn.disabled = true; btn.textContent = 'Guardando…'; aviso.textContent = '';
 
-    sb.from(TABLA).update({
-      estado:   document.getElementById('fEstado').value,
-      grupo:    document.getElementById('fGrupo').value || null,
-      telefono: document.getElementById('fTel').value.trim() || null,
-      clase_en: clase ? deInputHN(clase) : null,
-      notas:    document.getElementById('fNotas').value.trim() || null
-    }).eq('id', id).then(function(r){
+    /* El teléfono es de la PERSONA y el resto de la inscripción: la
+       misma señora en dos programas tiene un solo número, y guardarlo
+       en cada inscripción sería tener dos que se contradicen. */
+    var c = datos.filter(function(x){ return x.id === id; })[0] || {};
+    var tel = document.getElementById('fTel').value.trim() || null;
+
+    sb.from('personas').update({ telefono: tel }).eq('id', c.persona_id)
+      .then(function(rp){
+        if(rp.error) throw rp.error;
+        return sb.from('inscripciones').update({
+          estado:   document.getElementById('fEstado').value,
+          grupo:    (document.getElementById('fGrupo') || {}).value || null,
+          clase_en: clase ? deInputHN(clase) : null,
+          notas:    document.getElementById('fNotas').value.trim() || null
+        }).eq('id', id);
+      })
+      .catch(function(e){ return { error:e }; })
+      .then(function(r){
       btn.disabled = false; btn.textContent = 'Guardar';
       if(r.error){ aviso.textContent = 'No se pudo guardar: ' + r.error.message; return; }
       aviso.textContent = 'Guardado';
@@ -1936,11 +2212,15 @@ body{background:var(--sand);}
   function ajWa(){
     return String(aj('whatsapp', (window.THRIVE && window.THRIVE.whatsapp) || '')).replace(/\D/g,'');
   }
-  function ajHora(){ return aj('hora', '7:30 a.m.'); }
-  function ajCupos(){ return Number(aj('cupos_por_grupo', 4)) || 4; }
+  /* La hora y los cupos son del PROGRAMA, no de Denisse: THRIVE es a
+     las 7:30 con grupos de cuatro y el taller de caídas no tiene por
+     qué serlo. `ajustes` se queda con lo que es de ella —su WhatsApp,
+     la dirección del estudio— y lo demás bajó a cada programa. */
+  function ajHora(){ return pAj('hora', aj('hora', '7:30 a.m.')); }
+  function ajCupos(){ return Number(pAj('cupos_por_grupo', 4)) || 4; }
   function ajDias(g){
-    return g === '3X' ? aj('dias_3x', 'lunes, miércoles y viernes')
-                      : aj('dias_2x', 'martes y jueves');
+    var e = grupos().filter(function(x){ return x.id === g; })[0];
+    return (e && e.dias) || g || '';
   }
 
   function cargarAjustes(){
@@ -1965,68 +2245,78 @@ body{background:var(--sand);}
      detalle real es un mensaje genérico, que es exactamente lo que
      estos ocho existen para evitar.
      ═══════════════════════════════════════════════════════════ */
+  /* `programas` dice para cuáles sirve cada guion. Los ocho difíciles
+     los escribió Denisse PARA THRIVE: hablan de la clase de prueba, del
+     grupo de cuatro y de los tres meses. Ofrecérselos en el taller de
+     caídas sería ofrecerle decir cosas que no son ciertas ahí. */
   var MENSAJES = [
-    { id:'apertura', titulo:'Primer mensaje',
+    { id:'generico', programas:null, titulo:'Primer mensaje',
+      cuando:'Sirve en cualquier programa. Abre la conversación sin prometer nada.',
+      estados:null,
+      texto:'Hola {nombre}, soy Denisse de Healing Through Movement.\n\n{lo que le querés decir}\n\n¿Cuándo podemos conversar?',
+      porque:'Deliberadamente casi vacío: el hueco del medio es tuyo. Los guiones largos que hay abajo están escritos para THRIVE y todavía no hay equivalentes para los otros programas.' },
+
+    { id:'apertura', programas:['thrive'], titulo:'Primer mensaje',
       cuando:'Todavía no han hablado. Abre la conversación sin pedir nada.',
       estados:['invitada','escribio','formulario'],
       texto:'Hola {nombre}, soy Denisse de Healing Through Movement. Ya vi tus respuestas — gracias por tomarte el tiempo de contestarlas.\n\n¿Cuándo podemos conversar?',
       porque:'Corto y sin pedirle nada todavía. La primera respuesta viene de una persona, que para grupos de cuatro es el producto entero.' },
 
-    { id:'salud', titulo:'Antes de agendarle, por salud',
+    { id:'salud', programas:['thrive'], titulo:'Antes de agendarle, por salud',
       cuando:'Contestó que sí a una restricción médica o a síntomas al esforzarse.',
       estados:['formulario'],
       texto:'Hola {nombre}, soy Denisse de Healing Through Movement. Leí tus respuestas y me gustaría que conversemos un momento antes de agendarte la clase de prueba.\n\n¿Cuándo te queda bien?',
       porque:'A propósito NO menciona salud por escrito. Eso se conversa: WhatsApp es un canal que ella no controla y del otro lado puede haber cualquiera leyendo.' },
 
-    { id:'callada', titulo:'Escribió, pero no llenó el formulario',
+    { id:'callada', programas:['thrive'], titulo:'Escribió, pero no llenó el formulario',
       cuando:'Pasaron días desde su último mensaje y la conversación se enfrió. Un solo recordatorio.',
       estados:['escribio','invitada'],
       texto:'Hola {nombre}, ¿cómo vas?\n\nTe dejo otra vez el link de las preguntas, por si se te perdió entre los mensajes: {link}\n\nTe toma unos minutos. Con eso ya te armo tu clase de prueba.\n\nY si estos días te diste cuenta de que no es el momento, decímelo con confianza. Te guardo para la siguiente edición y listo.',
       porque:'Le regala una razón de por qué no contestó que no es «te ignoré»: el link se perdió. Eso le quita el costo social de retomar. Y le abre la puerta de salida, porque la gente contesta más rápido cuando decir que no es fácil.' },
 
-    { id:'agendar', titulo:'Llenó el formulario, pero no agendó',
+    { id:'agendar', programas:['thrive'], titulo:'Llenó el formulario, pero no agendó',
       cuando:'Ya contestó todo y falta ponerle día a la clase de prueba.',
       estados:['formulario'],
       texto:'Hola {nombre}, leí tus respuestas. Gracias por tomarte el tiempo, se nota que lo pensaste.\n\n{un detalle real de lo que ella escribió}\n\nTe tengo espacio para la clase de prueba el {día} a las {hora}. ¿Te sirve ese día o buscamos otro?',
       porque:'La línea del medio hace todo el trabajo: es la prueba de que la leíste de verdad, y tiene que salir de sus respuestas. Cierra con dos opciones en vez de un sí o un no, para que la respuesta fácil siga siendo venir.' },
 
-    { id:'pase', titulo:'Recordarle su clase',
+    { id:'pase', programas:['thrive'], titulo:'Recordarle su clase',
       cuando:'Ya tiene día asignado y conviene que le llegue el pase.',
       estados:['clase_agendada'],
       texto:'Hola {nombre}, te recuerdo tu clase de prueba, es el {día}.\n\nAcá está todo — dirección, hora y qué llevar: {pase}',
       porque:'El pase no se lee, se guarda. Mandarlo el día antes es lo que hace que no tenga que buscarte para preguntar dónde era.' },
 
-    { id:'enfriada', titulo:'Vino a la clase y no ha decidido',
+    { id:'enfriada', programas:['thrive'], titulo:'Vino a la clase y no ha decidido',
       cuando:'Ya entrenó con vos y todavía no dice que sí ni que no.',
       estados:['vino'],
       texto:'Hola {nombre}, me quedé pensando en tu clase del {día} — {algo concreto que le salió bien}.\n\nNo te escribo para presionarte. Te escribo para decirte que el cupo del grupo de {grupo} sigue siendo tuyo hasta el {fecha límite}, y después lo abro a la lista.\n\nSi tenés dudas de cualquier tipo — el horario, los tres meses, el precio, lo que sea — preguntame y las vemos.',
       porque:'Nombra la presión en voz alta para desactivarla, y recién después pone una fecha. La urgencia solo funciona si es cierta: con cuatro cupos por grupo, lo es. La última línea nombra las tres objeciones porque casi nadie se atreve a decir «es el precio».' },
 
-    { id:'lleno', titulo:'Preguntó y los grupos están llenos',
+    { id:'lleno', programas:['thrive'], titulo:'Preguntó y los grupos están llenos',
       cuando:'Los ocho cupos están tomados. Este mensaje decide si se queda en tu órbita o desaparece.',
       estados:['lista_espera','escribio','invitada','formulario'],
       texto:'Hola {nombre}, gracias por escribirme.\n\nTe voy a ser honesta: los dos grupos ya están completos. Son {cupos} mujeres por grupo y ese número no lo muevo, porque es justo lo que me deja verlas a todas mientras entrenan.\n\n¿Te anoto para la siguiente edición? Arranca {cuándo arranca}. Y si alguien suelta un espacio antes, vos sos la primera a la que le escribo.',
       porque:'El límite se explica como la razón por la que el programa funciona, no como una pared administrativa. Eso convierte un «no hay campo» en una señal de calidad. La última frase solo se dice si es cierta: anotala en orden y respetá el orden.' },
 
-    { id:'cupo', titulo:'Se abrió un cupo y ella está en la lista',
+    { id:'cupo', programas:['thrive'], titulo:'Se abrió un cupo y ella está en la lista',
       cuando:'Alguien soltó un espacio y le toca a ella.',
       estados:['lista_espera'],
       texto:'Hola {nombre}, se soltó un espacio en el grupo de {grupo}.\n\nMe acordé de vos de una. ¿Lo querés?\n\nTe lo guardo hasta {cuándo}. Si para entonces no me has dicho nada sigo con la lista, sin problema — así funciona y ya lo sabías.',
       porque:'Va corto a propósito: explicar una buena noticia la debilita. La fecha límite viene con el perdón por adelantado —«sin problema»— para que, si no le queda, pueda decírtelo en vez de desaparecer por vergüenza.' },
 
-    { id:'no_momento', titulo:'No es el momento — el horario o los tres meses',
+    { id:'no_momento', programas:['thrive'], titulo:'No es el momento — el horario o los tres meses',
       cuando:'Ya conversaron y ves que ahorita no le calza la vida, no el programa.',
       estados:['formulario','vino','escribio'],
       texto:'Hola {nombre}, estuve pensando en lo que hablamos.\n\nCreo que THRIVE te va a servir muchísimo, pero no ahorita. Las {hora} {días}, con {lo que tiene encima}, te va a poner a escoger entre cumplir y sentirte mal por no cumplir. No quiero ponerte ahí.\n\nTe propongo algo: te anoto para {cuándo} y en {cuándo le escribís} te escribo yo. Si para entonces la cosa está más despejada, arrancás sin culpa.',
       porque:'El no queda puesto sobre el calendario y no sobre ella, que es la diferencia entre posponer y descartar. Nombra el fracaso del que la estás protegiendo, y el seguimiento queda de tu lado: ella no tiene que volver a pedir nada.' },
 
-    { id:'individual', titulo:'Necesita trabajo individual primero',
+    { id:'individual', programas:['thrive'], titulo:'Necesita trabajo individual primero',
       cuando:'Lo que trae necesita atención uno a uno antes de un grupo de cuatro.',
       estados:['formulario','vino'],
       texto:'Hola {nombre}, le di vueltas a lo que me contaste de {lo que te contó} y quiero ser franca con vos.\n\nEn un grupo de {cupos} puedo adaptarte el trabajo, pero no puedo darte lo que {eso} necesita los primeros meses. No es que no podás entrenar fuerza. Es que primero hay que trabajarla de cerca, una a una.\n\nSi querés, lo armamos así: unas sesiones individuales conmigo, y cuando estés lista te pasás al grupo. Te cuento cómo funciona.',
       porque:'«No es que no podás» está ahí para matar la lectura que ella va a hacer sola: que está demasiado dañada para entrenar. Sin esa frase, un no por salud se convierte en una sentencia sobre su cuerpo. Y el cierre convierte el no en otra oferta.' },
 
-    { id:'no_encaja', titulo:'No es lo que ella anda buscando',
+    { id:'no_encaja', programas:['thrive'], titulo:'No es lo que ella anda buscando',
       cuando:'Ya vino, y lo que busca no es lo que THRIVE hace.',
       estados:['vino'],
       texto:'Hola {nombre}, gracias de nuevo por venir el {día}. De verdad disfruté entrenarte.\n\nDespués de la clase me quedé pensando y quiero ser honesta antes de que pongás tres meses y tu plata en esto.\n\nLo que me dijiste que andás buscando es {lo que ella dijo, con sus palabras}. THRIVE te va a hacer más fuerte y sí va a cambiar tu cuerpo, pero está construido alrededor de lo que tu cuerpo puede hacer, y va más lento de lo que estás esperando. No quiero venderte algo que en el mes dos te va a decepcionar.',
@@ -2065,8 +2355,13 @@ body{background:var(--sand);}
   function abrirHoja(id){
     var c = datos.filter(function(x){ return x.id === id; })[0];
     if(!c) return;
-    var sug = MENSAJES.filter(function(m){ return m.estados.indexOf(c.estado) !== -1; });
-    var resto = MENSAJES.filter(function(m){ return m.estados.indexOf(c.estado) === -1; });
+    /* Primero se descartan los que no son de este programa; recién
+       después se separan por si calzan con cómo está ella hoy. */
+    var suyos = MENSAJES.filter(function(m){
+      return !m.programas || m.programas.indexOf(prog.id) !== -1;
+    });
+    var sug   = suyos.filter(function(m){ return m.estados && m.estados.indexOf(c.estado) !== -1; });
+    var resto = suyos.filter(function(m){ return !m.estados || m.estados.indexOf(c.estado) === -1; });
 
     function tarjeta(m, esSug){
       return '<button class="msg-op' + (esSug ? ' sugerido' : '') + '" type="button" data-msg="' + esc(m.id) + '">' +
@@ -2080,6 +2375,10 @@ body{background:var(--sand);}
         '<h2 id="hojaTit">Escribirle a ' + esc(primerNombre(c)) + '</h2>' +
         '<button class="ficha-x" type="button" data-cerrar-hoja aria-label="Cerrar">&times;</button>' +
       '</div>' +
+      (esThrive() ? '' :
+        '<p class="prov"><b>Este programa todavía no tiene guiones propios</b>' +
+        'Los ocho de THRIVE están escritos para la clase de prueba y los grupos de cuatro, ' +
+        'así que no se ofrecen acá. Decime cómo hablás en ' + esc(prog.nombre) + ' y los armamos.</p>') +
       '<div class="ficha-sec"><h3>Elegí el mensaje</h3>' +
         sug.map(function(m){ return tarjeta(m, true); }).join('') +
         (sug.length && resto.length ? '<div style="height:18px"></div>' : '') +
@@ -2264,8 +2563,20 @@ body{background:var(--sand);}
     document.querySelectorAll('.vista').forEach(function(s){
       s.hidden = s.getAttribute('data-vista') !== v;
     });
+    var pv = document.getElementById('invProvisional');
+    if(pv && prog){
+      pv.hidden = !prog.provisional;
+      if(prog.provisional){
+        pv.innerHTML = '<b>Embudo provisional</b>Los estados de ' + esc(prog.nombre) +
+          ' los puse yo como punto de partida. Se cambian en Ajustes cuando me digas cómo funciona.';
+      }
+    }
     var nombre = VISTAS.filter(function(x){ return x[0] === v; })[0];
     document.getElementById('migaVista').textContent = nombre ? nombre[1] : '';
+    /* La miga de la izquierda es el programa abierto, no la marca: es
+       el dato que cambia y el que se olvida. */
+    var mp = document.getElementById('migaProg');
+    if(mp && prog) mp.textContent = prog.nombre;
     pintarNav();
     window.scrollTo(0, 0);
     if(v === 'clientas') pintarClientas();
@@ -2329,8 +2640,11 @@ body{background:var(--sand);}
      ═══════════════════════════════════════════════════════════ */
   var clientas = [];
 
+  /* Ya no hay tabla `clientas`: una clienta es una PERSONA marcada.
+     Era la misma gente contada dos veces — una clienta puede además
+     estar inscrita en otro programa, y así sus notas son las mismas. */
   function cargarClientas(){
-    return sb.from('clientas').select('*').order('creada_en', { ascending:true })
+    return sb.from('personas').select('*').eq('es_clienta', true).order('creada_en', { ascending:true })
       .then(function(r){
         if(r.error){ console.warn('clientas:', r.error.message); return; }
         clientas = r.data || [];
@@ -2378,7 +2692,7 @@ body{background:var(--sand);}
     cont.querySelectorAll('[data-baja]').forEach(function(b){
       b.addEventListener('click', function(){
         b.disabled = true; b.textContent = 'Un momento…';
-        sb.from('clientas').update({ activa: b.getAttribute('data-a') === '1' })
+        sb.from('personas').update({ activa: b.getAttribute('data-a') === '1' })
           .eq('id', b.getAttribute('data-baja')).then(function(r){
             if(r.error){ b.disabled = false; b.textContent = 'No se pudo'; return; }
             cargarClientas().then(pintarClientas);
@@ -2409,9 +2723,10 @@ body{background:var(--sand);}
         document.getElementById('clNombre').focus(); return;
       }
       b.disabled = true; b.textContent = 'Agregando…'; avi.textContent = '';
-      sb.from('clientas').insert({
+      sb.from('personas').insert({
         nombre: nombre.slice(0,120),
-        telefono: document.getElementById('clTel').value.trim() || null
+        telefono: document.getElementById('clTel').value.trim() || null,
+        es_clienta: true
       }).then(function(r){
         b.disabled = false; b.textContent = 'Agregar';
         if(r.error){ avi.textContent = 'No se pudo agregar: ' + r.error.message; return; }
@@ -2425,53 +2740,113 @@ body{background:var(--sand);}
   /* ═══════════════════════════════════════════════════════════
      AJUSTES — la pantalla
      ═══════════════════════════════════════════════════════════ */
-  var CAMPOS_AJ = [
-    ['ajWhatsapp','whatsapp','texto'],
+  /* ═══════════════════════════════════════════════════════════
+     AJUSTES — en dos mitades
+
+     Lo de Denisse es lo mismo en los cuatro programas: su WhatsApp y
+     la dirección del estudio. Lo demás —hora, cupos, precios, fechas—
+     es de CADA programa y por eso bajó a `programas.ajustes`. Tenerlo
+     todo junto obligaba a que el taller de caídas heredara los grupos
+     de cuatro de THRIVE.
+     ═══════════════════════════════════════════════════════════ */
+  var CAMPOS_DENISSE = [
+    ['ajWhatsapp','whatsapp'],
+    ['ajDireccion','direccion'],
+    ['ajMapa','mapa']
+  ];
+  var CAMPOS_PROG = [
     ['ajHora','hora','texto'],
     ['ajCupos','cupos_por_grupo','numero'],
-    ['ajDias2','dias_2x','texto'],
-    ['ajDias3','dias_3x','texto'],
-    ['ajPrecio2','precio_2x','numero'],
-    ['ajPrecio3','precio_3x','numero'],
     ['ajInicio','periodo_inicio','texto'],
-    ['ajFin','periodo_fin','texto'],
-    ['ajDireccion','direccion','texto'],
-    ['ajMapa','mapa','texto']
+    ['ajFin','periodo_fin','texto']
   ];
 
   function volcarAjustes(){
-    CAMPOS_AJ.forEach(function(f){
+    CAMPOS_DENISSE.forEach(function(f){
+      var el = document.getElementById(f[0]);
+      if(el) el.value = (AJ[f[1]] === null || AJ[f[1]] === undefined) ? '' : String(AJ[f[1]]);
+    });
+    if(!prog) return;
+
+    document.getElementById('ajProgTit').textContent = prog.nombre;
+    CAMPOS_PROG.forEach(function(f){
       var el = document.getElementById(f[0]);
       if(!el) return;
-      var v = AJ[f[1]];
+      var v = (prog.ajustes || {})[f[1]];
       el.value = (v === null || v === undefined) ? '' : String(v);
     });
+
+    /* Los grupos son una lista de largo variable: THRIVE tiene dos, el
+       1:1 ninguno. Se pintan, no se declaran en el marcado. */
+    var gs = grupos();
+    /* Sin grupos, «cupos por grupo» es una casilla sin referente. */
+    var cc = document.getElementById('ajCuposCaja');
+    if(cc) cc.hidden = !gs.length;
+
+    document.getElementById('ajGrupos').innerHTML = !gs.length
+      ? '<p class="ayuda" style="margin-top:14px;">Este programa no trabaja por grupos.</p>'
+      : gs.map(function(g, i){
+          return '<div class="ficha-campos" style="margin-top:14px;">' +
+            '<label><span>Días del ' + esc(g.id) + '</span>' +
+              '<input type="text" data-g="' + i + '" data-k="dias" value="' + esc(g.dias || '') + '"></label>' +
+            '<label><span>Precio del ' + esc(g.id) + ' · al mes</span>' +
+              '<input type="number" min="0" data-g="' + i + '" data-k="precio" value="' + esc(g.precio == null ? '' : g.precio) + '"></label>' +
+          '</div>';
+        }).join('');
+
+    var pv = document.getElementById('ajProvisional');
+    pv.hidden = !prog.provisional;
+    if(prog.provisional){
+      pv.innerHTML = '<b>El embudo de ' + esc(prog.nombre) + ' es provisional</b>' +
+        'Los estados que ves —' +
+        esc(estadosDe().map(function(e){ return e.nombre; }).join(' → ')) +
+        '— son un punto de partida que puse yo, no una decisión tuya. Decime cómo funciona de verdad y los cambio.';
+    }
   }
 
   document.getElementById('ajGuardar').addEventListener('click', function(){
     var b = this, avi = document.getElementById('ajAviso');
-    var campos = {};
-    CAMPOS_AJ.forEach(function(f){
+    b.disabled = true; b.textContent = 'Guardando…'; avi.textContent = '';
+
+    var mios = {};
+    CAMPOS_DENISSE.forEach(function(f){
+      var el = document.getElementById(f[0]);
+      if(el) mios[f[1]] = el.value.trim() || null;
+    });
+    /* El WhatsApp viaja como dígitos: si entra con + o guiones, los
+       links de wa.me salen rotos y no se nota hasta que alguien toca uno. */
+    if(mios.whatsapp) mios.whatsapp = mios.whatsapp.replace(/\D/g,'');
+
+    var suyos = JSON.parse(JSON.stringify(prog.ajustes || {}));
+    CAMPOS_PROG.forEach(function(f){
       var el = document.getElementById(f[0]);
       if(!el) return;
       var v = el.value.trim();
-      if(f[2] === 'numero') campos[f[1]] = v === '' ? null : Number(v);
-      else                  campos[f[1]] = v === '' ? null : v;
+      if(f[2] === 'numero') suyos[f[1]] = v === '' ? null : Number(v);
+      else                  suyos[f[1]] = v === '' ? null : v;
     });
-    /* La base exige entre 1 y 12 y no acepta null: sin esto el guardado
-       falla entero por un campo que la persona dejó vacío sin querer. */
-    if(!campos.cupos_por_grupo) campos.cupos_por_grupo = 4;
-    /* El WhatsApp viaja como dígitos: si entra con + o guiones, los
-       links de wa.me salen rotos y no se nota hasta que alguien toca uno. */
-    if(campos.whatsapp) campos.whatsapp = campos.whatsapp.replace(/\D/g,'');
+    if(!suyos.cupos_por_grupo) delete suyos.cupos_por_grupo;
 
-    b.disabled = true; b.textContent = 'Guardando…'; avi.textContent = '';
-    sb.from('ajustes').update(campos).eq('id', 1).then(function(r){
+    var gs = (suyos.grupos || []).map(function(g){ return JSON.parse(JSON.stringify(g)); });
+    document.getElementById('ajGrupos').querySelectorAll('[data-g]').forEach(function(el){
+      var i = Number(el.getAttribute('data-g'));
+      if(!gs[i]) return;
+      var k = el.getAttribute('data-k');
+      gs[i][k] = k === 'precio' ? (el.value.trim() === '' ? null : Number(el.value)) : el.value.trim();
+    });
+    if(gs.length) suyos.grupos = gs;
+
+    Promise.all([
+      sb.from('ajustes').update(mios).eq('id', 1),
+      sb.from('programas').update({ ajustes: suyos }).eq('id', prog.id)
+    ]).then(function(rs){
       b.disabled = false; b.textContent = 'Guardar ajustes';
-      if(r.error){ avi.textContent = 'No se pudo guardar: ' + r.error.message; return; }
-      Object.keys(campos).forEach(function(k){ AJ[k] = campos[k]; });
+      var err = rs.filter(function(r){ return r.error; })[0];
+      if(err){ avi.textContent = 'No se pudo guardar: ' + err.error.message; return; }
+      Object.keys(mios).forEach(function(k){ AJ[k] = mios[k]; });
+      prog.ajustes = suyos;
       avi.textContent = 'Guardado';
-      pintarCupos(); pintarFiltrosHorario();
+      pintarCupos(); pintarFiltrosHorario(); pintarDia();
       setTimeout(function(){ avi.textContent = ''; }, 2600);
     });
   });
@@ -2513,13 +2888,24 @@ body{background:var(--sand);}
 
     btn.disabled = true; btn.textContent = 'Agregando…'; elAviso.textContent = '';
 
-    sb.from(TABLA).insert({
-      nombre: nombre.slice(0,120),
-      telefono: tel || null,
-      referida_por: ref || null,
-      origen: 'manual',
-      estado: 'invitada'
-    }).then(function(r){
+    /* Nace la persona y, pegada, su inscripción en el programa que
+       está abierto. El estado es el PRIMERO del embudo de ese programa:
+       'invitada' no existe en el taller de caídas y la base lo
+       rechazaría. */
+    sb.from('personas').insert({ nombre: nombre.slice(0,120), telefono: tel || null })
+      .select('id').single()
+      .then(function(rp){
+        if(rp.error) throw rp.error;
+        return sb.from('inscripciones').insert({
+          persona_id: rp.data.id,
+          programa_id: prog.id,
+          estado: primerEstado(),
+          origen: 'manual',
+          referida_por: ref || null
+        });
+      })
+      .catch(function(e){ return { error:e }; })
+      .then(function(r){
       btn.disabled = false; btn.textContent = 'Agregar';
       if(r.error){ elAviso.textContent = 'No se pudo agregar: ' + r.error.message; return; }
       ['aNombre','aTel','aRef'].forEach(function(id){ document.getElementById(id).value = ''; });
