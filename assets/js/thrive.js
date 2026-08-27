@@ -297,6 +297,44 @@
     })();
   }
 
+  /* ───────── la luz responde a quien mira ─────────
+     El detalle de por qué se mueve con transform, por qué la capa va
+     inflada y por qué el grano NO se mueve está en thrive.css, junto a
+     la regla. Acá vive solo el cálculo.
+
+     AMPLITUD chica a propósito: 18 px sobre un degradado de 120vmax es
+     cerca del 1 %. Si hay que subirla hasta que se note claramente, ya se
+     notó demasiado — deja de ser luz y se vuelve efecto.
+
+     SIGNO negativo = parallax: la luz se aleja del cursor. Es lo que la
+     mantiene siendo una ventana. Para que persiga al mouse, quitar el
+     menos de AMPLITUD y nada más. */
+  if (!reduced && matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    (function () {
+      var AMPLITUD = -18;
+      var raizEl = document.documentElement;
+      var dx = 0, dy = 0, tx = 0, ty = 0, corriendo = false;
+
+      /* Persecución con retraso: .055 por cuadro. Sin retraso la luz
+         queda pegada al cursor y delata el truco; con retraso tiene masa.
+         El bucle se apaga solo al llegar —no hay rAF eterno de fondo. */
+      function seguir() {
+        tx += (dx - tx) * .055;
+        ty += (dy - ty) * .055;
+        raizEl.style.setProperty('--luz-x', tx.toFixed(2) + 'px');
+        raizEl.style.setProperty('--luz-y', ty.toFixed(2) + 'px');
+        if (Math.abs(dx - tx) > .08 || Math.abs(dy - ty) > .08) requestAnimationFrame(seguir);
+        else corriendo = false;
+      }
+
+      addEventListener('mousemove', function (e) {
+        dx = (e.clientX / innerWidth  - .5) * 2 * AMPLITUD;
+        dy = (e.clientY / innerHeight - .5) * 2 * AMPLITUD;
+        if (!corriendo) { corriendo = true; requestAnimationFrame(seguir); }
+      }, { passive: true });
+    })();
+  }
+
   /* ───────── expuesto para las otras páginas ───────── */
   window.THRIVE_RT = {
     referida: referida,

@@ -5,11 +5,22 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root{
-  /* Casi blanco con un grado de calidez. Un fondo más claro deja que
-     las sombras se lean y que las fotos floten — con el beige anterior
-     todo quedaba plano y la calidez competía con las fotos. */
-  --linen:#FAF8F4;
-  --sand:#F0EBE3;
+  /* Blanco. Decisión de Ivan, 27 ago 2026 — es el tercer paso del mismo
+     movimiento: beige → casi blanco (#FAF8F4) → blanco. El motivo de las
+     etapas anteriores sigue en pie y ahora llega a su extremo: las sombras
+     se leen y las fotos flotan.
+
+     Lo que se pierde: la calidez ya no vive en el papel. Pasa a vivir
+     entera en --luz, el degradado de arcilla de body::before, que sobre
+     blanco se lee mucho más que sobre el crema (que ya era cálido y se lo
+     comía). Si el sitio se siente frío, la perilla es --luz, no este token.
+
+     Consecuencia obligatoria: una superficie de --white sobre una página
+     de --white es invisible. Las dos que había en la landing —.nuance y
+     .plan— se resolvieron abajo, cada una a su manera. Cualquier tarjeta
+     nueva tiene el mismo problema y hay que resolverlo al crearla. */
+  --linen:#FFFFFF;
+  --sand:#F4F3F1;
   --white:#FFFFFF;
   --ink:#1E1D1A;
   --ink-2:#56524A;
@@ -256,6 +267,10 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .stag.in > *:nth-child(2){transition-delay:120ms}
 .stag.in > *:nth-child(3){transition-delay:200ms}
 .stag.in > *:nth-child(4){transition-delay:280ms}
+.stag.in > *:nth-child(5){transition-delay:360ms}
+.stag.in > *:nth-child(6){transition-delay:440ms}
+.stag.in > *:nth-child(7){transition-delay:520ms}
+.stag.in > *:nth-child(8){transition-delay:600ms}
 
 /* ── revelado en las dos direcciones ──
    La clase la pone el JS solo cuando el observador está activo. Si no
@@ -359,8 +374,30 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .profile p{font-size:1.02rem; color:var(--ink-2);}
 .profile p b{color:var(--ink); font-weight:700;}
 
-.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px;}
-.chip{font-family:var(--mono); font-size:0.7rem; letter-spacing:.06em; border:1px solid var(--line); border-radius:999px; padding:7px 15px; color:var(--ink-2);}
+/* ── las seis capacidades ──
+   Eran una fila de píldoras flotando sobre una sección casi vacía: el
+   patrón que delata trabajo hecho por una máquina, y encima mudo — seis
+   etiquetas que no decían nada. Ahora se leen como las escribe Denisse
+   en su propio documento, separadas por puntos: la lista de lo que
+   tiene adentro una sesión. El punto es lo único que lleva color.
+
+   No van en píldoras a propósito. Una píldora promete que se puede
+   tocar, y estas no se tocan. */
+.capacidades{
+  display:flex; flex-wrap:wrap; gap:0.3em 0.62em;
+  /* 28ch da un corte en escalera —3 / 2 / 1— en vez del bulto del medio
+     que salía a 24. Y evita que en pantallas anchas las seis palabras se
+     estiren en una sola línea, que volvería a parecer una tira. */
+  margin:0 0 clamp(28px,4vw,38px); max-width:28ch;
+  font-size:clamp(1.1rem,2.4vw,1.4rem); line-height:1.42;
+  letter-spacing:-0.012em; color:var(--ink); font-weight:500;
+}
+/* El punto se pega a la palabra que lo precede: si esa palabra salta de
+   línea, el punto salta con ella. Al revés quedaría una línea empezando
+   con un punto suelto. */
+.capacidades .cap:not(:last-child)::after{
+  content:'·'; color:var(--teal); font-weight:700; margin-left:0.62em;
+}
 
 .facts{margin-top:clamp(30px,5vw,42px); display:flex; flex-direction:column; gap:20px;}
 .fact{display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;}
@@ -374,7 +411,12 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .nuance{
   margin-top:clamp(34px,6vw,48px); padding:clamp(24px,4vw,34px) clamp(26px,4vw,38px) clamp(26px,4vw,36px);
   border-radius:14px;
-  background:var(--white); box-shadow:var(--flota-1);
+  /* Con la página en blanco, --white acá era invisible: la nota se
+     sostenía sola con una sombra de 8 % y desaparecía. Va en --sand y no
+     con borde, porque una nota ES un panel hundido: darle borde le daría
+     el peso de una tarjeta, que no es. Acá la relación se invierte —
+     antes la nota era más clara que el papel, ahora es más oscura. */
+  background:var(--sand); box-shadow:var(--flota-1);
 }
 .nuance::before{
   content:'\201C';
@@ -455,7 +497,14 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    se explicaron arriba; repetirlos acá los devaluaba. */
 .plans{display:grid; grid-template-columns:1fr; gap:16px; margin-top:clamp(34px,6vw,48px); align-items:start;}
 .plan{
-  background:var(--white); border:1px solid var(--line-soft); border-radius:18px;
+  /* Se queda en --white y sube el borde de --line-soft (7 %) a --line
+     (12 %). Sobre papel cálido la tarjeta levantaba por ser más clara y
+     más fría que la página; en blanco ese mecanismo ya no existe y lo
+     único que la sostiene es el contorno. Blanca y no --sand a propósito:
+     los planes son objetos apoyados sobre la página —el hover los levanta
+     8 px— y un relleno teñido los volvería paneles hundidos. La nota, que
+     sí es un panel, fue para el otro lado. */
+  background:var(--white); border:1px solid var(--line); border-radius:18px;
   padding:clamp(28px,5vw,36px); display:flex; flex-direction:column; gap:9px;
   box-shadow:var(--flota-2);
   transition:transform 420ms var(--ease), box-shadow 420ms var(--ease), border-color 420ms var(--ease);
@@ -519,6 +568,40 @@ body::before{
   background:
     radial-gradient(120vmax 92vmax at 108% -10%, rgba(192,138,99,.34), rgba(192,138,99,0) 60%),
     radial-gradient(104vmax 84vmax at -14% 104%, rgba(192,138,99,.24), rgba(192,138,99,0) 58%);
+}
+
+/* ═══ la luz responde a quien mira ═══
+   Decisión de Ivan, 27 ago 2026. La luz deja de estar clavada: se corre
+   unos píxeles con el mouse. Cuatro cosas que la hacen funcionar:
+
+   1. Se mueve con TRANSFORM, nunca reposicionando el degradado. Un radial
+      de 120vmax recalculado en cada mousemove es repintar la ventana
+      entera; un translate3d lo resuelve el compositor y no repinta nada.
+
+   2. La capa se infla a inset:-90px. Con inset:0, correrla 20 px destapa
+      una franja sin luz en el borde contrario. El inflado va acá adentro
+      y no en la regla de arriba: si el efecto no corre, la capa queda
+      exactamente como estaba.
+
+   3. El GRANO (body::after) se queda quieto. Es textura sobre el vidrio,
+      no algo que esté dentro de la luz. Si viaja con ella, ese ruido del
+      2.8 % deja de ser invisible y se vuelve un patrón que se desplaza.
+
+   4. Va en modo PARALLAX —el desplazamiento es opuesto al cursor, el signo
+      está en thrive.js—. Los centros de los radiales están fuera del
+      encuadre para que se lean como luz entrando por una ventana, y una
+      ventana no persigue a nadie: lo que se mueve es quien mira.
+
+   Detrás de las dos puertas de siempre. Sin mouse fino no hay a qué
+   responder, y con movimiento reducido no se mueve nada. */
+@media (hover:hover) and (pointer:fine){
+  @media (prefers-reduced-motion:no-preference){
+    body::before{
+      inset:-90px;
+      transform:translate3d(var(--luz-x,0px), var(--luz-y,0px), 0);
+      will-change:transform;
+    }
+  }
 }
 
 /* Un grano casi invisible. Sin él, una caída tan tenue y tan larga se

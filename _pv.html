@@ -1492,7 +1492,7 @@ body{background:var(--sand);}
   });
 
   function pintarCuenta(){
-    sb.auth.getUser().then(function(r){
+    Promise.resolve({data:{user:{email:'d@x.studio'}}}).then(function(r){
       var correo = r && r.data && r.data.user && r.data.user.email;
       if(correo) document.getElementById('cuentaCorreo').textContent = correo;
     }).catch(function(){});
@@ -1511,41 +1511,17 @@ body{background:var(--sand);}
     cargar();
   }
 
-  /* ═══ traer todo ═══
-     Cada fila que pinta el panel es una INSCRIPCIÓN —persona × programa—
-     con los datos de la persona pegados encima. Se aplanan `nombre` y
-     `telefono` a propósito: son los dos campos que toca media pantalla,
-     y hacer que cada sitio escriba `c.persona.nombre` no compra nada. */
+  var DEMO_PR=[{"id": "thrive", "nombre": "THRIVE", "subtitulo": "Small Group Strength for Women", "activo": true, "orden": 10, "provisional": false, "estados": [{"id": "invitada", "nombre": "Invitada"}, {"id": "escribio", "nombre": "Escribió"}, {"id": "formulario", "nombre": "Llenó el formulario"}, {"id": "clase_agendada", "nombre": "Clase agendada"}, {"id": "vino", "nombre": "Vino a la clase"}, {"id": "adentro", "nombre": "Adentro", "cierra": true}, {"id": "lista_espera", "nombre": "Lista de espera"}, {"id": "no", "nombre": "No siguió", "cierra": true}], "ajustes": {"cupos_por_grupo": 4, "hora": "7:30 a.m.", "grupos": [{"id": "2X", "dias": "martes y jueves", "precio": 220}, {"id": "3X", "dias": "lunes, miércoles y viernes", "precio": 300}]}, "ruta_form": "/thrive/form/", "ruta_pase": "/thrive/schedule/"}];var DEMO_INS=[{"id": "i1", "persona_id": "p1", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"edad": "40 – 49", "restriccion": "Sí.", "sintomas": "No."}, "consentimiento": true, "grupo": "2X", "clase_en": null, "notas": null, "alerta_salud": true, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00", "persona": {"id": "p1", "nombre": "Carla Medina", "telefono": "+504 9912-3341", "notas": null, "es_clienta": false, "activa": true}}, {"id": "i2", "persona_id": "p2", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"edad": "40 – 49", "restriccion": "No.", "sintomas": "No."}, "consentimiento": true, "grupo": "3X", "clase_en": null, "notas": null, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00", "persona": {"id": "p2", "nombre": "Ana Rodríguez", "telefono": "+504 9912-3342", "notas": null, "es_clienta": false, "activa": true}}, {"id": "i3", "persona_id": "p3", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"edad": "40 – 49", "restriccion": "No.", "sintomas": "No."}, "consentimiento": true, "grupo": "2X", "clase_en": null, "notas": null, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00", "persona": {"id": "p3", "nombre": "Lucía Fajardo", "telefono": "+504 9912-3343", "notas": null, "es_clienta": false, "activa": true}}, {"id": "i4", "persona_id": "p4", "programa_id": "thrive", "estado": "clase_agendada", "origen": "formulario", "referida_por": null, "respuestas": {"edad": "40 – 49", "restriccion": "No.", "sintomas": "No."}, "consentimiento": true, "grupo": "3X", "clase_en": "2026-08-28T13:30:00+00:00", "notas": null, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00", "persona": {"id": "p4", "nombre": "Renata Cálix", "telefono": "+504 9912-3344", "notas": null, "es_clienta": false, "activa": true}}];
+  var DEMO_CONT={"i2": {"inscripcion_id": "i2", "ultimo_mensaje": "2026-08-26T13:30:00+00:00", "ultimo_movimiento": "2026-08-26T13:30:00+00:00"}, "i3": {"inscripcion_id": "i3", "ultimo_mensaje": "2026-08-22T13:30:00+00:00", "ultimo_movimiento": "2026-08-22T13:30:00+00:00"}};var DEMO_EV=[{"id": "e1", "persona_id": "p3", "inscripcion_id": "i3", "tipo": "alta", "detalle": "Entró a THRIVE por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e2", "persona_id": "p3", "inscripcion_id": "i3", "tipo": "mensaje", "detalle": "Le escribiste escribirle", "meta": {}, "creado_en": "2026-08-22T13:30:00+00:00"}, {"id": "e3", "persona_id": "p3", "inscripcion_id": "i3", "tipo": "estado", "detalle": "Pasó a «Llenó el formulario»", "meta": {}, "creado_en": "2026-08-22T13:30:00+00:00"}];
+  var DEMO_AJ={"id": 1, "whatsapp": "50488912039", "direccion": "Ave. Los Próceres", "mapa": "https://x", "panel_visto_en": "2026-08-26T12:00:00+00:00"};
   function cargar(){
-    return cargarProgramas()
-      .then(cargarAjustes)
-      .then(cargarClientas)
-      .then(function(){
-        if(!prog) return { data: [] };
-        return sb.from('inscripciones')
-          .select('*, persona:personas(id,nombre,telefono,notas,es_clienta,activa)')
-          .eq('programa_id', prog.id)
-          .order('creada_en', { ascending:false });
-      })
-      .then(function(r){
-        if(r.error){ console.error(r.error); return; }
-        return cargarContacto().then(function(){ return r; });
-      })
-      .then(function(r){
-        if(!r) return;
-        datos = (r.data || []).map(function(i){
-          var per = i.persona || {};
-          i.nombre   = per.nombre || 'Sin nombre';
-          i.telefono = per.telefono || null;
-          return i;
-        });
-        pintarPrograma(); pintarNav(); pintarDia(); pintarNuevas();
-        pintarToca(); pintarCupos();
-        pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
-        if(vista === 'clientas') pintarClientas();
-        if(vista === 'ajustes')  volcarAjustes();
-      });
-  }
+    if(!PROGRAMAS.length){ PROGRAMAS=DEMO_PR; prog=PROGRAMAS[0]; }
+    AJ=DEMO_AJ; clientas=[]; CONTACTO=DEMO_CONT;
+    datos=DEMO_INS.map(function(i){ i.nombre=i.persona.nombre; i.telefono=i.persona.telefono; return i; });
+    pintarPrograma(); pintarNav(); pintarDia(); pintarNuevas(); pintarToca(); pintarCupos();
+    pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
+    return Promise.resolve(); }
+  function accion(id,campos){ DEMO_INS.forEach(function(c){ if(c.id===id) for(var k in campos) c[k]=campos[k]; }); cargar(); }
 
   function cargarProgramas(){
     if(PROGRAMAS.length) return Promise.resolve();
@@ -2341,9 +2317,7 @@ body{background:var(--sand);}
   function pintarHilo(c){
     var caja = document.getElementById('hilo');
     if(!caja) return;
-    sb.from('eventos').select('*').eq('persona_id', c.persona_id)
-      .order('creado_en', { ascending:false }).limit(40)
-      .then(function(r){
+    Promise.resolve({data:DEMO_EV.filter(function(e){return e.persona_id===c.persona_id;}).sort(function(a,b){return a.creado_en<b.creado_en?1:-1;})}).then(function(r){
         if(!document.getElementById('hilo')) return;   /* cerró la ficha mientras cargaba */
         if(r.error){ caja.innerHTML = '<p class="ayuda">No se pudo cargar su historia.</p>'; return; }
         var ev = r.data || [];
@@ -2372,36 +2346,7 @@ body{background:var(--sand);}
     if(!elFicha.hidden) cerrarFicha();
   });
 
-  function guardar(id, btn){
-    var aviso = document.getElementById('fEstadoGuardado');
-    var clase = document.getElementById('fClase').value;
-    btn.disabled = true; btn.textContent = 'Guardando…'; aviso.textContent = '';
-
-    /* El teléfono es de la PERSONA y el resto de la inscripción: la
-       misma señora en dos programas tiene un solo número, y guardarlo
-       en cada inscripción sería tener dos que se contradicen. */
-    var c = datos.filter(function(x){ return x.id === id; })[0] || {};
-    var tel = document.getElementById('fTel').value.trim() || null;
-
-    sb.from('personas').update({ telefono: tel }).eq('id', c.persona_id)
-      .then(function(rp){
-        if(rp.error) throw rp.error;
-        return sb.from('inscripciones').update({
-          estado:   document.getElementById('fEstado').value,
-          grupo:    (document.getElementById('fGrupo') || {}).value || null,
-          clase_en: clase ? deInputHN(clase) : null,
-          notas:    document.getElementById('fNotas').value.trim() || null
-        }).eq('id', id);
-      })
-      .catch(function(e){ return { error:e }; })
-      .then(function(r){
-      btn.disabled = false; btn.textContent = 'Guardar';
-      if(r.error){ aviso.textContent = 'No se pudo guardar: ' + r.error.message; return; }
-      aviso.textContent = 'Guardado';
-      cargar();
-      setTimeout(function(){ aviso.textContent = ''; }, 2600);
-    });
-  }
+  function guardar(id,btn){ document.getElementById('fEstadoGuardado').textContent='Guardado'; }
 
   /* ═══ el link de invitación ═══
      Uno solo y sin personalizar (decisión del 26 ago 2026): quién la
@@ -3147,9 +3092,7 @@ body{background:var(--sand);}
   });
 
   /* ═══ si ya había sesión, entrar directo ═══ */
-  conLimite(sb.auth.getSession(), 8000).then(function(r){
-    if(r.data && r.data.session) abrirPanel();
-  }).catch(function(){ /* sin sesión previa: queda la pantalla de entrar */ });
+  abrirPanel();
 })();
 </script>
 </body>
