@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=25dcf11b">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=7500b230">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -658,7 +658,7 @@ body{background:var(--sand);}
   transform:translateY(-2px) rotate(45deg);
 }
 .prog-menu{
-  position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:20;
+  position:fixed; z-index:70;
   background:var(--white); border-radius:14px; box-shadow:var(--flota-3);
   padding:6px; display:flex; flex-direction:column; gap:2px;
 }
@@ -686,7 +686,7 @@ body{background:var(--sand);}
 .pn-app.plegado .prog-btn{justify-content:center; padding-inline:0;}
 .pn-app.plegado .prog-btn .quien,
 .pn-app.plegado .prog-btn .flecha{display:none;}
-.pn-app.plegado .prog-menu{left:0; right:auto; width:216px;}
+
 
 /* ── la barra de vuelta ──
    Aparece cuando Denisse vuelve de WhatsApp. Ese es el único momento
@@ -813,6 +813,27 @@ body{background:var(--sand);}
   text-transform:uppercase; color:var(--ink-3);
 }
 .migas b{color:var(--ink); font-weight:500;}
+/* ── el selector de programa, también arriba ──
+   En el teléfono la barra lateral no existe, y con ella se iba el único
+   camino para cambiar de programa: la función entera quedaba fuera del
+   alcance en el aparato donde Denisse más lo usa. La miga ya dice el
+   nombre del programa, así que la miga es el botón. */
+#migaProg{
+  font:inherit; color:inherit; background:none; border:none; padding:0;
+  letter-spacing:inherit; text-transform:inherit; cursor:default;
+}
+@media (max-width:899px){
+  #migaProg{
+    cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+    color:var(--ink); padding:6px 11px; margin:-6px 0 -6px -11px;
+    border-radius:999px; background:var(--white); box-shadow:var(--flota-1);
+  }
+  #migaProg::after{
+    content:''; width:6px; height:6px; flex:none;
+    border-right:1.6px solid var(--ink-3); border-bottom:1.6px solid var(--ink-3);
+    transform:translateY(-2px) rotate(45deg);
+  }
+}
 .migas svg{width:11px; height:11px;}
 .main-fecha{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--ink-2);}
 
@@ -946,7 +967,6 @@ body{background:var(--sand);}
 
     <div class="prog">
       <button class="prog-btn" type="button" id="progBtn" aria-haspopup="true" aria-expanded="false" aria-controls="progMenu"></button>
-      <div class="prog-menu" id="progMenu" hidden role="menu"></div>
     </div>
 
     <div id="ladoNav"></div>
@@ -966,7 +986,7 @@ body{background:var(--sand);}
   <!-- ══════════ EL CONTENIDO ══════════ -->
   <div class="pn-main">
     <div class="main-top">
-      <p class="migas"><span id="migaProg">HTM</span>
+      <p class="migas"><button type="button" id="migaProg" aria-haspopup="true" aria-expanded="false" aria-controls="progMenu">HTM</button>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
         <b id="migaVista">Hoy</b>
       </p>
@@ -1106,6 +1126,12 @@ body{background:var(--sand);}
   </div>
 
   <nav class="pn-abajo" id="abajo" aria-label="Secciones del panel"></nav>
+
+  <!-- El menú de programas vive FUERA de la barra lateral a propósito:
+       en el teléfono la barra es display:none, y un hijo de display:none
+       no tiene caja aunque se lo posicione fixed. Adentro, el menú medía
+       cero por cero y no se veía. -->
+  <div class="prog-menu" id="progMenu" hidden role="menu"></div>
 
   <div class="volvio" id="volvio" hidden role="status">
     <b id="volvioQue"></b>
@@ -1725,17 +1751,51 @@ body{background:var(--sand);}
     filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = '';
     var b = document.getElementById('buscar'); if(b) b.value = '';
     datos = [];
+    /* Traer la gente del programa nuevo es un viaje de red. Sin esto, el
+       encabezado ya decía «Taller de caídas» mientras la lista todavía
+       mostraba a las de THRIVE — dos programas en la misma pantalla. */
+    vaciarMientrasCarga();
     cargar();
   }
 
-  function menuPrograma(abrir){
+  function vaciarMientrasCarga(){
+    pintarPrograma();
+    document.getElementById('toca').innerHTML = '';
+    document.getElementById('limpio').hidden = true;
+    document.getElementById('nuevas').hidden = true;
+    document.getElementById('tiles').innerHTML = '';
+    document.getElementById('lista').innerHTML = '<div class="pn-vacio">Cargando…</div>';
+    var d = document.getElementById('dia');
+    if(d) d.innerHTML = '<h1>' + esc(prog ? prog.nombre : '') + '</h1><p class="resto">Cargando…</p>';
+  }
+
+  /* El menú se coloca donde esté quien lo abrió: debajo del selector en
+     la barra, o debajo de la miga en el teléfono. Se calcula al abrir y
+     no en CSS porque los dos anclajes viven en sitios distintos. */
+  function menuPrograma(abrir, desde){
     var m = document.getElementById('progMenu');
     m.hidden = !abrir;
     document.getElementById('progBtn').setAttribute('aria-expanded', String(abrir));
+    document.getElementById('migaProg').setAttribute('aria-expanded', String(abrir));
+    if(!abrir) return;
+
+    var r = (desde || document.getElementById('progBtn')).getBoundingClientRect();
+    var ancho = Math.max(216, Math.min(r.width, 280));
+    var izq = Math.min(r.left, window.innerWidth - ancho - 12);
+    m.style.width = ancho + 'px';
+    m.style.left  = Math.max(12, izq) + 'px';
+    m.style.top   = (r.bottom + 6) + 'px';
   }
   document.getElementById('progBtn').addEventListener('click', function(e){
     e.stopPropagation();
-    menuPrograma(document.getElementById('progMenu').hidden);
+    menuPrograma(document.getElementById('progMenu').hidden, this);
+  });
+  /* En el teléfono la barra no existe: la miga, que ya dice el nombre
+     del programa, es la que abre el mismo menú. */
+  document.getElementById('migaProg').addEventListener('click', function(e){
+    if(window.innerWidth >= 900) return;
+    e.stopPropagation();
+    menuPrograma(document.getElementById('progMenu').hidden, this);
   });
   document.addEventListener('click', function(){ menuPrograma(false); });
   document.getElementById('progMenu').addEventListener('click', function(e){ e.stopPropagation(); });
