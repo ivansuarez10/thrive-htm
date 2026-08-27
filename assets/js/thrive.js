@@ -270,9 +270,38 @@
   /* Ligado al scroll y no a un observer: gana la última sección que ya
      cruzó la mitad de la pantalla. Es determinista — con un observer,
      un scroll rápido salta secciones y el fondo se queda pegado. */
-  if (!reduced && conFondo.length) {
+  /* Sin el gate de `reduced` a propósito, y esto es un arreglo, no un
+     descuido que se hereda: apagarlo dejaba la landing ENTERA blanca para
+     quien pide menos movimiento —data-ground no tiene una sola línea de
+     CSS, el color vive solo acá—, y con eso las secciones `sand` perdían
+     su separación y las tarjetas de plan quedaban blancas sobre blanco,
+     que es justo la trampa anotada arriba en --linen.
+
+     Un color de fondo NO es movimiento: no marea a nadie. Lo que hay que
+     quitar es el viaje de 900 ms, y de eso ya se encarga el CSS con
+     body{transition:none} dentro de prefers-reduced-motion. O sea que el
+     color cambia igual, pero al instante.
+
+     ⚠️ Lo que NO sirve: darle fondo propio a cada sección en CSS.
+     section{position:relative}, así que una sección con fondo TAPA
+     body::before — el degradado de arcilla que es toda la calidez del
+     sitio desde que la página pasó a blanco. */
+  if (conFondo.length) {
     var ultimo = '';
-    var ajustarFondo = function () {
+    /* Envuelto en rAF como el parallax y el riel de capacidades: era el
+       único de los tres escuchas de scroll que corría sincrónico, y hacía
+       un getBoundingClientRect() por sección en cada evento.
+
+       ⚠️ Acá el cerrojo booleano SÍ es correcto, al revés que en el riel
+       —donde un cuadro que no llega lo deja trabado en true para siempre—.
+       La diferencia es que el riel también se llama desde visibilitychange
+       para recalcular al volver a la pestaña; este se llama desde scroll y
+       resize, y no hay scroll con la pestaña oculta. Si algún día se le
+       agrega un visibilitychange, hay que pasarlo al patrón de
+       cancelAnimationFrame del riel. */
+    var cuadroFondo = 0;
+    var pintarFondo = function () {
+      cuadroFondo = 0;
       var medio = (innerHeight || 800) / 2;
       var elegido = conFondo[0];
       for (var k = 0; k < conFondo.length; k++) {
@@ -284,9 +313,19 @@
       document.body.style.backgroundColor = c;
       document.documentElement.style.backgroundColor = c;
     };
+    var ajustarFondo = function () {
+      if (cuadroFondo) return;
+      cuadroFondo = requestAnimationFrame(pintarFondo);
+    };
     addEventListener('scroll', ajustarFondo, { passive: true });
     addEventListener('resize', ajustarFondo);
-    ajustarFondo();
+    /* La primera pasada va DIRECTA, sin rAF. Un link de WhatsApp puede
+       abrirse en segundo plano, y con la pestaña oculta el navegador no
+       entrega cuadros: encolar la pintura inicial la dejaría esperando
+       hasta el primer scroll. Hoy la primera sección es `linen`, que es
+       el fondo por defecto, así que no se vería — pero eso es suerte del
+       orden de las secciones, no una garantía. */
+    pintarFondo();
   }
 
   /* ───────── parallax ─────────
@@ -467,51 +506,52 @@
     })();
   }
 
-  /* ───────── la portada, solo en el teléfono ─────────
-     En escritorio la portada es una sección normal y se pasa con scroll;
-     este bloque no hace nada allá. En el teléfono se vuelve una capa que
-     se quita a los 4 s. Decisión de Ivan, 27 ago 2026.
+  /* ───────── el sello de la portada responde al scroll ─────────
+     El sello entra letra por letra al cargar —eso lo hace el CSS con los
+     mismos keyframes del formulario— y a partir de ahí sigue al scroll:
+     el anillo gira doce grados, el conjunto sube un poco y se apaga
+     mientras la portada se va. Decisión de Ivan, 27 ago 2026.
 
-     El corte es el mismo 900 px del CSS. Se lee UNA vez, al cargar, y no
-     se escucha el cambio de tamaño a propósito: nadie gira el teléfono
-     durante los primeros cuatro segundos, y si alguien redimensiona una
-     ventana de escritorio a 800 px no queremos que le aparezca una capa
-     encima de la página que ya estaba leyendo.
+     Se escribe UNA variable, --pa, de 0 a 1. El CSS la usa solo en
+     transform y opacity, así que el navegador lo resuelve en el
+     compositor: no hay una sola maquetación de más por cuadro.
 
-     El orden de las últimas dos líneas ES la red: se programa la SALIDA
-     antes de mostrarla. Si algo explota en el medio, lo agendado igual la
-     saca. Y si este bloque no corre nunca, el CSS deja la portada como
-     sección normal y el teléfono la scrollea como escritorio.
+     Nada de esto es necesario para que la página funcione. Si este
+     bloque no corre, --pa se queda en 0, el sello queda puesto y la
+     portada se scrollea como cualquier sección. */
+  if (!reduced) {
+    (function () {
+      var sello = document.querySelector('.portada-sello');
+      var portada = document.getElementById('portada');
+      if (!sello || !portada) return;
 
-     aria-hidden porque es decoración de marca: quien escucha la página no
-     gana nada oyendo el logotipo deletreado, y sí pierde el titular. */
-  (function () {
-    var portada = document.getElementById('portada');
-    if (!portada) return;
+      var cuadro = 0;
+      var pintar = function () {
+        cuadro = 0;
+        var alto = portada.offsetHeight || innerHeight;
+        /* Cuánto de la portada ya se fue por arriba. Se mide contra su
+           propio alto y no contra la ventana: así vale igual en un
+           teléfono apaisado que en un monitor alto. */
+        var pa = -portada.getBoundingClientRect().top / alto;
+        if (pa < 0) pa = 0;
+        if (pa > 1) pa = 1;
+        sello.style.setProperty('--pa', pa.toFixed(4));
+      };
 
-    portada.setAttribute('aria-hidden', 'true');
-    if (!matchMedia('(max-width:899px)').matches) return;
+      /* Se cancela el cuadro anterior y se pide uno nuevo, en vez de un
+         cerrojo booleano: si un cuadro no llega —pestaña oculta— el
+         cerrojo quedaría trabado y el sello no volvería a moverse nunca.
+         Misma forma que el riel de capacidades. */
+      var pedir = function () {
+        if (cuadro) cancelAnimationFrame(cuadro);
+        cuadro = requestAnimationFrame(pintar);
+      };
 
-    var DURA = 4000;
-    var salir = function () {
-      portada.classList.add('se-va');
-      /* La clase del body se saca al terminar la salida, no antes: es la
-         que devuelve el scroll, y devolverlo mientras la capa todavía
-         cruza la pantalla deja mover la página por detrás. */
-      setTimeout(function () {
-        /* portada-ida ANTES de quitar portada-viva: la primera la saca del
-           flujo, la segunda devuelve el scroll. En ese orden la página nunca
-           existe con la portada ocupando la primera pantalla y el scroll ya
-           suelto — que era el fallo: el titular arrancaba a 812 px y los 4
-           segundos no llevaban a ningún lado. */
-        document.body.classList.add('portada-ida');
-        document.body.classList.remove('portada-viva');
-      }, 780);
-    };
-
-    setTimeout(salir, DURA);
-    document.body.classList.add('portada-viva');
-  })();
+      addEventListener('scroll', pedir, { passive: true });
+      addEventListener('resize', pedir);
+      pintar();
+    })();
+  }
 
   /* ───────── del precio al pie, sin perder el plan ─────────
      Los botones de cada plan bajan a la sección de invitación en vez de

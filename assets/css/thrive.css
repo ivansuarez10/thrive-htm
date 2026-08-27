@@ -662,25 +662,16 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 @media (min-width:720px){ .plans{grid-template-columns:1fr 1fr;} }
 
 /* ═══ la portada ═══
-   Primera pantalla de marca: sello, THRIVE y la línea de programa.
-   Se comporta DISTINTO según el tamaño (Ivan, 27 ago 2026):
+   Primera pantalla de marca: el sello, THRIVE y la línea de programa.
+   Sección normal en TODOS los tamaños (Ivan, 27 ago 2026): muestra
+   «Seguí bajando» y se pasa con scroll.
 
-     · escritorio → sección normal. Ocupa la pantalla, muestra «Seguí
-       bajando» y se pasa con scroll. La persona manda.
-     · teléfono   → capa que se quita sola a los 4 s.
-
-   El motivo de la diferencia es el gesto: en escritorio hay rueda y
-   barra, o sea que scrollear es gratis y una capa con temporizador sería
-   quitarle el control a alguien que ya lo tenía. En el teléfono la
-   portada a pantalla completa ES la primera pantalla y el pulgar todavía
-   no llegó; los 4 s hacen el trabajo de posicionar la marca antes de que
-   nadie tenga que decidir nada.
-
-   ⚠️ LO BASE ES LO DE ESCRITORIO, y eso es la red de seguridad: la capa
-   fija solo existe cuando thrive.js le pone .portada-viva al <body>. Si
-   el script no llega —o si llega y explota— el teléfono ve una sección
-   normal con su «Seguí bajando» y la página scrollea. Nadie se queda
-   mirando una pantalla trabada. */
+   Antes el teléfono llevaba una capa fija que se quitaba a los 4 s. Ivan
+   prefirió la de escritorio en los dos, y con eso se fueron —conviene
+   saber por qué ya no están— el temporizador, el bloqueo del scroll, la
+   transición de salida, las clases .portada-viva y .portada-ida, y toda
+   la red de seguridad que hacía falta para que una capa fija no se
+   quedara tapando el sitio. Nada de esto depende ya de JavaScript. */
 .portada{
   min-height:100svh;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -689,46 +680,58 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 }
 .portada-in{display:flex; flex-direction:column; align-items:center;}
 
-/* ── el teléfono: la capa con temporizador ── */
-@media (max-width:899px){
-  body.portada-viva .portada{
-    position:fixed; inset:0; z-index:60;
-    min-height:0; background:var(--linen);
-    transform:translateY(0);
-    transition:transform 760ms var(--ease),
-               opacity 620ms var(--ease),
-               visibility 0s linear 760ms;
-  }
-  body.portada-viva{overflow:hidden;}
+/* ── el sello, el mismo de diecisiete caminos del formulario ──
+   Entra letra por letra al cargar, con los keyframes que ya existen
+   (bv-letra-sello / bv-punto-sello), y DESPUÉS responde al scroll.
 
-  /* Se corre POCO —14 %— y el resto lo hace la opacidad. Antes viajaba
-     el 100 % con arranque brusco y se leía como una persiana: un gesto
-     que reclama atención justo cuando hay que empezar a leer. */
-  body.portada-viva .portada.se-va{
-    transform:translateY(-14%);
-    opacity:0; visibility:hidden;
-  }
+   El tamaño lo manda el ancho, igual que el sello viejo: el 34vw es lo
+   que hace que en un teléfono mande la pantalla y no el piso. */
+.portada-sello{
+  width:clamp(132px,34vw,168px);
+  /* --pa lo escribe thrive.js: 0 arriba del todo, 1 cuando la portada ya
+     se fue. Se usa solo en transform y opacity, o sea que el navegador lo
+     resuelve en el compositor y no vuelve a maquetar nada. */
+  --pa:0;
+  transform:scale(calc(1 - var(--pa) * .12)) translateY(calc(var(--pa) * -26px));
+  opacity:calc(1 - var(--pa) * .85);
+  will-change:transform, opacity;
+}
+.portada-sello .sello-vivo{width:100%; height:auto; display:block; overflow:visible;}
+/* Sin esto los caminos salen NEGROS: el SVG no trae fill propio y lo
+   hereda del CSS. En el formulario lo da .bv-sello; acá hacía falta el
+   equivalente. */
+.portada-sello .sl, .portada-sello .sl-punto{fill:var(--teal);}
 
-  /* Sin scroll que invitar: acá la portada se va sola. Dejar el rótulo
-     sería pedirle a alguien que haga algo que no hace falta. */
-  body.portada-viva .portada .abre-cue{display:none;}
+/* El anillo GIRA con el scroll: es el gesto interactivo. Doce grados en
+   todo el recorrido — se siente, no se anuncia. El punto del centro no
+   gira, por lo mismo de siempre: es el centro, girarlo no significa nada. */
+.portada-sello .sl{
+  opacity:0;
+  transform-box:view-box; transform-origin:50% 50%;
+  animation:bv-letra-sello 940ms cubic-bezier(.16,.85,.24,1) forwards;
+  animation-delay:calc(200ms + var(--n) * 100ms);
+}
+.portada-sello .sl-punto{
+  opacity:0;
+  transform-box:fill-box; transform-origin:center;
+  animation:bv-punto-sello 820ms cubic-bezier(.2,1.5,.4,1) 2480ms forwards;
+}
+/* ⚠️ El giro va en el <svg>, NO en el <g> de adentro. Ese <g> ya trae su
+   propio transform="translate(0,3085) scale(0.1,-0.1)" —es el que mapea
+   las coordenadas del trazado— y ponerle un transform de CSS lo REEMPLAZA:
+   el sello salía gigante y corrido fuera de la pantalla. Medido. */
+.portada-sello .sello-vivo{
+  transform-box:view-box; transform-origin:50% 50%;
+  transform:rotate(calc(var(--pa) * 12deg));
+}
 
-  /* ⚠️ Y cuando termina, SALE DEL FLUJO. Sin esto la portada volvía a ser
-     una sección de 100svh: la capa se quitaba, sí, pero debajo quedaba la
-     misma pantalla ocupando el primer scroll, y el titular arrancaba a
-     812 px. O sea que los 4 segundos no llevaban a ninguna parte y había
-     que bajar a mano igual — medido antes de este arreglo.
-     La clase la pone el JS al terminar de salir. */
-  body.portada-ida .portada{display:none;}
-
-  @media (prefers-reduced-motion: reduce){
-    body.portada-viva .portada{transition:opacity 300ms linear, visibility 0s linear 300ms;}
-    body.portada-viva .portada.se-va{transform:none; opacity:0; visibility:hidden;}
-    body.portada-viva .portada .abre-sello,
-    body.portada-viva .portada .abre-word,
-    body.portada-viva .portada .abre-word i,
-    body.portada-viva .portada .abre-tag{animation:none !important; opacity:1 !important; transform:none !important;}
-  }
+/* Quien pidió menos movimiento ve el sello puesto, quieto, desde el
+   principio — y sin que el scroll lo mueva. */
+@media (prefers-reduced-motion: reduce){
+  .portada-sello{transform:none; opacity:1;}
+  .portada-sello .sl,
+  .portada-sello .sl-punto{animation:none; opacity:1;}
+  .portada-sello .sello-vivo{transform:none;}
 }
 
 /* ═══ la luz de la casa ═══
