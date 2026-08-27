@@ -467,6 +467,86 @@
     })();
   }
 
+  /* ───────── la portada, solo en el teléfono ─────────
+     En escritorio la portada es una sección normal y se pasa con scroll;
+     este bloque no hace nada allá. En el teléfono se vuelve una capa que
+     se quita a los 4 s. Decisión de Ivan, 27 ago 2026.
+
+     El corte es el mismo 900 px del CSS. Se lee UNA vez, al cargar, y no
+     se escucha el cambio de tamaño a propósito: nadie gira el teléfono
+     durante los primeros cuatro segundos, y si alguien redimensiona una
+     ventana de escritorio a 800 px no queremos que le aparezca una capa
+     encima de la página que ya estaba leyendo.
+
+     El orden de las últimas dos líneas ES la red: se programa la SALIDA
+     antes de mostrarla. Si algo explota en el medio, lo agendado igual la
+     saca. Y si este bloque no corre nunca, el CSS deja la portada como
+     sección normal y el teléfono la scrollea como escritorio.
+
+     aria-hidden porque es decoración de marca: quien escucha la página no
+     gana nada oyendo el logotipo deletreado, y sí pierde el titular. */
+  (function () {
+    var portada = document.getElementById('portada');
+    if (!portada) return;
+
+    portada.setAttribute('aria-hidden', 'true');
+    if (!matchMedia('(max-width:899px)').matches) return;
+
+    var DURA = 4000;
+    var salir = function () {
+      portada.classList.add('se-va');
+      /* La clase del body se saca al terminar la salida, no antes: es la
+         que devuelve el scroll, y devolverlo mientras la capa todavía
+         cruza la pantalla deja mover la página por detrás. */
+      setTimeout(function () {
+        /* portada-ida ANTES de quitar portada-viva: la primera la saca del
+           flujo, la segunda devuelve el scroll. En ese orden la página nunca
+           existe con la portada ocupando la primera pantalla y el scroll ya
+           suelto — que era el fallo: el titular arrancaba a 812 px y los 4
+           segundos no llevaban a ningún lado. */
+        document.body.classList.add('portada-ida');
+        document.body.classList.remove('portada-viva');
+      }, 780);
+    };
+
+    setTimeout(salir, DURA);
+    document.body.classList.add('portada-viva');
+  })();
+
+  /* ───────── del precio al pie, sin perder el plan ─────────
+     Los botones de cada plan bajan a la sección de invitación en vez de
+     ir derecho al formulario: ese bloque dice «antes de comprometerte,
+     quiero que vengás a vivir la experiencia», y saltárselo era mandar a
+     alguien del precio al cuestionario sin haberle contado la clase de
+     prueba.
+
+     Lo que se recuerda es el PLAN. Sin esto, elegir 2X y bajar dejaba a
+     Denisse sin saber cuál eligió —el dato con el que arma los grupos—.
+
+     El ancla del href hace el trabajo aunque el JS no llegue: baja igual
+     y el botón de abajo manda al formulario sin plan, que es exactamente
+     como funcionaba antes. Nada depende de este bloque para funcionar. */
+  (function () {
+    var botones = [].slice.call(document.querySelectorAll('[data-plan-cta]'));
+    var final = document.querySelector('[data-cta-final]');
+    if (!botones.length || !final) return;
+
+    var baseFinal = final.getAttribute('href');
+
+    botones.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var plan = b.getAttribute('data-plan-cta');
+        if (!/^[23]X$/.test(plan)) return;          /* solo lo que conocemos */
+        final.setAttribute('href', baseFinal + '?plan=' + plan);
+        /* El texto del botón también lo dice: si alguien baja y ve
+           «Quiero probar THRIVE» a secas, no tiene forma de saber que su
+           elección viajó con él. */
+        var t = final.firstChild;
+        if (t && t.nodeType === 3) t.nodeValue = '\n        Quiero probar THRIVE ' + plan + '\n        ';
+      });
+    });
+  })();
+
   /* ───────── expuesto para las otras páginas ───────── */
   window.THRIVE_RT = {
     referida: referida,

@@ -111,6 +111,10 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .h2{
   font-family:var(--display); font-weight:600;
   font-size:clamp(1.6rem,4.6vw,2.5rem); line-height:1.15; letter-spacing:-0.02em;
+  /* 4 · Aire abajo. El titular venía pegado a lo que sigue: en móvil el
+     «¿Cómo entrenamos?» tocaba la foto. El margen sale del ancho, así que
+     respira más en pantalla grande sin abrirse de más en el teléfono. */
+  margin-bottom:clamp(22px,5vw,34px);
 }
 .body{font-size:1.05rem; color:var(--ink-2);}
 .body strong{color:var(--ink); font-weight:700;}
@@ -325,7 +329,11 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
   /* 2/3 y no 4:5: el video de móvil se codificó en 720x1080, y con esta
      proporción entra el cajón completo con el pie encima. A 4:5 se cortaba
      por abajo justo donde está el escalón. */
-  width:100vw; border-radius:0; aspect-ratio:2/3; max-height:92svh;
+  /* El tope baja de 92svh a 58svh: con la apertura ya sin altura fija, el
+     video tiene que ASOMAR en la primera pantalla, no ocuparla entera.
+     Recorta por object-fit, que en esta toma se lleva cielo y piso y deja
+     el movimiento donde está. */
+  width:100vw; border-radius:0; aspect-ratio:2/3; max-height:58svh;
 }
 /* ⚠️ 100vw INCLUYE la barra de desplazamiento; el ancho de la ventana no.
    En un escritorio con barra clásica el hero sobresalía 33 px y la página
@@ -355,13 +363,35 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
   color:var(--ink-2); margin-top:9px;
 }
 
-.band{position:relative; overflow:hidden; height:clamp(260px,44vw,460px); background:var(--sand);}
+/* 6 · Más angosta y con el lema más grande (Ivan, 27 ago 2026). La banda
+   es una pausa, no una sección: bajarle el alto la vuelve un respiro en
+   vez de un bloque, y deja que el lema —que ahora pesa más— la ocupe. */
+.band{position:relative; overflow:hidden; height:clamp(200px,32vw,340px); background:var(--sand);}
 .band .plx{position:absolute; inset:-9% 0; width:100%; height:118%; object-fit:cover; will-change:transform;}
-.band .veil{position:absolute; inset:0; background:linear-gradient(180deg, rgba(30,29,26,.34), rgba(30,29,26,.62));}
-.band .line{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 24px; text-align:center;}
+/* El velo pesa en el medio, que es donde va el lema. Yo lo había puesto al
+   pie —arriba claro para que el sello se viera— pero Ivan pidió el lema
+   centrado sobre la imagen (27 ago 2026), así que el contraste tiene que
+   estar donde aterriza el texto y no abajo.
+
+   Medido sobre esta foto: el sello es lo más claro del cuadro y aun con el
+   velo al 34 % el blanco encima da 5.05:1. Al 48 % del medio da 6.5:1. O sea
+   que centrarlo sobre el sello nunca fue un problema de legibilidad — era
+   una objeción de composición, y la decisión es de Ivan. */
+.band .veil{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg,
+    rgba(30,29,26,.22) 0%,
+    rgba(30,29,26,.48) 50%,
+    rgba(30,29,26,.58) 100%);
+}
+.band .line{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  padding:0 24px; text-align:center;
+}
 .band .line p{
   font-family:var(--display); font-weight:600; color:var(--linen);
-  font-size:clamp(1.4rem,4.4vw,2.4rem); line-height:1.15; letter-spacing:-0.02em; max-width:19ch;
+  font-size:clamp(1.9rem,6.4vw,3rem); line-height:1.15; letter-spacing:-0.02em; max-width:19ch;
 }
 
 /* ── marca ── */
@@ -400,9 +430,14 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .hero .shot{margin-top:clamp(38px,7vw,56px);}
 
 .profiles{margin-top:clamp(34px,6vw,50px); display:flex; flex-direction:column;}
-.profile{display:grid; grid-template-columns:auto 1fr; gap:20px; padding:26px 0; border-top:1px solid var(--line-soft);}
+.profile{display:grid; grid-template-columns:1fr; gap:20px; padding:26px 0; border-top:1px solid var(--line-soft);}
 .profile:last-child{border-bottom:1px solid var(--line-soft);}
-.profile .n{font-family:var(--mono); font-size:0.72rem; color:var(--teal); padding-top:5px; font-variant-numeric:tabular-nums;}
+/* 3 · Los números 01–04 se fueron (Ivan, 27 ago 2026). No contaban nada:
+   estos cuatro no son pasos de un proceso, son cuatro personas distintas,
+   así que numerarlas sugería un orden que no existe. Cada perfil ya se
+   distingue por el <b> que lo abre y por la línea fina que lo separa.
+   La regla se queda por si algún día vuelve un rótulo acá. */
+.profile .n{display:none;}
 .profile p{font-size:1.02rem; color:var(--ink-2);}
 .profile p b{color:var(--ink); font-weight:700;}
 
@@ -453,8 +488,13 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
    tira de pie a cabeza mediría más que la propia sección. Abajo de 900
    se acuesta: misma aparición palabra por palabra, en horizontal. */
 /* A lo ancho entran las seis en un renglón. flex-wrap sigue en wrap como
-   red para pantallas angostas: preferimos dos renglones a un desborde. */
-.metodo-riel{display:flex; flex-wrap:wrap; align-items:baseline;}
+   red para pantallas angostas: preferimos dos renglones a un desborde.
+
+   5 · En móvil van CENTRADAS (Ivan, 27 ago 2026). Alineadas a la
+   izquierda, al envolver en dos renglones el segundo quedaba corto y
+   colgando, y se leía como un error de maquetación en vez de como el pie
+   de la sección. Centradas, los dos renglones quedan equilibrados. */
+.metodo-riel{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:center; text-align:center;}
 @media (min-width:900px){
   .metodo-riel{justify-content:space-between; flex-wrap:nowrap;}
   /* Repartidas de borde a borde, el punto separador sobra: el espacio ya
@@ -552,8 +592,13 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
   display:grid; gap:22px;
 }
 @media (min-width:720px){ .incluye{grid-template-columns:1fr 1fr; gap:26px 44px;} }
-.incluye li{display:flex; align-items:flex-start; gap:14px;}
-.incluye .tic{width:19px; height:19px; flex:none; margin-top:4px; color:var(--teal);}
+.incluye li{display:block;}
+/* 7 · Los tildes se fueron (Ivan, 27 ago 2026). Eran cinco marcas de
+   verificación en una lista que nadie iba a verificar: no separaban nada
+   que la línea en blanco no separara ya, y en móvil se comían 33 px de
+   ancho por renglón. El SVG se quita del HTML; esta regla queda por si
+   vuelve en otra lista. */
+.incluye .tic{display:none;}
 .incluye li > span{display:block;}
 .incluye li b{
   display:block; font-family:var(--display); font-weight:600; font-size:1.04rem;
@@ -594,8 +639,13 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 .plan .price small{font-family:var(--sans); font-size:0.85rem; font-weight:600; color:var(--ink-2);}
 .plan-cta{
   margin-top:22px; align-self:stretch; text-align:center;
-  padding:16px 20px; border-radius:999px; border:none;
-  background:var(--linen); box-shadow:var(--flota-1);
+  padding:16px 20px; border-radius:999px;
+  /* 8 · Con la página en blanco, un botón --linen sobre tarjeta --white
+     se sostenía solo con una sombra al 8 % y se perdía. Sube a flota-2 y
+     suma un borde: es el único elemento clicable de la tarjeta y tiene
+     que leerse como objeto, no como renglón. */
+  background:var(--linen); box-shadow:var(--flota-2);
+  border:1px solid var(--line);
   font-weight:600; font-size:0.95rem; color:var(--ink);
   transition:background 300ms var(--ease), color 300ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
@@ -610,6 +660,76 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 .cierre-fecha b{color:var(--ink); font-weight:500;}
 
 @media (min-width:720px){ .plans{grid-template-columns:1fr 1fr;} }
+
+/* ═══ la portada ═══
+   Primera pantalla de marca: sello, THRIVE y la línea de programa.
+   Se comporta DISTINTO según el tamaño (Ivan, 27 ago 2026):
+
+     · escritorio → sección normal. Ocupa la pantalla, muestra «Seguí
+       bajando» y se pasa con scroll. La persona manda.
+     · teléfono   → capa que se quita sola a los 4 s.
+
+   El motivo de la diferencia es el gesto: en escritorio hay rueda y
+   barra, o sea que scrollear es gratis y una capa con temporizador sería
+   quitarle el control a alguien que ya lo tenía. En el teléfono la
+   portada a pantalla completa ES la primera pantalla y el pulgar todavía
+   no llegó; los 4 s hacen el trabajo de posicionar la marca antes de que
+   nadie tenga que decidir nada.
+
+   ⚠️ LO BASE ES LO DE ESCRITORIO, y eso es la red de seguridad: la capa
+   fija solo existe cuando thrive.js le pone .portada-viva al <body>. Si
+   el script no llega —o si llega y explota— el teléfono ve una sección
+   normal con su «Seguí bajando» y la página scrollea. Nadie se queda
+   mirando una pantalla trabada. */
+.portada{
+  min-height:100svh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; position:relative;
+  padding:clamp(60px,10vh,110px) clamp(22px,6vw,40px) clamp(40px,6vh,64px);
+}
+.portada-in{display:flex; flex-direction:column; align-items:center;}
+
+/* ── el teléfono: la capa con temporizador ── */
+@media (max-width:899px){
+  body.portada-viva .portada{
+    position:fixed; inset:0; z-index:60;
+    min-height:0; background:var(--linen);
+    transform:translateY(0);
+    transition:transform 760ms var(--ease),
+               opacity 620ms var(--ease),
+               visibility 0s linear 760ms;
+  }
+  body.portada-viva{overflow:hidden;}
+
+  /* Se corre POCO —14 %— y el resto lo hace la opacidad. Antes viajaba
+     el 100 % con arranque brusco y se leía como una persiana: un gesto
+     que reclama atención justo cuando hay que empezar a leer. */
+  body.portada-viva .portada.se-va{
+    transform:translateY(-14%);
+    opacity:0; visibility:hidden;
+  }
+
+  /* Sin scroll que invitar: acá la portada se va sola. Dejar el rótulo
+     sería pedirle a alguien que haga algo que no hace falta. */
+  body.portada-viva .portada .abre-cue{display:none;}
+
+  /* ⚠️ Y cuando termina, SALE DEL FLUJO. Sin esto la portada volvía a ser
+     una sección de 100svh: la capa se quitaba, sí, pero debajo quedaba la
+     misma pantalla ocupando el primer scroll, y el titular arrancaba a
+     812 px. O sea que los 4 segundos no llevaban a ninguna parte y había
+     que bajar a mano igual — medido antes de este arreglo.
+     La clase la pone el JS al terminar de salir. */
+  body.portada-ida .portada{display:none;}
+
+  @media (prefers-reduced-motion: reduce){
+    body.portada-viva .portada{transition:opacity 300ms linear, visibility 0s linear 300ms;}
+    body.portada-viva .portada.se-va{transform:none; opacity:0; visibility:hidden;}
+    body.portada-viva .portada .abre-sello,
+    body.portada-viva .portada .abre-word,
+    body.portada-viva .portada .abre-word i,
+    body.portada-viva .portada .abre-tag{animation:none !important; opacity:1 !important; transform:none !important;}
+  }
+}
 
 /* ═══ la luz de la casa ═══
    Una sola fuente cálida para TODO el sitio, no un degradado por
@@ -686,9 +806,23 @@ body::after{
 /* El contenido queda por encima del degradado. */
 .sec-planes > *{position:relative; z-index:1;}
 
-.terms{margin-top:26px; padding-top:22px; border-top:1px solid var(--line-soft); display:flex; flex-direction:column; gap:9px;}
-.terms p{font-family:var(--mono); font-size:0.76rem; color:var(--ink-2);}
-.terms p span{color:var(--ink-2);}
+/* 9 · Las condiciones del programa dejan de ser letra chica al margen
+   (Ivan, 27 ago 2026). Son el compromiso de 3 meses, el período y la
+   dirección: información que decide si alguien puede entrar, y pasaba
+   desapercibida alineada a la izquierda en gris sobre gris.
+
+   Ahora es un bloque propio: centrado, sobre arena, con su borde. No se
+   agranda la letra —sigue siendo mono chica, que es lo correcto para un
+   dato— lo que cambia es que tiene CAJA, y una caja se ve. */
+.terms{
+  margin-top:clamp(30px,5vw,44px); padding:clamp(20px,4vw,26px) clamp(18px,4vw,30px);
+  background:var(--sand); border:1px solid var(--line-soft); border-radius:16px;
+  display:flex; flex-direction:column; gap:11px; text-align:center;
+}
+.terms p{font-family:var(--mono); font-size:0.78rem; color:var(--ink-2); line-height:1.5;}
+/* Lo que va después del punto medio es el DATO; lo de antes es el rótulo.
+   El dato en tinta, el rótulo en gris: se lee el valor de un vistazo. */
+.terms p span{color:var(--ink); font-weight:500;}
 
 /* ── sección oscura ── */
 .dark{background:var(--ink); color:var(--linen);}
@@ -984,7 +1118,15 @@ textarea.field{min-height:130px;}
   }
   /* En vertical el encuadre al 74 % cae sobre ladrillo plano; el 46 %
      agarra el haz de luz, que es de donde sale la calidez. */
-  .pase-foto{height:100%; min-height:480px; border-radius:0;}
+  /* La foto NO decide cuánto mide el pase; el pase decide cuánto mide la
+     foto. Con la imagen en el flujo, su alto natural a 330 px de ancho
+     estiraba la fila: el recorte alto mide 660×1448, o sea 724 px acá, y
+     cuando el pase va SIN fecha el texto no llega a esos 724 y quedaba un
+     vacío grande abajo a la derecha. Sacándola del flujo (absoluta) la
+     columna se estira sola —es un grid item— y la fila la manda el
+     contenido, con el min-height de piso. */
+  .pase-foto{height:auto; min-height:480px; border-radius:0;}
+  .pase-foto picture{position:absolute; inset:0;}
   /* Acá entra el otro encuadre (ver el <picture> del HTML). El marco
      acostado mide 330×724 —más estrecho de lo que es alta la foto del
      teléfono—, así que esa foto entraba completa y el pase abría con
@@ -1088,6 +1230,9 @@ textarea.field{min-height:130px;}
      y eso le cortaba la cabeza a las dos mujeres del frente.
      El alto de escena pasa de 360 a 450 filas: un 25% más de cuarto. */
   .abre-foto .abre-shot{aspect-ratio:16/10; max-height:96svh;}
+  /* En escritorio el titular es más chico en proporción, así que .abre
+     puede seguir respirando sin empujar el video fuera de la pantalla. */
+  .abre{padding:clamp(70px,9vh,110px) clamp(22px,6vw,40px) clamp(38px,5vh,56px);}
 
   /* ── los cuatro perfiles en rejilla ── */
   .profiles{
@@ -1161,11 +1306,20 @@ textarea.field{min-height:130px;}
      No toca la landing. Cuando se apruebe, esto pasa al template.
      ═══════════════════════════════════════════════════════════ */
 
+  /* La apertura ya NO ocupa la pantalla entera (Ivan, 27 ago 2026).
+     Cuando la portada se corre hacia arriba, lo que queda detrás tiene que
+     traer el hero: si .abre midiera 100svh, el titular se quedaba solo en
+     una pantalla de texto y las mujeres entrenando aparecían recién al
+     tercer scroll.
+
+     Con altura automática, el titular y el arranque del video comparten la
+     primera pantalla. El video asomando además invita a bajar mejor que
+     cualquier flecha: se ve que hay algo, no que se avisa que lo hay. */
   .abre{
-    min-height:100svh;
+    min-height:auto;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; position:relative;
-    padding:clamp(60px,10vh,110px) clamp(22px,6vw,40px) clamp(80px,12vh,120px);
+    padding:clamp(46px,7vh,86px) clamp(22px,6vw,40px) clamp(30px,4vh,44px);
   }
 
   /* ── el sello, grande y centrado ── */
@@ -1241,10 +1395,19 @@ textarea.field{min-height:130px;}
 
   /* ── señal de scroll ── */
   .abre-cue{
-    /* Se centra con márgenes, no con translateX: la animación de entrada
-       anima `transform` y borraría el centrado a mitad de camino. */
-    position:absolute; left:0; right:0; margin-inline:auto; width:fit-content;
-    bottom:clamp(26px,4vh,44px);
+    /* ⚠️ Era `position:absolute; bottom:…` y funcionaba mientras .abre
+       medía 100svh: había pantalla de sobra debajo del subtítulo. Cuando
+       la apertura pasó a altura automática para dejar asomar el hero
+       (27 ago 2026), el indicador se quedó anclado al pie de una caja que
+       ahora termina justo debajo del texto, y se montó ENCIMA del
+       subtítulo — cruzando «capacidad para empezar a construirla».
+
+       Ahora va en el flujo normal, después del texto. Sin absolute no hay
+       nada que pisar, y el margen superior es suyo, no prestado.
+
+       Se centra con márgenes y no con translateX porque la animación de
+       entrada anima `transform` y borraría el centrado a mitad de camino. */
+    margin:clamp(20px,3.4vh,32px) auto 0; width:fit-content;
     display:flex; flex-direction:column; align-items:center; gap:9px;
     font-family:var(--mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
     color:var(--ink-2);
