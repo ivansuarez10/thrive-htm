@@ -995,7 +995,12 @@ textarea.field{min-height:130px;}
 
   /* ── el hero de apertura ── */
   .abre-linea{max-width:19ch;}
-  .abre-foto .shot{max-width:min(880px,100%);}
+  /* El hero se ensancha de 880 a 1240 —todo el contenedor— desde que
+     dejó de ser una foto de archivo. Con la clase real adentro, el plano
+     abierto pide aire: a 880 el grupo se leía apretado. Ojo con el techo:
+     la fuente mide 720 px de ancho, así que a este marco se la amplía
+     1.6x. Más que esto empieza a verse blanda. */
+  .abre-foto .shot{max-width:min(1240px,100%);}
 
   /* ── los cuatro perfiles en rejilla ── */
   .profiles{
