@@ -1949,7 +1949,9 @@ body{background:var(--sand);}
         var url = waLink(c, x.wa.mensaje);
         hacer += url
           ? '<a class="wa" href="' + esc(url) + '" target="_blank" rel="noopener"' +
-            ' data-quien="' + esc(c.id) + '" data-que="' + esc(x.wa.texto.toLowerCase()) + '">' +
+            /* Una frase, no el rótulo del botón: con el rótulo el hilo
+               quedaba diciendo «Le escribiste escribirle». */
+            ' data-quien="' + esc(c.id) + '" data-que="por WhatsApp">' +
             ICONO_WA + esc(x.wa.texto) + '</a>'
           /* Sin teléfono no hay WhatsApp, y decirlo acá es más útil que un
              botón que no hace nada. La ficha es donde se arregla. */
