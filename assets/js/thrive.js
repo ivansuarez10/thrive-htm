@@ -58,6 +58,30 @@
     a.rel = 'noopener';
   });
 
+  /* ───────── el hero cambia de toma según la pantalla ─────────
+     En el HTML viene la toma vertical, que es la del teléfono: el link
+     se manda por WhatsApp, así que ese es el caso normal y tiene que
+     verse aunque este archivo no llegue a ejecutarse. Acá arriba, si la
+     ventana es ancha, se cambia por la horizontal.
+
+     Se hace ANTES del bloque de video de abajo para que el observador ya
+     encuentre la fuente definitiva, y solo si de verdad hay que cambiar:
+     tocar src sin necesidad reinicia la descarga. */
+  (function () {
+    var v = document.querySelector('[data-hero] video[data-ancho]');
+    if (!v || !window.matchMedia || !matchMedia('(min-width: 900px)').matches) return;
+
+    var fuente = v.querySelector('source');
+    if (fuente) fuente.setAttribute('src', v.getAttribute('data-ancho'));
+    var poster = v.getAttribute('data-ancho-poster');
+    if (poster) {
+      v.setAttribute('poster', poster);
+      var fija = v.parentNode.querySelector('img.poster');
+      if (fija) fija.setAttribute('src', poster);
+    }
+    v.load();
+  })();
+
   /* ───────── los videos de fondo ─────────
      Son fotos que se mueven, no reproductores: nunca deben mostrar un
      botón de play. `autoplay muted playsinline` debería bastar y no
@@ -268,6 +292,84 @@
       addEventListener('scroll', mover, { passive: true });
       addEventListener('resize', mover);
       mover();
+    }
+  }
+
+  /* ───────── el riel de capacidades ─────────
+     Las seis palabras del margen aparecen una por una a medida que se
+     baja. No es un escalonado que se dispara al entrar: está atado a la
+     posición del scroll, así que si se sube, se vuelven a apagar. Eso es
+     lo que pidió Ivan — «que aparezcan según hago scroll».
+
+     Se cuelga del mismo patrón que el parallax —un rAF por cuadro y el
+     escucha en modo pasivo— para no agregar un segundo bucle de scroll.
+
+     Los umbrales van de .06 a .76 y no de 0 a 1: la última palabra tiene
+     que encenderse ANTES de que la sección empiece a irse, o nunca se la
+     ve completa. */
+  if (!reduced) {
+    var rieles = [].slice.call(document.querySelectorAll('[data-capacidades]'));
+    if (rieles.length) {
+      /* Se guarda el número de cuadro en vez de un booleano, y cada
+         llamada CANCELA el anterior y pide uno nuevo.
+
+         Con un booleano —`if (pidiendo) return; pidiendo = true;`— basta
+         con que un cuadro no llegue para que el cerrojo quede trabado en
+         true y la función muera para siempre. Pasa de verdad: mientras la
+         pestaña está oculta el navegador deja de dar cuadros. Así se
+         repara solo, y al volver a la pestaña el cuadro pendiente corre. */
+      var cuadro = 0;
+
+      var llenar = function () {
+        if (cuadro) cancelAnimationFrame(cuadro);
+        cuadro = requestAnimationFrame(function () {
+          cuadro = 0;
+          var vh = innerHeight;
+          rieles.forEach(function (riel) {
+            var caja = riel.parentElement;
+            var r = caja.getBoundingClientRect();
+            var palabras = riel.children;
+            var n = palabras.length;
+            if (!n) return;
+
+            /* Avance de la sección a lo largo de TODO su paso por la
+               pantalla: 0 cuando su tope llega al 75 % de alto, 1 cuando
+               su pie llega al 40 %.
+
+               La primera versión repartía las seis palabras sobre el 72 %
+               de la altura de la sección y nada más: con una sección de
+               370 px eso son 270 px de scroll, y las seis se encendían
+               mientras la sección todavía asomaba por abajo. Ahora el
+               recorrido dura lo que dura leerla. */
+            var recorrido = vh * 0.35 + r.height;
+            var avance = (vh * 0.75 - r.top) / Math.max(recorrido, 1);
+            if (avance < 0) avance = 0;
+            if (avance > 1) avance = 1;
+
+            for (var i = 0; i < n; i++) {
+              var umbral = 0.06 + (i / (n - 1 || 1)) * 0.70;
+              palabras[i].classList.toggle('vista', avance >= umbral);
+            }
+          });
+        });
+      };
+
+      /* ⚠️ El escucha va en DOCUMENT y en fase de CAPTURA, no en window.
+         En este sitio quien hace scroll es el <body> (lleva overflow), y
+         el evento scroll de un contenedor NO burbujea hasta la ventana:
+         colgado de window no se disparaba nunca y el riel se quedaba
+         apagado para siempre. En captura sí lo ve, venga del body, del
+         documento o de cualquier caja con scroll propio. */
+      /* En captura y sobre document: así vale igual si algún día el scroll
+         lo lleva el documento o una caja con overflow propio. */
+      document.addEventListener('scroll', llenar, { passive: true, capture: true });
+      addEventListener('resize', llenar);
+      /* Al volver a la pestaña se recalcula: mientras estuvo oculta pudo
+         moverse el scroll sin que llegara un solo cuadro. */
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) llenar();
+      });
+      llenar();
     }
   }
 

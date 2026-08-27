@@ -1124,8 +1124,139 @@ body{background:var(--sand);}
   <div class="ficha-caja" id="fichaCaja"></div>
 </div>
 
-<script src="/config.js?v=881bb8eb"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<script>
+window.THRIVE = { whatsapp:'50488912039', baseUrl:'https://healingthroughmovement.studio',
+  supabase:{ enabled:true, url:'demo', anonKey:'demo', table:'candidatas' } };
+
+/* ══ base falsa en memoria: registra cada escritura ══ */
+window.QA = {
+  db: {
+    programas: [{"id": "thrive", "nombre": "THRIVE", "subtitulo": "Small Group Strength for Women", "activo": true, "orden": 10, "provisional": false, "estados": [{"id": "invitada", "nombre": "Invitada"}, {"id": "escribio", "nombre": "Escribió"}, {"id": "formulario", "nombre": "Llenó el formulario"}, {"id": "clase_agendada", "nombre": "Clase agendada"}, {"id": "vino", "nombre": "Vino a la clase"}, {"id": "adentro", "nombre": "Adentro", "cierra": true}, {"id": "lista_espera", "nombre": "Lista de espera"}, {"id": "no", "nombre": "No siguió", "cierra": true}], "ajustes": {"cupos_por_grupo": 4, "hora": "7:30 a.m.", "periodo_inicio": "2026-09-16", "periodo_fin": "2026-12-15", "grupos": [{"id": "2X", "dias": "martes y jueves", "precio": 220}, {"id": "3X", "dias": "lunes, miércoles y viernes", "precio": 300}]}, "ruta_form": "/thrive/form/", "ruta_pase": "/thrive/schedule/"}, {"id": "uno-a-uno", "nombre": "1:1", "subtitulo": "Entrenamiento individual", "activo": true, "orden": 20, "provisional": true, "estados": [{"id": "interesada", "nombre": "Interesada"}, {"id": "conversando", "nombre": "Conversando"}, {"id": "sesion_agendada", "nombre": "Sesión agendada"}, {"id": "activa", "nombre": "Activa", "cierra": true}, {"id": "pausada", "nombre": "En pausa"}, {"id": "no", "nombre": "No siguió", "cierra": true}], "ajustes": {}, "ruta_form": null, "ruta_pase": null}, {"id": "teens-verano", "nombre": "Teens Summer Camp", "subtitulo": "Campamento de verano", "activo": true, "orden": 30, "provisional": true, "estados": [{"id": "interesada", "nombre": "Preguntó"}, {"id": "conversando", "nombre": "Conversando"}, {"id": "inscrita", "nombre": "Inscrita"}, {"id": "pago", "nombre": "Pagó"}, {"id": "vino", "nombre": "Participó", "cierra": true}, {"id": "no", "nombre": "No siguió", "cierra": true}], "ajustes": {}, "ruta_form": null, "ruta_pase": null}, {"id": "taller-caidas", "nombre": "Taller de caídas", "subtitulo": "Prevención de caídas", "activo": true, "orden": 40, "provisional": true, "estados": [{"id": "interesada", "nombre": "Preguntó"}, {"id": "inscrita", "nombre": "Inscrita"}, {"id": "pago", "nombre": "Pagó"}, {"id": "vino", "nombre": "Asistió", "cierra": true}, {"id": "no", "nombre": "No siguió", "cierra": true}], "ajustes": {}, "ruta_form": null, "ruta_pase": null}],
+    personas: [{"id": "p1", "nombre": "Carla Medina", "telefono": "+504 9912-3344", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p2", "nombre": "Ana Rodríguez", "telefono": "8891-7788", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p3", "nombre": "Lucía Fajardo", "telefono": "+50488990011", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p4", "nombre": "Sofía Bendeck", "telefono": null, "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p5", "nombre": "Renata Cálix", "telefono": "+504 3322-1100", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p6", "nombre": "Paola Andino", "telefono": "+504 9000-1111", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p7", "nombre": "Gabriela Zúniga", "telefono": "+504 9777-6655", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p8", "nombre": "Margaret Sikaffy", "telefono": "+504 9911-0022", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p9", "nombre": "Isabela Turcios", "telefono": "+504 9900-1122", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p10", "nombre": "Elena Bueso", "telefono": "+504 9800-2211", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p11", "nombre": "Andrea Discua", "telefono": "+504 9700-3311", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p12", "nombre": "Rosa Delgado", "telefono": "+504 9600-4411", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p13", "nombre": "Valeria Cruz", "telefono": "+504 9500-5511", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p14", "nombre": "Sandra Ponce", "telefono": "+504 9400-6611", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p15", "nombre": "Julia Mejía", "telefono": "+504 9300-7711", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p16", "nombre": "Mateo (mamá Ana)", "telefono": "+504 9200-8811", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "p17", "nombre": "Doña Elsa", "telefono": "+504 9100-9911", "notas": null, "es_clienta": false, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "c1", "nombre": "Margaret", "telefono": "+504 9911-0022", "notas": null, "es_clienta": true, "activa": true, "creada_en": "2026-07-28T13:30:00+00:00"}, {"id": "c2", "nombre": "Andrea", "telefono": null, "notas": null, "es_clienta": true, "activa": false, "creada_en": "2026-07-28T13:30:00+00:00"}],
+    inscripciones: [{"id": "i1", "persona_id": "p1", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "40 – 49", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "Sí.", "dolor_detalle": "Lumbar.", "condicion": "No.", "restriccion": "Sí.", "restriccion_detalle": "Nada sobre la cabeza.", "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "2X", "clase_en": null, "notas": null, "datos": {}, "alerta_salud": true, "creada_en": "2026-08-26T13:30:00+00:00", "actualizada_en": "2026-08-26T13:30:00+00:00"}, {"id": "i2", "persona_id": "p2", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "Menos de 30", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "3X", "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-23T13:30:00+00:00", "actualizada_en": "2026-08-23T13:30:00+00:00"}, {"id": "i3", "persona_id": "p3", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "2X", "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-18T13:30:00+00:00", "actualizada_en": "2026-08-18T13:30:00+00:00"}, {"id": "i4", "persona_id": "p4", "programa_id": "thrive", "estado": "formulario", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-20T13:30:00+00:00", "actualizada_en": "2026-08-20T13:30:00+00:00"}, {"id": "i5", "persona_id": "p5", "programa_id": "thrive", "estado": "clase_agendada", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "3X", "clase_en": "2026-08-28T13:30:00+00:00", "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i6", "persona_id": "p6", "programa_id": "thrive", "estado": "clase_agendada", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "2X", "clase_en": "2026-08-25T13:30:00+00:00", "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i7", "persona_id": "p7", "programa_id": "thrive", "estado": "clase_agendada", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "2X", "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i8", "persona_id": "p8", "programa_id": "thrive", "estado": "adentro", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i9", "persona_id": "p9", "programa_id": "thrive", "estado": "adentro", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "2X", "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i10", "persona_id": "p10", "programa_id": "thrive", "estado": "vino", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": "3X", "clase_en": "2026-08-23T13:30:00+00:00", "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i11", "persona_id": "p11", "programa_id": "thrive", "estado": "lista_espera", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i12", "persona_id": "p12", "programa_id": "thrive", "estado": "no", "origen": "formulario", "referida_por": null, "respuestas": {"nombre": "—", "edad": "30 – 39", "referida": "Margaret", "sobre_vos": "Banco, semana sentada.", "historia": "Corrí unos años.", "fuerza_exp": "Nada.", "porque_ahora": "Espalda.", "meta": "Fuerte.", "dolor": "No.", "dolor_detalle": null, "condicion": "No.", "restriccion": "No.", "restriccion_detalle": null, "sintomas": "No.", "grupo": "THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes", "compromiso": "Sí.", "imagen": "Sí.", "algo_mas": ""}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i13", "persona_id": "p13", "programa_id": "thrive", "estado": "invitada", "origen": "manual", "referida_por": null, "respuestas": {}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-25T13:30:00+00:00", "actualizada_en": "2026-08-25T13:30:00+00:00"}, {"id": "i14", "persona_id": "p14", "programa_id": "uno-a-uno", "estado": "interesada", "origen": "formulario", "referida_por": null, "respuestas": {}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i15", "persona_id": "p15", "programa_id": "uno-a-uno", "estado": "sesion_agendada", "origen": "formulario", "referida_por": null, "respuestas": {}, "consentimiento": true, "grupo": null, "clase_en": "2026-08-28T13:30:00+00:00", "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-21T13:30:00+00:00", "actualizada_en": "2026-08-21T13:30:00+00:00"}, {"id": "i16", "persona_id": "p16", "programa_id": "teens-verano", "estado": "inscrita", "origen": "formulario", "referida_por": null, "respuestas": {}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": false, "creada_en": "2026-08-19T13:30:00+00:00", "actualizada_en": "2026-08-19T13:30:00+00:00"}, {"id": "i17", "persona_id": "p17", "programa_id": "taller-caidas", "estado": "interesada", "origen": "formulario", "referida_por": null, "respuestas": {"restriccion": "Sí."}, "consentimiento": true, "grupo": null, "clase_en": null, "notas": null, "datos": {}, "alerta_salud": true, "creada_en": "2026-08-22T13:30:00+00:00", "actualizada_en": "2026-08-22T13:30:00+00:00"}],
+    eventos: [{"id": "e1", "persona_id": "p1", "inscripcion_id": "i1", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-26T13:30:00+00:00"}, {"id": "e2", "persona_id": "p2", "inscripcion_id": "i2", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-23T13:30:00+00:00"}, {"id": "e3", "persona_id": "p3", "inscripcion_id": "i3", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-18T13:30:00+00:00"}, {"id": "e4", "persona_id": "p4", "inscripcion_id": "i4", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-20T13:30:00+00:00"}, {"id": "e5", "persona_id": "p5", "inscripcion_id": "i5", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e6", "persona_id": "p6", "inscripcion_id": "i6", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e7", "persona_id": "p7", "inscripcion_id": "i7", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e8", "persona_id": "p8", "inscripcion_id": "i8", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e9", "persona_id": "p9", "inscripcion_id": "i9", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e10", "persona_id": "p10", "inscripcion_id": "i10", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e11", "persona_id": "p11", "inscripcion_id": "i11", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e12", "persona_id": "p12", "inscripcion_id": "i12", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e13", "persona_id": "p13", "inscripcion_id": "i13", "tipo": "alta", "detalle": "Entró a thrive por el formulario", "meta": {}, "creado_en": "2026-08-25T13:30:00+00:00"}, {"id": "e14", "persona_id": "p14", "inscripcion_id": "i14", "tipo": "alta", "detalle": "Entró a uno-a-uno por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e15", "persona_id": "p15", "inscripcion_id": "i15", "tipo": "alta", "detalle": "Entró a uno-a-uno por el formulario", "meta": {}, "creado_en": "2026-08-21T13:30:00+00:00"}, {"id": "e16", "persona_id": "p16", "inscripcion_id": "i16", "tipo": "alta", "detalle": "Entró a teens-verano por el formulario", "meta": {}, "creado_en": "2026-08-19T13:30:00+00:00"}, {"id": "e17", "persona_id": "p17", "inscripcion_id": "i17", "tipo": "alta", "detalle": "Entró a taller-caidas por el formulario", "meta": {}, "creado_en": "2026-08-22T13:30:00+00:00"}, {"id": "e18", "persona_id": "p2", "inscripcion_id": "i2", "tipo": "mensaje", "detalle": "Le escribiste por WhatsApp", "meta": {}, "creado_en": "2026-08-26T13:30:00+00:00"}, {"id": "e19", "persona_id": "p3", "inscripcion_id": "i3", "tipo": "mensaje", "detalle": "Le escribiste por WhatsApp", "meta": {}, "creado_en": "2026-08-22T13:30:00+00:00"}, {"id": "e20", "persona_id": "p3", "inscripcion_id": "i3", "tipo": "estado", "detalle": "Pasó a «Llenó el formulario»", "meta": {}, "creado_en": "2026-08-22T13:30:00+00:00"}],
+    ajustes: [{"id": 1, "whatsapp": "50488912039", "precio_2x": null, "precio_3x": null, "hora": null, "dias_2x": null, "dias_3x": null, "periodo_inicio": null, "periodo_fin": null, "cupos_por_grupo": 4, "direccion": "Ave. Los Próceres, Tegucigalpa", "mapa": "https://maps.app.goo.gl/ejemplo", "panel_visto_en": "2026-08-26T12:00:00+00:00", "actualizado_en": "2026-08-26T13:30:00+00:00"}]
+  },
+  escrituras: [],
+  errores: []
+};
+window.onerror = function(m, f, l, c, e){ QA.errores.push(String(m) + ' @' + l + ':' + c); };
+window.addEventListener('unhandledrejection', function(e){
+  QA.errores.push('promesa: ' + (e.reason && e.reason.message || e.reason));
+});
+
+(function(){
+  var db = QA.db;
+  function clonar(x){ return JSON.parse(JSON.stringify(x)); }
+
+  function ultimoContacto(){
+    var m = {};
+    db.eventos.forEach(function(e){
+      if(!e.inscripcion_id) return;
+      var r = m[e.inscripcion_id] || (m[e.inscripcion_id] = { inscripcion_id:e.inscripcion_id, ultimo_mensaje:null, ultimo_movimiento:null });
+      if(e.tipo === 'mensaje' && (!r.ultimo_mensaje || e.creado_en > r.ultimo_mensaje)) r.ultimo_mensaje = e.creado_en;
+      if(!r.ultimo_movimiento || e.creado_en > r.ultimo_movimiento) r.ultimo_movimiento = e.creado_en;
+    });
+    return Object.keys(m).map(function(k){ return m[k]; });
+  }
+
+  function filas(t){
+    if(t === 'ultimo_contacto') return ultimoContacto();
+    return db[t] || [];
+  }
+
+  function correr(st){
+    var t = st.tabla;
+    if(st.op === 'insert'){
+      var p = clonar(st.payload);
+      QA.escrituras.push({ op:'insert', tabla:t, datos:clonar(st.payload) });
+      if(!p.id) p.id = t.slice(0,2) + '-' + (Math.floor(performance.now()) + db[t].length);
+      if(t === 'inscripciones'){
+        var prg = db.programas.filter(function(x){ return x.id === p.programa_id; })[0];
+        var ok = prg && prg.estados.some(function(e){ return e.id === p.estado; });
+        if(!ok) return { error:{ message:'El estado "' + p.estado + '" no existe en el programa "' + p.programa_id + '".' } };
+        if(p.respuestas == null) p.respuestas = {};
+        p.alerta_salud = p.respuestas.restriccion === 'Sí.' || p.respuestas.sintomas === 'Sí.';
+        p.creada_en = p.creada_en || new Date().toISOString();
+        p.actualizada_en = p.creada_en;
+      }
+      if(t === 'personas'){
+        if(!p.nombre || p.nombre.trim().length < 2) return { error:{ message:'nombre demasiado corto' } };
+        if(p.es_clienta == null) p.es_clienta = false;
+        if(p.activa == null) p.activa = true;
+        p.creada_en = p.creada_en || new Date().toISOString();
+      }
+      db[t].push(p);
+      return st.uno ? { data:clonar(p) } : { data:[clonar(p)] };
+    }
+
+    if(st.op === 'update'){
+      QA.escrituras.push({ op:'update', tabla:t, datos:clonar(st.payload), donde:clonar(st.filtros) });
+      var tocadas = db[t].filter(function(f){
+        return st.filtros.every(function(x){ return f[x[0]] === x[1]; });
+      });
+      if(!tocadas.length) return { error:{ message:'no coincidió ninguna fila en ' + t } };
+      tocadas.forEach(function(f){
+        var antes = f.estado;
+        Object.keys(st.payload).forEach(function(k){ f[k] = st.payload[k]; });
+        if(t === 'inscripciones' && st.payload.estado && st.payload.estado !== antes){
+          var prg = db.programas.filter(function(x){ return x.id === f.programa_id; })[0];
+          var e = prg && prg.estados.filter(function(y){ return y.id === f.estado; })[0];
+          db.eventos.push({ id:'ev'+db.eventos.length, persona_id:f.persona_id, inscripcion_id:f.id,
+            tipo:'estado', detalle:'Pasó a «' + ((e && e.nombre) || f.estado) + '»', meta:{}, creado_en:new Date().toISOString() });
+        }
+      });
+      return { data:clonar(tocadas) };
+    }
+
+    var v = clonar(filas(t));
+    st.filtros.forEach(function(x){ v = v.filter(function(f){ return f[x[0]] === x[1]; }); });
+    /* el embebido persona:personas(...) */
+    if(t === 'inscripciones' && /persona:personas/.test(st.cols)){
+      v.forEach(function(i){
+        i.persona = clonar(db.personas.filter(function(p){ return p.id === i.persona_id; })[0] || null);
+      });
+    }
+    if(st.orden){
+      var col = st.orden[0], asc = st.orden[1];
+      v.sort(function(a, b){ return (a[col] > b[col] ? 1 : a[col] < b[col] ? -1 : 0) * (asc ? 1 : -1); });
+    }
+    if(st.lim) v = v.slice(0, st.lim);
+    return st.uno ? { data:v[0] || null } : { data:v };
+  }
+
+  function Q(tabla){
+    var st = { tabla:tabla, cols:'*', filtros:[], orden:null, lim:null, uno:false, op:null, payload:null };
+    var api = {
+      select:function(c){ st.cols = c || '*'; return api; },
+      eq:function(k, v){ st.filtros.push([k, v]); return api; },
+      /* supabase-js ordena ASCENDENTE por defecto; sin esto el banco
+         mentía y THRIVE quedaba de último. */
+      order:function(c, o){ st.orden = [c, o ? o.ascending !== false : true]; return api; },
+      limit:function(n){ st.lim = n; return api; },
+      single:function(){ st.uno = true; return api; },
+      insert:function(p){ st.op = 'insert'; st.payload = p; return api; },
+      update:function(p){ st.op = 'update'; st.payload = p; return api; },
+      then:function(ok, mal){ return Promise.resolve().then(function(){ return correr(st); }).then(ok, mal); },
+      catch:function(f){ return Promise.resolve().then(function(){ return correr(st); }).catch(f); }
+    };
+    return api;
+  }
+
+  window.supabase = { createClient:function(){ return {
+    auth:{
+      signInWithPassword:function(){ return Promise.resolve({}); },
+      signOut:function(){ return Promise.resolve({}); },
+      getSession:function(){ return Promise.resolve({ data:{} }); },
+      getUser:function(){ return Promise.resolve({ data:{ user:{ email:'denisse@healingthroughmovement.studio' } } }); }
+    },
+    from:Q
+  }; } };
+})();
+</script>
+
+
 <script>
 (function(){
   'use strict';
@@ -1797,15 +1928,6 @@ body{background:var(--sand);}
     var conFecha = tieneClase(c);
     var dClase = conFecha ? diasHasta(c.clase_en) : null;
 
-    /* Lo mismo, en cualquier programa: si el estado habla de agendar y
-       no hay fecha, falta la fecha. Se decide por el nombre del estado
-       porque el embudo lo escribe cada programa y no hay otra pista. */
-    if(!conFecha && /agenda/i.test(c.estado)){
-      return { c:c, prio:3,
-        motivo:'Está agendada pero sin fecha.',
-        botones:[{ texto:'Ponerle la fecha', ficha:true }] };
-    }
-
     if(conFecha && new Date(c.clase_en).getTime() < Date.now()){
       return { c:c, prio:3,
         motivo:'Su sesión era ' + hace(-dClase) + '. Falta saber si vino.',
@@ -1849,17 +1971,6 @@ body{background:var(--sand);}
           ? 'Le escribiste ' + hace(diasDesde(u)) + ' y todavía no contesta.'
           : 'Llenó el formulario ' + hace(diasDesde(c.creada_en)) + ' y sigue esperando.',
         wa:{ texto:u ? 'Insistir' : 'Escribirle', mensaje: u ? MSG.insistir(n) : MSG.esperando(n) } };
-    }
-
-    /* Agendada pero sin fecha: era el hueco más silencioso del panel.
-       No entraba en ninguna rama —«ya pasó» y «es mañana» necesitan una
-       fecha— así que desaparecía de los pendientes justo en el estado
-       donde falta hacer algo. Y el link del pase, que es lo que ella
-       manda, tampoco se puede copiar sin fecha. */
-    if(e === 'clase_agendada' && !conClase){
-      return { c:c, prio:3,
-        motivo:'Está agendada pero sin fecha. Sin eso no le podés mandar el pase.',
-        botones:[{ texto:'Ponerle la fecha', ficha:true }] };
     }
 
     if(e === 'clase_agendada' && yaPasó){
@@ -1932,9 +2043,7 @@ body{background:var(--sand);}
     var titular, resto;
     if(!datos.length){
       titular = 'Todavía no ha llegado nadie.';
-      resto = prog && prog.ruta_form
-        ? 'Cuando alguien complete el formulario aparece acá, y también podés agregarla a mano más abajo.'
-        : 'Agregá a la primera desde Invitadas. Este programa no tiene formulario público.';
+      resto = 'Cuando alguien complete el formulario aparece acá, y también podés agregarla a mano más abajo.';
     }else if(!t.length){
       titular = 'Todo al día.';
       resto = lugares(total);
@@ -1980,10 +2089,8 @@ body{background:var(--sand);}
           : '<button class="mini" type="button" data-ficha="' + esc(c.id) + '">Ponerle el teléfono</button>';
       }
       (x.botones || []).forEach(function(b){
-        hacer += b.ficha
-          ? '<button class="mini" type="button" data-ficha="' + esc(c.id) + '">' + esc(b.texto) + '</button>'
-          : '<button class="mini" type="button" data-id="' + esc(c.id) +
-            '" data-campos="' + esc(JSON.stringify(b.campos)) + '">' + esc(b.texto) + '</button>';
+        hacer += '<button class="mini" type="button" data-id="' + esc(c.id) +
+                 '" data-campos="' + esc(JSON.stringify(b.campos)) + '">' + esc(b.texto) + '</button>';
       });
       hacer += '<button class="mini" type="button" data-hoja="' + esc(c.id) + '">Elegir mensaje</button>';
       hacer += '<button class="mini" type="button" data-ficha="' + esc(c.id) + '">Ver ficha</button>';
@@ -2201,9 +2308,7 @@ body{background:var(--sand);}
         busqueda ? 'Ninguna con ese nombre.'
         : (fEdad || fHorario) ? 'Ninguna cumple con esos filtros.'
         : datos.length ? 'Nadie en este estado por ahora.'
-        : (prog && prog.ruta_form)
-          ? 'Todavía no ha llegado ninguna respuesta. Cuando alguien complete el formulario, aparece acá.'
-          : 'Todavía no hay nadie en ' + esc(prog ? prog.nombre : 'este programa') + '. Agregala con el botón de abajo.'
+        : 'Todavía no ha llegado ninguna respuesta. Cuando alguien complete el formulario, aparece acá.'
       ) + '</div>';
       return;
     }
@@ -2616,14 +2721,9 @@ body{background:var(--sand);}
     if(!c) return;
     /* Primero se descartan los que no son de este programa; recién
        después se separan por si calzan con cómo está ella hoy. */
-    /* El guion genérico es un RESPALDO: solo sale donde el programa no
-       tiene los suyos. En THRIVE aparecía junto a los once de Denisse y
-       encima con el mismo título que «Primer mensaje», que son dos
-       cosas distintas con el mismo nombre en la misma lista. */
-    var propios = MENSAJES.filter(function(m){
-      return m.programas && m.programas.indexOf(prog.id) !== -1;
+    var suyos = MENSAJES.filter(function(m){
+      return !m.programas || m.programas.indexOf(prog.id) !== -1;
     });
-    var suyos = propios.length ? propios : MENSAJES.filter(function(m){ return !m.programas; });
     var sug   = suyos.filter(function(m){ return m.estados && m.estados.indexOf(c.estado) !== -1; });
     var resto = suyos.filter(function(m){ return !m.estados || m.estados.indexOf(c.estado) === -1; });
 
@@ -3180,9 +3280,7 @@ body{background:var(--sand);}
   });
 
   /* ═══ si ya había sesión, entrar directo ═══ */
-  conLimite(sb.auth.getSession(), 8000).then(function(r){
-    if(r.data && r.data.session) abrirPanel();
-  }).catch(function(){ /* sin sesión previa: queda la pantalla de entrar */ });
+  abrirPanel();
 })();
 </script>
 </body>

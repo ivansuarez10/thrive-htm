@@ -301,7 +301,25 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
   transition:transform 600ms var(--ease), box-shadow 600ms var(--ease);
 }
 .shot .plx{position:absolute; inset:-9% 0; width:100%; height:118%; object-fit:cover; will-change:transform;}
-.shot.hero{aspect-ratio:16/10;}
+".shot.hero{aspect-ratio:16/10;}
+
+/* ── el hero, de borde a borde ──
+   Decisión de Ivan, 27 ago 2026: el hero se ve a pantalla completa y no
+   como un cuadro dentro de la columna. Se sale del contenedor con el
+   truco del 50%/50vw y pierde las esquinas redondeadas, porque un
+   redondeo contra el borde de la pantalla no se lee como marco: se lee
+   como error.
+
+   Dos proporciones porque son dos tomas. En el teléfono la fuente es
+   VERTICAL y 4:5 la usa casi entera; desde 900 px entra la horizontal y
+   manda 16:9. Ojo con el techo: las dos fuentes tienen 720 px de ancho,
+   así que a pantalla completa en un monitor de 1920 se amplían 2.7x. En
+   el teléfono, en cambio, 390 px lógicos son 780 físicos y la ampliación
+   es 1.08x — prácticamente nativa. Por eso la vertical va donde va. */
+.abre-foto .abre-shot{
+  width:100vw; margin-left:calc(50% - 50vw);
+  border-radius:0; aspect-ratio:4/5; max-height:88svh;
+}
 .shot.metodo{aspect-ratio:4/3;}
 /* ── la frase que releva al botón ──
    El hero dejó de terminar en una puerta (26 ago 2026). La línea que
@@ -374,36 +392,45 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .profile p{font-size:1.02rem; color:var(--ink-2);}
 .profile p b{color:var(--ink); font-weight:700;}
 
-/* ── las seis capacidades ──
-   Eran una fila de píldoras flotando sobre una sección casi vacía: el
-   patrón que delata trabajo hecho por una máquina, y encima mudo — seis
-   etiquetas que no decían nada. Ahora se leen como las escribe Denisse
-   en su propio documento, separadas por puntos: la lista de lo que
-   tiene adentro una sesión. El punto es lo único que lleva color.
+/* ── el riel de las seis capacidades ──
+   Fueron una fila de píldoras: el patrón que delata trabajo hecho por una
+   máquina, y encima mudo. Ahora corren por el MARGEN de la sección, en
+   mono fino, como el lomo de un libro o la etiqueta de un rack. No
+   compiten con nada — son estructura, no contenido — y dejan la columna
+   entera para las tres frases.
 
-   No van en píldoras a propósito. Una píldora promete que se puede
-   tocar, y estas no se tocan. */
-.capacidades{
-  display:flex; flex-wrap:wrap; gap:0.3em 0.62em;
-  /* 28ch da un corte en escalera —3 / 2 / 1— en vez del bulto del medio
-     que salía a 24. Y evita que en pantallas anchas las seis palabras se
-     estiren en una sola línea, que volvería a parecer una tira. */
-  margin:0 0 clamp(28px,4vw,38px); max-width:28ch;
-  font-size:clamp(1.1rem,2.4vw,1.4rem); line-height:1.42;
-  letter-spacing:-0.012em; color:var(--ink); font-weight:500;
+   Aparecen una por una a medida que se baja: el riel se llena mientras se
+   lee la sección. Eso lo calcula thrive.js; acá viven los dos estados.
+
+   El color es --ink-2 y no --ink-3: a 10 px en versalitas, el gris claro
+   da 3.7 sobre blanco y no alcanza. */
+.metodo-riel{margin:0 0 clamp(26px,3.4vw,34px);}
+.metodo-riel .cap{
+  font-family:var(--mono); font-size:0.63rem; letter-spacing:.26em;
+  text-transform:uppercase; color:var(--ink-2);
+  opacity:0; filter:blur(3px);
+  transition:opacity 620ms var(--ease), filter 620ms var(--ease);
 }
-/* El punto se pega a la palabra que lo precede: si esa palabra salta de
-   línea, el punto salta con ella. Al revés quedaría una línea empezando
-   con un punto suelto. */
-.capacidades .cap:not(:last-child)::after{
-  content:'·'; color:var(--teal); font-weight:700; margin-left:0.62em;
+.metodo-riel .cap.vista{opacity:1; filter:blur(0);}
+.metodo-riel .cap:not(:last-child)::after{content:'·'; color:var(--teal-deep); margin:0 .5em 0 .35em;}
+
+/* Quien pidió menos movimiento las ve todas, quietas, desde el principio. */
+@media (prefers-reduced-motion: reduce){
+  .metodo-riel .cap{opacity:1 !important; filter:none !important; transition:none !important;}
 }
 
-.facts{margin-top:clamp(30px,5vw,42px); display:flex; flex-direction:column; gap:20px;}
-.fact{display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;}
-.fact .dot{width:6px; height:6px; border-radius:50%; background:var(--teal); margin-top:11px;}
-.fact p{font-size:1.02rem; color:var(--ink-2);}
-.fact p b{color:var(--ink); font-weight:700;}
+/* En una sola columna no hay margen donde poner un riel vertical, y la
+   tira de pie a cabeza mediría más que la propia sección. Abajo de 900
+   se acuesta: misma aparición palabra por palabra, en horizontal. */
+.metodo-riel{display:flex; flex-wrap:wrap; align-items:baseline;}
+
+/* Sin viñetas. El punto de color no ordenaba nada —son tres frases, no
+   una lista de compras— y ponía un lunar teal delante de cada línea.
+   Lo que separa las frases es el aire, y lo que ancla cada una es su
+   frase en negrita. */
+.facts{display:flex; flex-direction:column; gap:clamp(20px,2.4vw,28px);}
+.fact{margin:0; font-size:1.02rem; color:var(--ink-2); text-wrap:pretty;}
+.fact b{color:var(--ink); font-weight:700;}
 
 /* Cita del método. La comilla grande en arcilla hace el trabajo que
    antes hacía una barra de color al costado — más editorial, y es el
@@ -1000,7 +1027,7 @@ textarea.field{min-height:130px;}
      abierto pide aire: a 880 el grupo se leía apretado. Ojo con el techo:
      la fuente mide 720 px de ancho, así que a este marco se la amplía
      1.6x. Más que esto empieza a verse blanda. */
-  .abre-foto .shot{max-width:min(1240px,100%);}
+  .abre-foto .abre-shot{aspect-ratio:16/9; max-height:82svh;}
 
   /* ── los cuatro perfiles en rejilla ── */
   .profiles{
@@ -1017,6 +1044,18 @@ textarea.field{min-height:130px;}
     display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
     column-gap:clamp(44px,5vw,88px); align-items:start;
     margin-top:clamp(44px,4vw,64px);
+    /* sitio para el riel, que va absoluto contra este borde */
+    position:relative; padding-left:56px;
+  }
+
+  /* El riel se pone de pie y corre por el margen. La rotación de 180°
+     sobre el modo vertical hace que se lea de abajo hacia arriba: así se
+     llena hacia arriba mientras se baja, siguiendo al contenido. */
+  .metodo-grid .metodo-riel{
+    position:absolute; left:0; top:0; bottom:0; width:34px; margin:0;
+    writing-mode:vertical-rl; transform:rotate(180deg);
+    flex-wrap:nowrap; justify-content:flex-start; align-items:center;
+    white-space:nowrap;
   }
   .metodo-media{position:sticky; top:clamp(40px,6vw,80px);}
   .shot.metodo{aspect-ratio:3/4;}

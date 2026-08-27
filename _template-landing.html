@@ -53,8 +53,18 @@
 <!-- ══════════ LA FOTO Y LA ACCIÓN ══════════ -->
 <div class="abre-foto" data-ground="linen">
   <div class="wide" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
-    <div class="shot" style="width:min(1240px,100%); aspect-ratio:16/10;">
-      <video class="plx" data-plx autoplay loop muted playsinline preload="metadata" poster="/assets/img/hero-poster.jpg" width="1088" height="680"><source src="/assets/video/hero.mp4" type="video/mp4"></video><img class="poster" src="/assets/img/hero-poster.jpg" alt="Cuatro mujeres entrenando con mancuernas en el estudio de HTM" width="1088" height="680">
+    <!-- Dos fuentes para dos formas de mirar. En el teléfono va una toma
+         VERTICAL —la del cajón— que a esa medida se ve casi a resolución
+         nativa; en escritorio va la clase, horizontal. La fuente vertical
+         viene escrita en el HTML a propósito: el link se manda por
+         WhatsApp, o sea que el teléfono es el caso normal y tiene que
+         funcionar aunque el JS no llegue. thrive.js sube a la horizontal
+         cuando la ventana es ancha. -->
+    <div class="shot abre-shot" data-hero>
+      <video class="plx" data-plx autoplay loop muted playsinline preload="metadata"
+             poster="/assets/img/hero-movil-poster.jpg"
+             data-ancho="/assets/video/hero.mp4" data-ancho-poster="/assets/img/hero-poster.jpg"
+             width="720" height="900"><source src="/assets/video/hero-movil.mp4" type="video/mp4"></video><img class="poster" src="/assets/img/hero-movil-poster.jpg" alt="Una mujer subiendo a un cajón con mancuernas en el estudio de HTM" width="720" height="900">
     </div>
 
     <p class="abre-frase up">Entrenamos fuerza para construir capacidad, confianza y libertad en tu cuerpo.</p>
@@ -102,6 +112,14 @@
     <h2 class="h2 up">¿Cómo entrenamos?</h2>
 
     <div class="metodo-grid">
+      <!-- Las seis capacidades corren por el margen de la sección, como el
+           lomo de un libro. Aparecen una por una a medida que se baja: el
+           riel se llena mientras se lee. El detalle del cálculo está en
+           thrive.js; acá sólo viven las palabras. -->
+      <p class="metodo-riel" data-capacidades aria-label="Movilidad, potencia, fuerza, core, balance y acondicionamiento">
+        <span class="cap">Movilidad</span><span class="cap">Potencia</span><span class="cap">Fuerza</span><span class="cap">Core</span><span class="cap">Balance</span><span class="cap">Acondicionamiento</span>
+      </p>
+
       <div class="metodo-media">
         <div class="shot metodo up">
           <video class="plx" data-plx autoplay loop muted playsinline preload="metadata" poster="/assets/img/metodo-poster.jpg" width="720" height="960"><source src="/assets/video/metodo.mp4" type="video/mp4"></video><img class="poster" src="/assets/img/metodo-poster.jpg" alt="Una clienta levantando una mancuerna desde una plataforma mientras la entrenadora la acompaña" width="720" height="960">
@@ -109,17 +127,10 @@
       </div>
 
       <div class="metodo-copy">
-        <!-- Las seis capacidades, escritas como las escribe Denisse en su
-             documento: separadas por puntos, no en una fila de píldoras.
-             Cada una entra por su cuenta al hacer scroll. -->
-        <p class="capacidades stag">
-          <span class="cap">Movilidad</span><span class="cap">Potencia</span><span class="cap">Fuerza</span><span class="cap">Core</span><span class="cap">Balance</span><span class="cap">Acondicionamiento</span>
-        </p>
-
         <div class="facts stag">
-          <div class="fact"><span class="dot"></span><p>Entrenamiento estructurado y progresivo, <b>adaptado al punto desde donde comenzás</b>.</p></div>
-          <div class="fact"><span class="dot"></span><p><b>Máximo 4 mujeres por grupo</b>, para darte coaching cercano mientras conservamos la energía de entrenar acompañadas.</p></div>
-          <div class="fact"><span class="dot"></span><p>Al unirte a THRIVE, comenzamos con <b>una evaluación individual</b> para conocer tu punto de partida y adaptar el entrenamiento a vos.</p></div>
+          <p class="fact">Entrenamiento estructurado y progresivo, <b>adaptado al punto desde donde comenzás</b>.</p>
+          <p class="fact"><b>Máximo 4 mujeres por grupo</b>, para darte coaching cercano mientras conservamos la energía de entrenar acompañadas.</p>
+          <p class="fact">Al unirte a THRIVE, comenzamos con <b>una evaluación individual</b> para conocer tu punto de partida y adaptar el entrenamiento a vos.</p>
         </div>
       </div>
     </div>
