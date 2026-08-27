@@ -317,8 +317,12 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    el teléfono, en cambio, 390 px lógicos son 780 físicos y la ampliación
    es 1.08x — prácticamente nativa. Por eso la vertical va donde va. */
 .abre-foto .abre-shot{
-  width:100vw; margin-left:calc(50% - 50vw);
-  border-radius:0; aspect-ratio:4/5; max-height:88svh;
+  /* Nada de margen negativo para salirse del contenedor: el .wide de esta
+     sección ya centra con flex (align-items:center), así que un item de
+     100vw queda centrado solo. Poniendo además el truco del 50%/50vw se
+     suman los dos desplazamientos y el marco se corre — medido: sobresalía
+     106 px por la izquierda y 34 por la derecha. */
+  width:100vw; border-radius:0; aspect-ratio:4/5; max-height:88svh;
 }
 .shot.metodo{aspect-ratio:4/3;}
 /* ── la frase que releva al botón ──
