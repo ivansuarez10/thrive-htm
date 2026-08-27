@@ -24,18 +24,50 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="/assets/img/hero.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=dad900a9">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=01169c0c">
 </head>
 
 <body>
 
+<!-- ══════════ PORTADA ══════════
+     Primera pantalla de marca: sello, THRIVE y la línea de programa.
+     Decisión de Ivan, 27 ago 2026.
+
+     SE COMPORTA DISTINTO SEGÚN EL TAMAÑO, y el detalle vive en el CSS:
+
+       · escritorio → sección normal. Muestra «Seguí bajando» y se pasa
+         con scroll. Hay rueda y barra: quitarle el control a alguien que
+         ya lo tenía sería un peaje.
+       · teléfono   → capa que se quita sola a los 4 s. Acá la portada ES
+         la primera pantalla y el pulgar todavía no llegó; los 4 segundos
+         posicionan la marca antes de que nadie decida nada.
+
+     ⚠️ Esto revierte el commit 13bebbf, «El hero deja de pedir y la
+     página deja de presentarse». El motivo nuevo es de posicionamiento:
+     THRIVE sale a clientas que no conocen la marca, y quien recibe el
+     link lo recibe por invitación. Queda escrito para que no se lea como
+     un descuido.
+
+     La red: lo BASE es lo de escritorio. La capa fija solo existe cuando
+     thrive.js le pone .portada-viva al <body>. Si el script no llega, el
+     teléfono ve una sección normal con su «Seguí bajando» y scrollea.
+     Nadie se queda mirando una pantalla trabada. -->
+<div class="portada" id="portada">
+  <div class="portada-in">
+    <img class="abre-sello" src="/assets/img/seal.svg" alt="Healing Through Movement" width="168" height="168">
+
+    <span class="abre-word" aria-label="THRIVE"><i style="--i:0">t</i><i style="--i:1">h</i><i style="--i:2">r</i><i style="--i:3">i</i><i style="--i:4">v</i><i style="--i:5">e</i></span>
+    <span class="abre-tag">Small Group Strength Training for Women</span>
+
+    <div class="abre-cue" aria-hidden="true">
+      <span class="riel"></span>
+      Seguí bajando
+    </div>
+  </div>
+</div>
+
 <!-- ══════════ APERTURA ══════════ -->
 <section class="abre" data-ground="linen">
-  <img class="abre-sello" src="/assets/img/seal.svg" alt="Healing Through Movement" width="168" height="168">
-
-  <span class="abre-word" aria-label="THRIVE"><i style="--i:0">t</i><i style="--i:1">h</i><i style="--i:2">r</i><i style="--i:3">i</i><i style="--i:4">v</i><i style="--i:5">e</i></span>
-  <span class="abre-tag">Small Group Strength Training for Women</span>
-
   <h1 class="abre-linea">
     <span class="mask m1"><span>Strength for the life</span></span>
     <span class="mask m2"><span>you want to keep</span></span>
@@ -44,10 +76,6 @@
 
   <p class="abre-sub">No tenés que esperar a perder capacidad para empezar a construirla.</p>
 
-  <div class="abre-cue" aria-hidden="true">
-    <span class="riel"></span>
-    Seguí bajando
-  </div>
 </section>
 
 <!-- ══════════ LA FOTO Y LA ACCIÓN ══════════ -->
@@ -87,19 +115,15 @@
 
     <div class="profiles stag">
       <div class="profile">
-        <span class="n">01</span>
         <p><b>Ya sos activa</b> y querés incorporar fuerza para complementar Pilates, tenis, running, caminatas u otras actividades que disfrutás.</p>
       </div>
       <div class="profile">
-        <span class="n">02</span>
         <p><b>Antes eras activa</b> y querés volver a entrenar con estructura, recuperar consistencia y volver a cumplir con vos.</p>
       </div>
       <div class="profile">
-        <span class="n">03</span>
         <p><b>Querés incorporar fuerza</b>, pero no sabés exactamente por dónde empezar, y valorás tener acompañamiento mientras aprendés y progresás.</p>
       </div>
       <div class="profile">
-        <span class="n">04</span>
         <p><b>Estás pensando en tu futuro</b> y querés invertir hoy en tu fuerza, masa muscular, huesos y articulaciones, y en cómo querés sentirte durante los próximos años.</p>
       </div>
     </div>
@@ -172,11 +196,11 @@
     <h2 class="h2 up" style="max-width:18ch;">Tu experiencia THRIVE incluye</h2>
 
     <ul class="incluye stag">
-        <li><svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Máximo 4 mujeres por grupo</b>Coaching cercano, correcciones y atención real durante tu entrenamiento.</span></li>
-        <li><svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Programación estructurada y progresiva</b>Tus sesiones forman parte de un proceso diseñado para desarrollar fuerza y capacidad a lo largo del ciclo.</span></li>
-        <li><svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Evaluación individual inicial</b>Antes de iniciar, conocemos tu punto de partida para reconocer tus fortalezas, identificar qué podemos seguir desarrollando y saber dónde poner especial atención.</span></li>
-        <li><svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Una estructura compartida, coaching individual</b>Entrenamos bajo una misma programación, con progresiones y adaptaciones según tu experiencia, capacidades y necesidades.</span></li>
-        <li><svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Tu programación en la app</b>Consultá tus entrenamientos, ejercicios, cargas y progreso desde tu teléfono, y mantené acceso cuando no puedas asistir.</span></li>
+        <li><span><b>Máximo 4 mujeres por grupo</b>Coaching cercano, correcciones y atención real durante tu entrenamiento.</span></li>
+        <li><span><b>Programación estructurada y progresiva</b>Tus sesiones forman parte de un proceso diseñado para desarrollar fuerza y capacidad a lo largo del ciclo.</span></li>
+        <li><span><b>Evaluación individual inicial</b>Antes de iniciar, conocemos tu punto de partida para reconocer tus fortalezas, identificar qué podemos seguir desarrollando y saber dónde poner especial atención.</span></li>
+        <li><span><b>Una estructura compartida, coaching individual</b>Entrenamos bajo una misma programación, con progresiones y adaptaciones según tu experiencia, capacidades y necesidades.</span></li>
+        <li><span><b>Tu programación en la app</b>Consultá tus entrenamientos, ejercicios, cargas y progreso desde tu teléfono, y mantené acceso cuando no puedas asistir.</span></li>
     </ul>
   </div>
 </section>
@@ -199,14 +223,14 @@
         <span class="pn">THRIVE · 2X</span>
         <span class="days">Martes + Jueves · 7:30 a.m.</span>
         <span class="price"><b>$220</b><small>/ mes</small></span>
-        <a class="plan-cta" href="/thrive/form/?plan=2X">Quiero probar THRIVE 2X</a>
+        <a class="plan-cta" href="#invitacion" data-plan-cta="2X">Quiero probar THRIVE 2X</a>
       </div>
 
       <div class="plan" data-plan="3X">
         <span class="pn">THRIVE · 3X</span>
         <span class="days">Lunes + Miércoles + Viernes&nbsp;· 7:30 a.m.</span>
         <span class="price"><b>$300</b><small>/ mes</small></span>
-        <a class="plan-cta" href="/thrive/form/?plan=3X">Quiero probar THRIVE 3X</a>
+        <a class="plan-cta" href="#invitacion" data-plan-cta="3X">Quiero probar THRIVE 3X</a>
       </div>
 
     </div>
@@ -223,8 +247,17 @@
   </div>
 </section>
 
-<!-- ══════════ INVITACIÓN ══════════ -->
-<section class="dark" data-ground="ink">
+<!-- ══════════ INVITACIÓN ══════════
+     Los botones de plan aterrizan ACÁ y no en el formulario (Ivan, 27 ago
+     2026). El motivo es de guion, no de maquetación: este bloque dice
+     «antes de comprometerte, quiero que vengás a vivir la experiencia», y
+     mandar a alguien del precio directo al cuestionario se saltea justo
+     ese mensaje.
+
+     El plan elegido NO se pierde: thrive.js lo guarda y se lo cuelga al
+     botón de abajo. Sin JS el ancla igual funciona —baja al pie— y el
+     botón manda al formulario sin plan, que es el comportamiento viejo. -->
+<section class="dark" data-ground="ink" id="invitacion">
   <div class="wrap">
     <img class="seal up" src="/assets/img/seal-linen.svg" alt="" width="64" height="64">
     <p class="body up" style="margin-top:30px;">Esta primera edición de THRIVE está abierta exclusivamente a clientas actuales, antiguas clientas y mujeres referidas por nuestra comunidad HTM.</p>
@@ -245,7 +278,7 @@
            sabido porque la conversación empezaba por WhatsApp.
            El glifo de WhatsApp se fue con el destino: dejarlo sería
            prometer una app y abrir otra cosa. -->
-      <a class="cta" href="/thrive/form/">
+      <a class="cta" data-cta-final href="/thrive/form/">
         Quiero probar THRIVE
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
@@ -264,6 +297,6 @@
 </footer>
 
 <script src="/config.js?v=881bb8eb"></script>
-<script src="/assets/js/thrive.js?v=5874df48"></script>
+<script src="/assets/js/thrive.js?v=86de74b1"></script>
 </body>
 </html>
