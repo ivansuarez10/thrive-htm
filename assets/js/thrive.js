@@ -577,6 +577,23 @@
       b.addEventListener('click', function () {
         var plan = b.getAttribute('data-plan-cta');
         if (!/^[23]X$/.test(plan)) return;          /* solo lo que conocemos */
+
+        /* ⚠️ El hash se BORRA de la URL apenas cumplió su trabajo.
+           Sin esto, la direccion queda en …/thrive/#invitacion — y como
+           esa seccion esta al 98 % del documento, el proximo refresco
+           tiraba a la persona casi al final de la pagina. Ivan lo
+           encontro en el telefono el 27 ago 2026.
+
+           Se usa replaceState y no location.hash='' porque asignar el
+           hash vacio deja el '#' colgando y agrega una entrada al
+           historial: el boton de atras dejaria de servir.
+
+           El href del boton NO se toca: sigue siendo #invitacion, que es
+           lo que hace bajar cuando el JS no llega. La limpieza pasa
+           despues del salto, no en vez de el. */
+        setTimeout(function () {
+          try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+        }, 0);
         final.setAttribute('href', baseFinal + '?plan=' + plan);
         /* El texto del botón también lo dice: si alguien baja y ve
            «Quiero probar THRIVE» a secas, no tiene forma de saber que su

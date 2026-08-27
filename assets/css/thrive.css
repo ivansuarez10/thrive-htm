@@ -115,6 +115,14 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
      «¿Cómo entrenamos?» tocaba la foto. El margen sale del ancho, así que
      respira más en pantalla grande sin abrirse de más en el teléfono. */
   margin-bottom:clamp(22px,5vw,34px);
+
+  /* CENTRADOS, en los dos tamaños (Ivan, 27 ago 2026).
+     ⚠️ El margin-inline:auto NO es decoración: dos de estos titulares
+     traen un max-width en línea (18ch y 20ch). Con solo text-align, la
+     caja angosta se queda pegada a la izquierda y el texto se centra
+     DENTRO de ella — se ve descolgado, no centrado. El auto centra la
+     caja; el text-align, el texto adentro. Hacen falta los dos. */
+  text-align:center; margin-inline:auto;
 }
 .body{font-size:1.05rem; color:var(--ink-2);}
 .body strong{color:var(--ink); font-weight:700;}
@@ -342,7 +350,12 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    `clip` y no `hidden` a propósito: `hidden` crea un contenedor de scroll
    y rompería el `position:sticky` de .metodo-media, unas secciones abajo. */
 .abre-foto{overflow-x:clip;}
-.shot.metodo{aspect-ratio:4/3;}
+/* VERTICAL, como se filmó (Ivan, 27 ago 2026). Estaba en 4/3 horizontal
+   sobre un archivo de 720x960: se le recortaba más de la mitad del alto,
+   y el alto es justo donde está el movimiento del ejercicio —el paso al
+   cajón—. En 3/4 pasa de 330x248 a 330x440: +77 % de superficie y deja
+   de cortar la toma. */
+.shot.metodo{aspect-ratio:3/4;}
 /* ── la frase que releva al botón ──
    El hero dejó de terminar en una puerta (26 ago 2026). La línea que
    estaba en la cita del método se MUDÓ acá: no se copió — repetirla a
@@ -1248,9 +1261,22 @@ textarea.field{min-height:130px;}
   .profile:last-child{border-bottom:1px solid var(--line-soft);}
 
   /* ── método: foto al lado del contenido ── */
+  /* La columna GRANDE es la del video (Ivan, 27 ago 2026). Era al revés
+     —0.9 para la foto, 1.1 para el texto— y el video quedaba en 301 px
+     sobre un archivo de 720: el 42 % de su tamaño real, con el
+     movimiento del ejercicio ilegible.
+
+     Se queda dentro del .wrap a propósito: Ivan descartó pasarlo al
+     .wide. Lo que se hace en cambio es apretar el canal entre columnas,
+     que a 1440 se comía 72 px de puro aire.
+
+     Resultado medido: el video pasa de 301x401 a 380x507 — un 26 % más
+     ancho y un 60 % más de superficie. Y el texto se queda en 311 px,
+     que a este cuerpo son unos 37 caracteres por renglón: angosto pero
+     legible. Bajar más de ahí ya rompe la lectura de tres párrafos. */
   .metodo-grid{
-    display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
-    column-gap:clamp(44px,5vw,88px); align-items:start;
+    display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+    column-gap:clamp(32px,3.4vw,56px); align-items:start;
     margin-top:clamp(44px,4vw,64px);
   }
 
