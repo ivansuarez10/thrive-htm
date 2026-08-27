@@ -80,6 +80,18 @@
       if (fija) fija.setAttribute('src', poster);
     }
     v.load();
+
+    /* Y se arranca acá mismo. Dejarlo en manos del observador de abajo
+       es frágil: load() reinicia el elemento y la promesa de play() puede
+       quedar cancelada por esa misma recarga. Si el navegador no lo deja
+       todavía, el intento se repite en cuanto haya datos. */
+    var arrancar = function () {
+      v.muted = true;
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    };
+    arrancar();
+    v.addEventListener('canplay', arrancar, { once: true });
   })();
 
   /* ───────── los videos de fondo ─────────
@@ -310,6 +322,10 @@
   if (!reduced) {
     var rieles = [].slice.call(document.querySelectorAll('[data-capacidades]'));
     if (rieles.length) {
+      /* Recién acá se apagan. El CSS las deja VISIBLES por defecto: si
+         este script no llega, el pie de la sección se lee igual. */
+      document.body.classList.add('capacidades-vivas');
+
       /* Se guarda el número de cuadro en vez de un booleano, y cada
          llamada CANCELA el anterior y pide uno nuevo.
 
@@ -326,23 +342,24 @@
           cuadro = 0;
           var vh = innerHeight;
           rieles.forEach(function (riel) {
-            var caja = riel.parentElement;
-            var r = caja.getBoundingClientRect();
             var palabras = riel.children;
             var n = palabras.length;
             if (!n) return;
 
-            /* Avance de la sección a lo largo de TODO su paso por la
-               pantalla: 0 cuando su tope llega al 75 % de alto, 1 cuando
-               su pie llega al 40 %.
+            /* Se mide contra LA PROPIA TIRA, no contra la sección.
 
-               La primera versión repartía las seis palabras sobre el 72 %
-               de la altura de la sección y nada más: con una sección de
-               370 px eso son 270 px de scroll, y las seis se encendían
-               mientras la sección todavía asomaba por abajo. Ahora el
-               recorrido dura lo que dura leerla. */
-            var recorrido = vh * 0.35 + r.height;
-            var avance = (vh * 0.75 - r.top) / Math.max(recorrido, 1);
+               Medir la sección era lo correcto cuando el riel era un lomo
+               vertical que ocupaba sus 1364 px de alto y estaba en pantalla
+               todo el rato. Acostado como pie, la tira mide 30 px: con el
+               recorrido atado a la sección, cuando se iba por arriba el
+               avance recién iba por .46 y sólo se habían encendido TRES de
+               las seis. Se veía como que no terminaban de cargar, y era eso.
+
+               Ahora: 0 cuando su tope entra por abajo (92 % del alto), 1
+               media pantalla después. Se llena entera MIENTRAS se la ve y
+               cierra la sección justo al terminar de leerla. */
+            var r = riel.getBoundingClientRect();
+            var avance = (vh * 0.92 - r.top) / Math.max(vh * 0.45, 1);
             if (avance < 0) avance = 0;
             if (avance > 1) avance = 1;
 

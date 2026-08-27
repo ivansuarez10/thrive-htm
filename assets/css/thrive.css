@@ -322,7 +322,10 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
      100vw queda centrado solo. Poniendo además el truco del 50%/50vw se
      suman los dos desplazamientos y el marco se corre — medido: sobresalía
      106 px por la izquierda y 34 por la derecha. */
-  width:100vw; border-radius:0; aspect-ratio:4/5; max-height:88svh;
+  /* 2/3 y no 4:5: el video de móvil se codificó en 720x1080, y con esta
+     proporción entra el cajón completo con el pie encima. A 4:5 se cortaba
+     por abajo justo donde está el escalón. */
+  width:100vw; border-radius:0; aspect-ratio:2/3; max-height:92svh;
 }
 .shot.metodo{aspect-ratio:4/3;}
 /* ── la frase que releva al botón ──
@@ -408,16 +411,30 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 
    El color es --ink-2 y no --ink-3: a 10 px en versalitas, el gris claro
    da 3.7 sobre blanco y no alcanza. */
-/* El margen va ARRIBA: las capacidades cuelgan de la foto. Era margen
-   inferior cuando vivían encima de ella. */
-.metodo-riel{margin:clamp(18px,2.4vw,26px) 0 0;}
+/* ── el pie del método ──
+   Cierra la sección a lo ancho, con una línea fina encima que la separa
+   de la rejilla. El margen va ARRIBA porque ahora cuelga del contenido,
+   no lo encabeza. */
+.metodo-riel{
+  margin:clamp(30px,4vw,46px) 0 0;
+  padding-top:clamp(16px,2vw,22px);
+  border-top:1px solid var(--line-soft);
+}
+
+/* ⚠️ RED: el estado por defecto de .cap es opacity:0. Si el script no
+   llega —o llega y falla— las seis palabras no aparecen NUNCA, y esto ya
+   no es un adorno del margen: es el pie de la sección, o sea contenido.
+   Por eso el apagado cuelga de una clase que el JS pone recién cuando ya
+   midió y va a correr. Sin clase, se ven. Es la misma red que body.dosvias.
+   Regla dura del proyecto: nadie ve una sección en blanco. */
+.metodo-riel .cap{opacity:1; filter:none;}
+body.capacidades-vivas .metodo-riel .cap{opacity:0; filter:blur(3px);}
+body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 .metodo-riel .cap{
   font-family:var(--mono); font-size:0.63rem; letter-spacing:.26em;
   text-transform:uppercase; color:var(--ink-2);
-  opacity:0; filter:blur(3px);
   transition:opacity 620ms var(--ease), filter 620ms var(--ease);
 }
-.metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 .metodo-riel .cap:not(:last-child)::after{content:'·'; color:var(--teal-deep); margin:0 .5em 0 .35em;}
 
 /* Quien pidió menos movimiento las ve todas, quietas, desde el principio. */
@@ -428,7 +445,15 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 /* En una sola columna no hay margen donde poner un riel vertical, y la
    tira de pie a cabeza mediría más que la propia sección. Abajo de 900
    se acuesta: misma aparición palabra por palabra, en horizontal. */
+/* A lo ancho entran las seis en un renglón. flex-wrap sigue en wrap como
+   red para pantallas angostas: preferimos dos renglones a un desborde. */
 .metodo-riel{display:flex; flex-wrap:wrap; align-items:baseline;}
+@media (min-width:900px){
+  .metodo-riel{justify-content:space-between; flex-wrap:nowrap;}
+  /* Repartidas de borde a borde, el punto separador sobra: el espacio ya
+     separa. Dejarlo sumaba un lunar teal suelto en medio del blanco. */
+  .metodo-riel .cap:not(:last-child)::after{content:none;}
+}
 
 /* Sin viñetas. El punto de color no ordenaba nada —son tres frases, no
    una lista de compras— y ponía un lunar teal delante de cada línea.
@@ -498,7 +523,11 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .shot video, .band video{pointer-events:none;}
 .shot video::-webkit-media-controls, .band video::-webkit-media-controls{display:none !important;}
 .shot video::-webkit-media-controls-start-playback-button,
-.band video::-webkit-media-controls-start-playback-button{
+.band video::-webkit-media-controls-start-playback-button,
+/* El de Chrome es OTRO pseudo-elemento. Tapar solo el de Safari dejaba
+   el botón grande del medio a la vista en Chrome, que es donde apareció. */
+.shot video::-webkit-media-controls-overlay-play-button,
+.band video::-webkit-media-controls-overlay-play-button{
   display:none !important; -webkit-appearance:none; opacity:0;
 }
 
