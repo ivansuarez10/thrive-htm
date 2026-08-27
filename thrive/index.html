@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="/assets/img/hero.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=6e2c6384">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=dad900a9">
 </head>
 
 <body>
@@ -199,14 +199,14 @@
         <span class="pn">THRIVE · 2X</span>
         <span class="days">Martes + Jueves · 7:30 a.m.</span>
         <span class="price"><b>$220</b><small>/ mes</small></span>
-        <a class="plan-cta" data-wa data-wa-plan="2X" href="#">Quiero probar THRIVE 2X</a>
+        <a class="plan-cta" href="/thrive/form/?plan=2X">Quiero probar THRIVE 2X</a>
       </div>
 
       <div class="plan" data-plan="3X">
         <span class="pn">THRIVE · 3X</span>
         <span class="days">Lunes + Miércoles + Viernes&nbsp;· 7:30 a.m.</span>
         <span class="price"><b>$300</b><small>/ mes</small></span>
-        <a class="plan-cta" data-wa data-wa-plan="3X" href="#">Quiero probar THRIVE 3X</a>
+        <a class="plan-cta" href="/thrive/form/?plan=3X">Quiero probar THRIVE 3X</a>
       </div>
 
     </div>
@@ -238,11 +238,18 @@
     <p class="body up" style="margin-top:26px;">Antes de comprometerte, quiero que vengás a vivir la experiencia. Conocé el espacio. Entrená conmigo. Y veamos si THRIVE es el lugar adecuado para vos.</p>
 
     <div class="cta-wrap up">
-      <a class="cta" data-wa href="#">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.4-5.3-4.6-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+      <!-- ⚠️ 27 ago 2026: la landing deja de terminar en WhatsApp y manda
+           al cuestionario. Reemplaza la decisión 1 del CLAUDE.md, por
+           pedido de Ivan. Consecuencia: el formulario pasa a ser la puerta
+           de entrada, y por eso ahora pide el teléfono — antes se daba por
+           sabido porque la conversación empezaba por WhatsApp.
+           El glifo de WhatsApp se fue con el destino: dejarlo sería
+           prometer una app y abrir otra cosa. -->
+      <a class="cta" href="/thrive/form/">
         Quiero probar THRIVE
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <span class="cta-fine">Te abre WhatsApp con el mensaje listo</span>
+      <span class="cta-fine">Dieciséis preguntas cortas. Cinco minutos.</span>
     </div>
   </div>
 </section>
@@ -257,6 +264,6 @@
 </footer>
 
 <script src="/config.js?v=881bb8eb"></script>
-<script src="/assets/js/thrive.js?v=5d35213b"></script>
+<script src="/assets/js/thrive.js?v=5874df48"></script>
 </body>
 </html>

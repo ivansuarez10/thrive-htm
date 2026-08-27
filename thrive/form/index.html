@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=53bed559">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=dad900a9">
 </head>
 
 <body>
@@ -1372,7 +1372,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 </div>
 
 <script src="/config.js?v=881bb8eb"></script>
-<script src="/assets/js/thrive.js?v=5d35213b"></script>
+<script src="/assets/js/thrive.js?v=5874df48"></script>
 <script>
 (function(){
   'use strict';
@@ -1509,6 +1509,16 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       ]
     },
     {
+      id:'telefono', tipo:'corta', campo:'tel', inputmode:'tel',
+      titulo:'¿A qué número te escribo por WhatsApp?',
+      ayuda:'Es por donde te confirmo el día de tu clase de prueba. No se comparte con nadie.',
+      placeholder:'+504 0000-0000',
+      /* Ocho dígitos es un celular hondureño; con el 504 son once. Se
+         cuentan dígitos y no se exige formato: cada quien lo escribe a su
+         manera y rechazarle el guion sería pelear por nada. */
+      valida:function(v){ var d=String(v||'').replace(/\D/g,''); return d.length>=8 && d.length<=15; }
+    },
+    {
       id:'algo_mas', tipo:'texto', opcional:true, cierre:true,
       titulo:'¿Hay algo más que te gustaría que supiera antes de conocernos?',
       ayuda:'Opcional. Si algo preferís contármelo hablando en vez de escribiéndolo, poné «prefiero contártelo» y lo vemos por WhatsApp.',
@@ -1526,6 +1536,24 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
   /* ═══ estado ═══ */
   var resp = {};
+
+  /* La landing manda en ?plan= el plan que ella tocó. Se contesta sola la
+     pregunta 13: ya lo eligió una vez, y volver a preguntárselo diez
+     pantallas después es no haberla escuchado. Queda seleccionada, no
+     bloqueada — la puede cambiar.
+     Va acá arriba y no dentro de la bienvenida: no depende de que esa
+     pantalla exista. */
+  (function(){
+    try{
+      var plan = new URLSearchParams(location.search).get('plan');
+      if(!plan) return;
+      var q13 = PREGUNTAS.filter(function(q){ return q.id === 'grupo'; })[0];
+      var op = q13 && q13.opciones.filter(function(o){
+        return o.indexOf('THRIVE ' + plan.toUpperCase()) === 0;
+      })[0];
+      if(op) resp.grupo = op;
+    }catch(e){ /* sin URLSearchParams: se pregunta como siempre */ }
+  })();
   var consiente = false;
   var i = 0;
 
@@ -1537,6 +1565,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     /* Se muestra SIEMPRE, en cada visita: es la presentación de la marca
        antes de pedirle nada a nadie. Decisión de Ivan, 26 ago 2026. */
     var quien = (window.THRIVE_RT && window.THRIVE_RT.referida) || '';
+
     var elNom = document.getElementById('bvNombre');
     if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
 
@@ -1710,7 +1739,11 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
     if(q.tipo === 'corta'){
       var inp = document.createElement('input');
-      inp.type = 'text';
+      /* `campo` e `inputmode` existen para el teléfono: en el celular la
+         diferencia entre teclado alfabético y numérico es la diferencia
+         entre que lo escriba bien o lo escriba mal. */
+      inp.type = q.campo || 'text';
+      if(q.inputmode) inp.inputMode = q.inputmode;
       inp.className = 'field corta';
       inp.placeholder = q.placeholder || '';
       inp.setAttribute('aria-label', q.titulo);
@@ -1770,9 +1803,32 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
               refrescarBoton(pIdx);
             } else {
               if(det){
-                det.hidden = true;
                 resp[q.id + '_detalle'] = '';
                 det.querySelector('textarea').value = '';
+                /* §7 · se retira por el mismo camino por el que entró.
+                   Antes se le ponía hidden y se cortaba de un cuadro al
+                   otro; el CSS ya no tiene solo @keyframes abre, ahora
+                   tiene su par (@keyframes cierra, clase .yendo).
+
+                   El hidden NUNCA depende de que llegue un evento: si el
+                   navegador no corre la animación —movimiento reducido— o
+                   animationend no dispara —la pestaña se ocultó a mitad—,
+                   el campo quedaría abierto para siempre. De ahí el
+                   temporizador de red. cerrar() es idempotente. */
+                if(!det.hidden){
+                  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+                    det.hidden = true;
+                  } else {
+                    det.classList.add('yendo');
+                    var cerrar = function(){
+                      det.hidden = true;
+                      det.classList.remove('yendo');
+                      det.removeEventListener('animationend', cerrar);
+                    };
+                    det.addEventListener('animationend', cerrar);
+                    setTimeout(cerrar, 400);
+                  }
+                }
               }
               if(!q.cierre){ setTimeout(function(){ ir(pIdx + 1); }, 260); }
               else pintarSiguiente(step, q);
@@ -1850,6 +1906,12 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     var lleno = q.opcional ? true
       : (q.tipo === 'multi' ? (v && v.length) : (typeof v === 'string' ? v.length > 0 : !!v));
 
+    /* Algunas preguntas necesitan más que «no está vacío». El teléfono es
+       la única puerta de contacto desde que la landing manda acá en vez
+       de a WhatsApp: uno mal escrito se ve igual que uno bueno hasta que
+       Denisse intenta escribirle. */
+    if(lleno && typeof q.valida === 'function' && !q.valida(v)) lleno = false;
+
     /* un sí sin el detalle no sirve para entrenarla segura */
     var det = step.querySelector('.detalle');
     if(det && !det.hidden && !(resp[q.id + '_detalle'] || '').length) lleno = false;
@@ -1915,6 +1977,10 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
     return {
       nombre: resp.nombre || 'Sin nombre',
+      /* Desde el 27 ago la landing manda acá en vez de a WhatsApp, así
+         que éste es el ÚNICO lugar donde se captura el número. Antes se
+         daba por sabido porque la conversación empezaba por WhatsApp. */
+      telefono: (resp.telefono || '').trim() || null,
       /* Explícito y no por defecto: el día que exista el segundo programa,
          su formulario tiene que mandar el suyo, y esta línea es el recordatorio. */
       programa: 'thrive',
