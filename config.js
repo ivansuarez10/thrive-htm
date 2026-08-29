@@ -120,7 +120,11 @@ window.THRIVE = {
        avenida repetida y un '·' que Google no interpreta, y el evento
        queda sin pin. */
     direccionCalendario: 'Healing Through Movement by Denisse Suazo, Av. Los Próceres, Tegucigalpa 11101, Honduras',
-    llevar: 'Traé ropa cómoda, tu toalla, grip socks y tu botella con agua. Y vení con toda tu energía para comenzar.'
+    /* «Y vení con toda tu energía» se quitó a pedido de Denisse (29 ago
+       2026): pone una condición de ánimo para poder participar, y THRIVE
+       está construido justo al revés — no hace falta llegar perfecta,
+       descansada ni con energía para entrenar. */
+    llevar: 'Traé ropa cómoda, toalla, grip socks y tu botella con agua. Del resto nos encargamos acá.'
   },
 
   /* ── Estado de los cupos ──

@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=5a13c685">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=589ff72d">
 </head>
 
 <body class="pag-pase">
@@ -111,7 +111,7 @@
 
 </article>
 
-<script src="/config.js?v=32bb9003"></script>
+<script src="/config.js?v=97ecc759"></script>
 <script src="/assets/js/thrive.js?v=81c007a6"></script>
 <script>
 (function(){
@@ -216,8 +216,12 @@
     var fin2 = new Date(inicio.getTime() + (C.duracion || 60)*60000);
     var lugarCal = C.direccionCalendario || C.direccion || C.lugar || '';
     var titulo = 'Clase de prueba — THRIVE';
+    /* La política va DENTRO del evento y no solo en el pase: el pase se
+       mira una vez, el evento la acompaña hasta el día. Pedido de
+       Denisse (29 ago 2026). */
     var detalle = 'THRIVE · Small Group Strength Training for Women\n\n' +
                   (C.llevar || '') + '\n\n' +
+                  'Si necesitás cancelar o cambiar tu clase, avisá con al menos 12 horas de anticipación.\n\n' +
                   'Healing Through Movement · move. heal. thrive.';
 
     function utc(d){ return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''); }
