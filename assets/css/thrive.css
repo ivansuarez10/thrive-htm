@@ -402,6 +402,12 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    cajón—. En 3/4 pasa de 330x248 a 330x440: +77 % de superficie y deja
    de cortar la toma. */
 .shot.metodo{aspect-ratio:3/4;}
+/* En el teléfono las dos columnas se apilan, y sin esto el texto arranca
+   pegado al borde inferior de la foto. La rejilla sólo declara `column-gap`,
+   que cuando hay una sola columna no separa nada. En escritorio vuelve a
+   cero: ahí el aire lo da la separación entre columnas, y un margen además
+   desplazaría el centrado. Pedido de Ivan, 29 ago 2026. */
+.metodo-copy{margin-top:clamp(22px,5vw,34px);}
 /* ── la frase que releva al botón ──
    El hero dejó de terminar en una puerta (26 ago 2026). La línea que
    estaba en la cita del método se MUDÓ acá: no se copió — repetirla a
@@ -561,6 +567,25 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 .metodo-riel{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:center; text-align:center;}
 @media (min-width:900px){
   .metodo-riel{justify-content:space-between; flex-wrap:nowrap;}
+
+  /* ── el riel, de pie junto a la foto ──
+     Antes cerraba la sección a lo ancho, debajo de la rejilla. El comentario
+     de arriba decía que en vertical «no hay margen donde ponerlo»: eso valía
+     cuando iba suelto a todo el ancho. Dentro de la columna sí lo hay — y es
+     el lado que quedaba vacío al costado de un video vertical.
+     Pedido de Ivan, 29 ago 2026. Baja de 900 se vuelve a acostar solo. */
+  .metodo-copy .metodo-riel{
+    flex-direction:column;
+    /* Centradas respecto al párrafo de arriba, no pegadas al margen: el
+       texto llena la columna, así que su centro óptico es el centro de la
+       columna, y las cuatro palabras cuelgan de ese mismo eje.
+       Pedido de Ivan, 29 ago 2026 — el mismo criterio que arreglamos en
+       «¿Por qué pensé en vos?»: una sección, un eje. */
+    align-items:center; text-align:center;
+    justify-content:flex-start;
+    gap:clamp(11px,1.3vw,17px);
+    margin-top:clamp(26px,3vw,38px);
+  }
   /* Repartidas de borde a borde, el punto separador sobra: el espacio ya
      separa. Dejarlo sumaba un lunar teal suelto en medio del blanco. */
   .metodo-riel .cap:not(:last-child)::after{content:none;}
@@ -1127,8 +1152,16 @@ body::after{
 .dark .kick{color:var(--clay);}
 .dark .h2{color:var(--linen);}
 .dark .body{color:rgba(243,239,233,.74);}
-.dark .cta{background:var(--teal);}
-.dark .cta:hover{background:#2E9FB4;}
+/* Ivan vio dos azules distintos: los botones de precio en teal profundo y
+   el «Me interesa THRIVE» del cierre en teal claro. Tenía razón, y el que
+   estaba mal era el claro: blanco sobre #24899D da 4.09:1, que no pasa —
+   es el mismo motivo por el que los botones de plan ya usaban el profundo.
+
+   El profundo sobre tinta casi no se distingue del fondo (2.36:1), así que
+   el borde claro es el que dibuja la forma del botón. Así hay UN azul en
+   todo el sitio y el texto se lee en los dos fondos. */
+.dark .cta{background:var(--teal-deep); border:1px solid rgba(244,243,241,.30);}
+.dark .cta:hover{background:var(--white); color:var(--ink); border-color:var(--white);}
 .dark .cta-fine{color:rgba(243,239,233,.5);}
 .dark .closing{
   font-family:var(--display); font-weight:600;
@@ -1580,7 +1613,13 @@ textarea.field{min-height:130px;}
      legible. Bajar más de ahí ya rompe la lectura de tres párrafos. */
   .metodo-grid{
     display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
-    column-gap:clamp(32px,3.4vw,56px); align-items:start;
+    column-gap:clamp(32px,3.4vw,56px);
+    /* Era `start`, y el texto —tres o cuatro líneas— quedaba pegado
+       arriba contra una foto vertical que mide el triple. El resultado
+       en escritorio era medio metro de blanco a la derecha, que se leía
+       como que faltaba algo. Centrado, las dos columnas se equilibran.
+       Lo vio Ivan el 29 ago 2026, en la landing y en la invitación. */
+    align-items:center;
     margin-top:clamp(44px,4vw,64px);
   }
 
@@ -1593,8 +1632,12 @@ textarea.field{min-height:130px;}
      .metodo-riel ya es horizontal y envuelve. Lo que sí importa es que
      ahora viven DENTRO de .metodo-media, que es lo pegajoso — así bajan
      pegadas a la imagen en vez de subir por detrás de ella. */
-  .metodo-media{position:sticky; top:clamp(40px,6vw,80px);}
+  /* Acá había `position:sticky`. Con las columnas centradas el ítem mide
+     lo que su contenido y no queda recorrido donde pegarse: era una regla
+     muerta que además confundía a quien la leyera. */
+  .shot.metodo{margin:0 auto;}
   .shot.metodo{aspect-ratio:3/4;}
+  .metodo-copy{margin-top:0;}
   .metodo-copy .facts{margin-top:0;}
   .nuance{margin-top:clamp(38px,4vw,56px);}
 
@@ -1846,7 +1889,13 @@ textarea.field{min-height:130px;}
 
 /* Los párrafos del «por qué pensé en vos» son una carta, no una lista:
    se leen seguidos y con medida corta. */
-.inv-porque .body{max-width:58ch;}
+/* El titular va centrado sobre la caja entera (820 px) y los párrafos se
+   cortan a 58 caracteres (582) alineados a la izquierda: sin `auto` el texto
+   se apoya en el borde izquierdo y su centro óptico queda 79 px a la
+   izquierda del titular. Son dos ejes, y eso es lo que se siente raro aunque
+   no se sepa nombrar. Centrando la COLUMNA —no el texto— los dos coinciden y
+   los párrafos se siguen leyendo alineados. Lo notó Ivan el 29 ago 2026. */
+.inv-porque .body{max-width:58ch; margin-inline:auto;}
 .inv-porque .body + .body{margin-top:clamp(14px,2.2vw,20px);}
 .inv-remate{margin-top:clamp(20px,3vw,28px);}
 
