@@ -7,6 +7,7 @@ supabase/.temp/
 _pv.html
 _preview-*.html
 _qa*.html
+_cmp.html
 
 # Pasó dos veces: 86ab99b se llevó _pv.html y b3ca4e7 se llevó _qa.html,
 # las dos con `git add -A` desde otra sesión. El patrón cubre lo que
