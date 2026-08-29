@@ -588,6 +588,23 @@ body{background:var(--sand);}
   border-radius:14px; padding:16px 18px; font-size:.93rem; line-height:1.6;
 }
 .aj-aviso b{display:block; font-weight:700; margin-bottom:4px;}
+/* ── las clases de prueba ── */
+.slot{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:11px 0; border-bottom:1px solid var(--line-soft);
+}
+.slot input[type="datetime-local"]{
+  flex:1 1 220px; min-width:0; font:inherit; font-size:.96rem; color:var(--ink);
+  background:var(--white); border:1px solid var(--line); border-radius:11px; padding:10px 12px;
+}
+.slot label{display:inline-flex; align-items:center; gap:7px; font-size:.9rem; color:var(--ink-2); cursor:pointer;}
+.slot .quitar{
+  font:inherit; font-size:.86rem; color:var(--ink-3); background:none; border:none;
+  cursor:pointer; padding:6px 8px; border-radius:8px;
+}
+.slot .quitar:hover{color:#8A2F2F; background:#F6E3E3;}
+.slot.apagada input[type="datetime-local"]{opacity:.5;}
+#ajSlotMas{margin-top:14px;}
 
 /* ═══════════════════════════════════════════════════════════
    LA CÁSCARA: barra lateral fija
@@ -1125,8 +1142,16 @@ body{background:var(--sand);}
             <label id="ajCuposCaja"><span>Cupos por grupo</span><input type="number" id="ajCupos" min="1" max="12"></label>
             <label><span>Arranca</span><input type="date" id="ajInicio"></label>
             <label><span>Termina</span><input type="date" id="ajFin"></label>
+            <label><span>Cuánto dura una clase · minutos</span><input type="number" id="ajDuracion" min="15" max="240" step="5" placeholder="60"></label>
           </div>
           <div id="ajGrupos"></div>
+        </div>
+
+        <div class="aj-grupo" id="ajSlotsCaja">
+          <h2>Clases de prueba</h2>
+          <p class="ayuda">Las fechas que se pueden elegir en la ficha de cada invitada. Desmarcá una para dejar de ofrecerla sin borrar a quien ya la tiene.</p>
+          <div id="ajSlots"></div>
+          <button class="pn-txt" type="button" id="ajSlotMas">+ Agregar una fecha</button>
         </div>
 
         <div class="ficha-pie" style="position:static; border-top:none;">
@@ -2438,7 +2463,7 @@ body{background:var(--sand);}
             : '') +
           '<label><span>Teléfono</span><input type="tel" id="fTel" value="' + esc(c.telefono || '') + '" placeholder="+504…"></label>' +
           '<label><span>' + (prog.ruta_pase ? 'Clase de prueba' : 'Primera sesión') +
-            ' · hora de Honduras</span><input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '"></label>' +
+            ' · hora de Honduras</span>' + campoClase(c, fechaLocal) + '</label>' +
         '</div>' +
         '<div class="ficha-campos ancho" style="margin-top:14px;">' +
           '<label><span>Tus notas · no las ve nadie más</span>' +
@@ -2492,6 +2517,13 @@ body{background:var(--sand);}
 
     pintarHilo(c);
     document.getElementById('cerrar').addEventListener('click', cerrarFicha);
+    var elSlot = document.getElementById('fSlot');
+    if(elSlot) elSlot.addEventListener('change', function(){
+      var libre = document.getElementById('fClase');
+      libre.hidden = this.value !== 'otra';
+      if(this.value === 'otra') libre.focus();
+    });
+
     document.getElementById('fMensaje').addEventListener('click', function(){
       cerrarFicha(); abrirHoja(c.id);
     });
@@ -2524,6 +2556,33 @@ body{background:var(--sand);}
       });
   }
 
+  /* Si todavía no hay fechas configuradas, el campo sigue siendo libre:
+     un desplegable vacío dejaría el panel sin forma de agendar hasta que
+     alguien entre a Ajustes. */
+  function campoClase(c, fechaLocal){
+    var ss = slotsActivos();
+    var libre = '<input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '">';
+    if(!ss.length) return libre;
+
+    var actual = tieneClase(c) ? new Date(c.clase_en).getTime() : null;
+    var calza = ss.filter(function(x){ return new Date(x.iso).getTime() === actual; })[0];
+    /* Ya tiene una fecha que no está en la lista —se la coordinaron a
+       mano, o la fecha se apagó después— así que la opción libre nace
+       elegida y con su valor: no se le pisa lo que ya tenía. */
+    var otra = actual !== null && !calza;
+
+    var ops = '<option value=""' + (actual === null ? ' selected' : '') + '>Sin fecha todavía</option>';
+    ss.forEach(function(x){
+      ops += '<option value="' + esc(x.iso) + '"' + (calza && calza.iso === x.iso ? ' selected' : '') + '>' +
+             esc(etiquetaSlot(x.iso)) + '</option>';
+    });
+    ops += '<option value="otra"' + (otra ? ' selected' : '') + '>Otra fecha · coordinar con ella</option>';
+
+    return '<select id="fSlot">' + ops + '</select>' +
+           '<input type="datetime-local" id="fClase" value="' + esc(fechaLocal) + '" style="margin-top:10px;"' +
+           (otra ? '' : ' hidden') + '>';
+  }
+
   function cerrarFicha(){
     elFicha.hidden = true;
     document.body.style.overflow = '';
@@ -2537,7 +2596,20 @@ body{background:var(--sand);}
 
   function guardar(id, btn){
     var aviso = document.getElementById('fEstadoGuardado');
-    var clase = document.getElementById('fClase').value;
+    /* El desplegable manda; el campo libre solo cuenta si eligió «otra».
+       Leer siempre el campo libre guardaría la fecha vieja que quedó
+       adentro cuando ella cambió de opción. */
+    var elSlot2 = document.getElementById('fSlot');
+    var clase;
+    if(!elSlot2){
+      clase = document.getElementById('fClase').value;
+      clase = clase ? deInputHN(clase) : null;
+    }else if(elSlot2.value === 'otra'){
+      var v = document.getElementById('fClase').value;
+      clase = v ? deInputHN(v) : null;
+    }else{
+      clase = elSlot2.value || null;
+    }
     btn.disabled = true; btn.textContent = 'Guardando…'; aviso.textContent = '';
 
     /* El teléfono es de la PERSONA y el resto de la inscripción: la
@@ -2552,7 +2624,9 @@ body{background:var(--sand);}
         return sb.from('inscripciones').update({
           estado:   document.getElementById('fEstado').value,
           grupo:    (document.getElementById('fGrupo') || {}).value || null,
-          clase_en: clase ? deInputHN(clase) : null,
+          /* `clase` YA viene en ISO desde el bloque de arriba. Volver a
+             pasarla por deInputHN la corría seis horas otra vez. */
+          clase_en: clase,
           notas:    document.getElementById('fNotas').value.trim() || null
         }).eq('id', id);
       })
@@ -3280,11 +3354,110 @@ body{background:var(--sand);}
   var CAMPOS_PROG = [
     ['ajHora','hora','texto'],
     ['ajCupos','cupos_por_grupo','numero'],
+    /* 4.2 · Denisse preguntó qué controla «hora de finalización».
+       Respuesta: no existía tal cosa. Lo que hay es DURACIÓN, que es
+       lo que decide cuánto ocupa el evento en su calendario — no la
+       disponibilidad para agendar, que ahora la deciden los slots. */
+    ['ajDuracion','duracion','numero'],
     ['ajInicio','periodo_inicio','texto'],
     ['ajFin','periodo_fin','texto']
   ];
 
+  /* ═══════════════════════════════════════════════════════════
+     4.1 · LAS CLASES DE PRUEBA SON UNA LISTA, NO UN CAMPO LIBRE
+
+     El campo era un datetime-local abierto: se podía agendar sin querer
+     un martes a las 3 de la mañana, y las fechas del panel no tenían por
+     qué coincidir con las que se están comunicando afuera.
+     Ahora las fechas se definen acá y la ficha elige de esa lista. Queda
+     «Otra fecha» para el caso que siempre existe: coordinar a mano con
+     alguien que no puede ninguna.
+
+     Se guardan en programas.ajustes.slots, que ya era jsonb. Una fecha
+     se DESACTIVA en vez de borrarse: quien ya la tenía asignada la
+     conserva, y borrarla dejaría su pase apuntando a un día que el panel
+     ya no reconoce.
+     ═══════════════════════════════════════════════════════════ */
+  function slots(){
+    var v = (prog && prog.ajustes && prog.ajustes.slots) || [];
+    return Array.isArray(v) ? v : [];
+  }
+  function slotsActivos(){
+    return slots().filter(function(x){ return x.activa !== false && x.iso; });
+  }
+  function etiquetaSlot(iso){
+    var d = new Date(iso);
+    if(isNaN(d.getTime())) return '(fecha inválida)';
+    var f = diaLargo(d);
+    return f.charAt(0).toUpperCase() + f.slice(1) + ' · ' + horaDe(iso);
+  }
+
+  function pintarSlots(){
+    var cont = document.getElementById('ajSlots');
+    if(!cont) return;
+    var ss = slots();
+    if(!ss.length){
+      cont.innerHTML = '<p class="ayuda" style="padding:10px 0;">Todavía no hay ninguna. Agregá las fechas en las que vas a recibir clases de prueba.</p>';
+      return;
+    }
+    cont.innerHTML = ss.map(function(x, i){
+      var activa = x.activa !== false;
+      return '<div class="slot' + (activa ? '' : ' apagada') + '">' +
+        '<input type="datetime-local" data-s="' + i + '" value="' + esc(x.iso ? aInputHN(x.iso) : '') + '">' +
+        '<label><input type="checkbox" data-sa="' + i + '"' + (activa ? ' checked' : '') + '> Se ofrece</label>' +
+        '<button class="quitar" type="button" data-sq="' + i + '">Quitar</button>' +
+      '</div>';
+    }).join('');
+
+    cont.querySelectorAll('[data-sq]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var i = Number(b.getAttribute('data-sq'));
+        var ss2 = slots().slice();
+        /* Si alguien ya la tiene asignada no se quita: se apaga. Quitarla
+           le dejaría el pase apuntando a una fecha huérfana. */
+        var usada = datos.some(function(c){ return c.clase_en && ss2[i] && new Date(c.clase_en).getTime() === new Date(ss2[i].iso).getTime(); });
+        if(usada){
+          ss2[i] = { iso: ss2[i].iso, activa: false };
+          prog.ajustes.slots = ss2; pintarSlots();
+          document.getElementById('ajAviso').textContent = 'Esa fecha ya está asignada a alguien: se apagó en vez de quitarse.';
+          setTimeout(function(){ document.getElementById('ajAviso').textContent = ''; }, 4000);
+          return;
+        }
+        ss2.splice(i, 1);
+        prog.ajustes.slots = ss2; pintarSlots();
+      });
+    });
+    cont.querySelectorAll('[data-sa]').forEach(function(ch){
+      ch.addEventListener('change', function(){
+        var ss2 = slots().slice();
+        var i = Number(ch.getAttribute('data-sa'));
+        if(ss2[i]) ss2[i].activa = ch.checked;
+        prog.ajustes.slots = ss2; pintarSlots();
+      });
+    });
+    cont.querySelectorAll('[data-s]').forEach(function(inp){
+      inp.addEventListener('change', function(){
+        var ss2 = slots().slice();
+        var i = Number(inp.getAttribute('data-s'));
+        if(ss2[i]) ss2[i].iso = inp.value ? deInputHN(inp.value) : null;
+        prog.ajustes.slots = ss2;
+      });
+    });
+  }
+
+  (function(){
+    var b = document.getElementById('ajSlotMas');
+    if(!b) return;
+    b.addEventListener('click', function(){
+      if(!prog) return;
+      prog.ajustes = prog.ajustes || {};
+      prog.ajustes.slots = slots().concat([{ iso:null, activa:true }]);
+      pintarSlots();
+    });
+  })();
+
   function volcarAjustes(){
+    pintarSlots();
     CAMPOS_DENISSE.forEach(function(f){
       var el = document.getElementById(f[0]);
       if(el) el.value = (AJ[f[1]] === null || AJ[f[1]] === undefined) ? '' : String(AJ[f[1]]);
@@ -3349,6 +3522,10 @@ body{background:var(--sand);}
       else                  suyos[f[1]] = v === '' ? null : v;
     });
     if(!suyos.cupos_por_grupo) delete suyos.cupos_por_grupo;
+
+    /* Las fechas sin poner no se guardan: una fila vacía en la lista se
+       vería en la ficha como una opción en blanco. */
+    suyos.slots = slots().filter(function(x){ return x.iso; });
 
     var gs = (suyos.grupos || []).map(function(g){ return JSON.parse(JSON.stringify(g)); });
     document.getElementById('ajGrupos').querySelectorAll('[data-g]').forEach(function(el){
