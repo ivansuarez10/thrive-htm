@@ -1360,13 +1360,13 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
 <!-- ══════════ CIERRE ══════════ -->
 <div class="confirm" id="listo" hidden>
-  <div class="check">
+  <div class="check" id="cierreIcono">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
   </div>
-  <h1 class="h2" style="margin-top:26px;">Listo, ya me llegó</h1>
-  <p class="body" style="margin-top:18px;">Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.</p>
-  <p class="body" style="margin-top:18px;">Mientras tanto no tenés que hacer nada. Si algo cambia de tu lado, escribime nomás.</p>
-  <p class="body" style="margin-top:22px; font-size:0.94rem;">Nos vemos pronto,<br><strong>Denisse</strong></p>
+  <h1 class="h2" style="margin-top:26px;" id="cierreTitulo">Listo, ya me llegó</h1>
+  <p class="body" style="margin-top:18px;" id="cierreTexto1">Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.</p>
+  <p class="body" style="margin-top:18px;" id="cierreTexto2">Mientras tanto no tenés que hacer nada. Si algo cambia de tu lado, escribime nomás.</p>
+  <p class="body" style="margin-top:22px; font-size:0.94rem;" id="cierreFirma">Nos vemos pronto,<br><strong>Denisse</strong></p>
 
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
@@ -1447,6 +1447,12 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
          que se pasa de largo. El texto es el mismo de Denisse. */
       id:'dolor', tipo:'unica',
       titulo:'¿Tenés actualmente algún dolor, lesión o limitación física que pueda afectar tu entrenamiento?',
+      /* En invitación directa la pregunta es más amplia —incluye
+         diagnóstico y cirugía— y, si ya entrenó con Denisse, se acota a lo
+         que pasó DESDE la última vez: ella ya conoce el resto.
+         Pedido de Denisse, 29 ago 2026. */
+      segunModo:{ directa:'Actualmente, ¿hay algún dolor, lesión, diagnóstico, cirugía o cambio en tu salud que debería conocer antes de que empecemos?' },
+      segunConocemos:{ 'Ya entrené con Denisse.':'Desde la última vez que entrenamos juntas, ¿hay algún dolor, lesión, diagnóstico, cirugía o cambio en tu salud que debería conocer?' },
       opciones:[
         'No.',
         {t:'Sí.', pide:'Contame dónde, desde cuándo, y cómo afecta hoy tu movimiento.'}
@@ -1531,6 +1537,20 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       titulo:'¿Hay algo más que te gustaría que supiera antes de conocernos?',
       ayuda:'Opcional. Si algo preferís contármelo hablando en vez de escribiéndolo, poné «prefiero contártelo» y lo vemos por WhatsApp.',
       placeholder:'Podés dejarlo en blanco y enviar.'
+    },
+
+    /* ⚠️ De acá para abajo, SOLO invitación directa.
+       Las partes del formulario público se cortan por id —la última va
+       `hasta:'algo_mas'`— así que todo lo que se agregue después de esa
+       queda fuera del público sin necesidad de ninguna bandera. */
+    {
+      id:'conocemos', tipo:'unica',
+      titulo:'¿Cómo nos conocemos?',
+      opciones:[
+        'Ya entrené con Denisse.',
+        'Conozco a Denisse personalmente.',
+        'Otro.'
+      ]
     }
   ];
 
@@ -2026,47 +2046,132 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     var payload = armarPayload();
     var sb = CFG.supabase || {};
 
-    function terminar(){
+    /* ⚠️ El 28 ago 2026 una candidata llenó el formulario, vio «Listo, ya
+       me llegó», y su fila NUNCA existió en la base. El .catch de acá
+       abajo mostraba el cierre de éxito pasara lo que pasara: la persona
+       creía estar inscrita, Denisse no se enteraba de nada, y el único
+       rastro era el WhatsApp que ella misma tocó al final.
+       La intención era buena —no dejarla con la sensación de haber
+       perdido el tiempo— pero mentirle es peor que decepcionarla. */
+    function terminar(ok){
       elShell.hidden = true;
       elListo.hidden = false;
-      pintarCierre(payload);
+      pintarCierre(payload, ok !== false);
       try{ scrollTo(0,0); }catch(e){}
     }
 
+    /* Se guarda ANTES de intentar, no después: si el navegador se cierra
+       en el medio, sus respuestas siguen acá y el reintento las encuentra. */
+    function recordar(){
+      try{ localStorage.setItem('thrive-sin-enviar', JSON.stringify(payload)); }catch(e){}
+    }
+    function olvidar(){
+      try{ localStorage.removeItem('thrive-sin-enviar'); }catch(e){}
+    }
+
     if(!sb.enabled || !sb.url || !sb.anonKey){
-      /* Todavía sin backend: no se pierde nada, se ofrece mandarlo por WhatsApp. */
+      /* Sin backend configurado esto es un entorno de prueba, no un fallo
+         de red: se avisa en consola y se cierra como si hubiera entrado. */
       console.info('[THRIVE] Supabase apagado. Respuestas:', payload);
-      terminar();
+      terminar(true);
       return;
     }
 
-    fetch(sb.url.replace(/\/$/,'') + '/rest/v1/' + (sb.table || 'thrive_screening'), {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'apikey': sb.anonKey,
-        'Authorization':'Bearer ' + sb.anonKey,
-        'Prefer':'return=minimal'
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r){
-      if(!r.ok) throw new Error('HTTP ' + r.status);
-      terminar();
-    })
-    .catch(function(e){
-      console.error('[THRIVE] no se pudo guardar:', e);
-      /* Nunca dejar a la persona con la sensación de que se perdió su tiempo:
-         se muestra el cierre igual y se ofrece la salida por WhatsApp. */
-      terminar();
-    });
+    recordar();
+
+    function intentar(){
+      return fetch(sb.url.replace(/\/$/,'') + '/rest/v1/' + (sb.table || 'thrive_screening'), {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey': sb.anonKey,
+          'Authorization':'Bearer ' + sb.anonKey,
+          'Prefer':'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      }).then(function(r){
+        if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' ' + t.slice(0,180)); });
+      });
+    }
+
+    /* Un reintento y nada más. La mayoría de los fallos son un parpadeo de
+       red y se resuelven solos; si el segundo también falla, insistir en
+       silencio solo alarga la espera de alguien que ya terminó. */
+    intentar()
+      .catch(function(e){
+        console.warn('[THRIVE] primer intento falló, reintentando:', e.message);
+        return new Promise(function(r){ setTimeout(r, 1500); }).then(intentar);
+      })
+      .then(function(){ olvidar(); terminar(true); })
+      .catch(function(e){
+        console.error('[THRIVE] no se pudo guardar:', e);
+        terminar(false);
+      });
   }
 
-  function pintarCierre(payload){
+  var ICONO_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  var ICONO_MAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>';
+
+  /* El cierre tiene dos versiones y la diferencia importa: una dice que
+     llegó y la otra dice que no. Antes había una sola y decía siempre
+     que sí.
+     ⚠️ Las DOS se escriben enteras. Escribir solo la mala y no restaurar
+     la buena deja el título de error después de un reintento exitoso:
+     pasó, se vio probando, y es peor que el bug original — decirle que
+     falló cuando sí entró la manda a escribir por gusto. */
+  var CIERRE_OK = {
+    titulo: 'Listo, ya me llegó',
+    t1: 'Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.',
+    t2: 'Mientras tanto no tenés que hacer nada. Si algo cambia de tu lado, escribime nomás.',
+    firma: 'Nos vemos pronto,<br><strong>Denisse</strong>'
+  };
+
+  function pintarCierre(payload, ok){
+    var poner = function(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html; };
+
+    if(ok){
+      poner('cierreIcono', ICONO_OK);
+      poner('cierreTitulo', CIERRE_OK.titulo);
+      poner('cierreTexto1', CIERRE_OK.t1);
+      poner('cierreTexto2', CIERRE_OK.t2);
+      poner('cierreFirma', CIERRE_OK.firma);
+      var eo = document.getElementById('cierreIcono');
+      if(eo) eo.style.color = '';
+    }else{
+      poner('cierreIcono', ICONO_MAL);
+      poner('cierreTitulo', 'No se pudo guardar tu formulario');
+      poner('cierreTexto1', 'Tus respuestas <b>no se perdieron</b>: quedaron guardadas en este teléfono. Probá de nuevo con el botón de abajo.');
+      poner('cierreTexto2', 'Si vuelve a fallar, escribile a Denisse por WhatsApp y ella lo resuelve con vos. No hace falta que llenes todo otra vez.');
+      poner('cierreFirma', '');
+      var el = document.getElementById('cierreIcono');
+      /* El check verde con un texto de error sería una contradicción a la
+         vista; el color lo dice antes que la palabra. */
+      if(el) el.style.color = '#8A2F2F';
+    }
+
     var cont = document.getElementById('cierreAcciones');
     cont.innerHTML = '';
+
+    if(!ok){
+      var re = document.createElement('button');
+      re.className = 'cta';
+      re.type = 'button';
+      re.textContent = 'Reintentar';
+      re.addEventListener('click', function(){
+        re.disabled = true; re.textContent = 'Enviando…';
+        document.getElementById('listo').hidden = true;
+        elShell.hidden = false;
+        /* Vuelve a la última pantalla con su botón, que es la que sabe
+           enviar: no se reimplementa el envío en dos sitios. */
+        var b = elShell.querySelector('.step:not([hidden]) .step-foot .cta');
+        if(b){ b.disabled = false; enviar(b); }
+        else { location.reload(); }
+      });
+      cont.appendChild(re);
+    }
+
     var a = document.createElement('a');
-    a.className = 'cta wa';
+    a.className = ok ? 'cta wa' : 'cta wa secundario';
     a.setAttribute('data-wa','');
     a.href = (window.THRIVE_RT ? window.THRIVE_RT.linkWhatsApp(textoCoordinar()) : '#');
     a.target = '_blank'; a.rel = 'noopener';

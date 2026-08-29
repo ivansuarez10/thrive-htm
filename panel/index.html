@@ -1691,9 +1691,54 @@ body{background:var(--sand);}
   /* Volver de otra pestaña dispara `visibilitychange`; volver de otra
      app en el teléfono dispara `focus`. Hacen falta las dos. */
   document.addEventListener('visibilitychange', function(){
-    if(document.visibilityState === 'visible') preguntarSiEscribio();
+    if(document.visibilityState === 'visible'){ preguntarSiEscribio(); refrescar('vuelta'); }
   });
-  window.addEventListener('focus', preguntarSiEscribio);
+  window.addEventListener('focus', function(){ preguntarSiEscribio(); refrescar('vuelta'); });
+
+  /* ═══════════════════════════════════════════════════════════
+     EL PANEL SE REFRESCA SOLO
+
+     Antes cargaba una vez y nunca más. Denisse lo dejaba abierto, alguien
+     llenaba el formulario, y ella podía mirar la pantalla media hora sin
+     ver a nadie nuevo — pasó exactamente eso el 28 ago 2026.
+
+     Pero repintar debajo de los dedos de alguien es peor que estar
+     desactualizado: si está escribiendo una nota o eligiendo un mensaje,
+     el repintado se lo borra. Por eso se pregunta primero si está
+     ocupada, y si lo está se espera al siguiente turno.
+     ═══════════════════════════════════════════════════════════ */
+  var ultimaCarga = Date.now();
+
+  function ocupada(){
+    if(!elFicha.hidden || !elHoja.hidden) return true;      /* algo abierto encima */
+    if(!document.getElementById('volvio').hidden) return true;
+    var caja = document.getElementById('cajaAlta');
+    var cli  = document.getElementById('cajaCl');
+    if((caja && !caja.hidden) || (cli && !cli.hidden)) return true;
+    var f = document.activeElement;
+    if(f && /^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName)) return true;
+    return false;
+  }
+
+  /* `motivo` decide qué tan estricto ser. El reloj sí exige que la pestaña
+     esté a la vista —consultar en segundo plano es gasto puro—, pero una
+     vuelta del usuario no: si llegó `focus`, la atención ya está acá, y
+     algunos navegadores todavía reportan `hidden` en ese instante. */
+  function refrescar(motivo){
+    if(motivo === 'reloj' && document.visibilityState !== 'visible') return;
+    /* Cinco segundos, no veinte: volver de WhatsApp toma menos de veinte
+       —es el gesto más común que hay acá— y con el umbral alto el
+       regreso más importante era justo el que no refrescaba. */
+    if(Date.now() - ultimaCarga < 5000) return;
+    if(ocupada()) return;
+    ultimaCarga = Date.now();
+    cargar();
+  }
+
+  /* Mientras la pestaña está a la vista, una vuelta por minuto. Es una
+     consulta chica y son pocas filas; el costo es despreciable al lado de
+     no enterarse de que llegó alguien. */
+  setInterval(function(){ refrescar('reloj'); }, 60000);
 
   /* Un solo oyente para todos los botones verdes, presentes y futuros:
      se repintan en cada carga y engancharlos uno por uno dejaría
