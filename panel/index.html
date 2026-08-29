@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=589ff72d">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=56d4d884">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -1582,7 +1582,7 @@ body{background:var(--sand);}
     elContenido.hidden = false;
     pintarCuenta();
     irA('hoy');
-    cargar();
+    cargar().then(abrirFichaDeLaURL);
   }
 
   /* ═══ traer todo ═══
@@ -2397,6 +2397,43 @@ body{background:var(--sand);}
     busqueda = this.value.trim();
     pintarLista(); pintarLimpiar();
   });
+
+  /* ═══ ?ficha=<id> ═══
+     Para que el correo de aviso pueda llevar a Denisse directo a la
+     persona en vez de al panel a buscarla. También sirve para pasarle un
+     link a alguien por WhatsApp.
+     Se limpia de la barra después de abrir: si recarga, que vea el panel
+     y no la misma ficha otra vez. */
+  function abrirFichaDeLaURL(){
+    var id;
+    try{ id = new URLSearchParams(location.search).get('ficha'); }catch(e){ return; }
+    if(!id) return;
+
+    var c = datos.filter(function(x){ return x.id === id; })[0];
+    if(c){
+      abrirFicha(id);
+    }else{
+      /* Puede estar en OTRO programa: el correo no sabe cuál está abierto.
+         Se busca en todos antes de rendirse. */
+      sb.from('inscripciones').select('programa_id').eq('id', id).limit(1).then(function(r){
+        var otro = r.data && r.data[0] && r.data[0].programa_id;
+        if(otro && otro !== prog.id){
+          var p2 = PROGRAMAS.filter(function(x){ return x.id === otro; })[0];
+          if(p2){
+            prog = p2;
+            try{ localStorage.setItem('thrive-programa', p2.id); }catch(e){}
+            cargar().then(function(){ if(datos.some(function(x){ return x.id === id; })) abrirFicha(id); });
+          }
+        }
+      });
+    }
+
+    try{
+      var u = new URL(location.href);
+      u.searchParams.delete('ficha');
+      history.replaceState({}, '', u.pathname + (u.search || '') + u.hash);
+    }catch(e){}
+  }
 
   /* ═══ la ficha ═══ */
   var elFicha = document.getElementById('ficha');
