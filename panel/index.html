@@ -1362,6 +1362,14 @@ body{background:var(--sand);}
       return 'Hola ' + n + ', te recuerdo tu clase de prueba, es ' + cuando + '. ' +
              'Acá está todo — dirección, hora y qué llevar: ' + link;
     },
+    cupoLibre: function(n, grupo){
+      /* Corto a propósito: explicar una buena noticia la debilita. El
+         guion largo —con la fecha límite y el perdón por adelantado—
+         está en «Se abrió un cupo», a un toque de «Elegir mensaje». */
+      return 'Hola ' + n + ', se soltó un espacio en ' +
+             (grupo ? 'el grupo de ' + grupo : 'THRIVE') +
+             '. Me acordé de vos de una. ¿Lo querés?';
+    },
     insistir: function(n){
       /* Un solo recordatorio y con puerta de salida: la gente contesta
          más rápido cuando decir que no es fácil. Es la misma idea del
@@ -2036,6 +2044,29 @@ body{background:var(--sand);}
         wa:{ texto:'Preguntarle', mensaje:MSG.despues(n) } };
     }
 
+    /* ═══ se liberó un cupo y hay alguien esperando ═══
+       Hasta hoy `lista_espera` no generaba ninguna tarea: alguien podía
+       caerse del grupo y nada le decía a Denisse que le tocaba a la
+       siguiente. El aviso sale solo cuando de verdad hay lugar, así que
+       se apaga solo en cuanto ella la mueve — o en cuanto el grupo se
+       vuelve a llenar.
+       Va en las reglas de THRIVE porque depende de los cupos, que es un
+       concepto de este programa: el taller de caídas no tiene grupos. */
+    if(e === 'lista_espera'){
+      var libres = libresPorGrupo();
+      var suGrupo = c.grupo;
+      var hay = suGrupo
+        ? (libresPorGrupo()[suGrupo === '2X' ? 0 : 1] > 0)
+        : (libres[0] + libres[1] > 0);
+      if(hay){
+        return { c:c, prio:2,
+          motivo: suGrupo
+            ? 'Está en la lista y se liberó un lugar en ' + suGrupo + '. Le toca a ella.'
+            : 'Está en la lista y hay lugar. Le toca a ella.',
+          wa:{ texto:'Avisarle', mensaje:MSG.cupoLibre(n, suGrupo) } };
+      }
+    }
+
     if(e === 'invitada' || e === 'escribio'){
       return { c:c, prio:6,
         motivo:'Todavía no ha llenado el formulario.',
@@ -2202,7 +2233,7 @@ body{background:var(--sand);}
         '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>' + esc(prog.nombre + ' ' + g.id) + '</b></div>' +
         '<div class="barras">' + barras + '</div>' +
         '<span class="pie">' + (libres <= 0 ? 'Grupo completo' :
-            'Quedan <b style="color:var(--ink)">' + libres + '</b> ' + (libres === 1 ? 'lugar' : 'lugares')) +
+            (libres === 1 ? 'Queda ' : 'Quedan ') + '<b style="color:var(--ink)">' + libres + '</b> ' + (libres === 1 ? 'lugar' : 'lugares')) +
           (camino ? ' · ' + camino + ' en camino' : '') + '</span></div>');
     });
 
