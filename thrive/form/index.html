@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>THRIVE — antes de coordinar tu clase</title>
+<script>
+  /* El título habla de coordinar una clase, y en invitación directa no hay
+     clase que coordinar. Se corrige antes de pintar para que ni la pestaña
+     ni el historial digan otra cosa. */
+  try{
+    if(new URLSearchParams(location.search).get('v') === 'directa'){
+      document.title = 'THRIVE — tu invitación';
+    }
+  }catch(e){}
+</script>
 <meta name="robots" content="noindex, nofollow">
 
 <meta property="og:type" content="website">
@@ -21,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=5a13c685">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=42d1b73d">
 </head>
 
 <body>
@@ -1339,7 +1349,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     <span class="bv-word" aria-hidden="true"><i style="--i:0">t</i><i style="--i:1">h</i><i style="--i:2">r</i><i style="--i:3">i</i><i style="--i:4">v</i><i style="--i:5">e</i></span>
 
     <h1 class="bv-hola">Bienvenida<span id="bvNombre"></span>.</h1>
-    <p class="bv-txt">Antes de tu clase de prueba quiero conocerte un poco. Son dieciséis preguntas y cinco minutos, y las leo yo.</p>
+    <p class="bv-txt">Antes de tu clase de prueba quiero conocerte un poco. Son <span id="bvCuantas">unas</span> preguntas y cinco minutos, y las leo yo.</p>
 
     <button class="cta bv-cta" type="button" id="bvEmpezar">Empezar</button>
   </div>
@@ -1371,7 +1381,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
 
-<script src="/config.js?v=32bb9003"></script>
+<script src="/config.js?v=97ecc759"></script>
 <script src="/assets/js/thrive.js?v=81c007a6"></script>
 <script>
 (function(){
@@ -1502,6 +1512,10 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
          la pregunta —para entonces ya se contestó la 13— con `segunGrupo`.
          El `titulo` de acá es el que se ve si todavía no eligió grupo. */
       titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés sostener este horario durante el primer ciclo, hasta el 15 de diciembre?',
+      /* El respaldo del público arranca con «si después de tu clase», que en
+         invitación directa promete algo que no se ofreció. Este es el que se
+         ve mientras todavía no eligió grupo. */
+      segunModo:{ directa:'¿Podés sostener este horario durante el primer ciclo, hasta el 15 de diciembre?' },
       segunGrupo:{
         '2X':'¿Podés sostener este horario durante el primer ciclo, del 17 de septiembre al 15 de diciembre?',
         '3X':'¿Podés sostener este horario durante el primer ciclo, del 16 de septiembre al 15 de diciembre?'
@@ -1514,6 +1528,9 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     },
     {
       id:'imagen', tipo:'unica',
+      /* En invitación directa no hay clase de prueba, así que la pregunta no
+         puede hablar de ella. Misma lógica y mismo copy, otro momento. */
+      segunModo:{ directa:'Durante las sesiones podríamos tomar algunas fotografías o videos del entrenamiento. ¿Autorizás que aparezcas en contenido de Healing Through Movement?' },
       titulo:'Durante la clase de prueba podríamos tomar algunas fotografías o videos del entrenamiento. ¿Autorizás que aparezcas en contenido de Healing Through Movement?',
       ayuda:'Tu respuesta no afecta en absoluto tu participación. Si decís que no, se graba solo contenido donde no aparezcas o no seas identificable.',
       opciones:[
@@ -1675,6 +1692,67 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       texto:['Las últimas cuatro: qué grupo te sirve, si el horario te calza, y una sobre fotos.']
     }
   ];
+
+  /* ═══ los dos formularios ═══
+     El público son las 16 preguntas de Denisse. La INVITACIÓN DIRECTA son
+     nueve: va dirigida a alguien que ella ya conoce —una former o una
+     conocida— y preguntarle de cero lo que ya sabe es no haberla escuchado.
+
+     ⚠️ Los dos comparten las MISMAS definiciones de pregunta, y eso no es
+     por ahorrar código. `alerta_salud` es una columna GENERADA en la base
+     que compara el texto exacto de las respuestas 'restriccion' y
+     'sintomas' contra 'Sí.' —con tilde y con punto—. Si hubiera dos
+     formularios con dos definiciones, el día que una cambie una coma la
+     alerta empieza a devolver «sin riesgo» EN SILENCIO. Compartiendo los
+     objetos, divergir es imposible.
+
+     Denisse lo pidió explícito: «si alguna respuesta activa un flag, debe
+     aparecer Revisar salud en el panel». */
+  var MODO = 'publico';
+  try{
+    if(new URLSearchParams(location.search).get('v') === 'directa') MODO = 'directa';
+  }catch(e){}
+
+  if(MODO === 'directa'){
+    var CORTO = ['nombre','telefono','conocemos','grupo','meta','dolor','restriccion','sintomas','compromiso','imagen'];
+    var porId = {};
+    PREGUNTAS.forEach(function(q){ porId[q.id] = q; });
+    PREGUNTAS = CORTO.map(function(id){ return porId[id]; }).filter(Boolean);
+
+    /* La última tiene que llevar el cierre: es la que muestra el
+       consentimiento y el botón de enviar. En el público ese papel lo hace
+       'algo_mas', que acá no está. */
+    PREGUNTAS[PREGUNTAS.length - 1] = Object.assign({}, PREGUNTAS[PREGUNTAS.length - 1], { cierre:true });
+
+    /* Una sola pantalla de parte, la de salud: es la única que se gana el
+       lugar, porque es donde hace falta decir quién lee esto. */
+    PARTES = [
+      { hasta:'meta', nombre:'Para conocerte', titulo:null },
+      {
+        hasta:'sintomas', nombre:'Salud',
+        titulo:'Ahora, tu <em>salud</em>.',
+        texto:[
+          'Estas tres las leo solo yo y no se comparten con nadie.',
+          'Ninguna respuesta te deja fuera por sí sola. Lo que cambia es cómo trabajamos, no si podés entrenar.'
+        ]
+      },
+      { hasta:'imagen', nombre:'Lo práctico', titulo:null }
+    ];
+  }
+
+  /* ⚠️ El número se CUENTA y va ACÁ, después de que el modo recortó la
+     lista. Decía «dieciséis» fijo cuando ya eran dieciocho, y en el modo
+     directo son diez: cualquier número escrito a mano en esta página
+     nace con fecha de vencimiento. Y va después del recorte porque
+     calculado antes daba dieciocho en los dos modos — lo probé.
+     Ponerle precio a la tarea sirve, pero solo si el precio es cierto. */
+  (function(){
+    var LETRAS_N = ['cero','una','dos','tres','cuatro','cinco','seis','siete','ocho','nueve',
+                    'diez','once','doce','trece','catorce','quince','dieciséis','diecisiete',
+                    'dieciocho','diecinueve','veinte'];
+    var el = document.getElementById('bvCuantas');
+    if(el) el.textContent = PREGUNTAS.length <= 20 ? LETRAS_N[PREGUNTAS.length] : String(PREGUNTAS.length);
+  })();
 
   /* La lista de navegación: pantallas de parte y de pregunta, en orden. */
   var PANTALLAS = [];
@@ -1985,10 +2063,20 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
        MOSTRARLA y no al construirla: cuando se arma el formulario, la respuesta
        que decide todavía no existe. Si vuelve atrás y cambia de grupo, al pasar
        de nuevo por acá el titular ya dice la fecha nueva. */
-    if(p.tipo === 'q' && p.q.segunGrupo){
-      var g = /^THRIVE (2X|3X)/.exec(resp.grupo || '');
+    if(p.tipo === 'q' && (p.q.segunGrupo || p.q.segunModo || p.q.segunConocemos)){
       var h1 = elSteps.children[n].querySelector('.q-title');
-      if(h1) h1.textContent = (g && p.q.segunGrupo[g[1]]) || p.q.titulo;
+      if(h1){
+        var t = p.q.titulo;
+        /* De lo más general a lo más específico: el modo cambia la pregunta,
+           y la respuesta de «cómo nos conocemos» la afina todavía más. */
+        if(p.q.segunModo && p.q.segunModo[MODO]) t = p.q.segunModo[MODO];
+        if(p.q.segunGrupo){
+          var g = /^THRIVE (2X|3X)/.exec(resp.grupo || '');
+          if(g && p.q.segunGrupo[g[1]]) t = p.q.segunGrupo[g[1]];
+        }
+        if(p.q.segunConocemos && p.q.segunConocemos[resp.conocemos]) t = p.q.segunConocemos[resp.conocemos];
+        h1.textContent = t;
+      }
     }
     elBack.hidden = (n === 0);
     refrescarBoton(n);
@@ -2025,7 +2113,10 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       grupo: g ? g[1] : null,
       respuestas: resp,
       consentimiento: consiente,
-      origen: 'formulario',
+      /* 'invitacion' es la tercera vía: alguien que Denisse invitó
+         personalmente. El panel la usa para NO pedirle agendar una clase de
+         prueba que ella decidió que no es obligatoria en este camino. */
+      origen: MODO === 'directa' ? 'invitacion' : 'formulario',
       estado: 'formulario'
     };
   }
@@ -2034,6 +2125,12 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
      salud incluida. Las respuestas ya llegaron por el formulario: no hay
      ninguna razón para duplicarlas en un canal que no controlamos. */
   function textoCoordinar(){
+    /* En invitación directa no hay clase de prueba que coordinar: ella
+       revisa y escribe. El botón queda por si la persona prefiere hablar
+       antes, pero no puede prometer una clase que no se ofreció. */
+    if(MODO === 'directa'){
+      return 'Hola, Denisse! Acabo de mandarte el formulario de la invitación a THRIVE.';
+    }
     return 'Hola, Denisse! Acabo de completar el formulario de THRIVE y me gustaría coordinar mi clase de prueba.';
   }
 
@@ -2119,6 +2216,16 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
      la buena deja el título de error después de un reintento exitoso:
      pasó, se vio probando, y es peor que el bug original — decirle que
      falló cuando sí entró la manda a escribir por gusto. */
+  /* El cierre de la invitación directa es otro, y la diferencia es el
+     punto entero de esta vía: acá NO se agenda nada. Texto de Denisse,
+     29 ago 2026. */
+  var CIERRE_DIRECTA = {
+    titulo: 'Listo 💛',
+    t1: 'Ya me llegó. Voy a revisar tus respuestas y te escribo personalmente para que platiquemos y definamos si THRIVE hace sentido para vos y cuál grupo sería el mejor fit.',
+    t2: '<b>No necesitás agendar nada por ahora.</b>',
+    firma: '<strong>Denisse</strong>'
+  };
+
   var CIERRE_OK = {
     titulo: 'Listo, ya me llegó',
     t1: 'Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.',
@@ -2130,11 +2237,21 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     var poner = function(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html; };
 
     if(ok){
+      var C = MODO === 'directa' ? CIERRE_DIRECTA : CIERRE_OK;
       poner('cierreIcono', ICONO_OK);
-      poner('cierreTitulo', CIERRE_OK.titulo);
-      poner('cierreTexto1', CIERRE_OK.t1);
-      poner('cierreTexto2', CIERRE_OK.t2);
-      poner('cierreFirma', CIERRE_OK.firma);
+      /* La clase se pone en el cuadro siguiente, no en el mismo: si se
+         agrega junto con el innerHTML, el navegador puede resolver las dos
+         cosas de una y la animación arranca ya terminada. */
+      (function(){
+        var caja = document.getElementById('cierreIcono');
+        if(!caja) return;
+        caja.classList.remove('dibuja');
+        requestAnimationFrame(function(){ caja.classList.add('dibuja'); });
+      })();
+      poner('cierreTitulo', C.titulo);
+      poner('cierreTexto1', C.t1);
+      poner('cierreTexto2', C.t2);
+      poner('cierreFirma', C.firma);
       var eo = document.getElementById('cierreIcono');
       if(eo) eo.style.color = '';
     }else{
