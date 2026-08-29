@@ -589,11 +589,22 @@ body{background:var(--sand);}
 }
 .aj-aviso b{display:block; font-weight:700; margin-bottom:4px;}
 /* ── las clases de prueba ── */
+/* Rejilla y no flex, con carriles nombrados. Con flex el alto de la fila
+   dependia de lo que dijeran las insignias: en una fecha ya pasada el
+   bloque del dia crecia 72px, «Quitar» se caia a un segundo renglon y esa
+   fila quedaba 48px mas alta que las demas. Una lista de fechas donde el
+   alto de cada renglon delata su contenido se lee como si algo estuviera
+   roto. Asi el dia queda DEBAJO de los campos que describe —que ademas es
+   donde se lo busca— y las acciones se quedan quietas a la derecha. */
 .slot{
-  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  display:grid; gap:6px 14px; align-items:center;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  grid-template-areas:
+    "cuando ofrece quitar"
+    "dice   ofrece quitar";
   padding:13px 0; border-bottom:1px solid var(--line-soft);
 }
-.slot-cuando{display:flex; gap:8px; flex:1 1 320px; min-width:0;}
+.slot-cuando{grid-area:cuando; display:flex; gap:8px; min-width:0;}
 .slot-cuando input[type="date"], .slot-cuando select{
   flex:1 1 0; min-width:0; font:inherit; font-size:.96rem; color:var(--ink);
   background:var(--white); border:1px solid var(--line); border-radius:11px; padding:10px 12px;
@@ -605,8 +616,8 @@ body{background:var(--sand);}
    Es la comprobación de un vistazo — «viernes 4» se lee bien, «jueves 4»
    salta a la cara. */
 .slot-dice{
-  display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;
-  flex:0 1 auto; font-size:.86rem;
+  grid-area:dice; display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;
+  font-size:.86rem; padding-left:2px;
 }
 .slot-dice b{font-weight:600; text-transform:capitalize; color:var(--ink);}
 .slot-dice b.falta{color:#8A2F2F; font-weight:500;}
@@ -617,8 +628,12 @@ body{background:var(--sand);}
 }
 .slot-dice .ya-fue{background:#F6E3E3; color:#8A2F2F;}
 .slot-dice .asignadas{background:var(--teal-pale); color:var(--teal-deep);}
-.slot-ofrece{display:inline-flex; align-items:center; gap:7px; font-size:.9rem; color:var(--ink-2); cursor:pointer;}
+.slot-ofrece{
+  grid-area:ofrece; display:inline-flex; align-items:center; gap:7px;
+  font-size:.9rem; color:var(--ink-2); cursor:pointer; white-space:nowrap;
+}
 .slot .quitar{
+  grid-area:quitar; justify-self:end;
   font:inherit; font-size:.86rem; color:var(--ink-3); background:none; border:none;
   cursor:pointer; padding:6px 8px; border-radius:8px;
 }
@@ -626,6 +641,19 @@ body{background:var(--sand);}
 .slot.apagada .slot-cuando{opacity:.5;}
 .slot.pasada .slot-cuando{opacity:.65;}
 #ajSlotMas{margin-top:14px;}
+/* En el telefono los dos campos ya se llevan el ancho entero, asi que la
+   fila se apila. «Quitar» pasa al renglon del dia para no gastar uno propio. */
+@media (max-width:620px){
+  .slot{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:
+      "cuando cuando"
+      "dice   quitar"
+      "ofrece ofrece";
+  }
+  .slot-cuando{flex-wrap:wrap;}
+  .slot-cuando input[type="date"], .slot-cuando select{flex:1 1 140px;}
+}
 
 /* ═══════════════════════════════════════════════════════════
    LA CÁSCARA: barra lateral fija
