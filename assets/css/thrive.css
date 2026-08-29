@@ -67,6 +67,28 @@
   --relieve-sello:drop-shadow(1px 3px 3px rgba(13,61,71,.42));
 }
 
+/* ── §14 · contraste alto del sistema ──
+   Solo cuando el sistema lo pide. Para todas las demás el sitio se ve
+   exactamente igual que hoy: esto no es un tema alternativo, es la misma
+   paleta con los contornos subidos.
+
+   Se tocan solo TOKENS, no reglas: así vale para todo lo que ya los usa
+   —opciones del formulario, campos, tarjetas de plan, la nota— sin tener
+   que enumerarlo, y cualquier componente nuevo lo hereda gratis.
+
+   --teal-pale también sube: es el fondo de una opción marcada, y si el
+   borde se oscurece y el relleno no, la marcada pasa a leerse más floja
+   que las otras — exactamente al revés de lo que hace falta. */
+@media (prefers-contrast: more){
+  :root{
+    --line:rgba(30,29,26,0.55);
+    --line-soft:rgba(30,29,26,0.34);
+    --ink-2:#3A362F;
+    --ink-3:#56524A;
+    --teal-pale:#BEDCE1;
+  }
+}
+
 *{box-sizing:border-box;}
 
 /* El atributo hidden tiene que ganarle a cualquier display de clase.
@@ -632,6 +654,8 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
      8 px— y un relleno teñido los volvería paneles hundidos. La nota, que
      sí es un panel, fue para el otro lado. */
   background:var(--white); border:1px solid var(--line); border-radius:18px;
+  position:relative;                 /* ancla del enlace estirado, abajo */
+  -webkit-tap-highlight-color:transparent;
   padding:clamp(28px,5vw,36px); display:flex; flex-direction:column; gap:9px;
   box-shadow:var(--flota-2);
   transition:transform 420ms var(--ease), box-shadow 420ms var(--ease), border-color 420ms var(--ease);
@@ -639,6 +663,45 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 @media (hover:hover){
   .plan:hover{transform:translateY(-8px); box-shadow:var(--flota-3); border-color:var(--teal-pale);}
   .plan:hover .plan-cta{background:var(--teal); border-color:var(--teal); color:var(--white);}
+  /* El pill ya no se levanta solo: ahora la que se mueve es la tarjeta,
+     y dos objetos subiendo uno adentro del otro se lee como un error. */
+  .plan:hover .plan-cta{transform:none;}
+}
+
+/* ── §1 · la tarjeta entera responde al dedo ──
+   El hover de arriba vive detrás de @media (hover:hover) y en el teléfono
+   no existe: tocar la tarjeta no producía absolutamente nada, y el único
+   blanco vivo era el pill. Como el link se manda por WhatsApp, el teléfono
+   es el caso normal — o sea que la sección donde se decide la venta era la
+   que menos respondía.
+
+   El <a> se estira sobre la tarjeta con un ::after. Sigue siendo un enlace
+   de verdad —teclado, «abrir en pestaña nueva», menú contextual—; lo que
+   cambia es su superficie. Con eso :active se dispara tocando en cualquier
+   parte, y no hace falta ni una línea de JS.
+
+   Se HUNDE con scale, no sube con translateY: al apretar, las cosas ceden.
+   100 ms y no 300: pasados ~100 ms la sensación de respuesta directa se cae.
+
+   Si el navegador no entiende :has(), se pierde el hundido y el enlace
+   estirado funciona igual. Nadie queda peor que hoy.
+
+   ⚠️ Costo conocido del enlace estirado: el precio deja de poder
+   seleccionarse con el mouse, porque el ::after cubre la tarjeta. */
+.plan-cta::after{content:''; position:absolute; inset:0;}
+
+.plan:has(.plan-cta:active){
+  transform:scale(.985);
+  box-shadow:var(--flota-1);
+  border-color:var(--teal-pale);
+  transition:transform 100ms ease-out, box-shadow 100ms ease-out, border-color 100ms ease-out;
+}
+.plan:has(.plan-cta:active) .plan-cta{
+  background:var(--teal-pale);
+  transition:background 100ms ease-out;
+}
+@media (prefers-reduced-motion:reduce){
+  .plan:has(.plan-cta:active){transform:none;}
 }
 .plan:focus-within{transform:translateY(-8px); box-shadow:var(--flota-3);}
 .plan .pn{font-family:var(--mono); font-size:0.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-deep);}
@@ -934,10 +997,18 @@ input.field.corta{min-height:0; padding:15px 18px;}
 .detalle textarea.field{min-height:104px;}
 @media (prefers-reduced-motion:no-preference){
   .detalle:not([hidden]){animation:abre 420ms var(--ease);}
+  /* §7 · sale por donde entró. Sin esto se corta de un cuadro al otro y
+     se lee como una falla de la página en vez de una decisión.
+     240 ms y no 420 a propósito: el avance de pregunta llega a los 260,
+     así que el cierre tiene que haber terminado antes. */
+  .detalle.yendo{animation:cierra 240ms var(--ease) forwards;}
 }
 @keyframes abre{
   from{opacity:0; transform:translateY(-6px);}
   to{opacity:1; transform:translateY(0);}
+}
+@keyframes cierra{
+  to{opacity:0; transform:translateY(-6px);}
 }
 .q-body{margin-top:clamp(26px,5vw,34px); display:flex; flex-direction:column; gap:10px;}
 
