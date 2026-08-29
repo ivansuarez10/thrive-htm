@@ -781,9 +781,16 @@ body{background:var(--sand);}
    Aparece cuando Denisse vuelve de WhatsApp. Ese es el único momento
    en que ella tiene la respuesta, y preguntarle después —o esperar a
    que se acuerde de mover el estado— es perderla. */
-.volvio{
+/* El contenedor es el que esta fijo; las barras son hijas normales. Asi
+   se apilan solas cuando coinciden. Sin barras mide cero de alto y no
+   recibe clics, asi que no tapa nada de la lista. */
+.barras-pie{
   position:fixed; left:50%; bottom:20px; transform:translateX(-50%);
   z-index:80; width:min(560px, calc(100vw - 24px));
+  display:flex; flex-direction:column; gap:10px; pointer-events:none;
+}
+.volvio{
+  pointer-events:auto; width:100%;
   display:flex; align-items:center; gap:14px; flex-wrap:wrap;
   background:var(--ink); color:var(--linen);
   border-radius:18px; padding:16px 20px; box-shadow:var(--flota-3);
@@ -799,11 +806,33 @@ body{background:var(--sand);}
 .volvio button:hover{background:rgba(250,248,244,.28);}
 .volvio button.si{background:var(--wa); border-color:var(--wa); font-weight:600;}
 .volvio button.si:hover{background:#1F6D5A;}
-@media (max-width:899px){ .volvio{bottom:96px;} }
+/* La de deshacer no usa el verde de WhatsApp: ahi el verde significaria
+   «mandar», y esto es lo contrario. */
+.vuelta button.si{background:rgba(250,248,244,.92); border-color:transparent; color:var(--ink);}
+.vuelta button.si:hover{background:#fff;}
+@media (max-width:899px){ .barras-pie{bottom:96px;} }
 @media (prefers-reduced-motion:no-preference){
   .volvio{animation:sube-barra 380ms var(--ease);}
-  @keyframes sube-barra{from{opacity:0; transform:translate(-50%,14px);} to{opacity:1; transform:translate(-50%,0);}}
+  @keyframes sube-barra{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
 }
+
+/* ── el «¿seguro?» ──
+   El boton se vuelve rojo y dice lo que va a pasar, y al lado le nace un
+   «No». Sin dialogo del sistema a proposito: un confirm() del navegador
+   se lee como un error de la pagina, y con cuatro fechas o seis tareas en
+   pantalla no dice CUAL se esta por tocar. Aca la pregunta sale en la
+   fila que se toco. */
+.confirmando{
+  background:#8A2F2F !important; border-color:#8A2F2F !important;
+  color:#FFF !important; font-weight:600;
+}
+.confirmando:hover{background:#701F1F !important; border-color:#701F1F !important; color:#FFF !important;}
+.cancelar{
+  font:inherit; font-size:.9rem; cursor:pointer; color:var(--ink-2);
+  background:none; border:1px solid var(--line); padding:11px 17px; border-radius:999px;
+}
+.cancelar:hover{color:var(--ink); border-color:var(--ink-3);}
+.slot .cancelar{padding:6px 10px; font-size:.86rem;}
 
 /* ── el hilo de cada persona ── */
 .hilo{display:flex; flex-direction:column; gap:0; margin-top:6px;}
@@ -1230,10 +1259,20 @@ body{background:var(--sand);}
        cero por cero y no se veía. -->
   <div class="prog-menu" id="progMenu" hidden role="menu"></div>
 
-  <div class="volvio" id="volvio" hidden role="status">
-    <b id="volvioQue"></b>
-    <button class="si" type="button" id="volvioSi">Sí, ya le escribí</button>
-    <button type="button" id="volvioNo">Todavía no</button>
+  <!-- Las dos barras del pie viven en la misma columna para que, cuando
+       coincidan, se apilen solas en vez de taparse. La de deshacer va
+       arriba: es la que acaba de aparecer. -->
+  <div class="barras-pie">
+    <div class="volvio vuelta" id="vuelta" hidden role="status">
+      <b id="vueltaQue"></b>
+      <button class="si" type="button" id="vueltaDeshacer">Deshacer</button>
+      <button type="button" id="vueltaOk">Listo</button>
+    </div>
+    <div class="volvio" id="volvio" hidden role="status">
+      <b id="volvioQue"></b>
+      <button class="si" type="button" id="volvioSi">Sí, ya le escribí</button>
+      <button type="button" id="volvioNo">Todavía no</button>
+    </div>
   </div>
 </div>
 
@@ -2240,14 +2279,123 @@ body{background:var(--sand);}
     });
     cont.querySelectorAll('[data-campos]').forEach(function(b){
       b.addEventListener('click', function(){
-        accion(b.getAttribute('data-id'), JSON.parse(b.getAttribute('data-campos')), b);
+        confirmar(b, function(){
+          accion(b.getAttribute('data-id'), JSON.parse(b.getAttribute('data-campos')), b);
+        });
       });
     });
   }
 
+  /* ═══════════════════════════════════════════════════════════
+     PREGUNTAR ANTES Y PODER VOLVER
+
+     Nada de esto borra a nadie —Former es una marca, una fecha quitada
+     no toca a quien ya la tiene, y un estado se puede volver a mover—,
+     pero todo se dispara con UN clic, y Denisse usa el panel en el
+     telefono, de noche, al lado del WhatsApp. Ahi un clic se da sin
+     querer y encima no se ve cual fue.
+
+     Son dos redes distintas y por eso estan las dos:
+       · el «¿seguro?» ataja el clic que no se quiso dar
+       · el «Deshacer» arregla el clic que se quiso dar y estuvo mal
+     La segunda llega despues que la primera y no la reemplaza.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Una sola confirmacion abierta a la vez: dos filas preguntando al
+     mismo tiempo es exactamente la confusion que esto viene a evitar. */
+  var CONF = null;
+
+  function cerrarConfirmacion(){
+    if(!CONF) return;
+    var c = CONF; CONF = null;
+    clearTimeout(c.reloj);
+    /* Puede haberse repintado la lista debajo: si el boton ya no existe
+       no hay nada que restaurar. */
+    if(c.btn && c.btn.isConnected){ c.btn.textContent = c.texto; c.btn.className = c.clase; }
+    if(c.no && c.no.isConnected) c.no.remove();
+  }
+
+  /* «Vino» → «Sí, vino». Se arma del rotulo que ya tenia el boton para
+     que la pregunta nombre la accion y no un generico: con dos botones
+     al lado —«Vino» y «No vino»— un «Confirmar» pelado no dice cual. */
+  function siY(t){ return 'Sí, ' + String(t).charAt(0).toLowerCase() + String(t).slice(1); }
+
+  function confirmar(btn, hacer){
+    if(CONF && CONF.btn === btn){ var f = CONF.hacer; cerrarConfirmacion(); f(); return; }
+    cerrarConfirmacion();
+    var no = document.createElement('button');
+    no.type = 'button'; no.className = 'cancelar'; no.textContent = 'No';
+    no.addEventListener('click', function(e){ e.stopPropagation(); cerrarConfirmacion(); });
+    btn.insertAdjacentElement('afterend', no);
+    CONF = { btn:btn, no:no, texto:btn.textContent, clase:btn.className, hacer:hacer };
+    btn.className = btn.className + ' confirmando';
+    btn.textContent = siY(CONF.texto);
+    /* Se cierra sola. Una fila que quedo preguntando toda la tarde es una
+       fila donde el proximo clic hace algo que ya nadie recuerda. */
+    CONF.reloj = setTimeout(cerrarConfirmacion, 9000);
+  }
+
+  var VUELTA = null, VUELTA_RELOJ = 0;
+
+  function cerrarVuelta(){
+    clearTimeout(VUELTA_RELOJ); VUELTA = null;
+    var bar = document.getElementById('vuelta');
+    if(bar) bar.hidden = true;
+  }
+
+  /* `deshacer` devuelve lo que quiera: una promesa de Supabase —y
+     entonces se mira su .error antes de dar la vuelta por buena— o nada,
+     para las que solo tocan la pantalla. Cada una se encarga de recargar
+     lo suyo: desde aca no se sabe si la vuelta fue de clientas, del
+     embudo o de los ajustes, y llamar a cargar() a ciegas se llevaria
+     puestos los cambios de Ajustes sin guardar. */
+  function ofrecerVuelta(texto, deshacer){
+    var bar = document.getElementById('vuelta');
+    if(!bar) return;
+    VUELTA = deshacer;
+    document.getElementById('vueltaQue').textContent = texto;
+    var d = document.getElementById('vueltaDeshacer');
+    d.disabled = false; d.textContent = 'Deshacer';
+    bar.hidden = false;
+    clearTimeout(VUELTA_RELOJ);
+    VUELTA_RELOJ = setTimeout(cerrarVuelta, 14000);
+  }
+
+  (function(){
+    var d = document.getElementById('vueltaDeshacer'), ok = document.getElementById('vueltaOk');
+    if(!d || !ok) return;
+    d.addEventListener('click', function(){
+      if(!VUELTA){ cerrarVuelta(); return; }
+      var f = VUELTA; VUELTA = null;
+      clearTimeout(VUELTA_RELOJ);
+      d.disabled = true; d.textContent = 'Un momento…';
+      Promise.resolve().then(f).then(function(r){
+        if(r && r.error){ throw r.error; }
+        cerrarVuelta();
+      }).catch(function(){
+        /* No se pierde la vuelta: se deja el boton listo para reintentar
+           y se corre el reloj, porque si fallo hay menos tiempo del que
+           parecia. */
+        VUELTA = f; d.disabled = false; d.textContent = 'No se pudo — probá otra vez';
+        clearTimeout(VUELTA_RELOJ); VUELTA_RELOJ = setTimeout(cerrarVuelta, 14000);
+      });
+    });
+    ok.addEventListener('click', cerrarVuelta);
+  })();
+
   /* Un cambio de estado desde la pila: sin abrir la ficha y sin Guardar.
      Es la operación más frecuente del panel y costaba tres pasos. */
   function accion(id, campos, btn){
+    /* Se guarda el valor de ANTES por cada campo que se va a tocar, que
+       es lo unico que hace posible la vuelta. Un campo que hoy es null
+       vuelve a null: `undefined` no le dice nada a Supabase y dejaria el
+       valor nuevo puesto. */
+    var c = datos.filter(function(x){ return x.id === id; })[0];
+    var previo = {};
+    Object.keys(campos).forEach(function(k){
+      previo[k] = (c && c[k] !== undefined) ? c[k] : null;
+    });
+    var quien = (c && c.nombre) ? c.nombre : 'Esa persona';
     var antes = btn.textContent;
     btn.disabled = true; btn.textContent = 'Un momento…';
     sb.from('inscripciones').update(campos).eq('id', id).then(function(r){
@@ -2256,6 +2404,15 @@ body{background:var(--sand);}
         setTimeout(function(){ btn.textContent = antes; }, 3000);
         return;
       }
+      /* ⚠️ La vuelta queda escrita en el hilo: el disparador de la base
+         anota el cambio Y anota el regreso. Es ruido, y se acepta —el
+         historial dice lo que paso de verdad, no lo que quedo. */
+      ofrecerVuelta(quien + ' · ' + antes, function(){
+        return sb.from('inscripciones').update(previo).eq('id', id).then(function(r2){
+          if(!r2.error) cargar();
+          return r2;
+        });
+      });
       cargar();
     });
   }
@@ -3291,6 +3448,9 @@ body{background:var(--sand);}
   }
 
   function pintarClientas(){
+    /* Se repinta la lista: cualquier «¿seguro?» abierto quedaria colgado
+       de un boton que ya no existe. */
+    cerrarConfirmacion();
     var cont = document.getElementById('listaClientas');
     if(!clientas.length){
       cont.innerHTML = '<div class="pn-vacio">Todavía no has agregado a ninguna. ' +
@@ -3314,7 +3474,8 @@ body{background:var(--sand);}
           (telE164(cl)
             ? '<button class="wa comobtn" type="button" data-invitar="' + esc(cl.id) + '">' + ICONO_WA + 'Enviar invitación</button>'
             : '<button class="mini" type="button" disabled title="Sin teléfono no se puede abrir su WhatsApp">Sin teléfono</button>') +
-          '<button class="mini" type="button" data-baja="' + esc(cl.id) + '" data-a="' + (cl.activa ? '0' : '1') + '">' +
+          '<button class="mini" type="button" data-baja="' + esc(cl.id) + '" data-a="' + (cl.activa ? '0' : '1') +
+            '" data-quien="' + esc(cl.nombre) + '">' +
             (cl.activa ? 'Mover a Former' : 'Reactivar') + '</button>' +
         '</span>' +
       '</div>';
@@ -3340,14 +3501,25 @@ body{background:var(--sand);}
     });
     /* Igual que con candidatas: no se borra, se marca. Ver la regla
        dura del CLAUDE.md — el historial es el producto. */
+    function marcarActiva(id, v){
+      return sb.from('personas').update({ activa: v }).eq('id', id).then(function(r){
+        if(!r.error) return cargarClientas().then(pintarClientas).then(function(){ return r; });
+        return r;
+      });
+    }
     cont.querySelectorAll('[data-baja]').forEach(function(b){
       b.addEventListener('click', function(){
-        b.disabled = true; b.textContent = 'Un momento…';
-        sb.from('personas').update({ activa: b.getAttribute('data-a') === '1' })
-          .eq('id', b.getAttribute('data-baja')).then(function(r){
-            if(r.error){ b.disabled = false; b.textContent = 'No se pudo'; return; }
-            cargarClientas().then(pintarClientas);
+        var id    = b.getAttribute('data-baja');
+        var haciaActiva = b.getAttribute('data-a') === '1';
+        var quien = b.getAttribute('data-quien') || 'Esa clienta';
+        confirmar(b, function(){
+          b.disabled = true; b.textContent = 'Un momento…';
+          marcarActiva(id, haciaActiva).then(function(r){
+            if(r && r.error){ b.disabled = false; b.textContent = 'No se pudo'; return; }
+            ofrecerVuelta(quien + (haciaActiva ? ' volvió a Actuales.' : ' pasó a Former.'),
+              function(){ return marcarActiva(id, !haciaActiva); });
           });
+        });
       });
     });
   }
@@ -3553,7 +3725,23 @@ body{background:var(--sand);}
     }).length;
   }
 
+  /* Como se llama una fecha cuando hay que nombrarla en una frase:
+     «el viernes 4 de septiembre». Sin esto, deshacer diria «se quitó esa
+     fecha» y con cuatro en pantalla eso no alcanza. */
+  function nombreDeSlot(iso){
+    var par = partirSlot(iso);
+    if(!par[0]) return 'esa fecha';
+    var dia = diaDeLaSemana(par[0]);
+    var d = new Date(par[0] + 'T12:00:00-06:00');
+    var largo = '';
+    try{
+      largo = new Intl.DateTimeFormat('es-HN', { day:'numeric', month:'long', timeZone:'America/Tegucigalpa' }).format(d);
+    }catch(e){ largo = par[0]; }
+    return (dia ? dia + ' ' : '') + largo;
+  }
+
   function pintarSlots(){
+    cerrarConfirmacion();
     var cont = document.getElementById('ajSlots');
     if(!cont) return;
     var ss = slots();
@@ -3626,19 +3814,35 @@ body{background:var(--sand);}
     cont.querySelectorAll('[data-sq]').forEach(function(b){
       b.addEventListener('click', function(){
         var i = Number(b.getAttribute('data-sq'));
-        var ss2 = slots().slice();
-        /* Si alguien ya la tiene asignada no se quita: se apaga. Quitarla
-           le dejaría el pase apuntando a una fecha huérfana. */
-        if(ss2[i] && asignadasA(ss2[i].iso) > 0){
-          ss2[i] = { iso: ss2[i].iso, activa: false };
+        confirmar(b, function(){
+          var ss2 = slots().slice();
+          var era = ss2[i];
+          if(!era) return;
+          var comoSeLlama = nombreDeSlot(era.iso);
+          /* Si alguien ya la tiene asignada no se quita: se apaga. Quitarla
+             le dejaría el pase apuntando a una fecha huérfana. */
+          if(asignadasA(era.iso) > 0){
+            ss2[i] = { iso: era.iso, activa: false };
+            prog.ajustes.slots = ss2; pintarSlots();
+            var avi = document.getElementById('ajAviso');
+            avi.textContent = 'Esa fecha ya está asignada a alguien: se apagó en vez de quitarse.';
+            setTimeout(function(){ avi.textContent = ''; }, 4000);
+            ofrecerVuelta('Se apagó el ' + comoSeLlama + '.', function(){
+              var s3 = slots().slice(); s3[i] = era;
+              prog.ajustes.slots = s3; pintarSlots();
+            });
+            return;
+          }
+          ss2.splice(i, 1);
           prog.ajustes.slots = ss2; pintarSlots();
-          var avi = document.getElementById('ajAviso');
-          avi.textContent = 'Esa fecha ya está asignada a alguien: se apagó en vez de quitarse.';
-          setTimeout(function(){ avi.textContent = ''; }, 4000);
-          return;
-        }
-        ss2.splice(i, 1);
-        prog.ajustes.slots = ss2; pintarSlots();
+          /* Se dice que falta Guardar porque es verdad y porque cambia la
+             urgencia: mientras no se guarde, cerrar la pantalla tambien
+             deshace. */
+          ofrecerVuelta('Se quitó el ' + comoSeLlama + '. Falta Guardar.', function(){
+            var s3 = slots().slice(); s3.splice(i, 0, era);
+            prog.ajustes.slots = s3; pintarSlots();
+          });
+        });
       });
     });
   }
