@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=49fd29c4">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=c34a5e82">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -590,20 +590,41 @@ body{background:var(--sand);}
 .aj-aviso b{display:block; font-weight:700; margin-bottom:4px;}
 /* ── las clases de prueba ── */
 .slot{
-  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-  padding:11px 0; border-bottom:1px solid var(--line-soft);
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:13px 0; border-bottom:1px solid var(--line-soft);
 }
-.slot input[type="datetime-local"]{
-  flex:1 1 220px; min-width:0; font:inherit; font-size:.96rem; color:var(--ink);
+.slot-cuando{display:flex; gap:8px; flex:1 1 320px; min-width:0;}
+.slot-cuando input[type="date"], .slot-cuando select{
+  flex:1 1 0; min-width:0; font:inherit; font-size:.96rem; color:var(--ink);
   background:var(--white); border:1px solid var(--line); border-radius:11px; padding:10px 12px;
 }
-.slot label{display:inline-flex; align-items:center; gap:7px; font-size:.9rem; color:var(--ink-2); cursor:pointer;}
+.slot-cuando input:focus, .slot-cuando select:focus{
+  outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-pale);
+}
+/* El día de la semana no se elige: se deduce de la fecha y se muestra.
+   Es la comprobación de un vistazo — «viernes 4» se lee bien, «jueves 4»
+   salta a la cara. */
+.slot-dice{
+  display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;
+  flex:0 1 auto; font-size:.86rem;
+}
+.slot-dice b{font-weight:600; text-transform:capitalize; color:var(--ink);}
+.slot-dice b.falta{color:#8A2F2F; font-weight:500;}
+.slot-dice .ya-fue,
+.slot-dice .asignadas{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px;
+}
+.slot-dice .ya-fue{background:#F6E3E3; color:#8A2F2F;}
+.slot-dice .asignadas{background:var(--teal-pale); color:var(--teal-deep);}
+.slot-ofrece{display:inline-flex; align-items:center; gap:7px; font-size:.9rem; color:var(--ink-2); cursor:pointer;}
 .slot .quitar{
   font:inherit; font-size:.86rem; color:var(--ink-3); background:none; border:none;
   cursor:pointer; padding:6px 8px; border-radius:8px;
 }
 .slot .quitar:hover{color:#8A2F2F; background:#F6E3E3;}
-.slot.apagada input[type="datetime-local"]{opacity:.5;}
+.slot.apagada .slot-cuando{opacity:.5;}
+.slot.pasada .slot-cuando{opacity:.65;}
 #ajSlotMas{margin-top:14px;}
 
 /* ═══════════════════════════════════════════════════════════
@@ -3460,6 +3481,50 @@ body{background:var(--sand);}
     return f.charAt(0).toUpperCase() + f.slice(1) + ' · ' + horaDe(iso);
   }
 
+  /* Las horas posibles, cada cuarto de hora. Un desplegable en vez de un
+     campo libre: el bug que Denisse reportó —agendó 7:30 y salió 3:08
+     p.m.— era el selector de hora del teléfono dejando la hora ACTUAL
+     cuando se toca el día y no la hora. Con una lista eso no puede pasar. */
+  var HORAS = (function(){
+    var out = [];
+    for(var h = 5; h <= 20; h++){
+      for(var m = 0; m < 60; m += 15){
+        var v = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+        var h12 = h % 12 === 0 ? 12 : h % 12;
+        out.push([v, h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + (h < 12 ? 'a.m.' : 'p.m.')]);
+      }
+    }
+    return out;
+  })();
+
+  /* La fecha se guarda y se lee en hora de Honduras. `aInputHN` devuelve
+     «AAAA-MM-DDTHH:MM», así que partir por la T da las dos mitades sin
+     volver a hacer cuentas de zona horaria — que es donde se equivoca uno. */
+  function partirSlot(iso){
+    if(!iso) return ['', ''];
+    var t = aInputHN(iso);
+    return t ? t.split('T') : ['', ''];
+  }
+
+  function diaDeLaSemana(fecha){
+    if(!fecha) return '';
+    var d = new Date(fecha + 'T12:00:00-06:00');
+    if(isNaN(d.getTime())) return '';
+    try{
+      return new Intl.DateTimeFormat('es-HN', { weekday:'long', timeZone:'America/Tegucigalpa' }).format(d);
+    }catch(e){ return ''; }
+  }
+
+  /* Cuántas ya tienen esa fecha asignada. Es lo que decide si «Quitar»
+     puede quitar o solo apagar, y verlo antes evita la sorpresa. */
+  function asignadasA(iso){
+    if(!iso) return 0;
+    var t = new Date(iso).getTime();
+    return datos.filter(function(c){
+      return c.clase_en && new Date(c.clase_en).getTime() === t;
+    }).length;
+  }
+
   function pintarSlots(){
     var cont = document.getElementById('ajSlots');
     if(!cont) return;
@@ -3468,33 +3533,59 @@ body{background:var(--sand);}
       cont.innerHTML = '<p class="ayuda" style="padding:10px 0;">Todavía no hay ninguna. Agregá las fechas en las que vas a recibir clases de prueba.</p>';
       return;
     }
+
+    var hoyHN = aInputHN(new Date().toISOString()).split('T')[0];
+
     cont.innerHTML = ss.map(function(x, i){
       var activa = x.activa !== false;
-      return '<div class="slot' + (activa ? '' : ' apagada') + '">' +
-        '<input type="datetime-local" data-s="' + i + '" value="' + esc(x.iso ? aInputHN(x.iso) : '') + '">' +
-        '<label><input type="checkbox" data-sa="' + i + '"' + (activa ? ' checked' : '') + '> Se ofrece</label>' +
+      var par = partirSlot(x.iso);
+      var fecha = par[0], hora = par[1];
+      var dia = diaDeLaSemana(fecha);
+      var n = asignadasA(x.iso);
+      var pasada = fecha && fecha < hoyHN;
+
+      var ops = HORAS.map(function(h){
+        return '<option value="' + h[0] + '"' + (h[0] === hora ? ' selected' : '') + '>' + h[1] + '</option>';
+      }).join('');
+      if(hora && !HORAS.some(function(h){ return h[0] === hora; })){
+        /* Una hora que no cae en el cuarto de hora —quedó de antes o la
+           puso otra persona— no se pierde: se agrega a la lista. */
+        ops = '<option value="' + esc(hora) + '" selected>' + esc(hora) + ' · fuera de la lista</option>' + ops;
+      }
+
+      return '<div class="slot' + (activa ? '' : ' apagada') + (pasada ? ' pasada' : '') + '">' +
+        '<div class="slot-cuando">' +
+          '<input type="date" data-sf="' + i + '" value="' + esc(fecha) + '">' +
+          '<select data-sh="' + i + '">' + ops + '</select>' +
+        '</div>' +
+        '<div class="slot-dice">' +
+          (dia ? '<b>' + esc(dia) + '</b>' : '<b class="falta">Falta la fecha</b>') +
+          (pasada ? '<span class="ya-fue">ya pasó</span>' : '') +
+          (n ? '<span class="asignadas">' + n + (n === 1 ? ' asignada' : ' asignadas') + '</span>' : '') +
+        '</div>' +
+        '<label class="slot-ofrece"><input type="checkbox" data-sa="' + i + '"' + (activa ? ' checked' : '') + '> Se ofrece</label>' +
         '<button class="quitar" type="button" data-sq="' + i + '">Quitar</button>' +
       '</div>';
     }).join('');
 
-    cont.querySelectorAll('[data-sq]').forEach(function(b){
-      b.addEventListener('click', function(){
-        var i = Number(b.getAttribute('data-sq'));
-        var ss2 = slots().slice();
-        /* Si alguien ya la tiene asignada no se quita: se apaga. Quitarla
-           le dejaría el pase apuntando a una fecha huérfana. */
-        var usada = datos.some(function(c){ return c.clase_en && ss2[i] && new Date(c.clase_en).getTime() === new Date(ss2[i].iso).getTime(); });
-        if(usada){
-          ss2[i] = { iso: ss2[i].iso, activa: false };
-          prog.ajustes.slots = ss2; pintarSlots();
-          document.getElementById('ajAviso').textContent = 'Esa fecha ya está asignada a alguien: se apagó en vez de quitarse.';
-          setTimeout(function(){ document.getElementById('ajAviso').textContent = ''; }, 4000);
-          return;
-        }
-        ss2.splice(i, 1);
-        prog.ajustes.slots = ss2; pintarSlots();
+    /* Fecha y hora escriben el mismo campo: se recompone de las dos
+       mitades cada vez, porque cambiar una sola dejaría la otra perdida. */
+    function recomponer(i){
+      var f = cont.querySelector('[data-sf="' + i + '"]');
+      var h = cont.querySelector('[data-sh="' + i + '"]');
+      var ss2 = slots().slice();
+      if(!ss2[i]) return;
+      ss2[i].iso = (f && f.value && h && h.value) ? deInputHN(f.value + 'T' + h.value) : null;
+      prog.ajustes.slots = ss2;
+      pintarSlots();
+    }
+
+    cont.querySelectorAll('[data-sf], [data-sh]').forEach(function(el){
+      el.addEventListener('change', function(){
+        recomponer(Number(el.getAttribute('data-sf') || el.getAttribute('data-sh')));
       });
     });
+
     cont.querySelectorAll('[data-sa]').forEach(function(ch){
       ch.addEventListener('change', function(){
         var ss2 = slots().slice();
@@ -3503,12 +3594,23 @@ body{background:var(--sand);}
         prog.ajustes.slots = ss2; pintarSlots();
       });
     });
-    cont.querySelectorAll('[data-s]').forEach(function(inp){
-      inp.addEventListener('change', function(){
+
+    cont.querySelectorAll('[data-sq]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var i = Number(b.getAttribute('data-sq'));
         var ss2 = slots().slice();
-        var i = Number(inp.getAttribute('data-s'));
-        if(ss2[i]) ss2[i].iso = inp.value ? deInputHN(inp.value) : null;
-        prog.ajustes.slots = ss2;
+        /* Si alguien ya la tiene asignada no se quita: se apaga. Quitarla
+           le dejaría el pase apuntando a una fecha huérfana. */
+        if(ss2[i] && asignadasA(ss2[i].iso) > 0){
+          ss2[i] = { iso: ss2[i].iso, activa: false };
+          prog.ajustes.slots = ss2; pintarSlots();
+          var avi = document.getElementById('ajAviso');
+          avi.textContent = 'Esa fecha ya está asignada a alguien: se apagó en vez de quitarse.';
+          setTimeout(function(){ avi.textContent = ''; }, 4000);
+          return;
+        }
+        ss2.splice(i, 1);
+        prog.ajustes.slots = ss2; pintarSlots();
       });
     });
   }
