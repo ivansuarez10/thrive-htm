@@ -20,7 +20,15 @@
      .plan— se resolvieron abajo, cada una a su manera. Cualquier tarjeta
      nueva tiene el mismo problema y hay que resolverlo al crearla. */
   --linen:#FFFFFF;
-  --sand:#F4F3F1;
+  /* De #F4F3F1 a #F1EDE6 el 29 ago 2026. El motivo no es el color en sí:
+     es que la ALTERNANCIA de secciones ya existía en el código y no se
+     veía. Con linen en blanco puro y sand a un punto de distancia, bajar
+     la landing era una sola superficie plana hasta la sección oscura del
+     cierre, o sea que todo el color de la marca vivía en el último 10 %
+     de la página. Sand tibia devuelve el ritmo sin tocar una sola regla.
+     Efecto colateral buscado: las tarjetas --white de los planes, que
+     caen sobre sand, ahora se despegan del fondo por sí solas. */
+  --sand:#F1EDE6;
   --white:#FFFFFF;
   --ink:#1E1D1A;
   --ink-2:#56524A;
@@ -52,7 +60,13 @@
 
   /* La luz cálida de todo el sitio: una sola perilla. Subila o bajala
      y cambia el ambiente entero. */
-  --luz:.85;
+  /* Subida de .85 a 1 el 29 ago 2026, con el resto de los cambios de
+     diseño de la landing. ⚠️ Y acá termina la perilla: --luz es la
+     OPACIDAD de body::before, así que 1 es el techo — un valor mayor se
+     recorta y engaña a quien lo lea. Si algún día hace falta más calor,
+     lo que se sube son los alfas de los dos radiales (.34 y .24), no
+     esto. La otra mitad del calor la puso --sand. */
+  --luz:1;
 
   --ease:cubic-bezier(.22,1,.36,1);
 
@@ -292,10 +306,20 @@ section{padding:clamp(72px,13vw,140px) 0; position:relative;}
 .mask.d1 > span{transition-delay:90ms}
 .mask.d2 > span{transition-delay:180ms}
 
-.up{opacity:0; transform:translateY(20px); transition:opacity 760ms var(--ease), transform 760ms var(--ease);}
+/* 29 ago 2026 — el piso pasó de 0 a .55 y la transición de 760 a 420 ms.
+   Bajando rápido con el pulgar se agarraban párrafos enteros al 25 %, y
+   eso no se lee como animación: se lee como que la página no cargó. El
+   movimiento se mantiene; lo que cambia es que el PEOR fotograma posible
+   pasa de «invisible» a «llegando».
+   ⚠️ Se probó además con blur(3px) para que el estado intermedio se
+   leyera como entrando en foco, y se descartó viéndolo lado a lado en
+   _cmp-diseno.html: el peor fotograma quedaba PEOR que antes —texto gris
+   pero nítido pasaba a texto gris y desenfocado, que es exactamente la
+   sensación de pantalla rota que se quería evitar. */
+.up{opacity:.55; transform:translateY(20px); transition:opacity 420ms var(--ease), transform 420ms var(--ease);}
 .up.in{opacity:1; transform:none;}
 
-.stag > *{opacity:0; transform:translateY(24px); transition:opacity 660ms var(--ease), transform 660ms var(--ease);}
+.stag > *{opacity:.55; transform:translateY(24px); transition:opacity 420ms var(--ease), transform 420ms var(--ease);}
 .stag.in > *{opacity:1; transform:none;}
 .stag.in > *:nth-child(1){transition-delay:40ms}
 .stag.in > *:nth-child(2){transition-delay:120ms}
@@ -437,16 +461,21 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .cta{
   display:inline-flex; align-items:center; gap:11px;
   background:var(--teal-deep); color:#fff;
-  border-radius:999px; padding:16px 30px;
-  font-weight:700; font-size:1rem;
-  /* Despegado del papel, como el cuadro de la fecha: sin borde, sobre
-     una sombra larga y suave. Al acercarse sube y la sombra crece. */
-  box-shadow:var(--flota-2);
+  border-radius:999px; padding:15px 28px;
+  font-weight:600; font-size:1rem;
+  /* Sin sombra. Opción C, elegida por Ivan el 29 ago 2026 mirando el
+     comparador: el resto del sitio no levanta nada del papel —son líneas
+     finas, aire y tipografía— y estos botones sí. Eso era lo que los
+     delataba como venidos de otro sitio.
+     El peso baja de 700 a 600 por lo mismo: 700 sobre Hanken Grotesk a
+     1rem engorda la píldora y pelea con los titulares. */
   transition:background 240ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
   cursor:pointer;
 }
-.cta:hover{background:var(--ink); transform:translateY(-4px); box-shadow:var(--flota-3);}
-.cta:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
+/* Sin levantarse: el color hace todo el trabajo. Y al tocarlo se HUNDE
+   en vez de subir, que es lo que hace un botón apoyado en el papel. */
+.cta:hover{background:var(--ink);}
+.cta:active{transform:translateY(1px);}
 .cta:disabled{background:var(--line); color:var(--ink-3); cursor:not-allowed; transform:none; box-shadow:none;}
 .cta svg{width:19px; height:19px; flex:none;}
 .cta-fine{display:block; margin-top:14px; font-family:var(--mono); font-size:0.7rem; letter-spacing:.09em; color:var(--ink-2);}
@@ -662,7 +691,7 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 }
 @media (hover:hover){
   .plan:hover{transform:translateY(-8px); box-shadow:var(--flota-3); border-color:var(--teal-pale);}
-  .plan:hover .plan-cta{background:var(--teal); border-color:var(--teal); color:var(--white);}
+  .plan:hover .plan-cta{background:var(--ink); border-color:var(--ink); color:var(--white);}
   /* El pill ya no se levanta solo: ahora la que se mueve es la tarjeta,
      y dos objetos subiendo uno adentro del otro se lee como un error. */
   .plan:hover .plan-cta{transform:none;}
@@ -697,7 +726,10 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
   transition:transform 100ms ease-out, box-shadow 100ms ease-out, border-color 100ms ease-out;
 }
 .plan:has(.plan-cta:active) .plan-cta{
-  background:var(--teal-pale);
+  /* Antes iba a --teal-pale, que sobre un pill blanco era el gesto
+     correcto. Con el pill en teal sólido, aclararlo al apretar lo apaga:
+     va a tinta, en la misma dirección que el hover. */
+  background:var(--ink);
   transition:background 100ms ease-out;
 }
 @media (prefers-reduced-motion:reduce){
@@ -705,15 +737,25 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 }
 .plan:focus-within{transform:translateY(-8px); box-shadow:var(--flota-3);}
 .plan .pn{font-family:var(--mono); font-size:0.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-deep);}
-/* Esto se LEE, no es un rótulo: 0.86rem daban 13.8 px en el teléfono. */
-.plan .days{font-family:var(--mono); font-size:0.94rem; color:var(--ink-2);}
+/* Esto se LEE, no es un rótulo: 0.86rem daban 13.8 px en el teléfono.
+   29 ago 2026 — y por eso mismo salió del mono. El sistema reserva la
+   monoespaciada para precios, horarios y rótulos; «Martes + Jueves ·
+   7:30 a.m.» es una frase con preposiciones. Entre esta línea y la de
+   abajo se iba el 80 % del texto de la tarjeta, así que una oferta de
+   $220 al mes se leía como salida de terminal. Sube a tinta y a peso
+   500 porque es el dato que decide el grupo.
+   ⚠️ El precio se QUEDA en --display. Se probó pasarlo a mono junto con
+   esto y se descartó: el cero de DM Mono va rayado, que es convención de
+   código —para no confundirlo con la O— y en un precio no significa
+   nada. La tipografía no expone un cero alterno. */
+.plan .days{font-family:var(--sans); font-size:1.04rem; font-weight:500; line-height:1.4; color:var(--ink);}
 /* Cada grupo arranca un día distinto —3X el 16, 2X el 17— y esa diferencia
    vivía en una línea general que decía una sola fecha. Va en la tarjeta,
    que es donde se decide. Subordinada al horario: es un dato de calendario,
    no un argumento de venta. */
 .plan .arranca{
   display:block; margin-top:6px;
-  font-family:var(--mono); font-size:0.66rem; letter-spacing:.06em;
+  font-family:var(--sans); font-size:0.92rem;
   color:var(--ink-2);
 }
 .plan .price{display:flex; align-items:baseline; gap:8px; margin-top:8px;}
@@ -726,16 +768,29 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
   margin-top:22px; align-self:stretch; text-align:center;
   padding:16px 20px; border-radius:999px;
   /* 8 · Con la página en blanco, un botón --linen sobre tarjeta --white
-     se sostenía solo con una sombra al 8 % y se perdía. Sube a flota-2 y
-     suma un borde: es el único elemento clicable de la tarjeta y tiene
-     que leerse como objeto, no como renglón. */
-  background:var(--linen); box-shadow:var(--flota-2);
-  border:1px solid var(--line);
-  font-weight:600; font-size:0.95rem; color:var(--ink);
+     se sostenía solo con una sombra al 8 % y se perdía. Subió a flota-2 y
+     sumó un borde para leerse como objeto y no como renglón.
+     29 ago 2026 — eso lo separaba del fondo pero no le daba jerarquía, y
+     seguían siendo TRES BLANCOS APILADOS: pill --linen sobre tarjeta
+     --white sobre página casi blanca. El único elemento que decide la
+     venta era el de menos contraste de la sección. Pasa a teal profundo
+     sólido: 7.14:1 con texto blanco, y el acento de la marca por fin
+     haciendo trabajo en vez de esperar a la sección oscura del cierre.
+     ⚠️ Va --teal-deep y NO --teal: el teal de marca da 4.09:1 con blanco
+     a 15 px, que no pasa. Alternativa descartada, igual de válida: tinta
+     sólida — más severa, pero deja el teal sin usar otra vez.
+     La sombra baja a flota-1: un botón con color propio ya no necesita
+     que una sombra grande lo despegue. */
+  /* 29 ago 2026 (Ivan, opción C): fuera también esta sombra. El botón ya
+     tiene color propio y borde; la sombra sólo lo despegaba del papel. */
+  background:var(--teal-deep);
+  border:1px solid var(--teal-deep);
+  font-weight:600; font-size:0.95rem; color:var(--white);
   transition:background 300ms var(--ease), color 300ms var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
-.plan-cta:hover{background:var(--teal-deep); color:var(--white); transform:translateY(-4px); box-shadow:var(--flota-3);}
-.plan-cta:active{transform:translateY(-1px); box-shadow:var(--flota-1);}
+/* El reposo ya es teal, así que el hover se va a tinta: si no, no pasa nada. */
+.plan-cta:hover{background:var(--ink); border-color:var(--ink); color:var(--white);}
+.plan-cta:active{transform:translateY(1px);}
 
 /* La escasez es real —cuatro por grupo— así que se dice sin adornos. */
 .cierre-fecha{
@@ -1443,8 +1498,22 @@ textarea.field{min-height:130px;}
 @keyframes pa-fondo{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
 .btn-row{display:flex; flex-direction:column; gap:11px; margin-top:clamp(30px,6vw,40px);}
 .btn-row .cta{justify-content:center;}
-.cta.wa{background:var(--wa);}
-.cta.wa:hover{background:#1E6B58;}
+/* El verde #25806A es de WhatsApp, no de THRIVE, y en una pantalla de
+   teales tiraba de la vista antes que el titular. Lo que dice «esto abre
+   WhatsApp» es el ícono, que se queda; el color nunca fue el que lo decía. */
+.cta.wa{background:var(--teal-deep);}
+.cta.wa:hover{background:var(--ink);}
+
+/* ── el segundo botón, de línea ──
+   El cierre con error ya pedía `cta wa secundario` desde antes, pero
+   `.secundario` no existía en ningún lado: era una clase muerta y los dos
+   botones salían igual de llenos. Acá por fin significa algo — una sola
+   acción llena por pantalla, y la otra acompaña. */
+.cta.secundario{background:transparent; color:var(--ink); border:1px solid var(--line);}
+.cta.secundario:hover{background:transparent; color:var(--ink); border-color:var(--ink);}
+/* En la sección oscura se invierte: un borde de tinta sobre tinta no se ve. */
+.dark .cta.secundario{color:var(--sand); border-color:rgba(244,243,241,.34);}
+.dark .cta.secundario:hover{color:var(--white); border-color:var(--sand);}
 
 /* ── estados de borde ── */
 .notice{max-width:520px; margin:0 auto; padding:clamp(70px,16vw,140px) clamp(22px,6vw,40px); text-align:center;}
@@ -1649,12 +1718,22 @@ textarea.field{min-height:130px;}
   .abre-linea .m3 > span{animation-delay:1.58s}
   @keyframes revela{ to{transform:translateY(0);} }
 
+  /* 29 ago 2026 — la frase salió de la itálica. La regla del sistema es
+     que el serif nunca encabeza, solo ACOMPAÑA, y acá cargaba las dos
+     líneas enteras: Bodoni itálica, hairlines finísimas, cuerpo chico,
+     sobre blanco y en un teléfono. Ahí ya no era acento, era cuerpo de
+     texto en una tipografía que no aguanta serlo. Pasa a --sans y la
+     itálica se queda en UNA palabra, que es donde pesa. */
   .abre-sub{
     margin-top:clamp(18px,2.6vh,28px);
-    font-family:var(--serif); font-style:italic; font-weight:500;
-    font-size:clamp(1.02rem,2.2vw,1.4rem); line-height:1.35; color:var(--teal-deep);
-    max-width:28ch;
+    font-family:var(--sans); font-weight:400;
+    font-size:clamp(1rem,2.1vw,1.22rem); line-height:1.45; color:var(--ink-2);
+    max-width:34ch;
     opacity:0; animation:sube 900ms var(--ease) 2.05s forwards;
+  }
+  .abre-sub em{
+    font-family:var(--serif); font-style:italic; font-weight:500;
+    color:var(--teal-deep);
   }
 
   /* ── señal de scroll ── */
@@ -1735,3 +1814,175 @@ textarea.field{min-height:130px;}
   transition:filter 820ms var(--ease);
 }
 .bv-sello.listo .sello-vivo{filter:var(--relieve-sello);}
+
+/* ═══════════════════════════════════════════════════════════
+   LA INVITACIÓN DIRECTA — /thrive/invitacion
+   Landing privada, para quien Denisse invita personalmente. No abre
+   como la pública: sin portada de marca y sin «seguí bajando», porque
+   el link llega por WhatsApp de su mano y quien lo abre ya sabe de
+   quién viene. Lo primero que se lee es a quién está dirigida.
+   ═══════════════════════════════════════════════════════════ */
+.inv-hero .wrap{display:flex; flex-direction:column; align-items:center; text-align:center;}
+.inv-sello{width:clamp(58px,11vw,76px); height:auto; filter:var(--relieve-sello);}
+
+/* El logotipo, más chico que en la pública: acá no es la portada, es la
+   firma de quien invita. */
+.inv-word{
+  margin-top:clamp(18px,3vw,26px);
+  font-size:clamp(2.6rem,11vw,4.2rem); line-height:1;
+}
+.inv-titular{margin-top:clamp(10px,1.8vw,16px); max-width:16ch;}
+.inv-entrada{margin-top:clamp(20px,3.4vw,28px); max-width:46ch;}
+
+/* El lema respira: es la frase de la marca, no el final del párrafo
+   anterior. Sin este margen quedaban pegados y se leían como uno solo. */
+.inv-lema{
+  margin-top:clamp(24px,4vw,34px);
+  font-family:var(--serif); font-style:italic;
+  font-size:clamp(1.15rem,3.4vw,1.55rem); line-height:1.35;
+  color:var(--ink-2); max-width:24ch;
+}
+.inv-hero .cta-wrap{margin-top:clamp(30px,5vw,44px);}
+
+/* Los párrafos del «por qué pensé en vos» son una carta, no una lista:
+   se leen seguidos y con medida corta. */
+.inv-porque .body{max-width:58ch;}
+.inv-porque .body + .body{margin-top:clamp(14px,2.2vw,20px);}
+.inv-remate{margin-top:clamp(20px,3vw,28px);}
+
+/* ═══════════════════════════════════════════════════════════
+   EL CIERRE DEL FORMULARIO · a pantalla completa
+   Aprobado por Ivan el 29 ago 2026 sobre el prototipo en
+   05-exploracion/thrive-cierre-pleno.html.
+
+   Son DOS tiempos, no uno:
+     1. Toda la pantalla es el check trabajando, MIENTRAS la base
+        contesta: dos anillos de puntos girando y un halo que respira.
+     2. Cuando la fila ya existe, los puntos se cierran en un aro
+        entero, se traza el visto, y recién ahí sube el mensaje.
+
+   ⚠️ Esto NO es decoración: es el estado del sistema. El 28 ago 2026
+   una candidata vio «Listo, ya me llegó» y su fila nunca existió. Por
+   eso la clase .arma la pone el JavaScript en el .then() de la
+   escritura, jamás al tocar «Enviar». Si algún día alguien la mueve
+   para «que se vea más rápido», vuelve el bug de raíz.
+
+   Va en los dos formularios —público e invitación— porque es un solo
+   archivo con dos modos. No hay una copia que se pueda desincronizar.
+
+   Sin sello: el logotipo ya se presentó al abrir el formulario, y acá
+   competiría con el mensaje. Decisión de Ivan. */
+.confirm.pleno{
+  min-height:100svh; display:grid; place-items:center;
+  max-width:none; padding:clamp(28px,7vw,56px) clamp(20px,6vw,40px);
+}
+/* Los dos tiempos ocupan la MISMA celda de la grilla: así el mensaje
+   nace justo donde estaba el check, sin salto de posición. */
+.confirm.pleno > *{grid-area:1 / 1;}
+
+.cierre-nucleo{position:relative; display:grid; justify-items:center; text-align:center;}
+.cierre-nucleo.sale{animation:cierre-nucleo-sale 420ms cubic-bezier(.4,0,.7,.2) both;}
+/* Si falló no hay ceremonia: se va rápido y aparece el error. Quien
+   necesita reintentar no tiene por qué esperar una despedida. */
+.cierre-nucleo.falla{animation:cierre-nucleo-sale 240ms cubic-bezier(.4,0,.7,.2) both;}
+@keyframes cierre-nucleo-sale{to{opacity:0; transform:scale(.94);}}
+
+/* El halo respira MIENTRAS espera. Es la parte honesta de la pantalla:
+   si la base tarda cuatro segundos, esto respira cuatro segundos. */
+.cierre-halo{
+  position:absolute; top:50%; left:50%; width:min(78vw,340px); aspect-ratio:1;
+  border-radius:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:0;
+  background:radial-gradient(circle, rgba(36,137,157,.17), rgba(36,137,157,0) 66%);
+  filter:blur(14px); animation:cierre-halo-late 3.4s var(--ease) infinite;
+}
+.cierre-nucleo.resuelto .cierre-halo,
+.cierre-nucleo.falla .cierre-halo{animation:cierre-halo-calma 800ms var(--ease) both;}
+@keyframes cierre-halo-late{
+  0%,100%{opacity:.95; transform:translate(-50%,-50%) scale(1);}
+  50%    {opacity:.55; transform:translate(-50%,-50%) scale(1.1);}
+}
+@keyframes cierre-halo-calma{to{opacity:0;}}
+
+/* ── el check ──
+   30vw lo mantiene proporcional al teléfono (112 px en uno de 375) sin
+   pasarse en escritorio, donde queda clavado en 148. */
+.cheque{position:relative; z-index:1; width:clamp(104px,30vw,148px); color:var(--teal);}
+.cheque svg{width:100%; height:auto; display:block; overflow:visible;}
+.cheque circle, .cheque path{fill:none; stroke:currentColor;}
+.cheque .corona{stroke-width:1.5; opacity:.34; stroke-dasharray:2 13;}
+.cheque .aro{stroke-width:2.5; stroke-dasharray:3 12;}
+/* El visto arranca escondido a propósito: no puede existir mientras la
+   base no haya contestado. Ver la nota de movimiento reducido abajo. */
+.cheque .visto{
+  stroke-width:3; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:56; stroke-dashoffset:56; opacity:0;
+}
+/* Los puntos corren por dashoffset y no por rotación: así el ciclo
+   cierra solo y no hay salto cuando se pasa a cerrar el aro. */
+.cheque.espera .corona{animation:cheque-corona 3.6s linear infinite;}
+.cheque.espera .aro{animation:cheque-aro 1.5s linear infinite;}
+@keyframes cheque-corona{to{stroke-dashoffset:15;}}
+@keyframes cheque-aro{to{stroke-dashoffset:-15;}}
+
+.cheque.arma .corona{animation:cheque-corona-va 560ms var(--ease) both;}
+.cheque.arma .aro{animation:cheque-cierra 720ms var(--ease) both;}
+.cheque.arma .visto{animation:cheque-visto 560ms var(--ease) 640ms both;}
+@keyframes cheque-corona-va{from{opacity:.34; transform:scale(1);} to{opacity:0; transform:scale(1.14);}}
+@keyframes cheque-cierra{from{stroke-dasharray:3 12;} to{stroke-dasharray:277 0;}}
+@keyframes cheque-visto{from{opacity:1; stroke-dashoffset:56;} to{opacity:1; stroke-dashoffset:0;}}
+
+/* El color lo dice antes que la palabra. */
+.cheque.mal{color:#8A2F2F;}
+
+.cierre-espera{
+  position:relative; z-index:1; font-family:var(--mono);
+  font-size:clamp(.66rem,2.6vw,.74rem); letter-spacing:.11em; text-transform:uppercase;
+  color:var(--ink-2); margin:clamp(22px,5vw,30px) 0 0;
+  animation:cierre-espera-respira 2.4s ease-in-out infinite;
+}
+@keyframes cierre-espera-respira{0%,100%{opacity:.42;} 50%{opacity:.9;}}
+.cierre-nucleo.resuelto .cierre-espera,
+.cierre-nucleo.falla .cierre-espera{animation:cierre-espera-sale 380ms var(--ease) both;}
+@keyframes cierre-espera-sale{to{opacity:0; transform:translateY(-7px);}}
+
+/* ── el mensaje ── */
+/* El JavaScript le da foco a este bloque cuando aparece, para que un
+   lector de pantalla lo lea. Pero el foco pinta el anillo de :focus-visible
+   ALREDEDOR DE TODO EL MENSAJE, y se ve como un recuadro que nadie diseñó.
+   Lo vio Ivan el 29 ago 2026. No se pierde nada de accesibilidad: el bloque
+   no es alcanzable con tabulador (tabindex -1), así que este anillo nunca
+   le sirvió a nadie que navegue con teclado. */
+.cierre-msg:focus, .cierre-msg:focus-visible{outline:none;}
+.cierre-msg{position:relative; z-index:2; max-width:min(460px,100%); text-align:center; justify-self:center;}
+.cierre-msg .body{margin-top:clamp(14px,3vw,18px);}
+.cierre-msg .firma{font-size:.94rem; margin-top:clamp(18px,4vw,22px);}
+.cierre-msg .btn-row{margin-top:clamp(26px,6vw,32px); align-items:center;}
+
+.cierre-msg.llega > *{animation:cierre-sube 640ms var(--ease) both;}
+.cierre-msg.llega > h1{animation-delay:0ms;}
+.cierre-msg.llega > p:nth-of-type(1){animation-delay:110ms;}
+.cierre-msg.llega > p:nth-of-type(2){animation-delay:205ms;}
+.cierre-msg.llega > p:nth-of-type(3){animation-delay:300ms;}
+.cierre-msg.llega > .btn-row{animation-delay:415ms;}
+/* El estado de partida vive en el fotograma, no en la regla: sin
+   animación esto se ve entero, no en blanco. */
+@keyframes cierre-sube{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:none;}}
+
+/* Quien pidió menos movimiento ve la misma secuencia sin movimiento:
+   los puntos quietos mientras espera, y el visto PUESTO al resolver.
+   ⚠️ Acá el visto SÍ hay que devolverlo a mano. Su estado escondido no
+   está en un fotograma sino en la regla —no hay alternativa: tiene que
+   estar invisible mientras la base contesta—, así que sin este bloque
+   quedaría un aro vacío para siempre. */
+@media (prefers-reduced-motion: reduce){
+  .cierre-halo, .cierre-espera,
+  .cheque.espera .corona, .cheque.espera .aro,
+  .cheque.arma .corona, .cheque.arma .aro, .cheque.arma .visto,
+  .cierre-nucleo.sale, .cierre-nucleo.falla,
+  .cierre-msg.llega > *{animation:none !important;}
+  .cheque.arma .corona{opacity:0 !important;}
+  .cheque.arma .aro{stroke-dasharray:277 0 !important;}
+  .cheque.arma .visto{opacity:1 !important; stroke-dashoffset:0 !important;}
+  .cierre-nucleo.sale, .cierre-nucleo.falla{opacity:0 !important;}
+}
+}

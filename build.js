@@ -38,7 +38,7 @@ if (!CFG || !Array.isArray(CFG.referidas)) {
 
 /* Slugs que ya son rutas del sitio. Una clienta que se llamara así
    taparía el formulario o la confirmación de la clase. */
-const RESERVADOS = new Set(['form', 'schedule', 'assets']);
+const RESERVADOS = new Set(['form', 'schedule', 'assets', 'invitacion']);
 
 /* Escapa lo que se mete en un atributo HTML */
 const attr = (s) => String(s)
@@ -97,6 +97,56 @@ for (const r of CFG.referidas) {
   console.log(`✓ thrive/${r.slug}/index.html`.padEnd(36) + `${r.nombre}`.padEnd(14) + `${(size/1024).toFixed(0)} KB`);
 }
 
+/* 3.5 · la landing privada — invitación directa
+   Reutiliza dos secciones ENTERAS de la pública: «qué recibís» y los
+   planes. Se extraen de la plantilla pública al construir, en vez de
+   copiarlas al archivo privado, porque copiadas se separan: alguien
+   cambia un precio en una y no en la otra, y nadie se entera hasta que
+   una clienta ve dos números distintos.
+
+   Los botones de plan sí se reescriben: en la pública dicen «Quiero
+   probar» y llevan al ancla de invitación; acá no hay clase de prueba,
+   así que dicen «Me interesa» y llevan al formulario corto con el grupo
+   ya elegido. */
+(function () {
+  const priv = path.join(raiz, '_template-privada.html');
+  if (!fs.existsSync(priv)) return;
+
+  /* Corta desde el banner pedido hasta el banner siguiente. Sirve para
+     cualquier bloque sin importar si es <section> o <div> — la portada es
+     un div y la primera versión de esto, que cortaba en </section>, no la
+     encontraba. */
+  const sacar = (banner) => {
+    const abre = tpl.search(new RegExp('<!-- ═+ ' + banner + ' ═+'));
+    if (abre === -1) { console.warn(`⚠ no encontré la sección "${banner}" en la plantilla pública`); return ''; }
+    const resto = tpl.slice(abre);
+    const sig = resto.slice(1).search(/<!-- ═{5,}/);
+    return (sig === -1 ? resto : resto.slice(0, sig + 1)).trimEnd();
+  };
+
+  let planes = sacar('PLANES');
+  /* «Quiero probar THRIVE 2X» → «Me interesa THRIVE 2X», y al formulario
+     corto en vez de al ancla. El grupo viaja en ?plan= y el formulario lo
+     deja contestado: ya lo eligió una vez. */
+  planes = planes.replace(
+    /<a class="plan-cta" href="[^"]*" data-plan-cta="(2X|3X)">[^<]*<\/a>/g,
+    (_, plan) => `<a class="plan-cta" href="/thrive/form/?v=directa&amp;plan=${plan}">Me interesa THRIVE ${plan}</a>`
+  );
+
+  const html = fs.readFileSync(priv, 'utf8')
+    /* La portada es la misma de la pública, sello animado incluido: Ivan
+       la pidió igual el 29 ago 2026. Extraída y no copiada, para que el
+       sello de diecisiete caminos exista una sola vez en el proyecto. */
+    .replace('{{PORTADA}}', sacar('PORTADA'))
+    .replace('{{QUE_RECIBIS}}', sacar('QUÉ RECIBÍS'))
+    .replace('{{PLANES}}', planes);
+
+  const destino = path.join(raiz, 'thrive', 'invitacion', 'index.html');
+  fs.mkdirSync(path.dirname(destino), { recursive: true });
+  fs.writeFileSync(destino, html);
+  console.log('✓ thrive/invitacion/index.html'.padEnd(36) + '(invitación directa)'.padEnd(14) + `${(html.length/1024).toFixed(0)} KB`);
+})();
+
 /* 4 · barrer landings de clientas que ya no están en config.
    Si a alguien se le quita el link, su página tiene que dejar de existir,
    no quedarse publicada porque nadie la borró a mano. */
@@ -132,7 +182,9 @@ function htmlsDe(dir) {
     if (e.name === '.git' || e.name === 'node_modules') continue;
     const full = path.join(dir, e.name);
     if (e.isDirectory()) out.push(...htmlsDe(full));
-    else if (e.name.endsWith('.html') && e.name !== '_template-landing.html') out.push(full);
+    /* Las plantillas no se sellan: no se publican, y sellarlas las deja
+       modificadas después de cada build sin que nadie las haya tocado. */
+    else if (e.name.endsWith('.html') && !e.name.startsWith('_template-')) out.push(full);
   }
   return out;
 }

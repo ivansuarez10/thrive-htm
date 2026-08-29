@@ -3,24 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THRIVE — antes de coordinar tu clase</title>
-<script>
-  /* El título habla de coordinar una clase, y en invitación directa no hay
-     clase que coordinar. Se corrige antes de pintar para que ni la pestaña
-     ni el historial digan otra cosa. */
-  try{
-    if(new URLSearchParams(location.search).get('v') === 'directa'){
-      document.title = 'THRIVE — tu invitación';
-    }
-  }catch(e){}
-</script>
+<title>THRIVE — esta invitación es para vos</title>
+<!-- Privada: se reparte por WhatsApp, una por una. No se indexa. -->
 <meta name="robots" content="noindex, nofollow">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Healing Through Movement">
-<meta property="og:title" content="THRIVE · antes de coordinar tu clase">
-<meta property="og:description" content="Unas preguntas para que Denisse prepare tu clase de prueba. Cinco minutos.">
-<meta property="og:url" content="https://healingthroughmovement.studio/thrive/form/">
+<meta property="og:title" content="THRIVE · esta invitación es para vos">
+<meta property="og:description" content="Un espacio nuevo de entrenamiento de fuerza en grupos pequeños.">
+<meta property="og:url" content="https://healingthroughmovement.studio/thrive/invitacion/">
 <meta property="og:image" content="https://healingthroughmovement.studio/assets/img/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -36,13 +27,37 @@
 
 <body>
 
+<!-- ══════════ PORTADA ══════════
+     Primera pantalla de marca: sello, THRIVE y la línea de programa.
+     Decisión de Ivan, 27 ago 2026.
 
-<!-- ══════════ BIENVENIDA ══════════
-     El formulario es una herramienta: la animación no bloquea, presenta.
-     Ella entra cuando toca el botón, y no se repite si vuelve atrás. -->
-<div class="bienve" id="bienve">
-  <div class="bv-in">
-    <div class="bv-sello"><svg class="sello-vivo" viewBox="0 0 3085.000000 3085.000000" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0,3085) scale(0.1,-0.1)"><path class="sl" style="--n:0" data-i="16" d="M9050 5731 c-18 -35 -11 -50 46 -105 55 -54 55 -54 52 -108 -2 -44
+     SE COMPORTA DISTINTO SEGÚN EL TAMAÑO, y el detalle vive en el CSS:
+
+       · escritorio → sección normal. Muestra «Seguí bajando» y se pasa
+         con scroll. Hay rueda y barra: quitarle el control a alguien que
+         ya lo tenía sería un peaje.
+       · teléfono   → capa que se quita sola a los 4 s. Acá la portada ES
+         la primera pantalla y el pulgar todavía no llegó; los 4 segundos
+         posicionan la marca antes de que nadie decida nada.
+
+     ⚠️ Esto revierte el commit 13bebbf, «El hero deja de pedir y la
+     página deja de presentarse». El motivo nuevo es de posicionamiento:
+     THRIVE sale a clientas que no conocen la marca, y quien recibe el
+     link lo recibe por invitación. Queda escrito para que no se lea como
+     un descuido.
+
+     La red: lo BASE es lo de escritorio. La capa fija solo existe cuando
+     thrive.js le pone .portada-viva al <body>. Si el script no llega, el
+     teléfono ve una sección normal con su «Seguí bajando» y scrollea.
+     Nadie se queda mirando una pantalla trabada. -->
+<div class="portada" id="portada">
+  <div class="portada-in">
+    <!-- El sello de 17 caminos, el mismo del formulario. Entra letra por
+         letra al cargar y después RESPONDE AL SCROLL: el anillo gira y el
+         conjunto se va mientras se baja. Pesa 20 KB comprimido sobre una
+         página de 6, y es el único lugar de la landing donde la marca se
+         presenta entera. -->
+    <div class="portada-sello"><div class="portada-cuerpo"><svg class="sello-vivo" viewBox="0 0 3085.000000 3085.000000" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0,3085) scale(0.1,-0.1)"><path class="sl" style="--n:0" data-i="16" d="M9050 5731 c-18 -35 -11 -50 46 -105 55 -54 55 -54 52 -108 -2 -44
 -7 -55 -25 -63 -18 -7 -23 -18 -23 -44 0 -29 -9 -43 -49 -81 -37 -35 -50 -55
 -53 -81 -2 -24 -10 -37 -25 -44 -17 -7 -23 -19 -25 -50 -2 -30 -8 -42 -25 -50
 -17 -7 -23 -19 -25 -50 -2 -30 -8 -42 -25 -50 -17 -7 -23 -19 -25 -50 -2 -30
@@ -1344,1050 +1359,209 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 -27 25 -21 69 7 44 5 48 -23 74 -21 18 -31 36 -31 55 0 22 -12 41 -50 76 -43
 40 -50 53 -50 84 0 26 -4 37 -15 37 -8 0 -22 11 -31 25 -12 18 -25 25 -47 25
 -24 0 -41 11 -78 50 -36 39 -54 50 -77 50 -21 0 -36 8 -50 27 -17 24 -25 26
--76 25 -49 -1 -58 2 -72 23 l-16 25 -188 0 -188 0 -16 -25z"/></g></svg></div>
+-76 25 -49 -1 -58 2 -72 23 l-16 25 -188 0 -188 0 -16 -25z"/></g></svg><span class="portada-brillo" aria-hidden="true"></span></div></div>
 
-    <span class="bv-word" aria-hidden="true"><i style="--i:0">t</i><i style="--i:1">h</i><i style="--i:2">r</i><i style="--i:3">i</i><i style="--i:4">v</i><i style="--i:5">e</i></span>
+    <span class="abre-word" aria-label="THRIVE"><i style="--i:0">t</i><i style="--i:1">h</i><i style="--i:2">r</i><i style="--i:3">i</i><i style="--i:4">v</i><i style="--i:5">e</i></span>
+    <span class="abre-tag">Small Group Strength Training for Women</span>
 
-    <h1 class="bv-hola">Bienvenida<span id="bvNombre"></span>.</h1>
-    <p class="bv-txt" id="bvTexto">Antes de tu clase de prueba quiero conocerte un poco. Son <span id="bvCuantas">unas</span> preguntas y cinco minutos, y las leo yo.</p>
-
-    <button class="cta bv-cta" type="button" id="bvEmpezar">Empezar</button>
-  </div>
-</div>
-
-<div class="form-shell" id="shell">
-
-  <div class="form-top">
-    <button class="back" id="back" type="button" hidden>← atrás</button>
-    <span class="count" id="count"></span>
-  </div>
-  <div class="tramos" id="tramos" aria-hidden="true"></div>
-
-  <!-- las pantallas se generan desde el arreglo PREGUNTAS -->
-  <div id="steps"></div>
-
-</div>
-
-<!-- ══════════ CIERRE ══════════
-     Dos tiempos que ocupan la misma celda de la grilla: primero el
-     check a pantalla completa MIENTRAS la base contesta, y después el
-     mensaje. El estilo y el porqué están en thrive.css — buscá
-     «EL CIERRE DEL FORMULARIO». -->
-<div class="confirm pleno" id="listo" hidden>
-
-  <div class="cierre-nucleo" id="cierreNucleo">
-    <div class="cierre-halo"></div>
-    <div class="cheque espera" id="cierreIcono">
-      <svg viewBox="0 0 120 120" aria-hidden="true">
-        <g transform="rotate(-90 60 60)">
-          <circle class="corona" cx="60" cy="60" r="54"/>
-          <circle class="aro"    cx="60" cy="60" r="44"/>
-        </g>
-        <path class="visto" d="M42 61 54 74 79 47"/>
-      </svg>
+    <div class="abre-cue" aria-hidden="true">
+      <span class="riel"></span>
+      Seguí bajando
     </div>
-    <!-- aria-live: quien no ve la pantalla también tiene que enterarse
-         de que se está guardando, y después de que se guardó. -->
-    <p class="cierre-espera" id="cierreEspera" role="status" aria-live="polite">Guardando tus respuestas…</p>
   </div>
-
-  <div class="cierre-msg" id="cierreMsg" hidden>
-    <h1 class="h2" id="cierreTitulo">Listo, ya me llegó</h1>
-    <p class="body" id="cierreTexto1"></p>
-    <p class="body" id="cierreTexto2"></p>
-    <p class="body firma" id="cierreFirma"></p>
-    <div class="btn-row" id="cierreAcciones"></div>
-  </div>
-
 </div>
+
+<!-- ══════════ 1 · HERO ══════════
+     Abre igual que la pública —portada de marca con el sello animado y
+     «seguí bajando»— y recién después dice a quién está dirigida. Pedido
+     de Ivan, 29 ago 2026.
+
+     Acá ya no van sello ni logotipo: los acaba de mostrar la portada, y
+     repetirlos dos pantallas seguidas es presentarse dos veces. -->
+<section class="abre inv-hero" data-ground="linen">
+  <div class="wrap">
+    <h1 class="h2 inv-titular up">Esta invitación <em>es para vos</em>.</h1>
+
+    <p class="body inv-entrada up">
+      Estoy abriendo un nuevo espacio de entrenamiento en Healing Through Movement
+      y, si estás acá, es porque te conozco o ya hemos trabajado juntas y pensé
+      que THRIVE podría hacer sentido para vos.
+    </p>
+
+    <p class="inv-lema up"><em>Strength for the life you want to keep living.</em></p>
+    <!-- Acá iba un botón «Ver THRIVE», que estaba en la estructura de
+         Denisse. Ivan lo quitó el 29 ago 2026: la portada ya invita a
+         bajar con su «seguí bajando», y poner un botón que solo hace
+         scroll es darle un trabajo al dedo que la página ya hacía sola.
+         Se deja anotado porque SÍ estaba en su documento. -->
+  </div>
+</section>
+
+<!-- ══════════ 2 · ¿QUÉ ES THRIVE? ══════════ -->
+<section id="que-es" data-ground="linen">
+  <div class="wrap">
+    <h2 class="h2 up">THRIVE es strength training en <em>grupos pequeños</em>.</h2>
+
+    <div class="metodo-grid">
+      <div class="metodo-media">
+        <div class="shot metodo up">
+          <video class="plx" data-plx autoplay loop muted playsinline preload="metadata" poster="/assets/img/metodo-poster.jpg" width="720" height="960"><source src="/assets/video/metodo.mp4" type="video/mp4"></video><img class="poster" src="/assets/img/metodo-poster.jpg" alt="Una clienta levantando una mancuerna desde una plataforma mientras la entrenadora la acompaña" width="720" height="960">
+        </div>
+      </div>
+
+      <div class="metodo-copy">
+        <div class="facts stag">
+          <p class="fact"><b>Máximo 4 mujeres por grupo</b>, con entrenamiento estructurado y progresivo y coaching cercano durante cada sesión.</p>
+          <p class="fact">No es una clase masiva donde todas siguen exactamente el mismo ritmo. Entrenamos juntas, pero <b>cada una trabaja desde su propio punto de partida</b>.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="metodo-riel" data-capacidades aria-label="Movilidad, potencia, fuerza y balance">
+      <span class="cap">Movilidad</span><span class="cap">Potencia</span><span class="cap">Fuerza</span><span class="cap">Balance</span>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ 3 · ¿POR QUÉ PENSÉ EN VOS? ══════════
+     La ÚNICA sección que cambia según el tipo de invitación. Se elige con
+     ?v= en el link que manda Denisse:
+       ?v=former    → ya entrenó con ella
+       (sin ?v)     → la conoce personalmente, pero nunca entrenaron juntas
+     El resto de la página es idéntico en los dos casos. -->
+<section data-ground="sand">
+  <div class="wrap">
+    <h2 class="h2 up">¿Por qué pensé <em>en vos</em>?</h2>
+
+    <div class="inv-porque" data-porque="former" hidden>
+      <p class="body up">Porque ya hemos trabajado juntas y conozco de primera mano de lo que sos capaz.</p>
+      <p class="body up">Sé lo que pasa cuando tenés estructura, acompañamiento y un espacio para dedicarte a vos. Y creo que estás en un punto donde podés seguir construyendo con más autonomía, sin dejar de sentirte acompañada.</p>
+      <p class="body up">THRIVE nació para crear justamente ese espacio: entrenar fuerza con intención, progresar con coaching y seguir construyendo confianza en todo lo que tu cuerpo puede hacer.</p>
+      <p class="body inv-remate up"><b>Por eso, cuando pensé en las primeras mujeres a quienes quería invitar, pensé en vos.</b></p>
+    </div>
+
+    <div class="inv-porque" data-porque="personal" hidden>
+      <p class="body up">Si te mandé esta invitación, es porque hay algo que conozco de vos —de lo que buscás, de la etapa en la que estás o de las cosas que son importantes para vos— que me hizo pensar que THRIVE podría hacer sentido para vos.</p>
+      <p class="body up">No significa que yo ya sepa si este es el lugar correcto para comenzar. Eso lo podemos descubrir juntas.</p>
+      <p class="body up">Pero sí pensé que valía la pena que conocieras este espacio: un grupo pequeño para entrenar fuerza con estructura, coaching y la libertad de avanzar desde tu propio punto de partida.</p>
+      <p class="body inv-remate up"><b>Por eso quise compartirlo con vos personalmente.</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ QUÉ RECIBÍS ══════════ -->
+<section data-ground="linen">
+  <div class="wrap">
+    <h2 class="h2 up" style="max-width:18ch;">Tu experiencia THRIVE incluye</h2>
+
+    <ul class="incluye stag">
+        <li><span><b>Máximo 4 mujeres por grupo</b>Coaching cercano, correcciones y atención real durante tu entrenamiento.</span></li>
+        <li><span><b>Programación estructurada y progresiva</b>Tus sesiones forman parte de un proceso diseñado para desarrollar fuerza y capacidad a lo largo del ciclo.</span></li>
+        <li><span><b>Evaluación individual inicial</b>Antes de iniciar, conocemos tu punto de partida para reconocer tus fortalezas, identificar qué podemos seguir desarrollando y saber dónde poner especial atención.</span></li>
+        <li><span><b>Una estructura compartida, coaching individual</b>Entrenamos bajo una misma programación, con progresiones y adaptaciones según tu experiencia, capacidades y necesidades.</span></li>
+        <li><span><b>Tu programación en la app</b>Consultá tus entrenamientos, ejercicios, cargas y progreso desde tu teléfono, y accedé a tu programación cuando necesités entrenar por tu cuenta.</span></li>
+        <!-- «cuando no puedas asistir» se cambió el 29 ago 2026 por pedido de
+             Denisse: podía leerse como que faltar a una clase da derecho a
+             reponerla, y la política de faltas todavía no está comunicada.
+             La frase nueva dice lo mismo sin prometer eso. -->
+        <li><svg class="tic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Acompañamiento entre sesiones</b>Tendremos un grupo privado de WhatsApp para avisos, compartir avances y mantenernos conectadas durante el programa. Un grupo pequeño, útil y sin ruido innecesario: prometemos no convertirlo en otro chat que tengas que silenciar.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════ PLANES ══════════ -->
+<section class="sec-planes" data-ground="sand">
+  <!-- Decisión de Ivan, 27 ago 2026: el TEXTO de esta sección se alinea con
+       el resto de la página —el mismo borde que todos los titulares— y solo
+       las tarjetas usan el ancho grande. Por eso hay tres contenedores en
+       vez de uno: wrap para el titular, wide para las tarjetas, wrap otra
+       vez para los términos. -->
+  <div class="wrap">
+    <h2 class="h2 up" style="max-width:20ch;">Elegí cómo querés hacer fuerza parte de tu semana</h2>
+  </div>
+
+  <div class="wide">
+    <div class="plans stag">
+
+      <div class="plan" data-plan="2X">
+        <span class="pn">THRIVE · 2X</span>
+        <span class="days">Martes + Jueves · 7:30 a.m.</span>
+        <span class="arranca">Arranca el 17 de septiembre</span>
+        <span class="price"><b data-aj="precio2X">$220</b><small>/ mes</small></span>
+        <a class="plan-cta" href="/thrive/form/?v=directa&amp;plan=2X">Me interesa THRIVE 2X</a>
+      </div>
+
+      <div class="plan" data-plan="3X">
+        <span class="pn">THRIVE · 3X</span>
+        <span class="days">Lunes + Miércoles + Viernes&nbsp;· 7:30 a.m.</span>
+        <span class="arranca">Arranca el 16 de septiembre</span>
+        <span class="price"><b data-aj="precio3X">$300</b><small>/ mes</small></span>
+        <a class="plan-cta" href="/thrive/form/?v=directa&amp;plan=3X">Me interesa THRIVE 3X</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="terms up">
+      <p>Compromiso inicial de 3 meses · <span>pago mensual</span></p>
+      <p>Primer período · <span>hasta el 15 de diciembre</span></p>
+      <p>Ave. Los Próceres, Tegucigalpa · <span>Studio privado · parqueo · seguridad</span></p>
+    </div>
+
+    <p class="cierre-fecha up">Las inscripciones cierran el <b>8 de septiembre</b>, o antes si se completan los espacios.</p>
+  </div>
+</section>
+
+<!-- ══════════ 6 · CTA / SIGUIENTE PASO ══════════ -->
+<section class="dark" data-ground="ink">
+  <div class="wrap">
+    <h2 class="h2 up">Si sentís que esto puede ser <em>para vos</em>, decime.</h2>
+
+    <p class="body up">
+      Como llegaste por invitación personal, <b>no necesitás reservar una clase de
+      prueba para dar el siguiente paso.</b>
+    </p>
+    <p class="body up">
+      Contame cuál grupo te interesa y revisamos juntas si THRIVE es el lugar
+      correcto para comenzar.
+    </p>
+
+    <div class="cta-wrap up">
+      <a class="cta" href="/thrive/form/?v=directa">Me interesa THRIVE →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mvt">Move. Heal. Thrive.</span>
+  </div>
+</footer>
 
 <script src="/config.js?v=1742748a"></script>
 <script src="/assets/js/thrive.js?v=81c007a6"></script>
 <script>
 (function(){
   'use strict';
-  var CFG = window.THRIVE || {};
+  /* Las dos versiones de «¿Por qué pensé en vos?» viven las dos en la
+     página y se enciende una. Se hace acá y no en el servidor porque el
+     sitio es estático: generar dos archivos duplicaría todo lo demás para
+     cambiar cuatro párrafos.
 
-  /* ═══════════════════════════════════════════════════════
-     Las dieciséis preguntas que escribió Denisse.
-     Cambiar el texto acá cambia el formulario. Nada más hay
-     que tocar. El orden importa: lo fácil primero, lo
-     delicado al final, cuando ya se comprometió con el proceso.
-     ═══════════════════════════════════════════════════════ */
-  var PREGUNTAS = [
-
-    /* ── Para conocerte ── */
-    {
-      id:'nombre', tipo:'corta',
-      titulo:'Nombre y apellido',
-      placeholder:'Como te llama la gente que te quiere'
-    },
-    {
-      id:'edad', tipo:'unica',
-      titulo:'Rango de edad',
-      /* Los rangos del borrador se solapaban (30-40 / 40-50): quien tuviera
-         40 no podía contestar bien. Estos no se tocan sin arreglar eso. */
-      opciones:['Menos de 30','30 – 39','40 – 49','50 – 59','60 o más']
-    },
-    {
-      id:'referida', tipo:'corta',
-      titulo:'¿Quién te compartió esta invitación a THRIVE?',
-      placeholder:'Su nombre'
-    },
-    {
-      id:'sobre_vos', tipo:'texto',
-      titulo:'Contame un poquito sobre vos. ¿A qué te dedicás y cómo se ve normalmente tu semana?',
-      placeholder:'Escribí lo que se te venga…'
-    },
-    {
-      id:'historia', tipo:'texto',
-      titulo:'Contame sobre tu historia con el ejercicio y el movimiento. ¿Qué actividades o deportes has practicado anteriormente y qué hacés actualmente?',
-      placeholder:'Aunque sea "nada por ahora": eso también me sirve.'
-    },
-    {
-      id:'fuerza_exp', tipo:'unica',
-      titulo:'¿Qué experiencia has tenido específicamente con entrenamiento de fuerza o pesas?',
-      opciones:[
-        'Actualmente entreno fuerza de manera consistente.',
-        'He entrenado fuerza anteriormente, pero actualmente no soy consistente.',
-        'He usado pesas ocasionalmente, pero nunca he seguido una programación estructurada.',
-        'Mi actividad principal ha sido otra (Pilates, tenis, running, deportes) y tengo poca experiencia con pesas.',
-        'Prácticamente no tengo experiencia previa con entrenamiento de fuerza.'
-      ]
-    },
-    {
-      id:'porque_ahora', tipo:'texto',
-      titulo:'¿Qué te hizo querer incorporar, o retomar, entrenamiento de fuerza en este momento?',
-      ayuda:'Contame con tus palabras. No hay respuesta correcta.',
-      placeholder:'Escribí lo que se te venga…'
-    },
-    {
-      id:'meta', tipo:'texto',
-      titulo:'¿Qué te gustaría lograr o desarrollar a través de tu entrenamiento?',
-      ayuda:'Mientras más concreto, mejor.',
-      placeholder:'Subir gradas sin quedarme sin aire, cargar a mi hijo…'
-    },
-
-    /* ── Health screen ──
-       Van al final a propósito: para entonces ya se comprometió con el
-       proceso y contesta con más honestidad que si se lo preguntás de entrada. */
-    {
-      /* La nota que abría esta pregunta se mudó a la pantalla de la
-         parte 3: ahí tiene una pantalla entera en vez de un recuadro
-         que se pasa de largo. El texto es el mismo de Denisse. */
-      id:'dolor', tipo:'unica',
-      titulo:'¿Tenés actualmente algún dolor, lesión o limitación física que pueda afectar tu entrenamiento?',
-      /* En invitación directa la pregunta es más amplia —incluye
-         diagnóstico y cirugía— y, si ya entrenó con Denisse, se acota a lo
-         que pasó DESDE la última vez: ella ya conoce el resto.
-         Pedido de Denisse, 29 ago 2026. */
-      segunModo:{ directa:'Actualmente, ¿hay algún dolor, lesión, diagnóstico, cirugía o cambio en tu salud que debería conocer antes de que empecemos?' },
-      segunConocemos:{ 'Ya entrené con Denisse.':'Desde la última vez que entrenamos juntas, ¿hay algún dolor, lesión, diagnóstico, cirugía o cambio en tu salud que debería conocer?' },
-      opciones:[
-        'No.',
-        {t:'Sí.', pide:'Contame dónde, desde cuándo, y cómo afecta hoy tu movimiento.'}
-      ]
-    },
-    {
-      id:'condicion', tipo:'unica',
-      titulo:'¿Tenés alguna condición médica o antecedente de salud que considerés importante que conozca antes de entrenar juntas?',
-      ayuda:'Por ejemplo: condición cardiovascular, presión arterial, diabetes, osteoporosis u osteopenia, condición neurológica u otra relevante.',
-      opciones:[
-        'No.',
-        {t:'Sí.', pide:'¿Cuál?'}
-      ]
-    },
-    {
-      id:'restriccion', tipo:'unica',
-      titulo:'¿Algún médico o profesional de salud te ha indicado actualmente alguna restricción para hacer ejercicio o entrenamiento de fuerza?',
-      opciones:[
-        'No.',
-        {t:'Sí.', pide:'Contame cuál.'},
-        'No estoy segura.'
-      ]
-    },
-    {
-      id:'sintomas', tipo:'unica',
-      titulo:'¿Alguna vez has tenido, durante el ejercicio o el esfuerzo físico, dolor u opresión en el pecho, desmayos, mareos importantes, falta de aire fuera de lo esperado o palpitaciones que te hayan preocupado?',
-      opciones:[
-        'No.',
-        {t:'Sí.', pide:'Contame brevemente qué pasó.'}
-      ]
-    },
-
-    /* ── Fit logístico ── */
-    {
-      id:'grupo', tipo:'unica',
-      titulo:'¿Cuál grupo te interesa?',
-      opciones:[
-        'THRIVE 2X · martes y jueves · 7:30 a.m. · $220/mes',
-        'THRIVE 3X · lunes, miércoles y viernes · 7:30 a.m. · $300/mes',
-        'Todavía no estoy segura.'
-      ]
-    },
-    {
-      id:'compromiso', tipo:'unica',
-      /* El titular nombra la fecha de arranque, y cada grupo arranca un día
-         distinto: 3X el 16 de septiembre, 2X el 17. Se reescribe al mostrar
-         la pregunta —para entonces ya se contestó la 13— con `segunGrupo`.
-         El `titulo` de acá es el que se ve si todavía no eligió grupo. */
-      titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés sostener este horario durante el primer ciclo, hasta el 15 de diciembre?',
-      /* El respaldo del público arranca con «si después de tu clase», que en
-         invitación directa promete algo que no se ofreció. Este es el que se
-         ve mientras todavía no eligió grupo. */
-      segunModo:{ directa:'¿Podés sostener este horario durante el primer ciclo, hasta el 15 de diciembre?' },
-      segunGrupo:{
-        '2X':'¿Podés sostener este horario durante el primer ciclo, del 17 de septiembre al 15 de diciembre?',
-        '3X':'¿Podés sostener este horario durante el primer ciclo, del 16 de septiembre al 15 de diciembre?'
-      },
-      opciones:[
-        'Sí.',
-        'Tengo algo que quisiera conversar antes.',
-        'No estoy segura.'
-      ]
-    },
-    {
-      id:'imagen', tipo:'unica',
-      /* En invitación directa no hay clase de prueba, así que la pregunta no
-         puede hablar de ella. Misma lógica y mismo copy, otro momento. */
-      segunModo:{ directa:'Durante las sesiones podríamos tomar algunas fotografías o videos del entrenamiento. ¿Autorizás que aparezcas en contenido de Healing Through Movement?' },
-      titulo:'Durante la clase de prueba podríamos tomar algunas fotografías o videos del entrenamiento. ¿Autorizás que aparezcas en contenido de Healing Through Movement?',
-      ayuda:'Tu respuesta no afecta en absoluto tu participación. Si decís que no, se graba solo contenido donde no aparezcas o no seas identificable.',
-      opciones:[
-        'Sí, autorizo fotografías y videos.',
-        'Sí, pero prefiero que no se muestre mi rostro.',
-        'No autorizo que se utilice mi imagen.'
-      ]
-    },
-    {
-      id:'telefono', tipo:'corta', campo:'tel', inputmode:'tel',
-      titulo:'¿A qué número te escribo por WhatsApp?',
-      ayuda:'Es por donde te confirmo el día de tu clase de prueba. No se comparte con nadie.',
-      placeholder:'+504 0000-0000',
-      /* Ocho dígitos es un celular hondureño; con el 504 son once. Se
-         cuentan dígitos y no se exige formato: cada quien lo escribe a su
-         manera y rechazarle el guion sería pelear por nada. */
-      valida:function(v){ var d=String(v||'').replace(/\D/g,''); return d.length>=8 && d.length<=15; }
-    },
-    {
-      id:'algo_mas', tipo:'texto', opcional:true, cierre:true,
-      titulo:'¿Hay algo más que te gustaría que supiera antes de conocernos?',
-      ayuda:'Opcional. Si algo preferís contármelo hablando en vez de escribiéndolo, poné «prefiero contártelo» y lo vemos por WhatsApp.',
-      placeholder:'Podés dejarlo en blanco y enviar.'
-    },
-
-    /* ⚠️ De acá para abajo, SOLO invitación directa.
-       Las partes del formulario público se cortan por id —la última va
-       `hasta:'algo_mas'`— así que todo lo que se agregue después de esa
-       queda fuera del público sin necesidad de ninguna bandera. */
-    {
-      id:'conocemos', tipo:'unica',
-      titulo:'¿Cómo nos conocemos?',
-      opciones:[
-        'Ya entrené con Denisse.',
-        'Conozco a Denisse personalmente.',
-        'Otro.'
-      ]
-    }
-  ];
-
-  var CONSENTIMIENTO = 'Autorizo a Denisse a usar esta información, incluida la de salud, para evaluar si THRIVE es adecuado para mí y para entrenarme de forma segura.';
-
-  /* Lo último que se lee antes de enviar. */
-  var ANTES_DE_ENVIAR = [
-    'Gracias por tomarte estos minutos.',
-    'Lo que escribiste acá lo leo yo, y me sirve para preparar tu clase y saber cómo acompañarte desde el primer día. No es un examen y no hay respuestas que te dejen fuera por sí solas.'
-  ];
-
-  /* ═══ estado ═══ */
-  var resp = {};
-
-  /* La landing manda en ?plan= el plan que ella tocó. Se contesta sola la
-     pregunta 13: ya lo eligió una vez, y volver a preguntárselo diez
-     pantallas después es no haberla escuchado. Queda seleccionada, no
-     bloqueada — la puede cambiar.
-     Va acá arriba y no dentro de la bienvenida: no depende de que esa
-     pantalla exista. */
-  (function(){
-    try{
-      var plan = new URLSearchParams(location.search).get('plan');
-      if(!plan) return;
-      var q13 = PREGUNTAS.filter(function(q){ return q.id === 'grupo'; })[0];
-      var op = q13 && q13.opciones.filter(function(o){
-        return o.indexOf('THRIVE ' + plan.toUpperCase()) === 0;
-      })[0];
-      if(op) resp.grupo = op;
-    }catch(e){ /* sin URLSearchParams: se pregunta como siempre */ }
-  })();
-  var consiente = false;
-  var i = 0;
-
-  /* ═══ bienvenida ═══
-     Se salta sola si ya la vio en esta sesión: presentarse dos veces a
-     la misma persona es cobrarle el tiempo dos veces. */
-  var elBienve = document.getElementById('bienve');
-  if (elBienve) {
-    /* Se muestra SIEMPRE, en cada visita: es la presentación de la marca
-       antes de pedirle nada a nadie. Decisión de Ivan, 26 ago 2026. */
-    var quien = (window.THRIVE_RT && window.THRIVE_RT.referida) || '';
-
-    var elNom = document.getElementById('bvNombre');
-    if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
-
-    /* A los 2.6 s: la última letra ya aterrizó (2.4 s) y el punto está
-       cayendo. Ahí entra la sombra, que tarda 820 ms en crecer, así que
-       termina junto con el punto. Se lee como una sola llegada.
-       De paso se suelta el will-change: 17 capas de GPU vivas sin
-       animación en curso son memoria regalada. */
-    setTimeout(function () {
-      var sello = elBienve.querySelector('.bv-sello');
-      if (sello) sello.classList.add('listo');
-    }, 3300);
-
-    function entrar() {
-      if (elBienve.classList.contains('se-va')) return;
-      elBienve.classList.add('se-va');
-      setTimeout(function () { elBienve.hidden = true; }, 640);
-      var f = elSteps.children[0] && elSteps.children[0].querySelector('.field');
-      if (f) setTimeout(function () { f.focus(); }, 700);
-    }
-
-    document.getElementById('bvEmpezar').addEventListener('click', entrar);
-
-    /* La secuencia completa dura 4.5 s antes de que aparezca el botón.
-       Es una presentación de marca, no un peaje: al segundo, tocar en
-       cualquier parte de la pantalla ya entra. Quien quiera mirarla la
-       mira; quien vino a llenar el formulario, entra. */
-    setTimeout(function () {
-      elBienve.addEventListener('click', function (e) {
-        if (e.target.closest('#bvEmpezar')) return;
-        entrar();
-      });
-      elBienve.style.cursor = 'pointer';
-    }, 1000);
-  }
-
-  var elSteps = document.getElementById('steps');
-  var elCount = document.getElementById('count');
-  var elTramos= document.getElementById('tramos');
-  var elBack  = document.getElementById('back');
-  var elShell = document.getElementById('shell');
-  var elListo = document.getElementById('listo');
-
-  /* ═══ las cuatro partes ═══
-     Las preguntas de Denisse ya venían en cuatro bloques de cuatro
-     —conocerte, historia, salud, práctico— y en ese orden a propósito:
-     lo fácil primero, la salud cuando ya se comprometió con el proceso.
-     Lo único nuevo es que ahora ella lo VE.
-
-     La parte 1 no lleva pantalla propia: esa es la bienvenida, que ya
-     la presentó. Poner otra ceremonia con sello justo después sería
-     cobrarle la entrada dos veces.
-
-     'hasta' es el id de la última pregunta de cada parte, no un índice:
-     si mañana Denisse mete una pregunta en medio, los bloques siguen
-     cuadrando solos. */
-  var PARTES = [
-    {
-      hasta:'sobre_vos', nombre:'Para conocerte', titulo:null
-    },
-    {
-      hasta:'meta', nombre:'Tu historia',
-      titulo:'Tu historia con el <em>movimiento</em>.',
-      texto:['Cuatro preguntas sobre de dónde venís y qué querés poder hacer. No hay respuestas correctas: «nada por ahora» también me sirve.']
-    },
-    {
-      hasta:'sintomas', nombre:'Salud',
-      titulo:'Ahora, tu <em>salud</em>.',
-      /* El texto es el mismo que antes iba en un recuadro celeste arriba
-         de la primera pregunta de salud. Acá tiene una pantalla entera. */
-      texto:[
-        'Estas cuatro las leo solo yo y no se comparten con nadie.',
-        'Ninguna respuesta te deja fuera por sí sola. Lo que cambia es cómo trabajamos, no si podés entrenar.'
-      ]
-    },
-    {
-      hasta:'algo_mas', nombre:'Lo práctico',
-      titulo:'Y lo <em>práctico</em>.',
-      texto:['Las últimas cuatro: qué grupo te sirve, si el horario te calza, y una sobre fotos.']
-    }
-  ];
-
-  /* ═══ los dos formularios ═══
-     El público son las 16 preguntas de Denisse. La INVITACIÓN DIRECTA son
-     nueve: va dirigida a alguien que ella ya conoce —una former o una
-     conocida— y preguntarle de cero lo que ya sabe es no haberla escuchado.
-
-     ⚠️ Los dos comparten las MISMAS definiciones de pregunta, y eso no es
-     por ahorrar código. `alerta_salud` es una columna GENERADA en la base
-     que compara el texto exacto de las respuestas 'restriccion' y
-     'sintomas' contra 'Sí.' —con tilde y con punto—. Si hubiera dos
-     formularios con dos definiciones, el día que una cambie una coma la
-     alerta empieza a devolver «sin riesgo» EN SILENCIO. Compartiendo los
-     objetos, divergir es imposible.
-
-     Denisse lo pidió explícito: «si alguna respuesta activa un flag, debe
-     aparecer Revisar salud en el panel». */
-  var MODO = 'publico';
+     Sin ?v= gana la personal: es el caso más amplio —alguien que Denisse
+     conoce— y la que menos supone. Decirle «ya hemos trabajado juntas» a
+     quien nunca entrenó con ella sería un error mucho más caro que el
+     contrario. */
+  var cual = 'personal';
   try{
-    if(new URLSearchParams(location.search).get('v') === 'directa') MODO = 'directa';
+    if(new URLSearchParams(location.search).get('v') === 'former') cual = 'former';
   }catch(e){}
 
-  if(MODO === 'directa'){
-    /* El teléfono va casi al final, igual que en el público. Estaba de
-       segundo y no había razón: la fila se escribe UNA sola vez, al
-       enviar, así que tenerlo temprano no salva a nadie que abandone a
-       mitad — y pedir un número como segunda cosa se siente formulario
-       de captura, no conversación. Movido el 29 ago 2026. */
-    var CORTO = ['nombre','conocemos','grupo','meta','dolor','restriccion','sintomas','compromiso','telefono','imagen'];
-    var porId = {};
-    PREGUNTAS.forEach(function(q){ porId[q.id] = q; });
-    PREGUNTAS = CORTO.map(function(id){ return porId[id]; }).filter(Boolean);
-
-    /* La última tiene que llevar el cierre: es la que muestra el
-       consentimiento y el botón de enviar. En el público ese papel lo hace
-       'algo_mas', que acá no está. */
-    PREGUNTAS[PREGUNTAS.length - 1] = Object.assign({}, PREGUNTAS[PREGUNTAS.length - 1], { cierre:true });
-
-    /* Una sola pantalla de parte, la de salud: es la única que se gana el
-       lugar, porque es donde hace falta decir quién lee esto. */
-    PARTES = [
-      { hasta:'meta', nombre:'Para conocerte', titulo:null },
-      {
-        hasta:'sintomas', nombre:'Salud',
-        titulo:'Ahora, tu <em>salud</em>.',
-        texto:[
-          'Estas tres las leo solo yo y no se comparten con nadie.',
-          'Ninguna respuesta te deja fuera por sí sola. Lo que cambia es cómo trabajamos, no si podés entrenar.'
-        ]
-      },
-      { hasta:'imagen', nombre:'Lo práctico', titulo:null }
-    ];
+  var bloques = document.querySelectorAll('[data-porque]');
+  for(var i = 0; i < bloques.length; i++){
+    bloques[i].hidden = (bloques[i].getAttribute('data-porque') !== cual);
   }
-
-  /* ⚠️ El número se CUENTA y va ACÁ, después de que el modo recortó la
-     lista. Decía «dieciséis» fijo cuando ya eran dieciocho, y en el modo
-     directo son diez: cualquier número escrito a mano en esta página
-     nace con fecha de vencimiento. Y va después del recorte porque
-     calculado antes daba dieciocho en los dos modos — lo probé.
-     Ponerle precio a la tarea sirve, pero solo si el precio es cierto. */
-  (function(){
-    var LETRAS_N = ['cero','una','dos','tres','cuatro','cinco','seis','siete','ocho','nueve',
-                    'diez','once','doce','trece','catorce','quince','dieciséis','diecisiete',
-                    'dieciocho','diecinueve','veinte'];
-    var el = document.getElementById('bvCuantas');
-    if(el) el.textContent = PREGUNTAS.length <= 20 ? LETRAS_N[PREGUNTAS.length] : String(PREGUNTAS.length);
-
-    /* En la invitación NO hay clase de prueba: ella entra hablando con
-       Denisse. Decir «antes de tu clase de prueba» ahí promete un paso
-       que esta vía justamente no tiene. Corregido el 29 ago 2026. */
-    if(MODO === 'directa'){
-      var tx = document.getElementById('bvTexto');
-      if(tx){
-        tx.innerHTML = 'Antes de que platiquemos quiero conocerte un poco. Son <span id="bvCuantas">'
-          + (PREGUNTAS.length <= 20 ? LETRAS_N[PREGUNTAS.length] : String(PREGUNTAS.length))
-          + '</span> preguntas y tres minutos, y las leo yo.';
-      }
-    }
-  })();
-
-  /* La lista de navegación: pantallas de parte y de pregunta, en orden. */
-  var PANTALLAS = [];
-  (function(){
-    var desde = 0;
-    PARTES.forEach(function(parte, n){
-      var fin = -1;
-      for(var k = desde; k < PREGUNTAS.length; k++){
-        if(PREGUNTAS[k].id === parte.hasta){ fin = k; break; }
-      }
-      /* Red de seguridad: si alguien renombra un id, la parte se come
-         lo que queda en vez de dejar preguntas fuera del formulario. */
-      if(fin === -1) fin = PREGUNTAS.length - 1;
-      if(parte.titulo) PANTALLAS.push({ tipo:'parte', parte:parte, n:n });
-      for(var j = desde; j <= fin; j++){
-        PANTALLAS.push({
-          tipo:'q', q:PREGUNTAS[j], n:n,
-          en:(j - desde + 1), de:(fin - desde + 1)
-        });
-      }
-      desde = fin + 1;
-    });
-  })();
-
-  /* Un tramo por parte. */
-  var tramos = [];
-  PARTES.forEach(function(){
-    var t = document.createElement('span'); t.className = 'tramo';
-    var barra = document.createElement('i');
-    t.appendChild(barra); elTramos.appendChild(t); tramos.push(barra);
-  });
-
-  /* ═══ construir las pantallas ═══ */
-  PANTALLAS.forEach(function(pantalla, pIdx){
-    var step = document.createElement('div');
-    step.className = 'step';
-    step.hidden = true;
-    step.dataset.idx = pIdx;
-
-    if(pantalla.tipo === 'parte'){
-      var parte = pantalla.parte;
-      var caja = document.createElement('div');
-      caja.className = 'parte';
-      caja.innerHTML =
-        /* Acá iba el sello. Fuera desde el 29 ago 2026, pedido de Ivan:
-           el logotipo ya se presentó en la bienvenida, y repetirlo en
-           cada intermedio lo vuelve papel tapiz. */
-        '<div class="num">Parte ' + (pantalla.n + 1) + ' de ' + PARTES.length + '</div>' +
-        '<h2>' + parte.titulo + '</h2>' +
-        parte.texto.map(function(t){ return '<p>' + t + '</p>'; }).join('');
-      step.appendChild(caja);
-
-      var pieParte = document.createElement('div');
-      pieParte.className = 'step-foot';
-      var seguir = document.createElement('button');
-      seguir.type = 'button';
-      seguir.className = 'cta';
-      seguir.textContent = 'Seguir';
-      seguir.addEventListener('click', function(){ ir(pIdx + 1); });
-      pieParte.appendChild(seguir);
-      step.appendChild(pieParte);
-
-      elSteps.appendChild(step);
-      return;
-    }
-
-    var q = pantalla.q;
-
-    /* El cuerpo se centra en lo que sobra de pantalla; el pie se queda
-       abajo. Sin este envoltorio la pregunta queda pegada al techo. */
-    var cuerpo = document.createElement('div');
-    cuerpo.className = 'q-cuerpo';
-    step.appendChild(cuerpo);
-
-    var h = document.createElement('h1');
-    /* El cuerpo del titular sale del largo de la pregunta. */
-    var largo = q.titulo.length;
-    h.className = 'q-title ' + (largo < 42 ? 'corta' : largo < 105 ? 'media' : 'larga');
-    h.textContent = q.titulo;
-    cuerpo.appendChild(h);
-
-    if(q.ayuda){
-      var help = document.createElement('p');
-      help.className = 'q-help';
-      help.textContent = q.ayuda;
-      cuerpo.appendChild(help);
-    }
-
-    var body = document.createElement('div');
-    body.className = 'q-body';
-    cuerpo.appendChild(body);
-
-    if(q.tipo === 'corta'){
-      var inp = document.createElement('input');
-      /* `campo` e `inputmode` existen para el teléfono: en el celular la
-         diferencia entre teclado alfabético y numérico es la diferencia
-         entre que lo escriba bien o lo escriba mal. */
-      inp.type = q.campo || 'text';
-      if(q.inputmode) inp.inputMode = q.inputmode;
-      inp.className = 'field corta';
-      inp.placeholder = q.placeholder || '';
-      inp.setAttribute('aria-label', q.titulo);
-      inp.autocomplete = 'off';
-      inp.addEventListener('input', function(){
-        resp[q.id] = inp.value.trim();
-        pintarSiguiente(step, q);
-      });
-      inp.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' && resp[q.id]){ e.preventDefault(); ir(pIdx + 1); }
-      });
-      body.appendChild(inp);
-
-    } else if(q.tipo === 'texto'){
-      var ta = document.createElement('textarea');
-      ta.className = 'field';
-      ta.placeholder = q.placeholder || '';
-      ta.setAttribute('aria-label', q.titulo);
-      ta.addEventListener('input', function(){
-        resp[q.id] = ta.value.trim();
-        pintarSiguiente(step, q);
-      });
-      body.appendChild(ta);
-
-    } else {
-      q.opciones.forEach(function(op){
-        var txt  = (typeof op === 'string') ? op : op.t;
-        var pide = (typeof op === 'string') ? null : op.pide;
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'opt' + (q.tipo === 'multi' ? ' multi' : '');
-        b.setAttribute('aria-pressed','false');
-        var m = document.createElement('span'); m.className = 'mark';
-        b.appendChild(m);
-        b.appendChild(document.createTextNode(txt));
-
-        b.addEventListener('click', function(){
-          if(q.tipo === 'multi'){
-            var actual = resp[q.id] || [];
-            var pos = actual.indexOf(txt);
-            if(pos === -1) actual.push(txt); else actual.splice(pos,1);
-            resp[q.id] = actual;
-            b.setAttribute('aria-pressed', pos === -1 ? 'true' : 'false');
-            pintarSiguiente(step, q);
-          } else {
-            resp[q.id] = txt;
-            body.querySelectorAll('.opt').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
-            b.setAttribute('aria-pressed','true');
-
-            /* Un sí de salud abre su campo y NO avanza solo: lo que
-               importa de esa respuesta es el detalle, no el sí. */
-            var det = step.querySelector('.detalle');
-            if(pide){
-              det.querySelector('textarea').placeholder = pide;
-              det.hidden = false;
-              setTimeout(function(){ det.querySelector('textarea').focus(); }, 60);
-              refrescarBoton(pIdx);
-            } else {
-              if(det){
-                resp[q.id + '_detalle'] = '';
-                det.querySelector('textarea').value = '';
-                /* §7 · se retira por el mismo camino por el que entró.
-                   Antes se le ponía hidden y se cortaba de un cuadro al
-                   otro; el CSS ya no tiene solo @keyframes abre, ahora
-                   tiene su par (@keyframes cierra, clase .yendo).
-
-                   El hidden NUNCA depende de que llegue un evento: si el
-                   navegador no corre la animación —movimiento reducido— o
-                   animationend no dispara —la pestaña se ocultó a mitad—,
-                   el campo quedaría abierto para siempre. De ahí el
-                   temporizador de red. cerrar() es idempotente. */
-                if(!det.hidden){
-                  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-                    det.hidden = true;
-                  } else {
-                    det.classList.add('yendo');
-                    var cerrar = function(){
-                      det.hidden = true;
-                      det.classList.remove('yendo');
-                      det.removeEventListener('animationend', cerrar);
-                    };
-                    det.addEventListener('animationend', cerrar);
-                    setTimeout(cerrar, 400);
-                  }
-                }
-              }
-              if(!q.cierre){ setTimeout(function(){ ir(pIdx + 1); }, 260); }
-              else pintarSiguiente(step, q);
-            }
-          }
-        });
-        body.appendChild(b);
-      });
-
-      /* campo condicional, oculto hasta que se elija un sí */
-      if(q.opciones.some(function(o){ return typeof o !== 'string' && o.pide; })){
-        var det = document.createElement('div');
-        det.className = 'detalle';
-        det.hidden = true;
-        var dta = document.createElement('textarea');
-        dta.className = 'field';
-        dta.setAttribute('aria-label', 'Contame más');
-        dta.addEventListener('input', function(){
-          resp[q.id + '_detalle'] = dta.value.trim();
-          pintarSiguiente(step, q);
-        });
-        det.appendChild(dta);
-        body.appendChild(det);
-      }
-    }
-
-    /* consentimiento, solo en la última */
-    if(q.cierre){
-      ANTES_DE_ENVIAR.forEach(function(t, n){
-        var pp = document.createElement('p');
-        pp.className = 'body';
-        pp.style.marginTop = n === 0 ? '30px' : '14px';
-        pp.textContent = t;
-        cuerpo.appendChild(pp);
-      });
-      var cons = document.createElement('button');
-      cons.type = 'button';
-      cons.className = 'consent';
-      cons.setAttribute('aria-checked','false');
-      var cm = document.createElement('span'); cm.className = 'mark';
-      cons.appendChild(cm);
-      cons.appendChild(document.createTextNode(CONSENTIMIENTO));
-      cons.addEventListener('click', function(){
-        consiente = !consiente;
-        cons.setAttribute('aria-checked', consiente ? 'true' : 'false');
-        pintarSiguiente(step, q);
-      });
-      cuerpo.appendChild(cons);
-    }
-
-    var foot = document.createElement('div');
-    foot.className = 'step-foot';
-    var next = document.createElement('button');
-    next.type = 'button';
-    next.className = 'cta';
-    next.textContent = q.cierre ? 'Enviar' : 'Siguiente';
-    next.addEventListener('click', function(){
-      if(q.cierre) enviar(next);
-      else ir(pIdx + 1);
-    });
-    foot.appendChild(next);
-    var err = document.createElement('p');
-    err.className = 'err';
-    foot.appendChild(err);
-    step.appendChild(foot);
-
-    elSteps.appendChild(step);
-  });
-
-  /* El botón de una pantalla de texto/múltiple se apaga si falta lo obligatorio */
-  function pintarSiguiente(step, q){
-    var btn = step.querySelector('.step-foot .cta');
-    if(!btn) return;
-    var v = resp[q.id];
-    var lleno = q.opcional ? true
-      : (q.tipo === 'multi' ? (v && v.length) : (typeof v === 'string' ? v.length > 0 : !!v));
-
-    /* Algunas preguntas necesitan más que «no está vacío». El teléfono es
-       la única puerta de contacto desde que la landing manda acá en vez
-       de a WhatsApp: uno mal escrito se ve igual que uno bueno hasta que
-       Denisse intenta escribirle. */
-    if(lleno && typeof q.valida === 'function' && !q.valida(v)) lleno = false;
-
-    /* un sí sin el detalle no sirve para entrenarla segura */
-    var det = step.querySelector('.detalle');
-    if(det && !det.hidden && !(resp[q.id + '_detalle'] || '').length) lleno = false;
-
-    var ok = lleno && (!q.cierre || consiente);
-    btn.disabled = !ok;
-  }
-
-  /* Las de opción única sin cierre no muestran botón: avanzan al tocar */
-  function refrescarBoton(p){
-    var pantalla = PANTALLAS[p];
-    if(!pantalla || pantalla.tipo !== 'q') return;
-    var q = pantalla.q;
-    var step = elSteps.children[p];
-    var foot = step.querySelector('.step-foot');
-    var d = step.querySelector('.detalle');
-    var abierto = d && !d.hidden;
-    if(q.tipo === 'unica' && !q.cierre && !abierto){ foot.hidden = true; return; }
-    foot.hidden = false;
-    pintarSiguiente(step, q);
-  }
-
-  function pintarTramos(p){
-    for(var c = 0; c < PARTES.length; c++){
-      var v = c < p.n ? 1
-            : c > p.n ? 0
-            : (p.tipo === 'parte' ? 0 : p.en / p.de);
-      tramos[c].style.transform = 'scaleX(' + v + ')';
-    }
-  }
-
-  function ir(n){
-    if(n >= PANTALLAS.length) n = PANTALLAS.length - 1;
-    if(n < 0) n = 0;
-    for(var k = 0; k < elSteps.children.length; k++) elSteps.children[k].hidden = (k !== n);
-    i = n;
-    var p = PANTALLAS[n];
-    /* En la pantalla de parte el rótulo repetiría el titular. */
-    elCount.textContent = p.tipo === 'parte' ? ''
-      : (PARTES[p.n].nombre + ' · ' + p.en + ' de ' + p.de);
-    pintarTramos(p);
-    /* Preguntas cuyo texto depende de una respuesta anterior. Se reescribe al
-       MOSTRARLA y no al construirla: cuando se arma el formulario, la respuesta
-       que decide todavía no existe. Si vuelve atrás y cambia de grupo, al pasar
-       de nuevo por acá el titular ya dice la fecha nueva. */
-    if(p.tipo === 'q' && (p.q.segunGrupo || p.q.segunModo || p.q.segunConocemos)){
-      var h1 = elSteps.children[n].querySelector('.q-title');
-      if(h1){
-        var t = p.q.titulo;
-        /* De lo más general a lo más específico: el modo cambia la pregunta,
-           y la respuesta de «cómo nos conocemos» la afina todavía más. */
-        if(p.q.segunModo && p.q.segunModo[MODO]) t = p.q.segunModo[MODO];
-        if(p.q.segunGrupo){
-          var g = /^THRIVE (2X|3X)/.exec(resp.grupo || '');
-          if(g && p.q.segunGrupo[g[1]]) t = p.q.segunGrupo[g[1]];
-        }
-        if(p.q.segunConocemos && p.q.segunConocemos[resp.conocemos]) t = p.q.segunConocemos[resp.conocemos];
-        h1.textContent = t;
-      }
-    }
-    elBack.hidden = (n === 0);
-    refrescarBoton(n);
-    var f = elSteps.children[n].querySelector('.field');
-    if(f) setTimeout(function(){ f.focus(); }, 120);
-    try{ scrollTo({top:0, behavior:'smooth'}); }catch(e){ scrollTo(0,0); }
-  }
-
-  elBack.addEventListener('click', function(){ ir(i - 1); });
-
-  /* ═══ envío ═══ */
-  function armarPayload(){
-    /* El nombre de quien refirió puede venir horneado en la página o
-       escrito por ella en la pregunta 3. Manda el horneado, que es el
-       que no se equivoca. */
-    var refiere = (window.THRIVE_RT && window.THRIVE_RT.referida)
-                  || resp.referida || null;
-    /* La 13 ya dice qué grupo quiere. Sin esto la columna queda en null,
-       Denisse vuelve a teclear lo que la clienta ya contestó, y la vista
-       'cupos' —que cuenta por grupo— dice ocho libres para siempre.
-       'Todavía no estoy segura' se queda en null a propósito: es null. */
-    var g = /^THRIVE (2X|3X)/.exec(resp.grupo || '');
-
-    return {
-      nombre: resp.nombre || 'Sin nombre',
-      /* Desde el 27 ago la landing manda acá en vez de a WhatsApp, así
-         que éste es el ÚNICO lugar donde se captura el número. Antes se
-         daba por sabido porque la conversación empezaba por WhatsApp. */
-      telefono: (resp.telefono || '').trim() || null,
-      /* Explícito y no por defecto: el día que exista el segundo programa,
-         su formulario tiene que mandar el suyo, y esta línea es el recordatorio. */
-      programa: 'thrive',
-      referida_por: refiere,
-      grupo: g ? g[1] : null,
-      respuestas: resp,
-      consentimiento: consiente,
-      /* 'invitacion' es la tercera vía: alguien que Denisse invitó
-         personalmente. El panel la usa para NO pedirle agendar una clase de
-         prueba que ella decidió que no es obligatoria en este camino. */
-      origen: MODO === 'directa' ? 'invitacion' : 'formulario',
-      estado: 'formulario'
-    };
-  }
-
-  /* Antes esto mandaba el formulario ENTERO por WhatsApp, información de
-     salud incluida. Las respuestas ya llegaron por el formulario: no hay
-     ninguna razón para duplicarlas en un canal que no controlamos. */
-  function textoCoordinar(){
-    /* En invitación directa no hay clase de prueba que coordinar: ella
-       revisa y escribe. El botón queda por si la persona prefiere hablar
-       antes, pero no puede prometer una clase que no se ofreció. */
-    if(MODO === 'directa'){
-      return 'Hola, Denisse! Acabo de mandarte el formulario de la invitación a THRIVE.';
-    }
-    return 'Hola, Denisse! Acabo de completar el formulario de THRIVE y me gustaría coordinar mi clase de prueba.';
-  }
-
-  function enviar(btn){
-    var err = btn.parentElement.querySelector('.err');
-    err.textContent = '';
-    btn.disabled = true;
-    btn.textContent = 'Enviando…';
-
-    var payload = armarPayload();
-    var sb = CFG.supabase || {};
-
-    /* ⚠️ El 28 ago 2026 una candidata llenó el formulario, vio «Listo, ya
-       me llegó», y su fila NUNCA existió en la base. El .catch de acá
-       abajo mostraba el cierre de éxito pasara lo que pasara: la persona
-       creía estar inscrita, Denisse no se enteraba de nada, y el único
-       rastro era el WhatsApp que ella misma tocó al final.
-       La intención era buena —no dejarla con la sensación de haber
-       perdido el tiempo— pero mentirle es peor que decepcionarla. */
-    /* La pantalla de espera se abre ACÁ, antes de tocar la base: lo que
-       la persona ve mientras tanto es el check trabajando, y ese trabajo
-       es real. Antes esta pantalla aparecía recién al final, ya resuelta. */
-    abrirEspera();
-
-    function terminar(ok){
-      contestoLaBase(payload, ok !== false);
-    }
-
-    /* Se guarda ANTES de intentar, no después: si el navegador se cierra
-       en el medio, sus respuestas siguen acá y el reintento las encuentra. */
-    function recordar(){
-      try{ localStorage.setItem('thrive-sin-enviar', JSON.stringify(payload)); }catch(e){}
-    }
-    function olvidar(){
-      try{ localStorage.removeItem('thrive-sin-enviar'); }catch(e){}
-    }
-
-    if(!sb.enabled || !sb.url || !sb.anonKey){
-      /* Sin backend configurado esto es un entorno de prueba, no un fallo
-         de red: se avisa en consola y se cierra como si hubiera entrado. */
-      console.info('[THRIVE] Supabase apagado. Respuestas:', payload);
-      terminar(true);
-      return;
-    }
-
-    recordar();
-
-    function intentar(){
-      return fetch(sb.url.replace(/\/$/,'') + '/rest/v1/' + (sb.table || 'thrive_screening'), {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'apikey': sb.anonKey,
-          'Authorization':'Bearer ' + sb.anonKey,
-          'Prefer':'return=minimal'
-        },
-        body: JSON.stringify(payload)
-      }).then(function(r){
-        if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' ' + t.slice(0,180)); });
-      });
-    }
-
-    /* Un reintento y nada más. La mayoría de los fallos son un parpadeo de
-       red y se resuelven solos; si el segundo también falla, insistir en
-       silencio solo alarga la espera de alguien que ya terminó. */
-    intentar()
-      .catch(function(e){
-        console.warn('[THRIVE] primer intento falló, reintentando:', e.message);
-        return new Promise(function(r){ setTimeout(r, 1500); }).then(intentar);
-      })
-      .then(function(){ olvidar(); terminar(true); })
-      .catch(function(e){
-        console.error('[THRIVE] no se pudo guardar:', e);
-        terminar(false);
-      });
-  }
-
-
-  /* El cierre tiene dos versiones y la diferencia importa: una dice que
-     llegó y la otra dice que no. Antes había una sola y decía siempre
-     que sí.
-     ⚠️ Las DOS se escriben enteras. Escribir solo la mala y no restaurar
-     la buena deja el título de error después de un reintento exitoso:
-     pasó, se vio probando, y es peor que el bug original — decirle que
-     falló cuando sí entró la manda a escribir por gusto. */
-  /* El cierre de la invitación directa es otro, y la diferencia es el
-     punto entero de esta vía: acá NO se agenda nada. Texto de Denisse,
-     29 ago 2026. */
-  var CIERRE_DIRECTA = {
-    titulo: 'Listo',
-    t1: 'Ya me llegó. Voy a revisar tus respuestas y te escribo personalmente para que platiquemos y definamos si THRIVE hace sentido para vos y cuál grupo sería el mejor fit.',
-    t2: '<b>No necesitás agendar nada por ahora.</b>',
-    firma: '<strong>Denisse</strong>'
-  };
-
-  var CIERRE_OK = {
-    titulo: 'Listo, ya me llegó',
-    t1: 'Voy a leer tus respuestas con calma y te escribo por WhatsApp para coordinar el día de tu clase de prueba. Normalmente el mismo día; si me escribiste un fin de semana, el lunes.',
-    t2: 'Mientras tanto no tenés que hacer nada. Si algo cambia de tu lado, escribime nomás.',
-    firma: 'Nos vemos pronto,<br><strong>Denisse</strong>'
-  };
-
-  /* ── el cierre, en dos tiempos ──────────────────────────────
-     ⚠️ La clase .arma —la que cierra el aro y dibuja el visto— NO se
-     pone al tocar «Enviar». Se pone cuando la base YA contestó. Si
-     alguien la adelanta «para que se vea más rápido», vuelve el bug
-     del 28 ago 2026: un visto dibujado sobre una fila que no existe. */
-
-  /* Una base rápida haría un parpadeo que se lee como error. Con este
-     mínimo se lee como trabajo. */
-  var MINIMO_ESPERA = 1400;
-  var abrioEspera = 0, relojesCierre = [];
-  function esperarCierre(ms, fn){ relojesCierre.push(setTimeout(fn, ms)); }
-
-  function abrirEspera(){
-    relojesCierre.forEach(clearTimeout); relojesCierre = [];
-    abrioEspera = Date.now();
-    elShell.hidden = true;
-    elListo.hidden = false;
-    var n = document.getElementById('cierreNucleo');
-    var q = document.getElementById('cierreIcono');
-    var e = document.getElementById('cierreEspera');
-    var m = document.getElementById('cierreMsg');
-    if(n){ n.hidden = false; n.className = 'cierre-nucleo'; }
-    if(q){ q.className = 'cheque espera'; }
-    if(e){ e.hidden = false; e.textContent = 'Guardando tus respuestas…'; }
-    if(m){ m.hidden = true; m.classList.remove('llega'); }
-    try{ scrollTo(0,0); }catch(err){}
-  }
-
-  function contestoLaBase(payload, ok){
-    /* Si contestó antes del mínimo, se completa la espera. No es teatro:
-       la escritura ya ocurrió, lo que se completa es el tiempo de lectura
-       de la persona. */
-    var falta = MINIMO_ESPERA - (Date.now() - abrioEspera);
-    if(falta > 0){ esperarCierre(falta, function(){ contestoLaBase(payload, ok); }); return; }
-
-    var n = document.getElementById('cierreNucleo');
-    var q = document.getElementById('cierreIcono');
-    var m = document.getElementById('cierreMsg');
-    pintarCierre(payload, ok);
-
-    function mostrarMensaje(){
-      if(!m) return;
-      m.hidden = false;
-      requestAnimationFrame(function(){ m.classList.add('llega'); });
-      /* Sin esto, quien usa lector de pantalla se queda oyendo
-         «guardando tus respuestas» y nunca se entera del desenlace. */
-      try{ m.setAttribute('tabindex','-1'); m.focus({preventScroll:true}); }catch(err){}
-    }
-
-    if(ok){
-      if(q) q.className = 'cheque arma';
-      if(n) n.classList.add('resuelto');
-      esperarCierre(1240, function(){
-        if(n) n.classList.add('sale');
-        mostrarMensaje();
-        esperarCierre(460, function(){ if(n) n.hidden = true; });
-      });
-    }else{
-      /* Sin ceremonia: quien necesita reintentar no tiene por qué
-         esperar una despedida. */
-      if(q) q.className = 'cheque mal';
-      if(n) n.classList.add('falla');
-      esperarCierre(240, function(){
-        if(n) n.hidden = true;
-        mostrarMensaje();
-      });
-    }
-  }
-
-  function pintarCierre(payload, ok){
-    var poner = function(id, html){ var e=document.getElementById(id); if(e) e.innerHTML = html; };
-
-    if(ok){
-      var C = MODO === 'directa' ? CIERRE_DIRECTA : CIERRE_OK;
-      poner('cierreTitulo', C.titulo);
-      poner('cierreTexto1', C.t1);
-      poner('cierreTexto2', C.t2);
-      poner('cierreFirma', C.firma);
-    }else{
-      poner('cierreTitulo', 'No se pudo guardar tu formulario');
-      poner('cierreTexto1', 'Tus respuestas <b>no se perdieron</b>: quedaron guardadas en este teléfono. Probá de nuevo con el botón de abajo.');
-      poner('cierreTexto2', 'Si vuelve a fallar, escribile a Denisse por WhatsApp y ella lo resuelve con vos. No hace falta que llenes todo otra vez.');
-      poner('cierreFirma', '');
-    }
-
-    var cont = document.getElementById('cierreAcciones');
-    cont.innerHTML = '';
-
-    if(!ok){
-      var re = document.createElement('button');
-      re.className = 'cta';
-      re.type = 'button';
-      re.textContent = 'Reintentar';
-      re.addEventListener('click', function(){
-        re.disabled = true; re.textContent = 'Enviando…';
-        document.getElementById('listo').hidden = true;
-        elShell.hidden = false;
-        /* Vuelve a la última pantalla con su botón, que es la que sabe
-           enviar: no se reimplementa el envío en dos sitios. */
-        var b = elShell.querySelector('.step:not([hidden]) .step-foot .cta');
-        if(b){ b.disabled = false; enviar(b); }
-        else { location.reload(); }
-      });
-      cont.appendChild(re);
-    }
-
-    var a = document.createElement('a');
-    a.className = ok ? 'cta wa' : 'cta wa secundario';
-    a.setAttribute('data-wa','');
-    a.href = (window.THRIVE_RT ? window.THRIVE_RT.linkWhatsApp(textoCoordinar()) : '#');
-    a.target = '_blank'; a.rel = 'noopener';
-    a.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.4-5.3-4.6-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg> Coordinar mi clase de prueba por WhatsApp';
-    cont.appendChild(a);
-  }
-
-  ir(0);
 })();
 </script>
 </body>
