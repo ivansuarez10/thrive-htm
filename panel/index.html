@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=c34a5e82">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=8933c74a">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -834,6 +834,92 @@ body{background:var(--sand);}
 .cancelar:hover{color:var(--ink); border-color:var(--ink-3);}
 .slot .cancelar{padding:6px 10px; font-size:.86rem;}
 
+/* ── la vista de cobros ── */
+.cob-mes{display:flex; align-items:center; gap:10px; margin:6px 0 18px;}
+.cob-mes b{font-family:var(--display); font-weight:600; font-size:1.05rem; text-transform:capitalize; min-width:9.5em;}
+.cob-mes button{
+  font:inherit; font-size:1rem; line-height:1; cursor:pointer; color:var(--ink-2);
+  background:var(--white); border:1px solid var(--line); border-radius:999px;
+  width:34px; height:34px; display:grid; place-items:center;
+}
+.cob-mes button:hover:not(:disabled){color:var(--ink); border-color:var(--ink-3);}
+.cob-mes button:disabled{opacity:.35; cursor:default;}
+.cob-fila{
+  display:grid; gap:4px 14px; align-items:center;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  grid-template-areas:"quien mes debe" "dice dice debe";
+  padding:14px 0; border-bottom:1px solid var(--line-soft);
+  width:100%; text-align:left; background:none; border-left:0; border-right:0; border-top:0;
+  font:inherit; cursor:pointer;
+}
+.cob-fila:hover{background:var(--linen);}
+.cob-fila .quien{grid-area:quien; font-family:var(--display); font-weight:600; font-size:1rem;}
+.cob-fila .dice{grid-area:dice; font-size:.87rem; color:var(--ink-2);}
+.cob-fila .mes-est{grid-area:mes;}
+.cob-fila .debe{grid-area:debe; justify-self:end; font-family:var(--mono); font-size:.92rem;}
+.cob-fila .debe.si{color:#8A2F2F;}
+.cob-fila .debe.no{color:var(--ink-3);}
+.cob-sello{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px;
+}
+.cob-sello.pagada{background:var(--teal-pale); color:var(--teal-deep);}
+.cob-sello.vencida{background:#F6E3E3; color:#8A2F2F;}
+.cob-sello.pendiente{background:var(--sand); color:var(--ink-3);}
+.cob-sello.sincuota{background:var(--sand); color:var(--ink-3);}
+@media (max-width:560px){
+  .cob-fila{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"quien debe" "mes-est mes-est" "dice dice";}
+  .cob-fila .mes-est{grid-area:mes-est; margin-top:4px;}
+}
+
+/* ── los pagos, en la ficha ── */
+.pg-cab{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:4px;}
+.pg-cab .cual{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--ink-3); margin-left:auto;}
+.pg-fila{
+  display:grid; gap:4px 14px; align-items:center;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  grid-template-areas:"mes monto hacer" "dice dice hacer";
+  padding:12px 0; border-bottom:1px solid var(--line-soft);
+}
+.pg-fila .mes{grid-area:mes; font-weight:600; text-transform:capitalize;}
+.pg-fila .monto{grid-area:monto; font-family:var(--mono); font-size:.9rem; color:var(--ink-2);}
+.pg-fila .dice{grid-area:dice; font-size:.86rem; color:var(--ink-2);}
+.pg-fila .hacer{grid-area:hacer; justify-self:end; display:flex; gap:6px; align-items:center;}
+.pg-fila.pagada .mes{color:var(--ink-2);}
+.pg-fila .sello{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px; margin-right:7px;
+}
+.pg-fila.pagada  .sello{background:var(--teal-pale); color:var(--teal-deep);}
+.pg-fila.vencida .sello{background:#F6E3E3; color:#8A2F2F;}
+.pg-fila.pendiente .sello{background:var(--sand); color:var(--ink-3);}
+.pg-form{
+  grid-column:1 / -1; display:grid; gap:10px;
+  grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+  background:var(--linen); border-radius:12px; padding:14px; margin-top:10px;
+}
+.pg-form label{display:flex; flex-direction:column; gap:5px; min-width:0;}
+.pg-form span{font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3);}
+.pg-form input, .pg-form select{
+  font:inherit; font-size:.95rem; color:var(--ink); min-width:0;
+  background:var(--white); border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+}
+.pg-form input:focus, .pg-form select:focus{outline:none; border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-pale);}
+.pg-form .pg-hacer{grid-column:1 / -1; display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.pg-total{
+  display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  margin-top:14px; font-size:.93rem; color:var(--ink-2);
+}
+.pg-total b{font-family:var(--mono); color:var(--ink);}
+.pg-desde{
+  display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
+  margin-top:16px; padding-top:16px; border-top:1px solid var(--line-soft);
+}
+@media (max-width:560px){
+  .pg-fila{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"mes monto" "dice dice" "hacer hacer";}
+  .pg-fila .hacer{justify-self:start; margin-top:6px;}
+}
+
 /* ── el hilo de cada persona ── */
 .hilo{display:flex; flex-direction:column; gap:0; margin-top:6px;}
 .hilo-item{display:flex; gap:13px; padding:11px 0;}
@@ -1198,6 +1284,16 @@ body{background:var(--sand);}
       </section>
 
       <!-- ══════ AJUSTES ══════ -->
+      <!-- Solo aparece en los programas que tienen forma de cobro
+           declarada, o sea hoy solo THRIVE. El índice la esconde en
+           los demás en vez de mostrar una pantalla vacía. -->
+      <section class="vista" data-vista="cobros" hidden>
+        <h1 id="cobTit">Cobros</h1>
+        <p class="sub" id="cobSub"></p>
+        <div id="cobResumen"></div>
+        <div id="cobLista"></div>
+      </section>
+
       <section class="vista" data-vista="ajustes" hidden>
         <h1>Ajustes</h1>
         <p class="sub">Lo tuyo es lo mismo en todos los programas. Lo de abajo cambia según cuál tengas abierto.</p>
@@ -1230,6 +1326,18 @@ body{background:var(--sand);}
           <p class="ayuda">Las fechas que se pueden elegir en la ficha de cada invitada. Desmarcá una para dejar de ofrecerla sin borrar a quien ya la tiene.</p>
           <div id="ajSlots"></div>
           <button class="pn-txt" type="button" id="ajSlotMas">+ Agregar una fecha</button>
+        </div>
+
+        <!-- Solo se ve donde el programa declara que cobra. El MONTO no
+             está acá: vive en el precio de cada grupo, arriba. Dos precios
+             que se pueden contradecir es peor que uno solo. -->
+        <div class="aj-grupo" id="ajCobroCaja" hidden>
+          <h2>Cómo se cobra</h2>
+          <p class="ayuda">El precio sale del grupo. Acá va solo cuándo vence y cuánta paciencia tener antes de que aparezca como pendiente.</p>
+          <div class="ficha-campos">
+            <label><span>Vence el día</span><input type="number" id="ajVenceDia" min="1" max="28" placeholder="1"></label>
+            <label><span>Días de gracia</span><input type="number" id="ajGracia" min="0" max="30" placeholder="5"></label>
+          </div>
         </div>
 
         <div class="ficha-pie" style="position:static; border-top:none;">
@@ -1449,6 +1557,28 @@ body{background:var(--sand);}
     recordatorio: function(n, cuando, link){
       return 'Hola ' + n + ', te recuerdo tu clase de prueba, es ' + cuando + '. ' +
              'Acá está todo — dirección, hora y qué llevar: ' + link;
+    },
+    /* ⚠️ EL MENSAJE MÁS DELICADO DE TODOS, y el único que todavía no
+       aprobó Denisse. Uno mal escrito le cuesta una clienta.
+
+       Las tres decisiones que tomé y que ella puede revertir:
+       · No dice «me debés» ni «pendiente de pago». Dice que no lo veo,
+         que es lo único que de verdad sé: una transferencia puede
+         haber salido y no haber llegado.
+       · No lleva monto de más ni recargo. No existe tal política.
+       · Termina ofreciendo arreglarlo, no exigiendo. Quien se atrasó
+         casi siempre ya lo sabe; recordárselo con dureza no acelera el
+         pago y sí arruina la relación.
+
+       Es un punto de partida editable, como todos: se abre escrito en
+       WhatsApp y ella lo cambia antes de mandarlo. */
+    cobro: function(n, cuales){
+      var q = (cuales && cuales.length === 1)
+        ? 'el pago de ' + String(cuales[0]).toLowerCase()
+        : 'los pagos de ' + cuales.map(function(x){ return String(x).toLowerCase(); }).join(' y ');
+      return 'Hola ' + n + ', ¿cómo vas? Te escribo por ' + q + ' — no lo tengo registrado ' +
+             'de mi lado y no quiero que se me pase.\n\nSi ya lo hiciste, pasame el comprobante ' +
+             'y lo anoto. Y si necesitás acomodarlo de otra forma, decime y lo vemos.';
     },
     cupoLibre: function(n, grupo){
       /* Corto a propósito: explicar una buena noticia la debilita. El
@@ -1699,7 +1829,7 @@ body{background:var(--sand);}
       })
       .then(function(r){
         if(r.error){ console.error(r.error); return; }
-        return cargarContacto().then(function(){ return r; });
+        return cargarContacto().then(cargarPagos).then(function(){ return r; });
       })
       .then(function(r){
         if(!r) return;
@@ -1990,6 +2120,156 @@ body{background:var(--sand);}
   document.getElementById('progMenu').addEventListener('click', function(e){ e.stopPropagation(); });
 
   /* ═══════════════════════════════════════════════════════════
+     LOS COBROS
+
+     Responde UNA pregunta: «¿quién me debe?». No es contabilidad y
+     no quiere serlo — una herramienta que hay que alimentar todos
+     los días se abandona en tres semanas.
+
+     ⚠️ LAS CUOTAS NO SE GUARDAN. SE CALCULAN.
+     Lo que la base guarda son los PAGOS, que son hechos: alguien
+     puso plata un día. Lo que le TOCA pagar sale del programa
+     —cuánto vale su grupo, desde cuándo, hasta cuándo— y se arma
+     acá. Por eso cambiar el período no obliga a migrar filas.
+
+     ⚠️ Y por eso ESTE es el único lugar donde vive la regla. La
+     tarea, la ficha y el resumen del mes leen todos de `cuotasDe`.
+     Escribirla dos veces es cómo `config.js` y la base terminaron
+     diciendo precios distintos.
+
+     ⚠️ Solo THRIVE tiene `cobro`. 1:1, Teens y el Taller no, a
+     propósito: cómo se cobra cada uno es una pregunta abierta para
+     Denisse, y con plata inventarlo cuesta más caro que con un
+     embudo. Sin `cobro` el panel no muestra nada de esto.
+     ═══════════════════════════════════════════════════════════ */
+  var PAGOS = {};
+  /* Si la consulta falla, NO se calcula ninguna cuota. Sin esta
+     bandera, `pagos` caído se leería como «nadie pagó nunca» y el
+     panel acusaría de deber a las ocho a la vez. Un cobro que no se
+     sabe es mejor que un cobro inventado. */
+  var PAGOS_OK = false;
+
+  function cargarPagos(){
+    if(!hayCobros()){ PAGOS = {}; PAGOS_OK = true; return Promise.resolve(); }
+    return sb.from('pagos').select('*').then(function(r){
+      if(r.error){ console.warn('pagos:', r.error.message); PAGOS = {}; PAGOS_OK = false; return; }
+      PAGOS = {}; PAGOS_OK = true;
+      (r.data || []).forEach(function(x){
+        (PAGOS[x.inscripcion_id] = PAGOS[x.inscripcion_id] || []).push(x);
+      });
+    });
+  }
+
+  function cobro(){ return (prog && prog.ajustes && prog.ajustes.cobro) || null; }
+  function hayCobros(){ var x = cobro(); return !!(x && x.forma); }
+  function moneda(){ var x = cobro(); return (x && x.moneda) || '$'; }
+  function plata(n){ return moneda() + (Math.round(Number(n) * 100) / 100); }
+
+  function pagosDe(c){
+    return (PAGOS[c.id] || []).filter(function(p){ return !p.anulado; });
+  }
+  function todosLosPagosDe(c){ return PAGOS[c.id] || []; }
+
+  /* Lo que le toca pagar es el precio de SU grupo. Sin grupo no hay
+     monto y por eso no hay cuota: ese caso ya tiene su tarea propia
+     —«está adentro pero sin grupo»— y no se arregla cobrándole. */
+  function montoDe(c){
+    var g = grupos().filter(function(x){ return x.id === c.grupo; })[0];
+    return (g && g.precio != null && g.precio !== '') ? Number(g.precio) : null;
+  }
+
+  function hoyHN(){ return aInputHN(new Date().toISOString()).split('T')[0]; }
+
+  /* ⚠️ A QUIÉN SE LE COBRA. No alcanza con que tenga grupo.
+     `grupo` sale de la respuesta 13 del cuestionario, así que alguien
+     que apenas llenó el formulario y todavía no ha entrenado un solo
+     día YA lo tiene. Cobrarle a esa persona es el peor error que puede
+     cometer esta pantalla: le reclama plata a quien todavía está
+     decidiendo si viene.
+
+     Paga quien ESTÁ adentro. Y sigue teniendo cuotas quien estuvo: se
+     lo reconoce por tener pagos hechos o por tener las fechas de cobro
+     puestas a mano, que es justo lo que Denisse llena cuando alguien
+     se va antes de tiempo. */
+  function seLeCobra(c){
+    if(!c) return false;
+    if(cierra(c.estado) && c.estado !== 'no') return true;
+    if(c.cobro_desde || c.cobro_hasta) return true;
+    return (PAGOS[c.id] || []).length > 0;
+  }
+
+  /* Sumar días a una fecha de calendario, en Honduras. Se ancla al
+     mediodía porque sumar sobre medianoche cruza de día con cualquier
+     desfase. */
+  function corrido(fecha, n){
+    var d = new Date(fecha + 'T12:00:00-06:00');
+    if(isNaN(d.getTime())) return fecha;
+    d.setUTCDate(d.getUTCDate() + n);
+    return aInputHN(d.toISOString()).split('T')[0];
+  }
+
+  function mesesEntre(desde, hasta){
+    var a = String(desde || '').slice(0, 7), b = String(hasta || '').slice(0, 7), out = [];
+    if(!/^\d{4}-\d{2}$/.test(a) || !/^\d{4}-\d{2}$/.test(b) || b < a) return out;
+    var y = +a.slice(0, 4), m = +a.slice(5, 7);
+    /* Tope de guarda: un período mal tecleado —2026 a 2126— no puede
+       colgar el panel armando mil doscientas cuotas. */
+    for(var i = 0; i < 120; i++){
+      var v = y + '-' + (m < 10 ? '0' : '') + m;
+      out.push(v);
+      if(v >= b) break;
+      m++; if(m > 12){ m = 1; y++; }
+    }
+    return out;
+  }
+
+  var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio',
+               'agosto','septiembre','octubre','noviembre','diciembre'];
+  function nombreDeMes(p){
+    if(p === 'unico') return 'Pago único';
+    var m = +String(p).slice(5, 7);
+    return (MESES[m - 1] || p) + ' ' + String(p).slice(0, 4);
+  }
+
+  /* Las cuotas de una inscripción. Cada una dice cuánto vale, cuándo
+     vence, cuánto se puso ya y en qué estado quedó. */
+  function cuotasDe(c){
+    var cb = cobro();
+    if(!cb || !c || !PAGOS_OK || !seLeCobra(c)) return [];
+    var monto = montoDe(c);
+    if(monto === null) return [];
+
+    var pagos = pagosDe(c), hoy = hoyHN(), aj = (prog && prog.ajustes) || {};
+
+    function armar(periodo, vence){
+      var puesto = pagos.filter(function(p){ return p.periodo === periodo; })
+                        .reduce(function(t, p){ return t + Number(p.monto); }, 0);
+      var falta = Math.round((monto - puesto) * 100) / 100;
+      var limite = corrido(vence, Number(cb.gracia_dias || 0));
+      return {
+        periodo:periodo, vence:vence, monto:monto, puesto:puesto, falta:falta,
+        /* Pagada de más también cuenta como pagada: si puso 240 sobre
+           220, lo que no puede es seguir apareciendo como deuda. */
+        estado: falta <= 0 ? 'pagada' : (hoy > limite ? 'vencida' : 'pendiente')
+      };
+    }
+
+    if(cb.forma === 'unico') return [armar('unico', aj.periodo_inicio || hoy)];
+
+    /* 28 como techo: un vencimiento el 30 no existe en febrero. */
+    var dia = Math.min(28, Math.max(1, Number(cb.vence_dia || 1)));
+    return mesesEntre(c.cobro_desde || aj.periodo_inicio,
+                      c.cobro_hasta || aj.periodo_fin).map(function(m){
+      return armar(m, m + '-' + (dia < 10 ? '0' : '') + dia);
+    });
+  }
+
+  function deudaDe(c){
+    var v = cuotasDe(c).filter(function(x){ return x.estado === 'vencida'; });
+    return { cuotas:v, total:v.reduce(function(t, x){ return t + x.falta; }, 0) };
+  }
+
+  /* ═══════════════════════════════════════════════════════════
      LO QUE TE TOCA
 
      El panel estaba ordenado por cuándo llegó cada mujer, que es el
@@ -2022,6 +2302,20 @@ body{background:var(--sand);}
           return { texto:'Ponerla en ' + g.id, campos:{ grupo:g.id } };
         }) };
     }
+    /* El cobro va acá arriba y no dentro del embudo de THRIVE, y es
+       la única regla que sobrevive a un estado que cierra: quien está
+       adentro ya no espera nada del embudo, pero puede deber. Y quien
+       se fue debiendo, siguió debiendo. */
+    var deuda = deudaDe(c);
+    if(deuda.cuotas.length){
+      var cual = deuda.cuotas.map(function(x){ return nombreDeMes(x.periodo); });
+      return { c:c, prio:2, cobro:true,
+        motivo:(cual.length === 1 ? 'No ha pagado ' + cual[0] : 'Debe ' + cual.length + ' cuotas: ' + cual.join(', ')) +
+               ' · ' + plata(deuda.total) + '.',
+        wa:{ texto:'Escribirle', mensaje:MSG.cobro(primerNombre(c), cual) },
+        botones:[ { texto:'Registrar pago', ficha:true } ] };
+    }
+
     /* De un estado que cierra no se espera nada más. */
     if(cierra(c.estado)) return null;
     return esThrive() ? tareaThrive(c) : tareaGenerica(c);
@@ -2676,6 +2970,334 @@ body{background:var(--sand);}
   var elFicha = document.getElementById('ficha');
   var elCaja  = document.getElementById('fichaCaja');
 
+  /* ═══ EL RESUMEN DEL MES ═══
+     Dos números que se parecen y NO son lo mismo, y por eso están los
+     dos con nombre distinto:
+       · «Entró» es plata que llegó ESTE mes, sin importar qué cuota
+         pagaba. Es la caja.
+       · «De este mes» es cuánto de las cuotas DE este mes está cubierto,
+         sin importar cuándo se pagó. Es la cobranza.
+     Quien adelanta dos meses en septiembre hace que difieran, y eso es
+     información, no un error de cuentas. */
+  var cobMes = null;
+
+  function mesesDelPrograma(){
+    var aj = (prog && prog.ajustes) || {};
+    return mesesEntre(aj.periodo_inicio, aj.periodo_fin);
+  }
+
+  function pintarCobros(){
+    var tit = document.getElementById('cobTit');
+    var sub = document.getElementById('cobSub');
+    var res = document.getElementById('cobResumen');
+    var lis = document.getElementById('cobLista');
+    if(!tit) return;
+
+    if(!hayCobros()){
+      sub.textContent = '';
+      res.innerHTML = '';
+      lis.innerHTML = '<div class="pn-vacio">' + esc(prog ? prog.nombre : 'Este programa') +
+        ' no tiene forma de cobro definida todavía. Cuando me digas cómo se cobra, aparece acá.</div>';
+      return;
+    }
+    if(!PAGOS_OK){
+      res.innerHTML = '';
+      lis.innerHTML = '<div class="pn-vacio">No pude leer los pagos. Prefiero no mostrarte nada ' +
+        'antes que mostrarte cuentas que no sé si son ciertas — recargá la página.</div>';
+      return;
+    }
+
+    var meses = mesesDelPrograma();
+    if(cobMes === null || meses.indexOf(cobMes) === -1){
+      var actual = hoyHN().slice(0, 7);
+      /* Se abre en el mes de hoy si cae dentro del período; si no, en el
+         más cercano. Abrir en el primer mes del período sería, en
+         diciembre, abrir tres meses atrás. */
+      cobMes = meses.indexOf(actual) !== -1 ? actual
+             : (meses.length ? (actual < meses[0] ? meses[0] : meses[meses.length - 1]) : actual);
+    }
+    var i = meses.indexOf(cobMes);
+
+    /* Solo la gente que tiene cuotas: quien no tiene grupo o todavía no
+       entró no es un cobro pendiente, es otra cosa. */
+    var gente = datos.map(function(c){
+      return { c:c, cuotas:cuotasDe(c), pagos:pagosDe(c) };
+    }).filter(function(x){ return x.cuotas.length; });
+
+    var entro = 0, esperado = 0, cubierto = 0, debiendo = 0, deudaTotal = 0;
+    gente.forEach(function(x){
+      x.pagos.forEach(function(p){
+        if(String(p.pagado_en).slice(0, 7) === cobMes) entro += Number(p.monto);
+      });
+      var q = x.cuotas.filter(function(y){ return y.periodo === cobMes; })[0];
+      if(q){ esperado += q.monto; cubierto += Math.min(q.puesto, q.monto); }
+      var d = x.cuotas.filter(function(y){ return y.estado === 'vencida'; })
+                      .reduce(function(t, y){ return t + y.falta; }, 0);
+      if(d > 0){ debiendo++; deudaTotal += d; }
+    });
+    var falta = Math.round((esperado - cubierto) * 100) / 100;
+
+    sub.textContent = 'Lo que entró, lo que falta y quién arrastra deuda. Tocá a alguien para registrarle un pago.';
+
+    res.innerHTML =
+      '<div class="cob-mes">' +
+        '<button type="button" id="cobAntes" aria-label="Mes anterior"' + (i <= 0 ? ' disabled' : '') + '>&lsaquo;</button>' +
+        '<b>' + esc(nombreDeMes(cobMes)) + '</b>' +
+        '<button type="button" id="cobDespues" aria-label="Mes siguiente"' + (i >= meses.length - 1 ? ' disabled' : '') + '>&rsaquo;</button>' +
+      '</div>' +
+      '<div class="pn-tiles">' +
+        tile('cobros', 'Entró en el mes', plata(entro), 'plata recibida en ' + nombreDeMes(cobMes).split(' ')[0]) +
+        tile('cobros', 'Cuotas de este mes', plata(cubierto) + ' / ' + plata(esperado),
+             falta > 0 ? 'faltan ' + plata(falta) : 'todas cubiertas') +
+        tile('invitadas', 'Debiendo', String(debiendo),
+             debiendo === 0 ? 'nadie arrastra deuda' :
+             (debiendo === 1 ? 'persona, ' : 'personas, ') + plata(deudaTotal) + ' en total') +
+        tile('clientas', 'Cobrando a', String(gente.length),
+             gente.length === 1 ? 'persona con cuotas' : 'personas con cuotas') +
+      '</div>';
+
+    /* Primero quien debe, y dentro de eso quien debe más: es el orden en
+       que sirve, no el alfabético. */
+    gente.sort(function(a, b){
+      var da = a.cuotas.filter(function(y){ return y.estado === 'vencida'; }).reduce(function(t,y){ return t+y.falta; }, 0);
+      var db = b.cuotas.filter(function(y){ return y.estado === 'vencida'; }).reduce(function(t,y){ return t+y.falta; }, 0);
+      if(da !== db) return db - da;
+      return String(a.c.nombre).localeCompare(String(b.c.nombre), 'es');
+    });
+
+    lis.innerHTML = gente.map(function(x){
+      var q = x.cuotas.filter(function(y){ return y.periodo === cobMes; })[0];
+      var d = x.cuotas.filter(function(y){ return y.estado === 'vencida'; });
+      var deuda = d.reduce(function(t, y){ return t + y.falta; }, 0);
+      var est = q ? q.estado : 'sincuota';
+      var dice = q
+        ? (q.estado === 'pagada' ? 'Cubierta' :
+           q.estado === 'vencida' ? 'Venció el ' + diaCorto(q.vence) : 'Vence el ' + diaCorto(q.vence))
+        : 'Este mes no se le cobra';
+      if(d.length > 1) dice += ' · arrastra ' + d.length + ' cuotas';
+      return '<button class="cob-fila" type="button" data-ficha="' + esc(x.c.id) + '">' +
+        '<span class="quien">' + esc(x.c.nombre) + (x.c.grupo ? ' · ' + esc(x.c.grupo) : '') + '</span>' +
+        '<span class="mes-est"><i class="cob-sello ' + est + '">' +
+          esc(q ? (q.estado === 'pagada' ? 'pagada' : q.estado === 'vencida' ? 'vencida' : 'no vence aún') : 'sin cuota') +
+        '</i></span>' +
+        '<span class="dice">' + esc(dice) + '</span>' +
+        '<span class="debe ' + (deuda > 0 ? 'si' : 'no') + '">' + esc(deuda > 0 ? 'debe ' + plata(deuda) : 'al día') + '</span>' +
+      '</button>';
+    }).join('') || '<div class="pn-vacio">Todavía no hay a quién cobrarle. Las cuotas aparecen ' +
+        'cuando alguien está adentro y tiene grupo — el grupo es de donde sale el precio.</div>';
+
+    var a = document.getElementById('cobAntes'), b2 = document.getElementById('cobDespues');
+    if(a) a.addEventListener('click', function(){ cobMes = meses[i - 1]; pintarCobros(); });
+    if(b2) b2.addEventListener('click', function(){ cobMes = meses[i + 1]; pintarCobros(); });
+    lis.querySelectorAll('[data-ficha]').forEach(function(el){
+      el.addEventListener('click', function(){ abrirFicha(el.getAttribute('data-ficha')); });
+    });
+  }
+
+  function tile(ico, rotulo, cifra, pie){
+    return '<div class="tile">' +
+      '<div class="tile-top"><span class="ico">' + svg(ico, 2) + '</span><b>' + esc(rotulo) + '</b></div>' +
+      '<span class="cifra">' + esc(cifra) + '</span>' +
+      '<span class="pie">' + esc(pie) + '</span></div>';
+  }
+
+  /* ═══ los pagos, dentro de la ficha ═══
+     Una fila por cuota, calculada. Lo que se guarda al registrar es un
+     PAGO —un hecho, con su fecha y su medio—; la cuota sigue siendo un
+     cálculo. Por eso «Registrar pago» inserta y no marca nada. */
+  function seccionPagos(c){
+    if(!hayCobros()) return '';
+    if(!PAGOS_OK){
+      return '<div class="ficha-sec"><h3>Sus pagos</h3>' +
+        '<p class="ayuda">No pude leer los pagos. Mejor no muestro nada antes que ' +
+        'mostrarte una deuda que no sé si existe — recargá la página.</p></div>';
+    }
+    if(!seLeCobra(c)){
+      return '<div class="ficha-sec"><h3>Sus pagos</h3>' +
+        '<p class="ayuda">Todavía no se le cobra: aparece cuando entre. ' +
+        'Que tenga grupo no basta — el grupo lo eligió ella en el cuestionario, ' +
+        'antes de decidir si venía.</p></div>';
+    }
+    var monto = montoDe(c);
+    if(monto === null){
+      return '<div class="ficha-sec"><h3>Sus pagos</h3>' +
+        '<p class="ayuda">Ponele un grupo arriba y aparecen sus cuotas: lo que paga ' +
+        'sale del precio de su grupo.</p></div>';
+    }
+
+    var cs = cuotasDe(c);
+    var pagados = pagosDe(c);
+    var hoy = hoyHN();
+
+    var filas = cs.map(function(x){
+      var suyos = pagados.filter(function(p){ return p.periodo === x.periodo; });
+      var dice, sello;
+      if(x.estado === 'pagada'){
+        sello = 'pagado';
+        dice = suyos.map(function(p){
+          return plata(p.monto) + ' el ' + diaCorto(p.pagado_en) + (p.medio ? ' · ' + p.medio : '');
+        }).join(' + ') || 'saldado';
+      }else if(x.estado === 'vencida'){
+        var d = diasDesde(x.vence + 'T12:00:00-06:00');
+        sello = 'vencida';
+        dice = 'Venció el ' + diaCorto(x.vence) + (d ? ' · hace ' + d + (d === 1 ? ' día' : ' días') : '') +
+               (x.puesto ? ' · lleva puesto ' + plata(x.puesto) : '');
+      }else{
+        sello = 'no vence aún';
+        dice = 'Vence el ' + diaCorto(x.vence) + (x.puesto ? ' · lleva puesto ' + plata(x.puesto) : '');
+      }
+
+      return '<div class="pg-fila ' + x.estado + '" data-cuota="' + esc(x.periodo) + '">' +
+        '<span class="mes">' + esc(nombreDeMes(x.periodo)) + '</span>' +
+        '<span class="monto">' + esc(plata(x.monto)) + '</span>' +
+        '<span class="dice"><i class="sello">' + esc(sello) + '</i>' + esc(dice) + '</span>' +
+        '<span class="hacer">' +
+          (x.falta > 0
+            ? '<button class="mini" type="button" data-cobrar="' + esc(x.periodo) + '" data-falta="' + x.falta + '">Registrar pago</button>'
+            : suyos.map(function(p){
+                return '<button class="mini" type="button" data-anular="' + esc(p.id) + '">Anular</button>';
+              }).join('')) +
+        '</span>' +
+      '</div>';
+    }).join('');
+
+    var debe = cs.filter(function(x){ return x.estado === 'vencida'; })
+                 .reduce(function(t, x){ return t + x.falta; }, 0);
+    var puso = pagados.reduce(function(t, p){ return t + Number(p.monto); }, 0);
+
+    return '<div class="ficha-sec">' +
+      '<div class="pg-cab"><h3>Sus pagos</h3>' +
+        '<span class="cual">' + esc((c.grupo ? prog.nombre + ' ' + c.grupo + ' · ' : '') +
+          plata(monto) + (cobro().forma === 'mensual' ? ' AL MES' : '')) + '</span></div>' +
+      (filas || '<p class="ayuda">Todavía no le toca ninguna cuota. Revisá el período del programa en Ajustes.</p>') +
+      '<div class="pg-total"><span>Lleva pagado <b>' + esc(plata(puso)) + '</b></span>' +
+        (debe > 0 ? '<span>Debe <b style="color:#8A2F2F">' + esc(plata(debe)) + '</b></span>' : '<span>Al día</span>') +
+      '</div>' +
+      /* Las dos fechas son lo que evita cobrarle de más a quien entró
+         tarde y lo que evita perder la deuda de quien se fue. */
+      '<div class="pg-desde">' +
+        '<label><span>Se le cobra desde</span><input type="date" id="fCobroDesde" value="' + esc(c.cobro_desde || '') + '"></label>' +
+        '<label><span>Hasta</span><input type="date" id="fCobroHasta" value="' + esc(c.cobro_hasta || '') + '"></label>' +
+      '</div>' +
+      '<p class="ayuda" style="margin-top:8px;">Vacías siguen el período del programa. ' +
+        '«Hasta» se llena cuando alguien se va antes: lo que dejó debiendo se queda, ' +
+        'lo que vendría después no se le cobra.</p>' +
+    '</div>';
+  }
+
+  /* Un día suelto, escrito como se dice: «3 de septiembre». */
+  function diaCorto(fecha){
+    var d = new Date(String(fecha).slice(0,10) + 'T12:00:00-06:00');
+    if(isNaN(d.getTime())) return String(fecha);
+    try{
+      return new Intl.DateTimeFormat('es-HN', { day:'numeric', month:'long', timeZone:'America/Tegucigalpa' }).format(d);
+    }catch(e){ return String(fecha).slice(0,10); }
+  }
+
+  function cablearPagos(c){
+    var caja = elCaja;
+
+    caja.querySelectorAll('[data-cobrar]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var fila = b.closest('.pg-fila');
+        if(fila.querySelector('.pg-form')) return;
+        var periodo = b.getAttribute('data-cobrar');
+        var falta = b.getAttribute('data-falta');
+        var f = document.createElement('div');
+        f.className = 'pg-form';
+        f.innerHTML =
+          '<label><span>Cuánto</span><input type="number" step="0.01" min="0.01" class="pg-monto" value="' + esc(falta) + '"></label>' +
+          '<label><span>Cuándo</span><input type="date" class="pg-fecha" value="' + esc(hoyHN()) + '"></label>' +
+          '<label><span>Cómo</span><select class="pg-medio">' +
+            '<option value="transferencia">Transferencia</option>' +
+            '<option value="efectivo">Efectivo</option>' +
+            '<option value="otro">Otro</option></select></label>' +
+          '<label><span>Nota · opcional</span><input type="text" class="pg-nota" placeholder="Nº de comprobante, banco…"></label>' +
+          '<div class="pg-hacer">' +
+            '<button class="pn-btn" type="button" style="width:auto;margin:0;padding:11px 22px;">Guardar el pago</button>' +
+            '<button class="cancelar" type="button">Cancelar</button>' +
+            '<span class="guardado"></span>' +
+          '</div>';
+        fila.appendChild(f);
+        f.querySelector('.pg-monto').focus();
+        f.querySelector('.cancelar').addEventListener('click', function(){ f.remove(); });
+        f.querySelector('.pn-btn').addEventListener('click', function(){
+          guardarPago(c, periodo, f, this);
+        });
+      });
+    });
+
+    /* Anular pide confirmación como todo lo que mueve algo, y usa el
+       mismo mecanismo: no borra la fila, la marca. */
+    caja.querySelectorAll('[data-anular]').forEach(function(b){
+      b.addEventListener('click', function(){
+        confirmar(b, function(){
+          b.disabled = true; b.textContent = 'Un momento…';
+          sb.from('pagos').update({ anulado:true }).eq('id', b.getAttribute('data-anular'))
+            .then(function(r){
+              if(r.error){ b.disabled = false; b.textContent = 'No se pudo'; return; }
+              return cargarPagos().then(function(){
+                cerrarFicha(); abrirFicha(c.id); repintarPorPagos();
+              });
+            });
+        });
+      });
+    });
+
+    var cd = document.getElementById('fCobroDesde'), ch = document.getElementById('fCobroHasta');
+    [cd, ch].forEach(function(el){
+      if(el) el.addEventListener('change', function(){
+        sb.from('inscripciones').update({
+          cobro_desde: cd.value || null, cobro_hasta: ch.value || null
+        }).eq('id', c.id).then(function(r){
+          if(r.error){ console.warn(r.error.message); return; }
+          c.cobro_desde = cd.value || null; c.cobro_hasta = ch.value || null;
+          /* Cambian las cuotas de golpe, así que se repinta la sección
+             entera: dejar las viejas a la vista es peor que parpadear. */
+          cerrarFicha(); abrirFicha(c.id);
+        });
+      });
+    });
+  }
+
+  /* Después de tocar un pago hay que repintar la pila y el resumen, no
+     recargar: `refrescar()` se rinde si hay algo abierto —y acá la ficha
+     lo está— así que la tarea seguiría diciendo que debe algo que acaba
+     de pagar. Los pagos ya se releyeron; sólo falta volver a dibujar lo
+     que los mira. */
+  function repintarPorPagos(){
+    pintarToca(); pintarDia();
+    if(vista === 'cobros') pintarCobros();
+  }
+
+  function guardarPago(c, periodo, form, btn){
+    var monto = Number(form.querySelector('.pg-monto').value);
+    var fecha = form.querySelector('.pg-fecha').value;
+    var aviso = form.querySelector('.guardado');
+    if(!(monto > 0)){ aviso.textContent = 'Poné cuánto pagó.'; return; }
+    if(!fecha){ aviso.textContent = 'Poné la fecha.'; return; }
+
+    btn.disabled = true; btn.textContent = 'Guardando…';
+    sb.from('pagos').insert({
+      inscripcion_id: c.id,
+      persona_id: c.persona_id,
+      periodo: periodo,
+      monto: monto,
+      pagado_en: fecha,
+      medio: form.querySelector('.pg-medio').value,
+      nota: form.querySelector('.pg-nota').value.trim() || null
+    }).then(function(r){
+      if(r.error){
+        btn.disabled = false; btn.textContent = 'Guardar el pago';
+        aviso.textContent = 'No se pudo: ' + r.error.message;
+        return;
+      }
+      return cargarPagos().then(function(){
+        cerrarFicha(); abrirFicha(c.id); repintarPorPagos();
+      });
+    });
+  }
+
   function abrirFicha(id){
     var c = datos.filter(function(x){ return x.id === id; })[0];
     if(!c) return;
@@ -2763,6 +3385,8 @@ body{background:var(--sand);}
         '</div>' +
       '</div>' : '') +
 
+      seccionPagos(c) +
+
       '<div class="ficha-sec"><h3>Su historia</h3><div class="hilo" id="hilo">' +
         '<p class="ayuda">Cargando…</p></div></div>' +
 
@@ -2790,6 +3414,7 @@ body{background:var(--sand);}
     });
 
     pintarHilo(c);
+    cablearPagos(c);
     document.getElementById('cerrar').addEventListener('click', cerrarFicha);
     var elSlot = document.getElementById('fSlot');
     if(elSlot) elSlot.addEventListener('change', function(){
@@ -3255,6 +3880,7 @@ body{background:var(--sand);}
     hoy:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 16 2 2 4-4"/>',
     invitadas:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
     clientas:'<path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m16 11 2 2 4-4"/>',
+    cobros:'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20"/><path d="M6 15h3"/>',
     ajustes:'<path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-4M20 13V3M1 15h6M9 8h6M17 17h6"/>'
   };
   function svg(v, w){
@@ -3270,15 +3896,26 @@ body{background:var(--sand);}
     ['hoy',       'Hoy',       'Su día'],
     ['invitadas', 'Invitadas', 'La gente'],
     ['clientas',  'Clientas',  ''],
-    ['ajustes',   'Ajustes',   'El programa']
+    ['cobros',    'Cobros',    'El programa'],
+    ['ajustes',   'Ajustes',   '']
   ];
+  /* «Cobros» no existe en un programa que no declara cómo cobra. Se
+     esconde entera en vez de abrir una pantalla vacía — es la misma
+     regla que ya usan los grupos y los cupos. El rótulo del grupo se
+     mueve a Ajustes cuando Cobros no está, o «El programa» quedaría
+     encabezando la nada. */
+  function vistasVivas(){
+    if(hayCobros()) return VISTAS;
+    return VISTAS.filter(function(v){ return v[0] !== 'cobros'; })
+                 .map(function(v){ return v[0] === 'ajustes' ? ['ajustes','Ajustes','El programa'] : v; });
+  }
   var vista = 'hoy';
 
   function pintarNav(){
     var n = nuevasDesdeLaUltimaVez().length;
 
     var lado = '', abierto = false;
-    VISTAS.forEach(function(v){
+    vistasVivas().forEach(function(v){
       if(v[2]){
         if(abierto) lado += '</div>';
         lado += '<p class="lado-rotulo">' + esc(v[2]) + '</p><div class="lado-nav">';
@@ -3294,7 +3931,7 @@ body{background:var(--sand);}
 
     /* En el teléfono la barra no cabe, y una gaveta que hay que abrir
        para cambiar de sección es un peaje. Abajo es donde llega el pulgar. */
-    document.getElementById('abajo').innerHTML = VISTAS.map(function(v){
+    document.getElementById('abajo').innerHTML = vistasVivas().map(function(v){
       return '<button type="button" data-v="' + v[0] + '"' +
              (vista === v[0] ? ' aria-current="page"' : '') + '>' +
              svg(v[0], 1.9) + esc(v[1]) +
@@ -3328,6 +3965,7 @@ body{background:var(--sand);}
     pintarNav();
     window.scrollTo(0, 0);
     if(v === 'clientas') pintarClientas();
+    if(v === 'cobros')   pintarCobros();
     if(v === 'ajustes')  volcarAjustes();
   }
 
@@ -3892,6 +4530,16 @@ body{background:var(--sand);}
           '</div>';
         }).join('');
 
+    var cb = cobro();
+    var cbc = document.getElementById('ajCobroCaja');
+    if(cbc){
+      cbc.hidden = !cb;
+      if(cb){
+        document.getElementById('ajVenceDia').value = cb.vence_dia == null ? '' : String(cb.vence_dia);
+        document.getElementById('ajGracia').value   = cb.gracia_dias == null ? '' : String(cb.gracia_dias);
+      }
+    }
+
     var pv = document.getElementById('ajProvisional');
     pv.hidden = !prog.provisional;
     if(prog.provisional){
@@ -3928,6 +4576,15 @@ body{background:var(--sand);}
     /* Las fechas sin poner no se guardan: una fila vacía en la lista se
        vería en la ficha como una opción en blanco. */
     suyos.slots = slots().filter(function(x){ return x.iso; });
+
+    /* El bloque de cobro se toca, no se crea: si el programa no declara
+       `forma`, guardarlo acá le inventaría una manera de cobrar que
+       nadie decidió. */
+    if(suyos.cobro && suyos.cobro.forma){
+      var vd = document.getElementById('ajVenceDia'), gr = document.getElementById('ajGracia');
+      if(vd) suyos.cobro.vence_dia   = vd.value === '' ? 1 : Math.min(28, Math.max(1, Number(vd.value)));
+      if(gr) suyos.cobro.gracia_dias = gr.value === '' ? 0 : Math.max(0, Number(gr.value));
+    }
 
     var gs = (suyos.grupos || []).map(function(g){ return JSON.parse(JSON.stringify(g)); });
     document.getElementById('ajGrupos').querySelectorAll('[data-g]').forEach(function(el){
