@@ -58,24 +58,13 @@ window.THRIVE = {
      que ya no están. Eso es lo que se quiere. */
   referidas: [],
 
-  /* ── Los cupos de clase de prueba ──
-     Denisse los dio el 29 ago 2026. Son CUATRO, no dos, y con dos horarios
-     distintos — reemplaza lo que se había hablado de «dos días».
+  /* ⚠️ `cuposPrueba` se quitó el 29 ago 2026. Las cuatro fechas de clase
+     de prueba viven AHORA en la base, en programas.ajustes.slots, que es
+     lo que lee el panel y lo que Denisse edita desde Ajustes. Tenerlas
+     también acá era pedir que un día se contradigan, y a seis días de la
+     primera clase esa contradicción se paga cara.
+     Si hace falta verlas: panel → Ajustes → Clases de prueba. */
 
-     ⚠️ TODAVÍA NO LOS USA NADIE. Están acá para no perderlos. Su lugar
-     natural es el panel: hoy el campo de fecha es escritura libre, y esa
-     es la causa probable del bug que reportó Denisse (agendó 7:30 a.m. y
-     después aparecía 3:08 p.m. — la hora en que estaba agendando). Con
-     cuatro opciones fijas ese error deja de ser posible.
-
-     Verificado que los cuatro días caen como dice: 4 y 11 de septiembre
-     son viernes, 5 y 12 son sábados. */
-  cuposPrueba: [
-    { inicioISO: '2026-09-04T07:30:00-06:00', etiqueta: 'Viernes 4 de septiembre · 7:30 a.m.' },
-    { inicioISO: '2026-09-05T09:30:00-06:00', etiqueta: 'Sábado 5 de septiembre · 9:30 a.m.'  },
-    { inicioISO: '2026-09-11T07:30:00-06:00', etiqueta: 'Viernes 11 de septiembre · 7:30 a.m.' },
-    { inicioISO: '2026-09-12T09:30:00-06:00', etiqueta: 'Sábado 12 de septiembre · 9:30 a.m.'  }
-  ],
 
   /* ── Clase de prueba ──
      Lo que se muestra en la página de confirmación.
