@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=2636d5b0">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=786f6110">
 </head>
 
 <body>
@@ -1371,7 +1371,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
   <div class="btn-row" id="cierreAcciones"></div>
 </div>
 
-<script src="/config.js?v=881bb8eb"></script>
+<script src="/config.js?v=32bb9003"></script>
 <script src="/assets/js/thrive.js?v=81c007a6"></script>
 <script>
 (function(){
@@ -1491,7 +1491,15 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     },
     {
       id:'compromiso', tipo:'unica',
-      titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés comprometerte con ese horario del 16 de septiembre al 15 de diciembre?',
+      /* El titular nombra la fecha de arranque, y cada grupo arranca un día
+         distinto: 3X el 16 de septiembre, 2X el 17. Se reescribe al mostrar
+         la pregunta —para entonces ya se contestó la 13— con `segunGrupo`.
+         El `titulo` de acá es el que se ve si todavía no eligió grupo. */
+      titulo:'Si después de tu clase sentís que THRIVE es para vos, ¿podés sostener este horario durante el primer ciclo, hasta el 15 de diciembre?',
+      segunGrupo:{
+        '2X':'¿Podés sostener este horario durante el primer ciclo, del 17 de septiembre al 15 de diciembre?',
+        '3X':'¿Podés sostener este horario durante el primer ciclo, del 16 de septiembre al 15 de diciembre?'
+      },
       opciones:[
         'Sí.',
         'Tengo algo que quisiera conversar antes.',
@@ -1953,6 +1961,15 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     elCount.textContent = p.tipo === 'parte' ? ''
       : (PARTES[p.n].nombre + ' · ' + p.en + ' de ' + p.de);
     pintarTramos(p);
+    /* Preguntas cuyo texto depende de una respuesta anterior. Se reescribe al
+       MOSTRARLA y no al construirla: cuando se arma el formulario, la respuesta
+       que decide todavía no existe. Si vuelve atrás y cambia de grupo, al pasar
+       de nuevo por acá el titular ya dice la fecha nueva. */
+    if(p.tipo === 'q' && p.q.segunGrupo){
+      var g = /^THRIVE (2X|3X)/.exec(resp.grupo || '');
+      var h1 = elSteps.children[n].querySelector('.q-title');
+      if(h1) h1.textContent = (g && p.q.segunGrupo[g[1]]) || p.q.titulo;
+    }
     elBack.hidden = (n === 0);
     refrescarBoton(n);
     var f = elSteps.children[n].querySelector('.field');

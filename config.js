@@ -58,6 +58,25 @@ window.THRIVE = {
      que ya no están. Eso es lo que se quiere. */
   referidas: [],
 
+  /* ── Los cupos de clase de prueba ──
+     Denisse los dio el 29 ago 2026. Son CUATRO, no dos, y con dos horarios
+     distintos — reemplaza lo que se había hablado de «dos días».
+
+     ⚠️ TODAVÍA NO LOS USA NADIE. Están acá para no perderlos. Su lugar
+     natural es el panel: hoy el campo de fecha es escritura libre, y esa
+     es la causa probable del bug que reportó Denisse (agendó 7:30 a.m. y
+     después aparecía 3:08 p.m. — la hora en que estaba agendando). Con
+     cuatro opciones fijas ese error deja de ser posible.
+
+     Verificado que los cuatro días caen como dice: 4 y 11 de septiembre
+     son viernes, 5 y 12 son sábados. */
+  cuposPrueba: [
+    { inicioISO: '2026-09-04T07:30:00-06:00', etiqueta: 'Viernes 4 de septiembre · 7:30 a.m.' },
+    { inicioISO: '2026-09-05T09:30:00-06:00', etiqueta: 'Sábado 5 de septiembre · 9:30 a.m.'  },
+    { inicioISO: '2026-09-11T07:30:00-06:00', etiqueta: 'Viernes 11 de septiembre · 7:30 a.m.' },
+    { inicioISO: '2026-09-12T09:30:00-06:00', etiqueta: 'Sábado 12 de septiembre · 9:30 a.m.'  }
+  ],
+
   /* ── Clase de prueba ──
      Lo que se muestra en la página de confirmación.
      ⚠️ PENDIENTE — la FECHA de la clase de prueba sigue siendo de relleno. */
@@ -83,7 +102,18 @@ window.THRIVE = {
        Denisse y no un homónimo porque el teléfono de la ficha (8891-2039)
        es el mismo WhatsApp del sitio. */
     direccion: 'Av. Los Próceres, Tegucigalpa 11101, Francisco Morazán',
-    mapa: 'https://www.google.com/maps/place/Healing+Through+Movement+by+Denisse+Suazo/@14.1024003,-87.1808674,17z',
+    /* ⚠️ Cambiado el 29 ago 2026: Denisse reportó que el link abría Google
+       Maps pero no marcaba la ubicación. El anterior era una URL de tipo
+       /place/ con nombre y coordenadas pero SIN identificador del lugar, y
+       cuando el nombre no calza exacto Google cae al mapa centrado, sin pin.
+
+       Este usa la API de búsqueda con las coordenadas: cae un pin exacto,
+       siempre, sin depender de que Google reconozca el nombre.
+
+       Lo que se pierde: no abre la ficha del negocio con reseñas y horarios.
+       Para eso hace falta el link de «Compartir» de la ficha de Denisse en
+       Google Maps, que lo tiene que sacar ella de su cuenta. */
+    mapa: 'https://www.google.com/maps/search/?api=1&query=14.1024003%2C-87.1808674',
     /* Lo que va en el campo 'ubicación' de Google Calendar. Tiene que ser
        geocodificable: nombre del negocio + dirección, sin separadores
        decorativos. Si se arma juntando 'lugar' y 'direccion' sale la

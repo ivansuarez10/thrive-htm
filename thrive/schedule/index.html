@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=2636d5b0">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=786f6110">
 </head>
 
 <body class="pag-pase">
@@ -73,7 +73,7 @@
     <dl class="datos">
       <div class="dato">
         <dt>Dónde</dt>
-        <dd><b id="lugar">—</b><span class="sub">Estudio privado, con parqueo</span><a class="mapa" id="mapa" href="#" target="_blank" rel="noopener" hidden>Abrir en Maps →</a></dd>
+        <dd><b id="lugar">—</b><span class="sub">Studio privado, con parqueo</span><a class="mapa" id="mapa" href="#" target="_blank" rel="noopener" hidden>Abrir en Maps →</a></dd>
       </div>
       <div class="dato">
         <dt>Llegá</dt>
@@ -86,6 +86,14 @@
       <div class="dato">
         <dt>Llevá</dt>
         <dd id="llevar">—</dd>
+      </div>
+      <!-- La política de cancelación va ACÁ y no antes de reservar. Pedido de
+           Denisse (29 ago 2026), con su razón: no quiere lo administrativo
+           como protagonista mientras alguien todavía decide si pide la clase.
+           Después de reservar sí, junto al resto de lo práctico. -->
+      <div class="dato">
+        <dt>Si no podés</dt>
+        <dd>Avisame con al menos <b>12 horas de anticipación</b> para poder ofrecerle el espacio a otra persona.</dd>
       </div>
     </dl>
 
@@ -103,7 +111,7 @@
 
 </article>
 
-<script src="/config.js?v=881bb8eb"></script>
+<script src="/config.js?v=32bb9003"></script>
 <script src="/assets/js/thrive.js?v=81c007a6"></script>
 <script>
 (function(){
@@ -265,6 +273,21 @@
       'SUMMARY:' + esc(titulo),
       'LOCATION:' + esc(lugarCal),
       'DESCRIPTION:' + esc(detalle),
+      /* Dos recordatorios, pedido de Denisse (29 ago 2026). Antes el .ics no
+         llevaba ninguno: el aviso de 30 minutos que ella veía lo pone Google
+         Calendar por su cuenta, no nosotros. Con estos dos, el aviso es el
+         mismo en cualquier calendario en vez de depender de la configuración
+         de cada quien. */
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      'TRIGGER:-P1D',
+      'DESCRIPTION:' + esc('Mañana es tu clase de prueba en THRIVE'),
+      'END:VALARM',
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      'TRIGGER:-PT1H',
+      'DESCRIPTION:' + esc('En una hora es tu clase de prueba en THRIVE'),
+      'END:VALARM',
       'END:VEVENT',
       'END:VCALENDAR'
     ].map(doblar).join('\r\n') + '\r\n';

@@ -707,6 +707,15 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
 .plan .pn{font-family:var(--mono); font-size:0.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-deep);}
 /* Esto se LEE, no es un rótulo: 0.86rem daban 13.8 px en el teléfono. */
 .plan .days{font-family:var(--mono); font-size:0.94rem; color:var(--ink-2);}
+/* Cada grupo arranca un día distinto —3X el 16, 2X el 17— y esa diferencia
+   vivía en una línea general que decía una sola fecha. Va en la tarjeta,
+   que es donde se decide. Subordinada al horario: es un dato de calendario,
+   no un argumento de venta. */
+.plan .arranca{
+  display:block; margin-top:6px;
+  font-family:var(--mono); font-size:0.66rem; letter-spacing:.06em;
+  color:var(--ink-2);
+}
 .plan .price{display:flex; align-items:baseline; gap:8px; margin-top:8px;}
 .plan .price b{
   font-family:var(--display); font-weight:600; font-size:2.6rem; line-height:1;
@@ -755,6 +764,48 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
   padding:clamp(60px,10vh,110px) clamp(22px,6vw,40px) clamp(40px,6vh,64px);
 }
 .portada-in{display:flex; flex-direction:column; align-items:center;}
+
+/* ── la portada, en el teléfono ──
+   Pedido de Denisse, 29 ago 2026: en el teléfono el contenido tardaba
+   demasiado en aparecer y daba sensación de página todavía cargando. El
+   sello caía a 240 px del borde en una pantalla de 812.
+
+   Se tocan DOS cosas y no una:
+   · el relleno de arriba baja de 10vh a 7vh
+   · el alto deja de ser la pantalla entera y pasa a 86svh
+
+   Lo segundo importa más que lo primero, y no es solo por subir el
+   contenido: con la portada un poco más corta, la sección siguiente ASOMA
+   por abajo. Eso es lo que de verdad quita la sensación de que no cargó —
+   se ve que hay algo más, no hay que suponerlo. Es el mismo recurso que ya
+   usa el hero con el video.
+
+   Ella pidió expresamente que el diseño siga respirando, así que el
+   contenido sube unos 70 px y nada más. En escritorio no cambia nada. */
+@media (max-width:899px){
+  .portada{
+    /* 92svh y no 86: con 86 asomaban ~126 px, y la sección siguiente tiene
+       63 px de relleno con su primer texto a 117 px del tope — o sea que se
+       colaban unos píxeles de titular CORTADO POR LA MITAD. Eso no se lee
+       como «hay más abajo», se lee como que algo se rompió.
+
+       La regla es: lo que asoma tiene que quedar POR DEBAJO de donde empieza
+       el texto de la sección siguiente. A 92svh asoman unos 65 px de fondo
+       limpio, que dicen que la página continúa sin mostrar media palabra.
+
+       ⚠️ Y por eso NO es un porcentaje. Con 92svh el asomo bajaba junto con
+       la pantalla —53 px en una de 667— pero el relleno de .abre tiene PISO
+       (`clamp(46px, 7vh, 86px)`), así que en pantallas cortas deja de
+       encogerse y el margen se comía: quedaban 11 px. Un asomo fijo de 40 px
+       está siempre por debajo de esos 46 de piso, en cualquier teléfono.
+
+       La invariante, para quien toque esto: el asomo tiene que ser menor que
+       el relleno superior mínimo de .abre. Si ese piso baja, este número
+       baja con él. */
+    min-height:calc(100svh - 40px);
+    padding-top:clamp(44px,7vh,80px);
+  }
+}
 
 /* ── el sello, el mismo de diecisiete caminos del formulario ──
    Entra letra por letra al cargar, con los keyframes que ya existen
@@ -896,12 +947,25 @@ body::after{
 .terms{
   margin-top:clamp(30px,5vw,44px); padding:clamp(20px,4vw,26px) clamp(18px,4vw,30px);
   background:var(--sand); border:1px solid var(--line-soft); border-radius:16px;
-  display:flex; flex-direction:column; gap:11px; text-align:center;
+  /* A la izquierda y no centrado (Ivan, 29 ago 2026): centradas, las tres
+     líneas arrancan en x distintas y hay que buscar dónde empieza cada una.
+     Alineadas, se barren como lista. */
+  display:flex; flex-direction:column; gap:11px; text-align:left;
 }
-.terms p{font-family:var(--mono); font-size:0.78rem; color:var(--ink-2); line-height:1.5;}
-/* Lo que va después del punto medio es el DATO; lo de antes es el rótulo.
-   El dato en tinta, el rótulo en gris: se lee el valor de un vistazo. */
-.terms p span{color:var(--ink); font-weight:500;}
+/* Invertido el 29 ago 2026, por Ivan. Antes el peso iba en lo que sigue al
+   punto medio; ahora va en lo que lo precede.
+
+   El motivo: leídas en columna, las tres líneas son tema + detalle
+   —«Compromiso inicial de 3 meses · pago mensual»—, y lo que uno busca al
+   barrer es el tema. Con el peso adelante y alineadas a la izquierda, los
+   tres temas quedan uno debajo del otro en el mismo punto de arranque.
+
+   Antes el argumento era el contrario: que el dato importa más que el
+   rótulo. Vale para «Primer período · hasta el 15 de diciembre», donde lo
+   de adelante sí es un rótulo; no vale para las otras dos, donde lo de
+   adelante es el hecho y lo de atrás la aclaración. */
+.terms p{font-family:var(--mono); font-size:0.78rem; color:var(--ink); font-weight:500; line-height:1.5;}
+.terms p span{color:var(--ink-2); font-weight:400;}
 
 /* ── sección oscura ── */
 .dark{background:var(--ink); color:var(--linen);}
