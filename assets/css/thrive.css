@@ -1793,15 +1793,22 @@ textarea.field{min-height:130px;}
        A 16vw da 64, que es lo que la palabra necesita para sostener una
        pantalla entera. En escritorio el techo no cambia. */
     font-size:clamp(3.2rem,16vw,6.4rem); line-height:1;
-    letter-spacing:.2em; text-indent:.2em;        /* el indent compensa el tracking del final */
-    animation:asienta 1600ms var(--ease) .35s both;
+    letter-spacing:.02em; text-indent:.02em;      /* el indent compensa el tracking */
   }
-  /* Un logotipo en minúscula no aguanta el tracking que aguantaban las
-     mayúsculas: se asienta en .02em y no en .14em. */
-  @keyframes asienta{
-    from{letter-spacing:.2em; text-indent:.2em;}
-    to  {letter-spacing:.02em; text-indent:.02em;}
-  }
+  /* ⚠️ Acá había una animación —`asienta`— que cerraba el tracking de .2em
+     a .02em en 1600 ms. Se quitó el 31 ago 2026: a Denisse se le caían
+     letras del logotipo. Se veía «t r ve», «t riv», «hrive».
+
+     letter-spacing y text-indent son propiedades de MAQUETACIÓN: cada
+     cuadro obliga a recolocar cada glifo y a redibujar la palabra entera.
+     Mientras eso pasaba, sus seis letras corrían cada una su animación de
+     opacidad y desplazamiento, y las 17 del sello la suya con desenfoque.
+     Son ~27 animaciones a la vez, y la ÚNICA que forzaba maquetación era
+     justo la de la palabra a la que se le caían las letras.
+
+     La entrada no se pierde: las letras siguen subiendo una por una. Lo
+     que se fue es una segunda idea encima de esa, que competía con ella
+     y era la cara. */
   .abre-word i{
     display:inline-block; font-style:normal;
     opacity:0; transform:translateY(.42em);
