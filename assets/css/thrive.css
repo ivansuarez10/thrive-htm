@@ -540,18 +540,23 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    midió y va a correr. Sin clase, se ven. Es la misma red que body.dosvias.
    Regla dura del proyecto: nadie ve una sección en blanco. */
 .metodo-riel .cap{opacity:1; filter:none;}
-body.capacidades-vivas .metodo-riel .cap{opacity:0; filter:blur(3px);}
-body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
+/* Se les suma un desplazamiento al aparecer: con el video a 594 px, sólo
+   opacidad y desenfoque era un cambio demasiado tímido para notarse.
+   (Ivan, 31 ago 2026.) Funciona en las dos orientaciones porque .cap son
+   items de un flex y eso los vuelve bloques — un <span> suelto ignora
+   transform. */
+body.capacidades-vivas .metodo-riel .cap{opacity:0; filter:blur(3px); transform:translateY(12px);}
+body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0); transform:none;}
 .metodo-riel .cap{
   font-family:var(--mono); font-size:0.63rem; letter-spacing:.26em;
   text-transform:uppercase; color:var(--ink-2);
-  transition:opacity 620ms var(--ease), filter 620ms var(--ease);
+  transition:opacity 620ms var(--ease), filter 620ms var(--ease), transform 620ms var(--ease);
 }
 .metodo-riel .cap:not(:last-child)::after{content:'·'; color:var(--teal-deep); margin:0 .5em 0 .35em;}
 
 /* Quien pidió menos movimiento las ve todas, quietas, desde el principio. */
 @media (prefers-reduced-motion: reduce){
-  .metodo-riel .cap{opacity:1 !important; filter:none !important; transition:none !important;}
+  .metodo-riel .cap{opacity:1 !important; filter:none !important; transform:none !important; transition:none !important;}
 }
 
 /* En una sola columna no hay margen donde poner un riel vertical, y la
@@ -574,6 +579,15 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0);}
      cuando iba suelto a todo el ancho. Dentro de la columna sí lo hay — y es
      el lado que quedaba vacío al costado de un video vertical.
      Pedido de Ivan, 29 ago 2026. Baja de 900 se vuelve a acostar solo. */
+  /* 0.95rem y no 0.63: al lado de un video de 594 px, las cuatro palabras
+     a tamaño de rótulo desaparecían. El interletrado baja de .26 a .2
+     porque a mayor cuerpo esa separación ya no hace falta para que se
+     lean como etiqueta. */
+  .metodo-copy .metodo-riel .cap{font-size:0.95rem; letter-spacing:.2em;}
+  /* El párrafo es el ÚNICO texto de la sección y competía con la imagen
+     desde 1.02rem. (Ivan, 31 ago 2026: «el texto pierde protagonismo».) */
+  .metodo-copy .fact{font-size:1.24rem; line-height:1.55;}
+
   .metodo-copy .metodo-riel{
     flex-direction:column;
     /* Centradas respecto al párrafo de arriba, no pegadas al margen: el
