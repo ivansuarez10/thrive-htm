@@ -1211,7 +1211,10 @@ footer p{font-size:0.85rem;}
 .form-top{padding:26px 0 0; display:flex; align-items:center; justify-content:space-between; gap:16px;}
 .form-top .back{
   font-family:var(--mono); font-size:0.72rem; letter-spacing:.06em; color:var(--ink-2);
-  padding:8px 0; cursor:pointer;
+  /* 44 px de zona de toque sin moverse de su sitio: el relleno crece y el
+     margen negativo lo compensa. Es el control secundario más usado del
+     formulario y medía 53×34. (Auditoría 30 ago 2026.) */
+  padding:13px 14px; margin:-13px -14px; cursor:pointer;
 }
 /* Excepción deliberada al [hidden] global de arriba: el botón de
    atrás se apaga pero sigue ocupando su lugar, o el encabezado del
@@ -1428,11 +1431,13 @@ textarea.field{min-height:130px;}
 .dato dd{margin:0; font-size:0.92rem; color:var(--ink-2); line-height:1.5; text-wrap:pretty;}
 .dato dd b{color:var(--ink); font-weight:700;}
 .dato dd .sub{display:block;}
-.mapa{display:inline-block; margin-top:6px; font-family:var(--mono); font-size:0.68rem; letter-spacing:.03em; color:var(--teal-deep); border-bottom:1px solid var(--line);}
+/* Mismo truco que el back del formulario: zona de toque de 44 px sin
+   mover el enlace. Medían 103×17 y 219×24. (Auditoría 30 ago 2026.) */
+.mapa{display:inline-block; margin-top:6px; padding:13px 10px; margin-inline:-10px; margin-bottom:-13px; font-family:var(--mono); font-size:0.68rem; letter-spacing:.03em; color:var(--teal-deep); border-bottom:1px solid var(--line);}
 .mapa:hover{border-bottom-color:var(--teal-deep);}
 
 .pase-cola{padding:30px 26px 40px; text-align:center;}
-.salida{display:block; width:fit-content; margin:0 auto; font-size:0.88rem; color:var(--ink-2); border-bottom:1px solid transparent; transition:color 300ms var(--ease), border-color 300ms var(--ease);}
+.salida{display:block; width:fit-content; margin:0 auto; padding:10px 12px; margin-bottom:-10px; font-size:0.88rem; color:var(--ink-2); border-bottom:1px solid transparent; transition:color 300ms var(--ease), border-color 300ms var(--ease);}
 .salida:hover{color:var(--ink); border-bottom-color:var(--line);}
 /* Firma centrada: marca, lema, persona. 64 px es el mínimo al que el
    anillo de letras deja de ser una mancha y se lee. */

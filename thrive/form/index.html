@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=1b23a47d">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=5d447c7e">
 </head>
 
 <body>
@@ -1359,7 +1359,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
   <div class="form-top">
     <button class="back" id="back" type="button" hidden>← atrás</button>
-    <span class="count" id="count"></span>
+    <span class="count" id="count" aria-live="polite"></span>
   </div>
   <div class="tramos" id="tramos" aria-hidden="true"></div>
 
@@ -2012,6 +2012,10 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       var cons = document.createElement('button');
       cons.type = 'button';
       cons.className = 'consent';
+      /* aria-checked sólo significa algo en un role que pueda marcarse.
+         En un <button> pelado el lector anuncia «botón» y se calla el
+         estado: la persona no sabe si ya consintió. (Auditoría 30 ago.) */
+      cons.setAttribute('role','checkbox');
       cons.setAttribute('aria-checked','false');
       var cm = document.createElement('span'); cm.className = 'mark';
       cons.appendChild(cm);
@@ -2037,6 +2041,10 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     foot.appendChild(next);
     var err = document.createElement('p');
     err.className = 'err';
+    /* role=alert: cuando el texto cambia, el lector de pantalla lo lee de
+       inmediato. Sin esto, quien no ve la pantalla toca «Siguiente», nada
+       avanza, y nadie le dice por qué. (Auditoría 30 ago 2026.) */
+    err.setAttribute('role', 'alert');
     foot.appendChild(err);
     step.appendChild(foot);
 
@@ -2121,6 +2129,14 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     refrescarBoton(n);
     var f = elSteps.children[n].querySelector('.field');
     if(f) setTimeout(function(){ f.focus(); }, 120);
+    else {
+      /* En los pasos de opciones el foco se quedaba en <body>: quien navega
+         con teclado o lector tenía que recorrer la página desde cero en
+         CADA pregunta. Se enfoca el titular —no la primera opción, que se
+         leería como «ya hay una elegida»—. (Auditoría 30 ago 2026.) */
+      var t = elSteps.children[n].querySelector('.q-title, h2');
+      if(t){ t.setAttribute('tabindex','-1'); setTimeout(function(){ t.focus({preventScroll:true}); }, 120); }
+    }
     try{ scrollTo({top:0, behavior:'smooth'}); }catch(e){ scrollTo(0,0); }
   }
 
