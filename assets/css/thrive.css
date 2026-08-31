@@ -1147,6 +1147,35 @@ body::after{
 .terms p{font-family:var(--mono); font-size:0.78rem; color:var(--ink); font-weight:500; line-height:1.5;}
 .terms p span{color:var(--ink-2); font-weight:400;}
 
+/* ── el studio ──
+   Pedido de Denisse (30 ago 2026): «el espacio físico también es parte
+   importante de la experiencia», y que se vea un poco más — sin agregar
+   explicación. Antes era el tercer renglón de la caja de condiciones, con
+   la misma tipografía mono de «compromiso inicial de 3 meses». Una
+   dirección no es una condición de contratación, y ahí se leía como tal.
+
+   Se le da presencia con jerarquía, no con adorno: el título en la
+   display del sitio y la dirección en cuerpo. Sin caja ni borde — la de
+   condiciones ya tiene una, y dos cajas seguidas compiten. */
+.studio{margin-top:clamp(26px,4vw,38px); text-align:left;}
+.studio h3{
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(1.12rem,2.6vw,1.4rem); line-height:1.25; letter-spacing:-0.015em;
+  color:var(--ink); margin:0; text-wrap:balance; max-width:22ch;
+}
+.studio .donde{
+  font-family:var(--sans); font-size:1rem; color:var(--ink); font-weight:600;
+  margin:clamp(10px,1.6vw,14px) 0 0;
+}
+.studio .detalle{
+  font-family:var(--mono); font-size:0.75rem; letter-spacing:.06em;
+  color:var(--ink-2); margin:6px 0 0;
+}
+/* La fecha de cierre venía justo debajo, a la misma distancia que separa
+   las líneas DENTRO del studio, y se leía como un cuarto renglón de la
+   dirección. Son dos cosas distintas: dónde queda y hasta cuándo hay lugar. */
+.studio + .cierre-fecha{margin-top:clamp(26px,4vw,38px);}
+
 /* ── sección oscura ── */
 .dark{background:var(--ink); color:var(--linen);}
 .dark .kick{color:var(--clay);}
