@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="/assets/img/hero.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=07e33f99">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=bbeae1fd">
 </head>
 
 <body>
@@ -1442,7 +1442,12 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
 <!-- ══════════ MÉTODO ══════════ -->
 <section data-ground="linen">
-  <div class="wrap">
+  <!-- `wide` y no `wrap`: la sección es la del VIDEO, y en un contenedor de
+       760 px el video quedaba en 380 — un 26 % de una pantalla de 1440, o sea
+       una miniatura al lado de mucho papel. Pedido de Ivan, 31 ago 2026:
+       que tenga protagonismo. En 1080 el video pasa a ~600.
+       El titular sigue centrado sobre esta caja, así que también se ensancha. -->
+  <div class="wide">
     <h2 class="h2 up">¿Cómo entrenamos?</h2>
 
     <div class="metodo-grid">
@@ -1506,7 +1511,15 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
          sello al 35 % del alto, la repisa asomando abajo.
          Al reloj LED rojo del rincón se le pasó `delogo` y se recortaron las
          últimas filas: en escritorio la banda lo cortaba, pero en teléfono
-         entraba, y un LED rojo en un cuadro de azules jala el ojo. -->
+         entraba, y un LED rojo en un cuadro de azules jala el ojo.
+
+         31 ago, segunda pasada (Ivan: «se ve torcida»). Se midió el eje del
+         pilar de la chimenea buscando sus dos bordes por luminancia: estaba a
+         -1.06° y el pilar converge hacia abajo, o sea que era perspectiva y no
+         sólo giro. Girada -1.05° el eje queda en 0.00°.
+         Y el borde izquierdo traía 133 px de la pared BLANCA de al lado: el
+         recorte arranca después de ella y se centra en el eje del pilar, así
+         que la chimenea queda exactamente al medio (desvío medido: 0 px). -->
   <!-- Sin lema, por pedido de Denisse (29 ago 2026): quiere la foto del
        estudio limpia y pasar directo a «Tu experiencia THRIVE incluye».
 

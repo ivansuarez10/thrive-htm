@@ -1660,7 +1660,17 @@ textarea.field{min-height:130px;}
      que a este cuerpo son unos 37 caracteres por renglón: angosto pero
      legible. Bajar más de ahí ya rompe la lectura de tres párrafos. */
   .metodo-grid{
-    display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+    display:grid;
+    /* 1.15 / 1 y no 1.1 / 0.9. El video es el contenido de esta sección y
+       tenía que pesar más que su pie de texto: en `wrap` medía 380 px, un
+       26 % de una pantalla de 1440. (Ivan, 31 ago 2026: «se ve muy pequeño».)
+
+       ⚠️ El límite lo pone el ALTO, no el ancho. El video es 3:4 vertical,
+       así que cada píxel de ancho cuesta 1.33 de alto: con 1.5/1 llegaba a
+       667×889, más alto que la pantalla de una laptop. Y recortarlo no era
+       salida — en el cuadro la mujer ya ocupa de la cabeza a los pies.
+       1.15/1 lo deja en ~594×792: entra en pantalla y sigue mandando. */
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
     column-gap:clamp(32px,3.4vw,56px);
     /* Era `start`, y el texto —tres o cuatro líneas— quedaba pegado
        arriba contra una foto vertical que mide el triple. El resultado
