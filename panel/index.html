@@ -2649,10 +2649,25 @@ body{background:var(--sand);}
     VUELTA = deshacer;
     document.getElementById('vueltaQue').textContent = texto;
     var d = document.getElementById('vueltaDeshacer');
-    d.disabled = false; d.textContent = 'Deshacer';
+    d.disabled = false; d.textContent = 'Deshacer'; d.hidden = false;
     bar.hidden = false;
     clearTimeout(VUELTA_RELOJ);
     VUELTA_RELOJ = setTimeout(cerrarVuelta, 14000);
+  }
+
+  /* Lo mismo, pero SIN «Deshacer»: para lo que de verdad no se puede
+     deshacer. Ofrecer un botón que no va a funcionar es peor que no
+     ofrecerlo — la persona lo toca creyendo que recupera algo. */
+  function avisar(texto){
+    var bar = document.getElementById('vuelta');
+    if(!bar) return;
+    VUELTA = null;
+    document.getElementById('vueltaQue').textContent = texto;
+    var d = document.getElementById('vueltaDeshacer');
+    if(d) d.hidden = true;
+    bar.hidden = false;
+    clearTimeout(VUELTA_RELOJ);
+    VUELTA_RELOJ = setTimeout(cerrarVuelta, 9000);
   }
 
   (function(){
@@ -4115,6 +4130,11 @@ body{background:var(--sand);}
           '<button class="mini" type="button" data-baja="' + esc(cl.id) + '" data-a="' + (cl.activa ? '0' : '1') +
             '" data-quien="' + esc(cl.nombre) + '">' +
             (cl.activa ? 'Mover a Former' : 'Reactivar') + '</button>' +
+          /* Borrar de verdad. La base decide si se puede: sólo clientas y
+             sólo sin historial. Acá no se filtra nada a mano — un botón se
+             puede saltar, la función de la base no. */
+          '<button class="mini" type="button" data-borrar="' + esc(cl.id) + '"' +
+            ' data-quien="' + esc(cl.nombre) + '">Borrar</button>' +
         '</span>' +
       '</div>';
     }
@@ -4145,7 +4165,53 @@ body{background:var(--sand);}
         return r;
       });
     }
-    cont.querySelectorAll('[data-baja]').forEach(function(b){
+    /* ⚠️ Borrar SÍ borra: no hay «Deshacer» y por eso no se ofrece.
+     Ivan levantó la regla dura para este caso puntual el 31 ago 2026,
+     porque once clientas de prueba estaban ensuciando Former —que
+     significa ex-clienta, no papelera—. Los tres candados siguen
+     puestos y viven en la base, no acá:
+       · sólo personas con es_clienta
+       · sólo sin inscripciones, eventos ni pagos
+       · la función pide sesión; con la clave pública no se puede */
+  cont.querySelectorAll('[data-borrar]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var id    = b.getAttribute('data-borrar');
+      var quien = b.getAttribute('data-quien') || 'esta clienta';
+      confirmar(b, function(){
+        b.disabled = true; b.textContent = 'Un momento…';
+        /* ⚠️ Todo dentro de una promesa CON .catch. Sin él, si la llamada
+           falla —red caída, función sin instalar— el botón se queda en
+           «Un momento…», deshabilitado y mudo, y no hay forma de salir de
+           ahí más que recargar. Se cazó probándolo en el banco. */
+        function revivir(mensaje){
+          if(b.isConnected){ b.disabled = false; b.textContent = 'Borrar'; }
+          avisar(mensaje);
+        }
+        Promise.resolve()
+          .then(function(){ return sb.rpc('borrar_clienta', { p_id: id }); })
+          .then(function(r){
+            if(r && r.error){
+              /* El mensaje viene de la base y ya está en español: dice si
+                 fue por historial y qué hacer en su lugar. */
+              revivir(r.error.hint || r.error.message || 'No se pudo borrar.');
+              return;
+            }
+            return cargarClientas().then(pintarClientas).then(function(){
+              avisar(quien + ' se borró. Esto no se puede deshacer.');
+            });
+          })
+          .catch(function(e){
+            revivir('No se pudo borrar a ' + quien + '. ' +
+                    ((e && e.message) ? e.message : 'Probá de nuevo.'));
+          });
+      });
+      /* La pregunta nombra a quién: con varias filas en pantalla, un
+         «Sí, borrar» pelado no dice cuál. */
+      if(b.classList.contains('confirmando')) b.textContent = '¿Borrar a ' + quien + '?';
+    });
+  });
+
+  cont.querySelectorAll('[data-baja]').forEach(function(b){
       b.addEventListener('click', function(){
         var id    = b.getAttribute('data-baja');
         var haciaActiva = b.getAttribute('data-a') === '1';
