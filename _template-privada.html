@@ -42,11 +42,15 @@
 
     <p class="body inv-entrada up">
       Estoy abriendo un nuevo espacio de entrenamiento en Healing Through Movement
-      y, si estás acá, es porque te conozco o ya hemos trabajado juntas y pensé
-      que THRIVE podría hacer sentido para vos.
+      y quise compartirlo con vos personalmente.
     </p>
 
-    <p class="inv-lema up"><em>Strength for the life you want to keep living.</em></p>
+    <!-- Denisse, 1 sep 2026: «quiero que tenga más peso visual. Ahorita se
+         siente como una frase secundaria/decorativa y quiero que se sienta
+         como una de las ideas centrales de THRIVE.»
+         Sube de pie de página a titular: es lo único de esta portada que
+         dice qué promete el programa. -->
+    <p class="inv-lema mayor up"><em>Strength for the life you want to keep living.</em></p>
     <!-- Acá iba un botón «Ver THRIVE», que estaba en la estructura de
          Denisse. Ivan lo quitó el 29 ago 2026: la portada ya invita a
          bajar con su «seguí bajando», y poner un botón que solo hace
@@ -81,34 +85,18 @@
   </div>
 </section>
 
-<!-- ══════════ 3 · ¿POR QUÉ PENSÉ EN VOS? ══════════
-     La ÚNICA sección que cambia según el tipo de invitación. Se elige con
-     ?v= en el link que manda Denisse:
-       ?v=former    → ya entrenó con ella
-       (sin ?v)     → la conoce personalmente, pero nunca entrenaron juntas
-     El resto de la página es idéntico en los dos casos. -->
-<section data-ground="sand">
-  <div class="wrap">
-    <h2 class="h2 up">¿Por qué pensé <em>en vos</em>?</h2>
+<!-- ══════════ 3 · ¿POR QUÉ PENSÉ EN VOS? — RETIRADA ══════════
+     Denisse, 1 sep 2026: «no necesitamos explicar o justificar por qué
+     recibió la invitación. Ya queda claro desde el inicio que es una
+     invitación personal.»
 
-    <div class="inv-porque" data-porque="former" hidden>
-      <p class="body up">Porque ya hemos trabajado juntas y conozco de primera mano de lo que sos capaz.</p>
-      <p class="body up">Sé lo que pasa cuando tenés estructura, acompañamiento y un espacio para dedicarte a vos. Y creo que estás en un punto donde podés seguir construyendo con más autonomía, sin dejar de sentirte acompañada.</p>
-      <p class="body up">THRIVE nació para crear justamente ese espacio: entrenar fuerza con intención, progresar con coaching y seguir construyendo confianza en todo lo que tu cuerpo puede hacer.</p>
-      <p class="body inv-remate up"><b>Por eso, cuando pensé en las primeras mujeres a quienes quería invitar, pensé en vos.</b></p>
-    </div>
-
-    <div class="inv-porque" data-porque="personal" hidden>
-      <!-- Eran cuatro párrafos. Denisse quitó los dos del medio el 30 ago
-           2026: decían lo mismo que la sección de abajo y alargaban el
-           único bloque que tiene que sonar a carta, no a folleto.
-           ⚠️ La variante «former» sigue con cuatro: ella sólo mandó el
-           texto de ésta. Preguntar antes de recortar la otra. -->
-      <p class="body up">Si te mandé esta invitación, es porque hay algo que conozco de vos —de lo que buscás, de la etapa en la que estás o de las cosas que son importantes para vos— que me hizo pensar que THRIVE podría hacer sentido para vos.</p>
-      <p class="body inv-remate up"><b>Por eso quise compartirlo con vos personalmente.</b></p>
-    </div>
-  </div>
-</section>
+     Era la ÚNICA sección que cambiaba según ?v= (former / personal), y con
+     ella se va esa bifurcación: hoy las dos variantes del link muestran
+     exactamente la misma página. `?v=former` sigue funcionando y sigue
+     siendo un link válido —el panel lo genera— pero ya no cambia nada de
+     lo que se lee. Si algún día vuelve a hacer falta un texto distinto por
+     tipo de invitación, el mecanismo que lo elegía está en el historial de
+     este archivo, no hay que reinventarlo. -->
 
 {{QUE_RECIBIS}}
 
@@ -117,15 +105,15 @@
 <!-- ══════════ 6 · CTA / SIGUIENTE PASO ══════════ -->
 <section class="dark" data-ground="ink">
   <div class="wrap">
-    <h2 class="h2 up">Si sentís que esto puede ser <em>para vos</em>, decime.</h2>
+    <h2 class="h2 up">¿Sentís que THRIVE puede ser <em>para vos</em>?</h2>
 
     <p class="body up">
       Como llegaste por invitación personal, <b>no necesitás reservar una clase de
       prueba para dar el siguiente paso.</b>
     </p>
     <p class="body up">
-      Contame cuál grupo te interesa y revisamos juntas si THRIVE es el lugar
-      correcto para comenzar.
+      Contame cuál grupo te interesa y platicamos para ver cuál sería el mejor
+      siguiente paso para vos.
     </p>
 
     <div class="cta-wrap up">
@@ -152,28 +140,5 @@
 
 <script src="/config.js"></script>
 <script src="/assets/js/thrive.js"></script>
-<script>
-(function(){
-  'use strict';
-  /* Las dos versiones de «¿Por qué pensé en vos?» viven las dos en la
-     página y se enciende una. Se hace acá y no en el servidor porque el
-     sitio es estático: generar dos archivos duplicaría todo lo demás para
-     cambiar cuatro párrafos.
-
-     Sin ?v= gana la personal: es el caso más amplio —alguien que Denisse
-     conoce— y la que menos supone. Decirle «ya hemos trabajado juntas» a
-     quien nunca entrenó con ella sería un error mucho más caro que el
-     contrario. */
-  var cual = 'personal';
-  try{
-    if(new URLSearchParams(location.search).get('v') === 'former') cual = 'former';
-  }catch(e){}
-
-  var bloques = document.querySelectorAll('[data-porque]');
-  for(var i = 0; i < bloques.length; i++){
-    bloques[i].hidden = (bloques[i].getAttribute('data-porque') !== cual);
-  }
-})();
-</script>
 </body>
 </html>

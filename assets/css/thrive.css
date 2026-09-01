@@ -2009,19 +2009,37 @@ textarea.field{min-height:130px;}
   font-size:clamp(1.15rem,3.4vw,1.55rem); line-height:1.35;
   color:var(--ink-2); max-width:24ch;
 }
+
+/* ── el lema deja de ser un pie ──
+   Denisse, 1 sep 2026: «se siente como una frase secundaria/decorativa y
+   quiero que se sienta como una de las ideas centrales de THRIVE».
+   Sube a tamaño de titular y a color de tinta plena. Sigue en Bodoni
+   itálica —la regla de la marca es que el serif nunca encabeza, sólo
+   acompaña— así que no compite con el h1: pesa por tamaño y por contraste,
+   no por cambiar de familia. Y se le da aire arriba: era lo último de un
+   párrafo y ahora es su propio momento. */
+.inv-lema.mayor{
+  margin-top:clamp(30px,5.5vw,46px);
+  /* ⚠️ El primer intento fue clamp(1.6rem,5.4vw,2.5rem), que es el MISMO
+     mínimo y máximo que `.h2` —el titular de esta portada—: a 375 los dos
+     medían 26 px y en el medio del rango el lema era más grande. Pesar no
+     es destronar al titular. Esto lo deja en 0.78× del h1 en todo el
+     rango: 20 px contra 26 en teléfono, 31 contra 40 en escritorio. */
+  font-size:clamp(1.25rem,3.6vw,1.95rem);
+  line-height:1.22; letter-spacing:-0.008em;
+  color:var(--ink); max-width:18ch;
+  text-wrap:balance;
+}
 .inv-hero .cta-wrap{margin-top:clamp(30px,5vw,44px);}
 
-/* Los párrafos del «por qué pensé en vos» son una carta, no una lista:
-   se leen seguidos y con medida corta. */
-/* El titular va centrado sobre la caja entera (820 px) y los párrafos se
-   cortan a 58 caracteres (582) alineados a la izquierda: sin `auto` el texto
-   se apoya en el borde izquierdo y su centro óptico queda 79 px a la
-   izquierda del titular. Son dos ejes, y eso es lo que se siente raro aunque
-   no se sepa nombrar. Centrando la COLUMNA —no el texto— los dos coinciden y
-   los párrafos se siguen leyendo alineados. Lo notó Ivan el 29 ago 2026. */
-.inv-porque .body{max-width:58ch; margin-inline:auto;}
-.inv-porque .body + .body{margin-top:clamp(14px,2.2vw,20px);}
-.inv-remate{margin-top:clamp(20px,3vw,28px);}
+/* ⚠️ Acá vivía el estilo de «¿Por qué pensé en vos?», que Denisse retiró
+   el 1 sep 2026. Se va con la sección para no dejar CSS que apunta a
+   nada. Lo que valía la pena guardar de ese bloque es la regla general
+   que salió de él, y que sigue aplicando a cualquier sección nueva:
+   un titular centrado sobre una caja ancha con párrafos cortados a 58ch
+   alineados a la izquierda deja los dos ejes descuadrados —se midieron
+   79 px de desvío—. Se centra la COLUMNA con `margin-inline:auto`, no el
+   texto. Lo notó Ivan el 29 ago 2026. */
 
 /* ═══════════════════════════════════════════════════════════
    EL CIERRE DEL FORMULARIO · a pantalla completa

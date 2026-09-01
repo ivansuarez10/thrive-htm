@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=d3a1f1ed">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=6c59099d">
 </head>
 
 <body>
@@ -2276,8 +2276,8 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
      29 ago 2026. */
   var CIERRE_DIRECTA = {
     titulo: 'Listo',
-    t1: 'Ya me llegó. Voy a revisar tus respuestas y te escribo personalmente para que platiquemos y definamos si THRIVE hace sentido para vos y cuál grupo sería el mejor fit.',
-    t2: '<b>No necesitás agendar nada por ahora.</b>',
+    t1: 'Ya me llegó. Voy a revisar tus respuestas y te escribo personalmente para que platiquemos y veamos cuál sería el mejor siguiente paso para vos.',
+    t2: 'Si querés conocer la experiencia antes de decidir, también podemos coordinar una clase de prueba.<br><br><b>No necesitás agendar nada por ahora.</b>',
     firma: '<strong>Denisse</strong>'
   };
 
@@ -2393,6 +2393,19 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       });
       cont.appendChild(re);
     }
+
+    /* ⚠️ En invitación directa y con la fila ya guardada, NO va botón.
+       Denisse, 1 sep 2026: pidió quitar «Coordinar mi clase de prueba por
+       WhatsApp» porque contradice que en esta ruta la clase no es
+       obligatoria. El cierre ya dice que ella escribe, así que un botón
+       acá sólo le pediría a la persona que haga algo que no tiene que
+       hacer.
+
+       Si FALLÓ, el botón se queda pase lo que pase: ahí no es una
+       invitación a coordinar nada, es la única salida que le queda a
+       alguien cuyas respuestas no entraron. Quitarlo en el error sería
+       dejarla sin puerta. */
+    if(ok && MODO === 'directa') return;
 
     var a = document.createElement('a');
     a.className = ok ? 'cta wa' : 'cta wa secundario';
