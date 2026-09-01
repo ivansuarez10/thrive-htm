@@ -266,6 +266,19 @@ body{background:var(--sand);}
    entrada del formulario; con esto es el embudo completo. */
 .pn-alta{margin-top:22px; display:flex; justify-content:flex-start; align-items:center; gap:12px; flex-wrap:wrap;}
 
+/* ── la fila de los tres links ──
+   El rótulo va aparte y no dentro de cada botón: «Copiar link de
+   invitación general / personal / …» serían tres botones larguísimos que
+   repiten cinco palabras. Dicho una vez, los tres caben en un renglón. */
+.inv-links{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.inv-rotulo{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.06em;
+  color:var(--ink-2); margin-right:2px;
+}
+@media (max-width:560px){
+  .inv-rotulo{flex:1 0 100%; margin:0 0 2px;}
+}
+
 /* ── las páginas de la lista ──
    Con 17 fichas la lista medía 2.402 px en un teléfono. Cortarla en
    páginas la deja en una pantalla y media, y de paso el botón del link
@@ -327,7 +340,11 @@ body{background:var(--sand);}
 }
 .pn-copiar{
   flex:none; font:inherit; font-family:var(--mono); font-size:.68rem; letter-spacing:.08em;
-  text-transform:uppercase; cursor:pointer; padding:9px 15px; border-radius:999px;
+  /* 13px y no 9: con 9 medían 37 px de alto y el mínimo de toque es 44.
+     Denisse usa esto con el pulgar, y en Invitadas ahora son tres
+     seguidos. Sus vecinos de la fila de clientas ya eran más altos,
+     así que además alinea mejor. (Auditoría 1 sep 2026.) */
+  text-transform:uppercase; cursor:pointer; padding:13px 15px; border-radius:999px;
   border:1px solid var(--line); background:var(--linen); color:var(--ink-2);
   transition:color 200ms var(--ease), border-color 200ms var(--ease), transform 260ms var(--ease);
 }
@@ -1276,7 +1293,20 @@ body{background:var(--sand);}
              pantallas de teléfono con 17 fichas— para encontrarlo. -->
         <div class="pn-alta">
           <button class="pn-btn chico" type="button" id="btnAlta" aria-expanded="false" aria-controls="cajaAlta">Agregar a alguien</button>
-          <button class="pn-copiar" type="button" id="btnInvitacion">Copiar link de invitación</button>
+          <!-- ⚠️ 1 sep 2026. THRIVE tiene TRES landings de invitación y hasta
+               hoy sólo una era alcanzable desde el panel. Las otras dos estaban
+               en vivo, con el texto que escribió Denisse, pero había que teclear
+               la dirección de memoria — y ese «?v=former» no lo recuerda nadie.
+               Se nombran por A QUIÉN se le manda, no por su URL. -->
+          <span class="inv-links">
+            <span class="inv-rotulo">Copiar link de invitación:</span>
+            <button class="pn-copiar" type="button" id="btnInvitacion"
+              data-link="/thrive/" data-que="general">General</button>
+            <button class="pn-copiar" type="button"
+              data-link="/thrive/invitacion/" data-que="personal">Personal</button>
+            <button class="pn-copiar" type="button"
+              data-link="/thrive/invitacion/?v=former" data-que="former">Ya entrenó conmigo</button>
+          </span>
         </div>
 
         <div class="pn-caja" id="cajaAlta" hidden>
@@ -3655,46 +3685,51 @@ body{background:var(--sand);}
      recomendó lo captura la pregunta 3 del cuestionario, así que no hace
      falta una landing horneada por clienta. */
   (function(){
-    var b = document.getElementById('btnInvitacion');
-    if(!b) return;
-    var link = BASE + '/thrive/';
+    var caja = document.getElementById('cajaAlta');
+    var fila = document.querySelector('.inv-links');
+    if(!fila) return;
 
-    /* ═══ el círculo se cierra acá ═══
-       Denisse, 1 sep 2026: «¿cómo sé a quién se lo mandé? tendría que
-       tener un listado, lo tengo en el cuaderno». El listado ya existía
-       —es el estado «Invitada»— pero había que acordarse de agregarla
-       después, en otra pantalla, y por eso terminaba en el cuaderno.
-       Ahora el panel pregunta en el único momento en que ella tiene la
-       respuesta: justo después de copiar el link. Es el mismo principio
-       de la barra de vuelta, y reusa el alta a mano tal cual: no hay un
-       camino nuevo de escritura que pueda fallar distinto. */
-    function pedirNombre(){
+    /* Los tres se nombran por a quién se le manda, no por su dirección.
+       El «general» es el que ya existía; los otros dos son las variantes
+       de la landing de invitación directa, que hasta hoy no tenían puerta
+       desde acá. */
+    var COMO = {
+      general:  'Link copiado.',
+      personal: 'Link copiado — el de invitación personal, para alguien que conocés.',
+      former:   'Link copiado — el de quien ya entrenó con vos.'
+    };
+
+    function pedirNombre(que){
       abrirAlta(true);
-      var caja = document.getElementById('cajaAlta');
       var tit = caja.querySelector('h2');
       var ayuda = caja.querySelector('.ayuda');
       if(tit) tit.textContent = '¿A quién se lo vas a mandar?';
-      if(ayuda) ayuda.innerHTML = 'Link copiado. Anotala acá y queda como <b>invitada</b>, ' +
-        'para que después sepas a quién le escribiste. Si preferís no anotar a nadie, tocá Cancelar.';
+      if(ayuda) ayuda.innerHTML = (COMO[que] || COMO.general) +
+        ' Anotala acá y queda como <b>invitada</b>, para que después sepas a quién le ' +
+        'escribiste. Si preferís no anotar a nadie, tocá Cancelar.';
       var n = document.getElementById('aNombre');
       if(n) n.focus();
     }
 
-    b.addEventListener('click', function(){
-      copiar(link).then(function(){
-        b.textContent = 'Copiado';
-        b.classList.add('listo');
-        setTimeout(function(){ b.textContent = 'Copiar link de invitación'; b.classList.remove('listo'); }, 2200);
-        pedirNombre();
-      }).catch(function(){
-        /* Sin portapapeles el link se muestra para copiarlo a mano.
-           ⚠️ Se pregunta IGUAL: el primer intento decía que no, con el
-           razonamiento de que «todavía no lo mandó». Es falso — copiarlo
-           a mano y mandarlo es exactamente el mismo acto, y justo en el
-           caso donde algo ya salió mal era donde se perdía el registro. */
-        b.textContent = link;
-        setTimeout(function(){ b.textContent = 'Copiar link de invitación'; }, 4000);
-        pedirNombre();
+    fila.querySelectorAll('[data-link]').forEach(function(b){
+      var etiqueta = b.textContent;
+      var link = BASE + b.getAttribute('data-link');
+      var que = b.getAttribute('data-que');
+      b.addEventListener('click', function(){
+        copiar(link).then(function(){
+          b.textContent = 'Copiado';
+          b.classList.add('listo');
+          setTimeout(function(){ b.textContent = etiqueta; b.classList.remove('listo'); }, 2200);
+          pedirNombre(que);
+        }).catch(function(){
+          /* Sin portapapeles el link se muestra para copiarlo a mano, y se
+             pregunta IGUAL: copiarlo a mano y mandarlo es el mismo acto, y
+             en el camino donde algo ya salió mal es donde más se perdía el
+             registro. */
+          b.textContent = link;
+          setTimeout(function(){ b.textContent = etiqueta; }, 4000);
+          pedirNombre(que);
+        });
       });
     });
   })();
