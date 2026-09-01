@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=27d5950d">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=15af313e">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -265,6 +265,35 @@ body{background:var(--sand);}
    pero no había forma de escribirlos. Sin esto el panel es la bandeja de
    entrada del formulario; con esto es el embudo completo. */
 .pn-alta{margin-top:22px; display:flex; justify-content:flex-start; align-items:center; gap:12px; flex-wrap:wrap;}
+
+/* ── las páginas de la lista ──
+   Con 17 fichas la lista medía 2.402 px en un teléfono. Cortarla en
+   páginas la deja en una pantalla y media, y de paso el botón del link
+   y el de agregar quedan siempre a la vista. La página vive en memoria
+   y NO en la URL: es una lista que se filtra y se busca, y volver a
+   ella por un link con página 4 mostraría otra cosa. */
+.pn-paginas{
+  margin-top:18px; display:flex; align-items:center; gap:6px;
+  flex-wrap:wrap; justify-content:center;
+}
+.pn-paginas button{
+  font:inherit; font-size:.88rem; cursor:pointer;
+  min-width:38px; height:38px; padding:0 11px;
+  background:var(--linen); color:var(--ink-2);
+  border:1px solid var(--line); border-radius:999px;
+}
+.pn-paginas button:hover:not(:disabled){border-color:var(--ink); color:var(--ink);}
+.pn-paginas button[aria-current="true"]{
+  background:var(--ink); color:var(--white); border-color:var(--ink); font-weight:600;
+}
+.pn-paginas button:disabled{opacity:.38; cursor:default;}
+.pn-paginas .de{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.06em;
+  color:var(--ink-2); margin-left:6px;
+}
+@media (max-width:520px){
+  .pn-paginas .de{width:100%; text-align:center; margin:6px 0 0;}
+}
 .pn-btn.chico{width:auto; margin-top:0; padding:12px 22px; font-size:.9rem;}
 .pn-caja{
   margin-top:14px; background:var(--white); border-radius:16px;
@@ -549,6 +578,12 @@ body{background:var(--sand);}
 }
 .cl-fila + .cl-fila{margin-top:10px;}
 .cl-fila .cl-quien{flex:1 1 200px; min-width:0;}
+.cl-fila .cl-mandada{
+  display:block; margin-top:5px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.06em;
+  color:var(--teal-deep);
+}
+.cl-fila .cl-mandada.sin{color:var(--ink-2); opacity:.72;}
 .cl-fila .cl-quien b{display:block; font-family:var(--display); font-weight:600; font-size:1.06rem; letter-spacing:-.01em;}
 .cl-fila .cl-quien code{
   display:block; font-family:var(--mono); font-size:.66rem; color:var(--ink-2);
@@ -1234,8 +1269,11 @@ body{background:var(--sand);}
           </div>
         </div>
 
-        <div class="pn-lista" id="lista"></div>
-
+        <!-- ⚠️ 1 sep 2026: este bloque SUBIÓ. Vivía después de la lista
+             porque «agregar a alguien» era la acción menos frecuente. Dejó
+             de serlo: ahora es como Denisse anota a quién le mandó el link,
+             y enterrado bajo la lista había que bajar 2.261 px —2,8
+             pantallas de teléfono con 17 fichas— para encontrarlo. -->
         <div class="pn-alta">
           <button class="pn-btn chico" type="button" id="btnAlta" aria-expanded="false" aria-controls="cajaAlta">Agregar a alguien</button>
           <button class="pn-copiar" type="button" id="btnInvitacion">Copiar link de invitación</button>
@@ -1255,6 +1293,9 @@ body{background:var(--sand);}
             <span class="guardado" id="aAviso" role="status"></span>
           </div>
         </div>
+        <div class="pn-lista" id="lista"></div>
+        <nav class="pn-paginas" id="paginas" hidden aria-label="Páginas de la lista"></nav>
+
       </section>
 
       <!-- ══════ CLIENTAS ══════ -->
@@ -2067,7 +2108,7 @@ body{background:var(--sand);}
     /* Los filtros son del programa que se deja atrás: sus estados no
        existen en el que entra, y el disparador de la base lo rechazaría
        igual. Se limpian antes de repintar. */
-    filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = '';
+    filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; pagina = 1;
     var b = document.getElementById('buscar'); if(b) b.value = '';
     datos = [];
     /* Traer la gente del programa nuevo es un viaje de red. Sin esto, el
@@ -2852,6 +2893,10 @@ body{background:var(--sand);}
 
   (function(){
     function repintar(){
+      /* Filtrar desde la página 4 mostraría una lista vacía: el filtro
+         nuevo casi nunca tiene cuatro páginas. Se vuelve al principio.
+         «Limpiar» también entra por acá, así que no necesita el suyo. */
+      pagina = 1;
       pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
     }
     document.getElementById('selEstado').addEventListener('change', function(){
@@ -2891,6 +2936,46 @@ body{background:var(--sand);}
     return v;
   }
 
+  /* ═══ las páginas ═══
+     POR_PAGINA sale de una medición, no de un gusto: con 17 fichas la
+     lista medía 2.402 px en un teléfono de 812. Doce dejan la lista en
+     una pantalla y media, que es lo que se recorre sin perder el hilo. */
+  var POR_PAGINA = 12;
+  var pagina = 1;
+
+  function pintarPaginas(total){
+    var nav = document.getElementById('paginas');
+    if(!nav) return;
+    var paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+    /* Una sola página no es una elección: no se dibuja nada. */
+    if(paginas < 2){ nav.hidden = true; nav.innerHTML = ''; return; }
+
+    var h = '<button type="button" data-p="' + (pagina - 1) + '"' +
+            (pagina === 1 ? ' disabled' : '') + ' aria-label="Página anterior">‹</button>';
+    for(var i = 1; i <= paginas; i++){
+      h += '<button type="button" data-p="' + i + '"' +
+           (i === pagina ? ' aria-current="true"' : '') + '>' + i + '</button>';
+    }
+    h += '<button type="button" data-p="' + (pagina + 1) + '"' +
+         (pagina === paginas ? ' disabled' : '') + ' aria-label="Página siguiente">›</button>';
+
+    var desde = (pagina - 1) * POR_PAGINA + 1;
+    var hasta = Math.min(total, pagina * POR_PAGINA);
+    h += '<span class="de">' + desde + '–' + hasta + ' de ' + total + '</span>';
+
+    nav.innerHTML = h;
+    nav.hidden = false;
+    nav.querySelectorAll('[data-p]').forEach(function(b){
+      b.addEventListener('click', function(){
+        pagina = parseInt(b.getAttribute('data-p'), 10);
+        pintarLista();
+        /* Al cambiar de página el ojo tiene que volver arriba de la
+           lista, no quedarse donde estaba el botón que tocó. */
+        document.getElementById('lista').scrollIntoView({ block:'start', behavior:'smooth' });
+      });
+    });
+  }
+
   function pintarLista(){
     var cont = document.getElementById('lista');
     var v = visibles();
@@ -2898,6 +2983,8 @@ body{background:var(--sand);}
     if(elC) elC.textContent = datos.length ? (v.length === datos.length ? datos.length : v.length + ' de ' + datos.length) : '';
 
     if(!v.length){
+      var navV = document.getElementById('paginas');
+      if(navV){ navV.hidden = true; navV.innerHTML = ''; }
       cont.innerHTML = '<div class="pn-vacio">' + (
         busqueda ? 'Ninguna con ese nombre.'
         : (fEdad || fHorario) ? 'Ninguna cumple con esos filtros.'
@@ -2909,7 +2996,15 @@ body{background:var(--sand);}
       return;
     }
 
-    cont.innerHTML = v.map(function(c){
+    /* Filtrar puede dejar menos páginas de las que había: sin esto se
+       queda en la 4 de una lista que ahora tiene 2 y no muestra nada. */
+    var paginas = Math.max(1, Math.ceil(v.length / POR_PAGINA));
+    if(pagina > paginas) pagina = paginas;
+    if(pagina < 1) pagina = 1;
+    pintarPaginas(v.length);
+    var enPagina = v.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
+
+    cont.innerHTML = enPagina.map(function(c){
       var cuando = new Date(c.creada_en).toLocaleDateString('es-HN',
                     { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
       var linea2 = [cuando];
@@ -2941,6 +3036,7 @@ body{background:var(--sand);}
 
   document.getElementById('buscar').addEventListener('input', function(){
     busqueda = this.value.trim();
+    pagina = 1;
     pintarLista(); pintarLimpiar();
   });
 
@@ -3562,14 +3658,43 @@ body{background:var(--sand);}
     var b = document.getElementById('btnInvitacion');
     if(!b) return;
     var link = BASE + '/thrive/';
+
+    /* ═══ el círculo se cierra acá ═══
+       Denisse, 1 sep 2026: «¿cómo sé a quién se lo mandé? tendría que
+       tener un listado, lo tengo en el cuaderno». El listado ya existía
+       —es el estado «Invitada»— pero había que acordarse de agregarla
+       después, en otra pantalla, y por eso terminaba en el cuaderno.
+       Ahora el panel pregunta en el único momento en que ella tiene la
+       respuesta: justo después de copiar el link. Es el mismo principio
+       de la barra de vuelta, y reusa el alta a mano tal cual: no hay un
+       camino nuevo de escritura que pueda fallar distinto. */
+    function pedirNombre(){
+      abrirAlta(true);
+      var caja = document.getElementById('cajaAlta');
+      var tit = caja.querySelector('h2');
+      var ayuda = caja.querySelector('.ayuda');
+      if(tit) tit.textContent = '¿A quién se lo vas a mandar?';
+      if(ayuda) ayuda.innerHTML = 'Link copiado. Anotala acá y queda como <b>invitada</b>, ' +
+        'para que después sepas a quién le escribiste. Si preferís no anotar a nadie, tocá Cancelar.';
+      var n = document.getElementById('aNombre');
+      if(n) n.focus();
+    }
+
     b.addEventListener('click', function(){
       copiar(link).then(function(){
         b.textContent = 'Copiado';
         b.classList.add('listo');
         setTimeout(function(){ b.textContent = 'Copiar link de invitación'; b.classList.remove('listo'); }, 2200);
+        pedirNombre();
       }).catch(function(){
+        /* Sin portapapeles el link se muestra para copiarlo a mano.
+           ⚠️ Se pregunta IGUAL: el primer intento decía que no, con el
+           razonamiento de que «todavía no lo mandó». Es falso — copiarlo
+           a mano y mandarlo es exactamente el mismo acto, y justo en el
+           caso donde algo ya salió mal era donde se perdía el registro. */
         b.textContent = link;
         setTimeout(function(){ b.textContent = 'Copiar link de invitación'; }, 4000);
+        pedirNombre();
       });
     });
   })();
@@ -4119,9 +4244,15 @@ body{background:var(--sand);}
        former también puede recomendar a alguien. */
     function fila(cl){
       var url = linkDe(cl);
+      var mandada = INVITACIONES[cl.id];
+      var sello = mandada
+        ? '<span class="cl-mandada">Invitación enviada ' +
+            (mandada === true ? 'hace un tiempo' : hace(diasDesde(mandada))) + '</span>'
+        : '<span class="cl-mandada sin">Todavía no le mandaste la invitación</span>';
+
       return '<div class="cl-fila' + (cl.activa ? '' : ' baja') + '">' +
         '<span class="cl-quien"><b>' + esc(cl.nombre) + '</b>' +
-          '<code>' + esc(url) + '</code></span>' +
+          '<code>' + esc(url) + '</code>' + sello + '</span>' +
         '<span class="cl-hacer">' +
           '<button class="pn-copiar" type="button" data-copiar="' + esc(url) + '">Copiar link</button>' +
           (telE164(cl)
@@ -4161,7 +4292,7 @@ body{background:var(--sand);}
        dura del CLAUDE.md — el historial es el producto. */
     function marcarActiva(id, v){
       return sb.from('personas').update({ activa: v }).eq('id', id).then(function(r){
-        if(!r.error) return cargarClientas().then(pintarClientas).then(function(){ return r; });
+        if(!r.error) return cargarClientas().then(cargarInvitaciones).then(pintarClientas).then(function(){ return r; });
         return r;
       });
     }
@@ -4196,7 +4327,7 @@ body{background:var(--sand);}
               revivir(r.error.hint || r.error.message || 'No se pudo borrar.');
               return;
             }
-            return cargarClientas().then(pintarClientas).then(function(){
+            return cargarClientas().then(cargarInvitaciones).then(pintarClientas).then(function(){
               avisar(quien + ' se borró. Esto no se puede deshacer.');
             });
           })
@@ -4270,7 +4401,7 @@ body{background:var(--sand);}
           '<b>' + (i + 1) + ' · ' + esc(m.que) + '</b>' +
           '<p>' + esc(m.texto) + '</p>' +
           (i === 0 && tel
-            ? '<a class="wa" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(m.texto) +
+            ? '<a class="wa" data-mande="' + esc(cl.id) + '" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(m.texto) +
               '" target="_blank" rel="noopener">' + ICONO_WA + 'Abrir su WhatsApp con este</a>'
             : '<button class="pn-copiar" type="button" data-copiar="' + esc(m.texto) + '">Copiar</button>') +
         '</div>';
@@ -4284,11 +4415,56 @@ body{background:var(--sand);}
         });
       });
     });
+    /* ═══ queda anotado que le mandaste la invitación ═══
+       Se anota al ABRIR su WhatsApp, no al cerrar la hoja: ése es el
+       único gesto que significa «se lo estoy mandando». Puede haber un
+       falso positivo —abrir y arrepentirse— y se prefiere a la
+       alternativa, que es no saber nunca a quién ya le pediste.
+       El evento va sin `inscripcion_id`: una clienta no está inscrita
+       en el embudo, y esa columna es nulable justamente para esto. */
+    elHojaCaja.querySelectorAll('[data-mande]').forEach(function(a){
+      a.addEventListener('click', function(){
+        var id = a.getAttribute('data-mande');
+        var quien = (clientas.filter(function(x){ return x.id === id; })[0] || {}).nombre || '';
+        sb.from('eventos').insert({
+          persona_id: id,
+          tipo: 'mensaje',
+          detalle: 'Le mandaste la invitación de THRIVE para que la reparta',
+          meta: { via: 'whatsapp', que: 'invitacion_clienta' }
+        }).then(function(r){
+          if(r && r.error){ console.warn('no se pudo anotar la invitación:', r.error.message); return; }
+          cargarInvitaciones().then(pintarClientas);
+        });
+      });
+    });
+
     elHojaCaja.querySelectorAll('[data-cerrar-hoja]').forEach(function(b){
       b.addEventListener('click', cerrarHoja);
     });
     elHoja.hidden = false;
     document.body.style.overflow = 'hidden';
+  }
+
+  /* Cuándo se le mandó la invitación a cada clienta, para que la fila lo
+     diga sin abrir nada. Se lee del hilo, que es donde ya vive. */
+  var INVITACIONES = {};
+  function cargarInvitaciones(){
+    return sb.from('eventos').select('persona_id, creado_en, meta')
+      .eq('tipo', 'mensaje')
+      .order('creado_en', { ascending: false })
+      .then(function(r){
+        if(r.error){ console.warn('invitaciones:', r.error.message); return; }
+        INVITACIONES = {};
+        (r.data || []).forEach(function(e){
+          if(e.meta && e.meta.que === 'invitacion_clienta' && !INVITACIONES[e.persona_id]){
+            /* Si algún día llegara un evento sin fecha, que la fila diga
+               «se la mandaste» y no «todavía no»: el hecho es cierto y la
+               fecha es el adorno. Mentir en la otra dirección la haría
+               mandar la invitación dos veces. */
+            INVITACIONES[e.persona_id] = e.creado_en || true;
+          }
+        });
+      });
   }
 
   (function(){
@@ -4322,7 +4498,7 @@ body{background:var(--sand);}
         if(r.error){ avi.textContent = 'No se pudo agregar: ' + r.error.message; return; }
         ['clNombre','clTel'].forEach(function(i){ document.getElementById(i).value = ''; });
         abrir(false);
-        cargarClientas().then(pintarClientas);
+        cargarClientas().then(cargarInvitaciones).then(pintarClientas);
       });
     });
   })();
@@ -4684,7 +4860,22 @@ body{background:var(--sand);}
   var elBtnAlta = document.getElementById('btnAlta');
   var elAviso = document.getElementById('aAviso');
 
+  /* El encabezado de esta caja lo reescribe «Copiar link de invitación»
+     para preguntar a quién se lo mandó. Se guarda el original la primera
+     vez y se restaura SIEMPRE al abrir: si no, el texto de la pregunta
+     quedaba pegado y «Agregar a alguien» abría una caja que hablaba de
+     un link que nadie copió. */
+  var ALTA_TIT = null, ALTA_AYUDA = null;
   function abrirAlta(abrir){
+    var caja = document.getElementById('cajaAlta');
+    var tit = caja.querySelector('h2');
+    var ayuda = caja.querySelector('.ayuda');
+    if(ALTA_TIT === null && tit) ALTA_TIT = tit.textContent;
+    if(ALTA_AYUDA === null && ayuda) ALTA_AYUDA = ayuda.innerHTML;
+    if(abrir){
+      if(tit && ALTA_TIT !== null) tit.textContent = ALTA_TIT;
+      if(ayuda && ALTA_AYUDA !== null) ayuda.innerHTML = ALTA_AYUDA;
+    }
     elAlta.hidden = !abrir;
     elBtnAlta.setAttribute('aria-expanded', String(abrir));
     elBtnAlta.hidden = abrir;

@@ -487,6 +487,34 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
 .cta-fine{display:block; margin-top:14px; font-family:var(--mono); font-size:0.7rem; letter-spacing:.09em; color:var(--ink-2);}
 .cta-wrap{margin-top:clamp(34px,6vw,48px);}
 
+/* ── la salida lateral, antes del formulario ──
+   Pedido de Denisse, 1 sep 2026: quien tenga una pregunta no debería
+   tener que buscar cómo escribirle ni abandonar la página a medias.
+   Va DEBAJO del CTA y con menos peso A PROPÓSITO — ella fue explícita
+   en que WhatsApp no sustituye al formulario ni pesa lo mismo. Por eso
+   el botón es `secundario` (de línea, no lleno): una sola acción llena
+   por pantalla.
+   ⚠️ Y acá el glifo de WhatsApp SÍ va. El CLAUDE.md dice que se quitó
+   del CTA principal el 27 ago porque ese botón dejó de abrir WhatsApp:
+   el glifo prometía una app y abría otra cosa. Éste sí la abre, así que
+   el glifo es lo que cumple la promesa, no lo que la rompe. */
+.cta-alterna{
+  margin-top:clamp(30px,5.5vw,42px);
+  padding-top:clamp(24px,4.5vw,32px);
+  border-top:1px solid var(--line-soft);
+  max-width:38ch;
+}
+.cta-alterna p{margin:0 0 18px; font-size:0.95rem; line-height:1.55; color:var(--ink-2);}
+.cta-alterna p b{font-weight:600; color:var(--ink);}
+.cta-alterna .cta{font-size:0.88rem; padding:12px 22px; gap:9px;}
+.cta-alterna .cta svg{width:17px; height:17px;}
+
+/* Los dos cierres son secciones oscuras, así que sin esto la línea y el
+   texto quedan invisibles sobre tinta. */
+.dark .cta-alterna{border-top-color:rgba(244,243,241,.16);}
+.dark .cta-alterna p{color:rgba(243,239,233,.66);}
+.dark .cta-alterna p b{color:var(--sand);}
+
 /* ═══ landing ═══ */
 .hero{padding-top:clamp(52px,11vw,80px); padding-bottom:clamp(56px,10vw,96px);}
 .hero .brandline{margin-top:20px; display:flex; flex-direction:column; gap:3px;}

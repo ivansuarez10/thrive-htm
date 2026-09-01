@@ -58,10 +58,21 @@
     return 'Hola, Denisse! Recibí una invitación a THRIVE' + de +
            ' y me interesa probar la opción ' + plan + '.';
   }
+  /* El botón de «tengo una pregunta» que Denisse pidió el 1 sep 2026 va
+     con SU propio mensaje. Con el genérico ella recibiría «me gustaría
+     probar una clase» de alguien que en realidad todavía está dudando,
+     y contestaría la conversación equivocada. */
+  function textoPregunta() {
+    var de = referida ? ' de parte de ' + referida : '';
+    return 'Hola, Denisse! Estoy viendo la información de THRIVE' + de +
+           ' y me surgió una pregunta antes de llenar el formulario.';
+  }
 
   document.querySelectorAll('[data-wa]').forEach(function (a) {
     var plan = a.getAttribute('data-wa-plan');
-    var texto = plan ? textoPlan(plan) : (a.getAttribute('data-wa-text') || '');
+    var texto = a.hasAttribute('data-wa-pregunta') ? textoPregunta()
+              : plan ? textoPlan(plan)
+              : (a.getAttribute('data-wa-text') || '');
     a.href = linkWhatsApp(texto);
     a.target = '_blank';
     a.rel = 'noopener';
