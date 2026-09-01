@@ -1332,16 +1332,22 @@ footer p{font-size:0.85rem;}
 /* Campo de una línea: nombre, quién refirió. */
 input.field.corta{min-height:0; padding:15px 18px;}
 
-/* Se despliega cuando marca un "Sí" en las de salud. */
-.detalle{margin-top:14px;}
-.detalle textarea.field{min-height:104px;}
+/* Se despliega cuando marca un "Sí" en las de salud.
+   ⚠️ Va acotado a `.step` a propósito. Sin eso el selector alcanzaba
+   también a `.studio .detalle` —la línea de la dirección de LAS DOS
+   landings, que se llama igual— y le corría la animación de apertura
+   del formulario al cargar la página. Hoy termina en opacidad 1 y no se
+   nota, pero cualquiera que le agregue `forwards` a `abre` hace
+   desaparecer la dirección en silencio. (Auditoría 1 sep 2026.) */
+.step .detalle{margin-top:14px;}
+.step .detalle textarea.field{min-height:104px;}
 @media (prefers-reduced-motion:no-preference){
-  .detalle:not([hidden]){animation:abre 420ms var(--ease);}
+  .step .detalle:not([hidden]){animation:abre 420ms var(--ease);}
   /* §7 · sale por donde entró. Sin esto se corta de un cuadro al otro y
      se lee como una falla de la página en vez de una decisión.
      240 ms y no 420 a propósito: el avance de pregunta llega a los 260,
      así que el cierre tiene que haber terminado antes. */
-  .detalle.yendo{animation:cierra 240ms var(--ease) forwards;}
+  .step .detalle.yendo{animation:cierra 240ms var(--ease) forwards;}
 }
 @keyframes abre{
   from{opacity:0; transform:translateY(-6px);}
@@ -1468,6 +1474,17 @@ textarea.field{min-height:130px;}
   transition:color 240ms var(--ease), border-color 240ms var(--ease);
 }
 .alterna:hover{color:var(--ink); border-bottom-color:var(--ink-3);}
+
+/* Medía 167×18: la mitad del mínimo de 44 px, y es un link que se toca
+   con el pulgar. Sus dos vecinos —«Abrir en Maps» y «¿Te surgió algo?»—
+   se arreglaron el 30 ago con relleno, pero eso acá empujaría el
+   subrayado 13 px debajo del texto. La zona se extiende con un
+   pseudo-elemento, que no toca la maquetación ni mueve la línea. */
+.alterna{position:relative;}
+.alterna::after{
+  content:''; position:absolute; left:-12px; right:-12px;
+  top:50%; transform:translateY(-50%); height:44px;
+}
 
 /* La perforación. Las dos muescas se comen el borde de la tarjeta y el
    sello cae en el centro del troquel, como el lacre que lo cierra. */
