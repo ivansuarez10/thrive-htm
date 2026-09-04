@@ -134,22 +134,123 @@ begin
   v_asunto := 'Nueva solicitud ' || coalesce(v_prog.nombre, new.programa_id) ||
               ' — ' || coalesce(v_persona.nombre, 'sin nombre');
 
+  /* ══ El correo ══
+     Rehecho el 3 sep 2026. El primero era una tarjeta blanca flotando
+     sobre gris, con rótulos en versalitas y un botón píldora — o sea el
+     lenguaje de una notificación de SaaS. Ivan: «que no parezca de chat
+     gpt».
+
+     THRIVE es lo contrario, y está escrito en el CLAUDE.md: «el resto
+     del sitio no levanta nada del papel — son líneas finas, aire y
+     tipografía». Acá tampoco: sin sombra, sin tarjeta, sin caja
+     redondeada. Lo que separa son reglas de un píxel.
+
+     Y el hilo de la marca es el serif en itálica, que NUNCA encabeza y
+     sólo acompaña. Bodoni en el sitio; acá Georgia, que está en todos
+     los clientes y es lo bastante Didone para sostener el gesto.
+
+     ⚠️ El maquetado es de correo, no de web: tablas, estilos en línea,
+     sin tipografías web. El <style> sólo lleva el modo oscuro y el
+     ancho de teléfono — Apple Mail los respeta, que es donde Denisse
+     lo abre; donde no, ya se ve bien con lo que trae en línea.
+     La copia del original queda en 05-exploracion/aviso-correo.html
+     para poder verla sin mandar un correo. */
   v_html :=
-    '<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.6;color:#1E1D1A;max-width:520px">' ||
-    '<h2 style="font-size:20px;margin:0 0 4px">' || coalesce(v_persona.nombre, 'Sin nombre') || '</h2>' ||
-    '<p style="margin:0 0 18px;color:#56524A">' || coalesce(v_prog.nombre, new.programa_id) ||
-      ' · ' || v_grupo ||
-      coalesce(' · la invitó ' || nullif(btrim(new.referida_por), ''), '') || '</p>' ||
-    coalesce(nullif(v_alerta, ''),
-             '') ||
+    '<!doctype html><html lang="es"><head><meta charset="utf-8">' ||
+    '<meta name="color-scheme" content="light dark">' ||
+    '<meta name="supported-color-schemes" content="light dark"><style>' ||
+    '@media (prefers-color-scheme:dark){' ||
+      '.papel{background:#141312!important}.tinta{color:#F1EEE9!important}' ||
+      '.tinta2{color:#B3ADA4!important}.tinta3{color:#948E84!important}' ||
+      '.regla{border-color:#302C29!important}.serif{color:#D8D2C9!important}' ||
+      '.aviso{background:#7A4030!important}.aviso-t{color:#E8A48D!important}' ||
+      '.boton{background:#2E9DB2!important}.boton a{color:#0F1717!important}}' ||
+    '@media only screen and (max-width:620px){' ||
+      '.caja{width:100%!important}.pad{padding-left:24px!important;padding-right:24px!important}' ||
+      '.nom{font-size:32px!important}.col{display:block!important;width:100%!important}' ||
+      '.col2{padding-top:18px!important}}' ||
+    '</style></head><body class="papel" style="margin:0;padding:0;background:#FFFFFF">' ||
+
+    -- La línea que se lee en la bandeja antes de abrir. Sin esto el
+    -- cliente muestra el primer texto que encuentra, que no dice nada.
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' ||
+      coalesce(v_prog.nombre, new.programa_id) || ' &#183; ' || v_grupo ||
+      case when v_alerta <> '' then ' &#183; con alerta de salud' else '' end ||
+      '&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;</div>' ||
+
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="papel" style="background:#FFFFFF">' ||
+    '<tr><td align="center"><table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" class="caja" style="width:560px;max-width:560px">' ||
+
+    -- el sello. A 34 px el anillo de letras todavía se lee.
+    '<tr><td class="pad" align="center" style="padding:44px 40px 0">' ||
+      '<img src="' || v_base || '/assets/img/seal.svg" width="34" height="34" alt="Healing Through Movement" style="display:block;width:34px;height:34px"></td></tr>' ||
+
+    -- el gesto de la marca
+    '<tr><td class="pad" align="center" style="padding:20px 40px 0">' ||
+      '<div class="serif tinta2" style="font-family:Georgia,''Times New Roman'',serif;font-style:italic;font-size:17px;line-height:1.5;color:#56524A">' ||
+      'Alguien más quiere entrenar con vos.</div></td></tr>' ||
+
+    -- quién
+    '<tr><td class="pad" align="center" style="padding:26px 40px 0">' ||
+      '<div class="nom tinta" style="font-family:''Avenir Next'',''Segoe UI'',Helvetica,Arial,sans-serif;font-size:38px;line-height:1.1;letter-spacing:-1px;font-weight:600;color:#1E1D1A">' ||
+      coalesce(v_persona.nombre, 'Sin nombre') || '</div>' ||
+      '<div class="tinta2" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#56524A;padding-top:10px">' ||
+      coalesce(v_prog.nombre, new.programa_id) || ' &nbsp;&#183;&nbsp; ' || v_grupo ||
+      coalesce(' &nbsp;&#183;&nbsp; la invitó ' || nullif(btrim(new.referida_por), ''), '') ||
+      '</div></td></tr>' ||
+
+    -- la alerta: regla al costado, no caja de color. Pesa por posición
+    -- y por borde, no por gritar. Va ARRIBA de los datos porque es lo
+    -- único que cambia lo que Denisse hace después.
     case when v_alerta <> '' then
-      '<div style="background:#F6E3E3;color:#7A2828;border-radius:10px;padding:14px 16px;margin:0 0 18px">' ||
-      '<b>Revisar salud</b><ul style="margin:8px 0 0;padding-left:18px">' || v_alerta || '</ul></div>'
+      '<tr><td class="pad" style="padding:34px 40px 0">' ||
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' ||
+      '<td class="aviso" width="2" style="width:2px;background:#B5462F;font-size:0;line-height:0">&nbsp;</td>' ||
+      '<td style="padding:2px 0 2px 18px">' ||
+      '<div class="aviso-t" style="font-family:''Avenir Next'',''Segoe UI'',Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.4px;color:#8A3A22;padding-bottom:6px">Revisar salud antes de agendar</div>' ||
+      '<div class="tinta2" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#56524A"><ul style="margin:0;padding-left:18px">' ||
+      v_alerta || '</ul></div></td></tr></table></td></tr>'
     else '' end ||
-    coalesce('<p style="margin:0 0 18px">Teléfono: <b>' || nullif(btrim(v_persona.telefono), '') || '</b></p>', '') ||
-    '<p style="margin:0"><a href="' || v_base || '/panel/?ficha=' || new.id::text ||
-      '" style="display:inline-block;background:#1E1D1A;color:#FAF8F4;text-decoration:none;padding:12px 22px;border-radius:999px">Ver su ficha</a></p>' ||
-    '</div>';
+
+    -- los datos, sobre reglas de un píxel
+    '<tr><td class="pad" style="padding:34px 40px 0">' ||
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' ||
+    '<tr><td class="regla" colspan="2" style="border-top:1px solid #E7E4DF;font-size:0;line-height:0">&nbsp;</td></tr><tr>' ||
+    '<td class="col" width="50%" valign="top" style="padding:18px 16px 0 0">' ||
+      '<div class="tinta3" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#6E6961;padding-bottom:3px">Teléfono</div>' ||
+      coalesce('<a href="tel:' || btrim(v_persona.telefono) || '" class="tinta" style="font-family:''Avenir Next'',''Segoe UI'',Helvetica,Arial,sans-serif;font-size:17px;font-weight:600;color:#1E1D1A;text-decoration:none">' || btrim(v_persona.telefono) || '</a>',
+               '<span class="tinta3" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:15px;color:#6E6961">no lo dejó</span>') ||
+      '</td>' ||
+    '<td class="col col2" width="50%" valign="top" style="padding:18px 0 0 0">' ||
+      '<div class="tinta3" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.4;color:#6E6961;padding-bottom:3px">Llegó</div>' ||
+      '<div class="tinta" style="font-family:''Avenir Next'',''Segoe UI'',Helvetica,Arial,sans-serif;font-size:17px;font-weight:600;color:#1E1D1A">' ||
+      to_char(now() at time zone 'America/Tegucigalpa', 'DD/MM') || ', ' ||
+      trim(to_char(now() at time zone 'America/Tegucigalpa', 'HH12:MI am')) ||
+      '</div></td></tr></table></td></tr>' ||
+
+    -- una sola acción, sin sombra: la decisión de los botones del 29 ago
+    '<tr><td class="pad" style="padding:36px 40px 0">' ||
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>' ||
+    '<td class="boton" bgcolor="#17606F" style="background:#17606F;border-radius:999px">' ||
+    '<a href="' || v_base || '/panel/?ficha=' || new.id::text ||
+    '" style="display:inline-block;padding:15px 30px;font-family:''Avenir Next'',''Segoe UI'',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#FFFFFF;text-decoration:none">Ver su ficha</a>' ||
+    '</td></tr></table></td></tr>' ||
+
+    '<tr><td class="pad" style="padding:16px 40px 0">' ||
+    '<div class="tinta3" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.55;color:#6E6961">' ||
+    'Sus respuestas están en el panel. Por correo no viajan.</div></td></tr>' ||
+
+    -- el pie: el lema de la casa, en el mismo serif
+    '<tr><td class="pad" style="padding:44px 40px 0">' ||
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' ||
+    '<tr><td class="regla" style="border-top:1px solid #E7E4DF;font-size:0;line-height:0">&nbsp;</td></tr>' ||
+    '<tr><td style="padding:22px 0 52px">' ||
+    '<div class="serif tinta3" style="font-family:Georgia,''Times New Roman'',serif;font-style:italic;font-size:15px;color:#6E6961;padding-bottom:10px">Move. Heal. Thrive.</div>' ||
+    '<div class="tinta3" style="font-family:''Helvetica Neue'',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#6E6961">' ||
+    'Te llega porque alguien completó el formulario de THRIVE.<br>A dónde llega se cambia en el panel, en Ajustes.</div>' ||
+    '</td></tr></table></td></tr>' ||
+
+    '</table></td></tr></table></body></html>';
 
   select net.http_post(
     url     := 'https://api.resend.com/emails',

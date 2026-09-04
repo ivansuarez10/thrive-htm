@@ -2233,9 +2233,26 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 
     recordar();
 
+    /* ⚠️ CORTE A LOS 20 SEGUNDOS. Sin esto, `fetch` puede quedarse
+       colgado indefinidamente —un ascensor, un túnel, wifi que se cae a
+       la mitad— y la persona se queda mirando «Guardando tus
+       respuestas…» para siempre: sin error, sin reintento, sin salida.
+       Termina cerrando la pestaña convencida de que lo mandó, y a
+       Denisse le dice después «yo sí llené el formulario».
+
+       20 s y no 8: una red mala en Honduras tarda, y cortar demasiado
+       pronto convierte un envío lento —que iba a entrar— en un fallo.
+       Como hay un reintento detrás, el peor caso son 41 segundos antes
+       de rendirse, y eso pasa con la pantalla de espera puesta. */
+    var CORTE = 20000;
+
     function intentar(){
+      var aborta = (typeof AbortController === 'function') ? new AbortController() : null;
+      var reloj = aborta ? setTimeout(function(){ aborta.abort(); }, CORTE) : null;
+
       return fetch(sb.url.replace(/\/$/,'') + '/rest/v1/' + (sb.table || 'thrive_screening'), {
         method:'POST',
+        signal: aborta ? aborta.signal : undefined,
         headers:{
           'Content-Type':'application/json',
           'apikey': sb.anonKey,
@@ -2243,6 +2260,15 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
           'Prefer':'return=minimal'
         },
         body: JSON.stringify(payload)
+      }).then(function(r){
+        if(reloj) clearTimeout(reloj);
+        return r;
+      }, function(e){
+        if(reloj) clearTimeout(reloj);
+        /* Se traduce a algo que se entienda en el registro: `AbortError`
+           a secas parece un fallo del navegador y es un tiempo agotado. */
+        throw new Error(e && e.name === 'AbortError'
+          ? 'La red no contestó en ' + (CORTE/1000) + ' segundos' : (e && e.message) || 'fallo de red');
       }).then(function(r){
         if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' ' + t.slice(0,180)); });
       });
