@@ -2215,9 +2215,23 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     }
 
     /* Se guarda ANTES de intentar, no después: si el navegador se cierra
-       en el medio, sus respuestas siguen acá y el reintento las encuentra. */
+       en el medio, sus respuestas siguen acá y el rescate las encuentra
+       al volver a abrir el formulario (`RESCATE`, abajo).
+
+       ⚠️ Ese rescate NO EXISTÍA hasta el 3 sep 2026, aunque este
+       comentario lo prometía desde el principio: `thrive-sin-enviar` se
+       escribía y se borraba, y nadie lo leía jamás. Alguien que se quedó
+       a mitad perdió sus quince respuestas creyendo que estaban a salvo.
+
+       Va envuelto con la fecha para poder caducarlo: ofrecerle reenviar
+       algo de hace tres semanas es raro, y dejar respuestas de salud en
+       el teléfono para siempre, peor. */
     function recordar(){
-      try{ localStorage.setItem('thrive-sin-enviar', JSON.stringify(payload)); }catch(e){}
+      try{
+        localStorage.setItem('thrive-sin-enviar', JSON.stringify({
+          v: 1, cuando: new Date().toISOString(), payload: payload
+        }));
+      }catch(e){}
     }
     function olvidar(){
       try{ localStorage.removeItem('thrive-sin-enviar'); }catch(e){}
@@ -2442,7 +2456,112 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     cont.appendChild(a);
   }
 
-  ir(0);
+  /* ═══════════════════════════════════════════════════════════
+     EL RESCATE — 3 sep 2026
+
+     Si el envío anterior no llegó a completarse, sus respuestas
+     siguen en este teléfono. Hasta hoy se guardaban y nadie las leía
+     nunca: quien se quedó a mitad perdía quince preguntas creyendo
+     que estaban a salvo.
+
+     No se reenvía solo, y no es por prudencia técnica: mandar en su
+     nombre algo que ella no vio es peor que perderlo. Se le muestra,
+     se le pregunta, y ella decide.
+
+     Y NO se reimplementa el envío: se restaura el estado, se salta a
+     la última pantalla y se toca su botón — el mismo camino que usa
+     «Reintentar». Envío hay uno solo en todo el archivo.
+     ═══════════════════════════════════════════════════════════ */
+  var RESCATE_DIAS = 7;
+
+  function loQueQuedo(){
+    try{
+      var crudo = localStorage.getItem('thrive-sin-enviar');
+      if(!crudo) return null;
+      var g = JSON.parse(crudo);
+      /* Lo guardado antes del 3 sep era el payload pelado, sin envoltura.
+         Se acepta igual —son respuestas de alguien— pero sin fecha no se
+         puede caducar, así que se trata como recién guardado. */
+      var payload = g && g.v === 1 ? g.payload : g;
+      var cuando  = g && g.v === 1 ? new Date(g.cuando) : new Date();
+      if(!payload || !payload.respuestas) return null;
+      var dias = (Date.now() - cuando.getTime()) / 86400000;
+      if(!(dias >= 0) || dias > RESCATE_DIAS){
+        try{ localStorage.removeItem('thrive-sin-enviar'); }catch(e){}
+        return null;
+      }
+      return { payload: payload, dias: Math.floor(dias) };
+    }catch(e){ return null; }
+  }
+
+  function ofrecerRescate(){
+    var g = loQueQuedo();
+    if(!g) return false;
+
+    var nombre = (g.payload.nombre || '').split(' ')[0];
+    var cuando = g.dias === 0 ? 'hoy' : (g.dias === 1 ? 'ayer' : 'hace ' + g.dias + ' días');
+
+    var caja = document.createElement('section');
+    caja.className = 'step';
+    caja.innerHTML =
+      '<h1 class="q-title" tabindex="-1"></h1>' +
+      '<p class="q-help">Las empezaste ' + cuando + ' y el envío no llegó a completarse — ' +
+        'seguramente se cortó la conexión. Están guardadas en este teléfono, ' +
+        'nadie más las vio.</p>' +
+      '<div class="step-foot">' +
+        '<button class="cta" type="button" id="rescMandar">Mandarlas ahora</button>' +
+        '<button class="cta secundario" type="button" id="rescNuevo">Empezar de nuevo</button>' +
+        '<p class="err" role="alert"></p>' +
+      '</div>';
+    /* El nombre va por textContent y no interpolado en el HTML: es texto
+       que escribió ella, y `esc()` no existe en este archivo — lo di por
+       sentado y habría reventado con la primera persona que tuviera
+       nombre. Así además no hay nada que escapar. */
+    caja.querySelector('.q-title').textContent =
+      (nombre ? nombre + ', tus' : 'Tus') + ' respuestas quedaron sin enviar.';
+
+    elSteps.insertBefore(caja, elSteps.firstChild);
+    for(var k = 1; k < elSteps.children.length; k++) elSteps.children[k].hidden = true;
+    caja.hidden = false;
+    elCount.textContent = '';
+    try{ caja.querySelector('.q-title').focus({ preventScroll:true }); }catch(e){}
+
+    document.getElementById('rescMandar').addEventListener('click', function(){
+      /* Se restaura el estado y se deja que el formulario haga lo suyo.
+         `armarPayload()` vuelve a construir exactamente lo mismo desde
+         `resp` y `consiente`, que es lo que se guardó. */
+      resp = g.payload.respuestas || {};
+      consiente = !!g.payload.consentimiento;
+
+      /* ⚠️ `armarPayload()` reconstruye desde `resp`, y DOS campos no
+         salen de ahí: los toma de la página. Si ella vuelve por la URL
+         pelada —que es lo normal: el link con `?de=` o `?v=directa` ya
+         no está en su historial reciente— los dos se pierden en
+         silencio. Se detectó probando el rescate: mandó
+         `referida_por: null` sobre unas respuestas que decían Margaret.
+
+         · referida_por → quién la invitó. Es el dato entero por el que
+           existen los links por clienta.
+         · origen → si llegó por invitación directa. El panel lo usa
+           para NO pedirle agendar una clase que no le corresponde. */
+      if(g.payload.referida_por) resp.referida = g.payload.referida_por;
+      if(g.payload.origen === 'invitacion') MODO = 'directa';
+      caja.remove();
+      ir(PANTALLAS.length - 1);
+      var b = elSteps.children[elSteps.children.length - 1].querySelector('.step-foot .cta');
+      if(b){ b.disabled = false; enviar(b); }
+      else { location.reload(); }
+    });
+
+    document.getElementById('rescNuevo').addEventListener('click', function(){
+      try{ localStorage.removeItem('thrive-sin-enviar'); }catch(e){}
+      caja.remove();
+      ir(0);
+    });
+    return true;
+  }
+
+  if(!ofrecerRescate()) ir(0);
 })();
 </script>
 </body>
