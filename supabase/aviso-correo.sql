@@ -23,8 +23,23 @@ create extension if not exists pg_net with schema extensions;
 -- código ni base. Si está vacío, no se manda nada y no falla nada.
 alter table public.ajustes add column if not exists correo_aviso text;
 
+-- ⚠️ Copia OCULTA del aviso (3 sep 2026). Va en `bcc` y no en `to` a
+-- propósito: el aviso es de Denisse. Verlo dirigido a dos personas
+-- cambia lo que el correo parece ser —de «tu aviso» a «un reporte del
+-- sistema»— y además expone la otra dirección en cada mensaje.
+--
+-- La dirección va en la BASE y no acá: este repo es público.
+--   update public.ajustes set correo_copia = 'tu@correo.com' where id = 1;
+--   update public.ajustes set correo_copia = null where id = 1;   -- apagarla
+--
+-- NO se agrega al grant de anon ni a `ajustes_publicos`: los permisos de
+-- esa tabla son por columna y listan una por una, así que nace privada.
+alter table public.ajustes add column if not exists correo_copia text;
+
 comment on column public.ajustes.correo_aviso is
   'A dónde llega el aviso de inscripción nueva. Vacío = no se manda.';
+comment on column public.ajustes.correo_copia is
+  'Copia oculta (bcc) del aviso. Vacío = solo va a correo_aviso. No se muestra en el panel: es un respaldo, no un ajuste de Denisse.';
 
 
 -- ══════════ 2 · LA LLAVE ══════════
@@ -39,7 +54,12 @@ comment on column public.ajustes.correo_aviso is
 create or replace function public.clave_resend()
 returns text language sql stable
 security definer set search_path = vault, public, pg_temp as $$
-  select decrypted_secret from vault.decrypted_secrets where name = 'resend_key' limit 1;
+  -- ⚠️ El `order by` no es adorno. Sin él, con dos secretos del mismo
+  -- nombre Postgres devuelve cualquiera —y el 3 sep 2026 eso fue el
+  -- primer sospechoso de un 401, porque el código lo permitía. Que gane
+  -- siempre la más nueva.
+  select decrypted_secret from vault.decrypted_secrets
+  where name = 'resend_key' order by created_at desc limit 1;
 $$;
 revoke all on function public.clave_resend() from anon, authenticated;
 
@@ -74,6 +94,7 @@ security definer set search_path = public, extensions, pg_temp as $$
 declare
   v_clave   text;
   v_destino text;
+  v_copia   text;
   v_persona record;
   v_prog    record;
   v_grupo   text;
@@ -83,7 +104,7 @@ declare
   v_pid     bigint;
   v_base    text := 'https://healingthroughmovement.studio';
 begin
-  select correo_aviso into v_destino from public.ajustes where id = 1;
+  select correo_aviso, correo_copia into v_destino, v_copia from public.ajustes where id = 1;
   v_clave := public.clave_resend();
 
   if v_destino is null or btrim(v_destino) = '' or v_clave is null then
@@ -140,6 +161,8 @@ begin
                  'to', jsonb_build_array(v_destino),
                  'subject', v_asunto,
                  'html', v_html)
+               || case when nullif(btrim(coalesce(v_copia,'')), '') is null then '{}'::jsonb
+                       else jsonb_build_object('bcc', jsonb_build_array(btrim(v_copia))) end
   ) into v_pid;
 
   insert into public.avisos (inscripcion_id, destino, estado, peticion_id)
