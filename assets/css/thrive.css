@@ -73,8 +73,17 @@
   /* Flotación. Sombras largas y muy suaves, teñidas de tinta y no de
      negro puro, para que no ensucien el fondo cálido. */
   --flota-1:0 2px 4px -2px rgba(30,29,26,.05), 0 8px 18px -8px rgba(30,29,26,.08);
-  --flota-2:0 4px 10px -4px rgba(30,29,26,.06), 0 22px 44px -18px rgba(30,29,26,.16);
-  --flota-3:0 8px 20px -8px rgba(30,29,26,.08), 0 44px 80px -32px rgba(30,29,26,.24);
+  /* --flota-2 y -3 llevan una TERCERA capa de contacto, la hairline de
+     1 px (3 sep 2026). Sin ella el objeto flota pero no toca: las dos
+     capas que había son cuerpo y ambiente, y faltaba el apoyo.
+
+     Va en el TOKEN y no en .plan a propósito. La tarjeta pasa de -2 a -3
+     al hacer hover, y si una de las dos tuviera la capa hardcodeada, el
+     hover la ganaría o la perdería de golpe. Token a token, la sombra
+     interpola entera. Toca lo que ya usaba estos tokens: los planes, la
+     nota del método y las dos superficies de la sección de planes. */
+  --flota-2:0 1px 2px rgba(30,29,26,.05), 0 4px 10px -4px rgba(30,29,26,.06), 0 22px 44px -18px rgba(30,29,26,.16);
+  --flota-3:0 1px 2px rgba(30,29,26,.06), 0 8px 20px -8px rgba(30,29,26,.08), 0 44px 80px -32px rgba(30,29,26,.24);
   /* El relieve del sello, elegido el 26 ago 2026. Se usa drop-shadow de
      CSS y no un filtro SVG: así vale igual para el <img> del sello y para
      el SVG en línea de la intro, sin duplicar definiciones por página. */
@@ -350,6 +359,79 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
   .mask > span{transform:none !important; transition:none !important;}
   .up, .stag > *{opacity:1 !important; transform:none !important; transition:none !important;}
   .plx{transform:none !important;}
+}
+
+/* ═══ el scroll conduce las entradas ═══
+   Aprobado el 3 sep 2026, comparado contra la landing real en
+   05-exploracion/thrive-scroll-comparador.html.
+
+   Hoy un bloque reproduce un clip de 420 ms cuando una clase lo dispara:
+   te muevas como te muevas, la animación dura lo mismo. Acá el progreso
+   ES el scroll. El navegador lo resuelve en el compositor.
+
+   ⚠️ TODO vive dentro de @supports. Donde animation-timeline no exista
+   —Safari es la duda real y hay que medirla— no se aplica NADA y el
+   sistema de .up/.in con IntersectionObserver sigue mandando igual que
+   hasta hoy, con sus tres salidas de emergencia. Esto no lo reemplaza:
+   se le monta encima cuando el navegador puede.
+
+   Lo que se gana además de cómo se ve: la reversibilidad es inherente
+   —las seis reglas de .desde-arriba existen para fingirla a mano— y el
+   escalonado deja de estar cableado a nth-child, que hoy llega hasta 8
+   y al noveno hijo ya no lo escalona. */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion: no-preference){
+
+    /* De dónde arranca la opacidad. El sistema viejo parte de .55 y NUNCA
+       de cero, porque si el observador no dispara la sección se queda en
+       blanco — regla dura del proyecto. Acá no hay observador que pueda
+       fallar: lo mueve el navegador. Por eso .12 es seguro en este bloque
+       y no lo era en el otro. Esta es la perilla si se quiere más o menos
+       drama; subirla a .55 deja el sitio como estaba. */
+    :root{ --arranque:.12; }
+
+    .up{
+      transition:none;
+      animation:tv-sube linear both;
+      animation-timeline:view();
+      animation-range:entry 6% cover 32%;
+    }
+    .stag > *{
+      transition:none;
+      animation:tv-sube linear both;
+      animation-timeline:view();
+      animation-range:entry 2% cover 30%;
+    }
+    /* El escalonado sale de la POSICIÓN de cada hijo dentro del recorrido,
+       no de un transition-delay por nth-child. Estas tres reglas cubren
+       cualquier cantidad de hijos, no ocho. */
+    .stag > *:nth-child(n+2){ animation-range:entry 6% cover 34%; }
+    .stag > *:nth-child(n+3){ animation-range:entry 10% cover 36%; }
+    .stag > *:nth-child(n+4){ animation-range:entry 14% cover 38%; }
+
+    @keyframes tv-sube{
+      from{ opacity:var(--arranque,.12); transform:translateY(26px) scale(.994); }
+      to  { opacity:1; transform:none; }
+    }
+
+    /* Los títulos se escriben de abajo hacia arriba con clip-path.
+
+       ⚠️ Los cuatro h2 llevan TAMBIÉN la clase .up, así que la regla de
+       arriba los agarra y la gana por orden: medido, el h2 computaba
+       tv-sube y esto no se aplicaba. Se resuelve con un solo keyframe que
+       hace las dos cosas —no se pueden apilar dos animaciones sobre
+       transform— y subiendo la especificidad con body. */
+    body section h2,
+    body.dosvias section h2.up{
+      animation:tv-titulo linear both;
+      animation-timeline:view();
+      animation-range:entry 8% cover 30%;
+    }
+    @keyframes tv-titulo{
+      from{ clip-path:inset(0 0 100% 0); transform:translateY(10px); }
+      to  { clip-path:inset(0 0 0% 0);   transform:none; }
+    }
+  }
 }
 
 /* ── fotos ── */

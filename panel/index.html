@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=6c59099d">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=0ec424a2">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -1101,10 +1101,25 @@ body{background:var(--sand);}
   display:grid; gap:12px; margin-top:24px;
   grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
 }
+/* Son <button> desde el 3 sep 2026: cada uno lleva a la lista que él
+   mismo contó. Hay que reponer lo que el navegador le pone a un botón
+   —fuente, alineación, borde— o los cuatro salen centrados y en Arial. */
 .tile{
   background:var(--white); border-radius:16px; padding:18px 20px;
   box-shadow:var(--flota-1); display:flex; flex-direction:column; gap:10px;
+  font:inherit; color:inherit; text-align:left; border:0; width:100%;
+  cursor:pointer; appearance:none;
+  transition:box-shadow 220ms var(--ease), transform 220ms var(--ease);
 }
+/* Que se note que se puede tocar, sin gritar: el mosaico se levanta un
+   pelo y la sombra crece. En el teléfono no hay hover, así que ahí lo
+   que informa es el hundido al tocar. */
+@media (hover:hover){
+  .tile:hover{box-shadow:var(--flota-2); transform:translateY(-2px);}
+  .tile:hover .ico{background:var(--sand);}
+}
+.tile:active{transform:translateY(0); box-shadow:var(--flota-1);}
+.tile:focus-visible{outline:2px solid var(--teal-deep); outline-offset:3px;}
 .tile-top{display:flex; align-items:center; gap:9px;}
 .tile-top .ico{
   flex:none; width:30px; height:30px; border-radius:9px;
@@ -2815,38 +2830,62 @@ body{background:var(--sand);}
       var libres = tope - dentro;
       var barras = '';
       for(var i=0;i<tope;i++) barras += '<i class="' + (i < dentro ? 'lleno' : '') + '"></i>';
-      tiles.push('<div class="tile">' +
+      tiles.push('<button type="button" class="tile" data-va="horario:' + esc(g.id) + '">' +
         '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>' + esc(prog.nombre + ' ' + g.id) + '</b></div>' +
         '<div class="barras">' + barras + '</div>' +
         '<span class="pie">' + (libres <= 0 ? 'Grupo completo' :
             (libres === 1 ? 'Queda ' : 'Quedan ') + '<b style="color:var(--ink)">' + libres + '</b> ' + (libres === 1 ? 'lugar' : 'lugares')) +
-          (camino ? ' · ' + camino + ' en camino' : '') + '</span></div>');
+          (camino ? ' · ' + camino + ' en camino' : '') + '</span></button>');
     });
 
     var vivas = datos.filter(function(c){ return !cierra(c.estado); }).length;
-    tiles.push('<div class="tile">' +
+    tiles.push('<button type="button" class="tile" data-va="filtro:vivas">' +
       '<div class="tile-top"><span class="ico">' + svg('invitadas', 2) + '</span><b>En el embudo</b></div>' +
       '<span class="cifra">' + vivas + '</span>' +
-      '<span class="pie">' + (vivas === 1 ? 'persona sin resolver' : 'personas sin resolver') + '</span></div>');
+      '<span class="pie">' + (vivas === 1 ? 'persona sin resolver' : 'personas sin resolver') + '</span></button>');
 
     /* Sin grupos sobra un lugar en la fila, y el número que falta es
        cuánta gente ya cerró bien: entró, pagó, participó. */
     if(!grupos().length){
       var cerradas = datos.filter(function(c){ return cierra(c.estado) && c.estado !== 'no'; }).length;
-      tiles.push('<div class="tile">' +
+      tiles.push('<button type="button" class="tile" data-va="filtro:cerradas">' +
         '<div class="tile-top"><span class="ico">' + svg('clientas', 2) + '</span><b>Cerradas</b></div>' +
         '<span class="cifra">' + cerradas + '</span>' +
-        '<span class="pie">' + (cerradas === 1 ? 'llegó hasta el final' : 'llegaron hasta el final') + '</span></div>');
+        '<span class="pie">' + (cerradas === 1 ? 'llegó hasta el final' : 'llegaron hasta el final') + '</span></button>');
     }
 
     var t = tareas().length;
-    tiles.push('<div class="tile' + (t ? ' urge' : '') + '">' +
+    tiles.push('<button type="button" class="tile' + (t ? ' urge' : '') + '" data-va="hoy">' +
       '<div class="tile-top"><span class="ico">' + svg('hoy', 2) + '</span><b>Pendientes</b></div>' +
       '<span class="cifra">' + t + '</span>' +
       '<span class="pie">' + (t === 0 ? 'nadie está esperando nada' :
-          (t === 1 ? 'cosa que resolver hoy' : 'cosas que resolver hoy')) + '</span></div>');
+          (t === 1 ? 'cosa que resolver hoy' : 'cosas que resolver hoy')) + '</span></button>');
 
     cont.innerHTML = tiles.join('');
+
+    /* Cada mosaico lleva a la lista que él mismo contó. Se enganchan
+       acá y no con un oyente delegado porque se repintan enteros en
+       cada carga: los de antes se van con su HTML. */
+    cont.querySelectorAll('[data-va]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var d = b.getAttribute('data-va');
+        if(d === 'hoy'){
+          irA('hoy');
+          var pila = document.getElementById('toca');
+          if(pila) pila.scrollIntoView({ block:'start', behavior:'smooth' });
+          return;
+        }
+        /* Se limpia todo lo demás: el mosaico dice UN número, y llegar a
+           una lista con otro filtro puesto encima mostraría menos gente
+           de la que él prometió. */
+        filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; pagina = 1;
+        var buscador = document.getElementById('buscar'); if(buscador) buscador.value = '';
+        if(d.indexOf('horario:') === 0) fHorario = d.slice(8);
+        else if(d.indexOf('filtro:') === 0) filtro = d.slice(7);
+        irA('invitadas');
+        pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
+      });
+    });
   }
 
   /* ═══ los tres filtros ═══
@@ -2865,8 +2904,16 @@ body{background:var(--sand);}
 
   function pintarFiltros(){
     var alertas = datos.filter(function(c){ return c.alerta_salud; }).length;
+    var vivas = datos.filter(function(c){ return !cierra(c.estado); }).length;
+    var cerradas = datos.filter(function(c){ return cierra(c.estado) && c.estado !== 'no'; }).length;
     var ops = [opcion('todas', 'Todas', datos.length, filtro)];
     if(alertas) ops.push(opcion('alerta', 'Revisar salud', alertas, filtro));
+    /* Van acá arriba y no al final: son los dos cortes que ella mira
+       primero, y son los que llegan al tocar un mosaico. Si no
+       existieran como opción, el guardián de abajo los devolvería a
+       «todas» en el siguiente repintado y el filtro se caería solo. */
+    if(vivas)    ops.push(opcion('vivas', 'Sin resolver', vivas, filtro));
+    if(cerradas) ops.push(opcion('cerradas', 'Ya entraron', cerradas, filtro));
     estadosDe().forEach(function(e){
       var n = datos.filter(function(c){ return c.estado === e.id; }).length;
       if(n) ops.push(opcion(e.id, e.nombre, n, filtro));
@@ -2953,7 +3000,14 @@ body{background:var(--sand);}
 
   function visibles(){
     var v = datos;
+    /* «vivas» y «cerradas» no son estados del embudo: son los dos
+       grupos que cuentan los mosaicos de arriba. Existen como filtro
+       para que tocar un número lleve EXACTAMENTE a la lista que ese
+       número contó. Sin esto, tocar «18 en el embudo» mostraría 18 hoy
+       y otra cosa el día que alguien cierre. */
     if(filtro === 'alerta')      v = v.filter(function(c){ return c.alerta_salud; });
+    else if(filtro === 'vivas')  v = v.filter(function(c){ return !cierra(c.estado); });
+    else if(filtro === 'cerradas') v = v.filter(function(c){ return cierra(c.estado) && c.estado !== 'no'; });
     else if(filtro !== 'todas')  v = v.filter(function(c){ return c.estado === filtro; });
     if(fEdad)    v = v.filter(function(c){ return (c.respuestas || {}).edad === fEdad; });
     if(fHorario) v = v.filter(function(c){ return grupoDe(c) === (fHorario === '?' ? '' : fHorario); });
