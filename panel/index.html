@@ -225,6 +225,16 @@ body{background:var(--sand);}
   font-family:var(--mono); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase;
   color:var(--teal-deep); margin-bottom:12px;
 }
+/* De dónde llegó, al lado del rótulo y no como un cartel aparte: es
+   una nota al pie del título, no una alerta. Sin versalitas ni teal —
+   eso es del rótulo— para que se lea como aclaración y no compita. */
+.ficha-sec > h3 .de-donde{
+  display:block; margin-top:5px;
+  font-family:var(--sans); font-size:.78rem; letter-spacing:0;
+  text-transform:none; font-style:normal; font-weight:400;
+  color:var(--ink-2);
+}
+
 .qa{padding:14px 0; border-bottom:1px solid var(--line-soft);}
 .qa p{font-size:.86rem; color:var(--ink-2); line-height:1.5;}
 .qa span{display:block; margin-top:6px; font-size:1rem; color:var(--ink); white-space:pre-wrap;}
@@ -1792,10 +1802,22 @@ body{background:var(--sand);}
   function grupos(){ return pAj('grupos', []); }
   function esThrive(){ return prog && prog.id === 'thrive'; }
 
-  /* Las 15 preguntas, para mostrar la respuesta junto a su pregunta.
-     El orden importa: es el mismo en que ella las contestó. */
+  /* Las preguntas, para mostrar la respuesta junto a su pregunta.
+     El orden es de LECTURA, no la secuencia exacta en que las contestó:
+     los dos formularios preguntan en distinto orden y una sola lista no
+     puede ser fiel a los dos.
+
+     ⚠️ `telefono` NO está y es a propósito: tiene su propio campo
+     editable arriba, en «Su seguimiento». Repetirlo acá daría dos sitios
+     donde leer el mismo número y uno de ellos no se puede corregir.
+
+     ⚠️ `conocemos` faltaba hasta el 7 sep 2026. Era una respuesta
+     guardada que Denisse no veía en ninguna parte — y justo la que más
+     importa en las invitaciones directas, porque ahí reemplaza a
+     «¿quién te compartió esta invitación?». */
   var PREGUNTAS = [
     ['nombre',       'Nombre y apellido'],
+    ['conocemos',    '¿Cómo nos conocemos?'],
     ['edad',         'Rango de edad'],
     ['referida',     '¿Quién te compartió esta invitación?'],
     ['sobre_vos',    '¿A qué te dedicás y cómo se ve tu semana?'],
@@ -1812,6 +1834,37 @@ body{background:var(--sand);}
     ['imagen',       '¿Autoriza fotos y videos?'],
     ['algo_mas',     '¿Algo más que quisiera que sepa?']
   ];
+  /* ═══ el formulario corto ═══
+     Quien llega por el link de invitación directa contesta OCHO
+     preguntas, no dieciséis: a alguien que Denisse ya conoce no se le
+     hace el cuestionario entero.
+
+     Esto vive acá porque la ficha recorría siempre las dieciséis y las
+     ocho que nunca se preguntaron salían como «Sin respuesta» — que es
+     lo contrario de la verdad. Ivan lo cazó el 7 sep 2026 con la ficha
+     de una clienta real: parecía que se habían perdido datos.
+
+     ⚠️ Es una copia de la constante CORTO de `thrive/form/index.html`.
+     Si allá cambia el juego de preguntas, hay que tocar las dos — igual
+     que pasa con los mensajes. Lo que las mantiene honestas es que un
+     id de más acá solo esconde una pregunta, nunca inventa una
+     respuesta. */
+  var CORTO = ['nombre','conocemos','grupo','meta','dolor',
+               'restriccion','sintomas','compromiso','telefono','imagen'];
+
+  /* Por dónde llegó cada una, dicho como lo diría Denisse. */
+  function porDondeLlego(c){
+    if(c.origen === 'invitacion') return 'invitación directa';
+    if(c.origen === 'manual')     return 'la agregaste vos';
+    return null;   // 'formulario' es el caso normal y no se nombra
+  }
+
+  /* Las preguntas que ESA persona vio de verdad. */
+  function preguntasDe(c){
+    if(c.origen !== 'invitacion') return PREGUNTAS;
+    return PREGUNTAS.filter(function(q){ return CORTO.indexOf(q[0]) !== -1; });
+  }
+
   var SALUD = ['dolor','condicion','restriccion','sintomas'];
   var RIESGO = ['restriccion','sintomas'];
 
@@ -3092,7 +3145,12 @@ body{background:var(--sand);}
       var cuando = new Date(c.creada_en).toLocaleDateString('es-HN',
                     { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
       var linea2 = [cuando];
+      /* «la invitó ___» y «invitación directa» comparten sitio porque
+         nunca coinciden: el formulario corto no pregunta quién la
+         compartió, así que a estas personas ese hueco les queda vacío.
+         Ocupa el lugar que ya estaba libre, sin agregar un cartel más. */
       if(c.referida_por) linea2.push('la invitó ' + c.referida_por);
+      else if(porDondeLlego(c)) linea2.push(porDondeLlego(c));
       if(c.grupo) linea2.push(c.grupo);
 
       /* Lo que le falta, visible sin abrir la ficha: sin teléfono no hay
@@ -3498,7 +3556,7 @@ body{background:var(--sand);}
     if(!c) return;
     var R = c.respuestas || {};
 
-    var qa = PREGUNTAS.map(function(q){
+    var qa = preguntasDe(c).map(function(q){
       var k = q[0], v = R[k], det = R[k + '_detalle'];
       var riesgo = RIESGO.indexOf(k) !== -1 && v === 'Sí.';
       var texto = (v == null || v === '')
@@ -3585,7 +3643,20 @@ body{background:var(--sand);}
       '<div class="ficha-sec"><h3>Su historia</h3><div class="hilo" id="hilo">' +
         '<p class="ayuda">Cargando…</p></div></div>' +
 
-      (Object.keys(R).length ? '<div class="ficha-sec"><h3>Lo que contestó</h3>' + qa + '</div>' : '') +
+      (Object.keys(R).length
+        ? '<div class="ficha-sec"><h3>Lo que contestó' +
+          /* Sin esto la ficha de una invitación directa se ve más corta
+             sin explicar por qué, y eso se lee como que falta algo. */
+          /* El número se cuenta solo. Escrito a mano decía «ocho» y
+             mostraba nueve, porque `conocemos` volvió a la lista y
+             nadie actualizó la frase. Un número a mano al lado de una
+             lista que cambia es un número que va a mentir. */
+          (c.origen === 'invitacion'
+            ? '<i class="de-donde">llegó por invitación directa · le preguntamos ' +
+              preguntasDe(c).length + ' de las ' + PREGUNTAS.length + '</i>'
+            : '') +
+          '</h3>' + qa + '</div>'
+        : '') +
 
       '<div class="ficha-pie">' +
         '<button class="pn-btn" type="button" id="fGuardar">Guardar</button>' +
