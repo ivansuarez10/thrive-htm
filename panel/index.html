@@ -1978,6 +1978,26 @@ body{background:var(--sand);}
           i.telefono = per.telefono || null;
           return i;
         });
+        /* ═══ repintar solo si algo cambió ═══
+           Ivan, 7 sep 2026: «cada vez que cambio de pantalla al panel,
+           el panel como que se refresca... qué fea sensación».
+
+           Tenía razón y la culpa era de acá. El refresco corre al
+           volver a la pestaña y cada minuto, y ejecutaba estos diez
+           pintores SIEMPRE — y cada uno reemplaza su `innerHTML`
+           entero, o sea que el navegador destruye y reconstruye media
+           pantalla. Casi siempre para dibujar exactamente lo mismo:
+           entre una vuelta de WhatsApp y la siguiente no cambió nada.
+
+           Ahora se compara primero. Si la huella es idéntica, no se
+           toca un solo nodo y la pantalla se queda quieta. Cuando sí
+           llegó alguien, repinta como siempre — que es el único
+           momento en que el parpadeo se justifica, porque hay algo
+           nuevo que ver. */
+        var huella = JSON.stringify([datos, CONTACTO, PAGOS, AJ, clientas]);
+        if(huella === ULTIMA_HUELLA) return;
+        ULTIMA_HUELLA = huella;
+
         pintarPrograma(); pintarNav(); pintarDia(); pintarNuevas();
         pintarToca(); pintarCupos();
         pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
@@ -1985,6 +2005,10 @@ body{background:var(--sand);}
         if(vista === 'ajustes')  volcarAjustes();
       });
   }
+
+  /* La huella del último pintado. Vacía al arrancar para que la primera
+     carga siempre dibuje. */
+  var ULTIMA_HUELLA = null;
 
   function cargarProgramas(){
     if(PROGRAMAS.length) return Promise.resolve();
