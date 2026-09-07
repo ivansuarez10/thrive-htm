@@ -301,7 +301,9 @@ body{background:var(--sand);}
 }
 .pn-paginas button{
   font:inherit; font-size:.88rem; cursor:pointer;
-  min-width:38px; height:38px; padding:0 11px;
+  /* 44 y no 38: es el mínimo de toque, y estos se tocan con el pulgar
+     igual que todo lo demás del panel. (Medido el 7 sep 2026.) */
+  min-width:44px; height:44px; padding:0 12px;
   background:var(--linen); color:var(--ink-2);
   border:1px solid var(--line); border-radius:999px;
 }
@@ -1284,6 +1286,7 @@ body{background:var(--sand);}
         <div class="pn-tiles" id="tiles"></div>
         <div class="pn-nuevas" id="nuevas" hidden></div>
         <div class="pn-toca" id="toca"></div>
+        <nav class="pn-paginas" id="paginasToca" hidden aria-label="Páginas de pendientes"></nav>
         <div class="pn-limpio" id="limpio" hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
           <span>Nadie está esperando nada tuyo ahora mismo.</span>
@@ -2230,7 +2233,7 @@ body{background:var(--sand);}
     /* Los filtros son del programa que se deja atrás: sus estados no
        existen en el que entra, y el disparador de la base lo rechazaría
        igual. Se limpian antes de repintar. */
-    filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; pagina = 1;
+    filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; PAG_LISTA.pagina = 1;
     var b = document.getElementById('buscar'); if(b) b.value = '';
     datos = [];
     /* Traer la gente del programa nuevo es un viaje de red. Sin esto, el
@@ -2629,9 +2632,15 @@ body{background:var(--sand);}
     });
     /* Primero la urgencia; dentro de la misma urgencia, la que lleva
        más tiempo esperando. */
+    /* La urgencia sigue mandando: una alerta de salud va primero aunque
+       haya llegado ayer, porque de eso depende que no se le agende una
+       clase a alguien antes de hablar.
+       Lo que cambió el 7 sep 2026, a pedido de Ivan, es el desempate
+       DENTRO de cada nivel: antes ganaba la que llevaba más tiempo
+       esperando, ahora la más reciente. */
     out.sort(function(a, b){
       if(a.prio !== b.prio) return a.prio - b.prio;
-      return new Date(a.c.creada_en) - new Date(b.c.creada_en);
+      return new Date(b.c.creada_en) - new Date(a.c.creada_en);
     });
     return out;
   }
@@ -2693,6 +2702,15 @@ body{background:var(--sand);}
     /* Sin pendientes la pila no deja una tarjeta vacía: desaparece, y en
        su lugar queda una sola línea. */
     limpio.hidden = !(datos.length && !t.length);
+
+    /* De a diez. Resolver una tarea encoge la pila, así que la página
+       puede quedar más allá del final: se acomoda antes de cortar, o
+       ella termina mirando un hueco donde estaba trabajando. */
+    var paginasT = Math.max(1, Math.ceil(t.length / PAG_TOCA.por));
+    if(PAG_TOCA.pagina > paginasT) PAG_TOCA.pagina = paginasT;
+    if(PAG_TOCA.pagina < 1) PAG_TOCA.pagina = 1;
+    pintarPaginas('paginasToca', t.length, PAG_TOCA, pintarToca, 'toca');
+    t = t.slice((PAG_TOCA.pagina - 1) * PAG_TOCA.por, PAG_TOCA.pagina * PAG_TOCA.por);
 
     cont.innerHTML = t.map(function(x, i){
       var c = x.c;
@@ -2955,7 +2973,7 @@ body{background:var(--sand);}
         /* Se limpia todo lo demás: el mosaico dice UN número, y llegar a
            una lista con otro filtro puesto encima mostraría menos gente
            de la que él prometió. */
-        filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; pagina = 1;
+        filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; PAG_LISTA.pagina = 1;
         var buscador = document.getElementById('buscar'); if(buscador) buscador.value = '';
         if(d.indexOf('horario:') === 0) fHorario = d.slice(8);
         else if(d.indexOf('filtro:') === 0) filtro = d.slice(7);
@@ -3050,7 +3068,7 @@ body{background:var(--sand);}
       /* Filtrar desde la página 4 mostraría una lista vacía: el filtro
          nuevo casi nunca tiene cuatro páginas. Se vuelve al principio.
          «Limpiar» también entra por acá, así que no necesita el suyo. */
-      pagina = 1;
+      PAG_LISTA.pagina = 1;
       pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
     }
     document.getElementById('selEstado').addEventListener('change', function(){
@@ -3098,41 +3116,49 @@ body{background:var(--sand);}
   }
 
   /* ═══ las páginas ═══
-     POR_PAGINA sale de una medición, no de un gusto: con 17 fichas la
+     El «de a doce» sale de una medición, no de un gusto: con 17 fichas la
      lista medía 2.402 px en un teléfono de 812. Doce dejan la lista en
      una pantalla y media, que es lo que se recorre sin perder el hilo. */
-  var POR_PAGINA = 12;
-  var pagina = 1;
+  /* Dos listas paginadas y un solo paginador. Cada una lleva su estado
+     —en qué página va y de a cuántas— para que moverse en una no mueva
+     la otra.
 
-  function pintarPaginas(total){
-    var nav = document.getElementById('paginas');
+     La pila de pendientes va de a DIEZ y la lista de invitadas de a
+     doce: son tarjetas mucho más altas, con su motivo y sus botones.
+     Diecinueve seguidas eran un scroll larguísimo (Ivan, 7 sep 2026). */
+  var PAG_LISTA = { pagina:1, por:12 };
+  var PAG_TOCA  = { pagina:1, por:10 };
+
+  function pintarPaginas(navId, total, est, repintar, anclaId){
+    var nav = document.getElementById(navId);
     if(!nav) return;
-    var paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+    var paginas = Math.max(1, Math.ceil(total / est.por));
     /* Una sola página no es una elección: no se dibuja nada. */
     if(paginas < 2){ nav.hidden = true; nav.innerHTML = ''; return; }
 
-    var h = '<button type="button" data-p="' + (pagina - 1) + '"' +
-            (pagina === 1 ? ' disabled' : '') + ' aria-label="Página anterior">‹</button>';
+    var h = '<button type="button" data-p="' + (est.pagina - 1) + '"' +
+            (est.pagina === 1 ? ' disabled' : '') + ' aria-label="Página anterior">‹</button>';
     for(var i = 1; i <= paginas; i++){
       h += '<button type="button" data-p="' + i + '"' +
-           (i === pagina ? ' aria-current="true"' : '') + '>' + i + '</button>';
+           (i === est.pagina ? ' aria-current="true"' : '') + '>' + i + '</button>';
     }
-    h += '<button type="button" data-p="' + (pagina + 1) + '"' +
-         (pagina === paginas ? ' disabled' : '') + ' aria-label="Página siguiente">›</button>';
+    h += '<button type="button" data-p="' + (est.pagina + 1) + '"' +
+         (est.pagina === paginas ? ' disabled' : '') + ' aria-label="Página siguiente">›</button>';
 
-    var desde = (pagina - 1) * POR_PAGINA + 1;
-    var hasta = Math.min(total, pagina * POR_PAGINA);
+    var desde = (est.pagina - 1) * est.por + 1;
+    var hasta = Math.min(total, est.pagina * est.por);
     h += '<span class="de">' + desde + '–' + hasta + ' de ' + total + '</span>';
 
     nav.innerHTML = h;
     nav.hidden = false;
     nav.querySelectorAll('[data-p]').forEach(function(b){
       b.addEventListener('click', function(){
-        pagina = parseInt(b.getAttribute('data-p'), 10);
-        pintarLista();
-        /* Al cambiar de página el ojo tiene que volver arriba de la
-           lista, no quedarse donde estaba el botón que tocó. */
-        document.getElementById('lista').scrollIntoView({ block:'start', behavior:'smooth' });
+        est.pagina = parseInt(b.getAttribute('data-p'), 10);
+        repintar();
+        /* Al cambiar de página el ojo vuelve arriba del bloque, no se
+           queda donde estaba el botón que tocó. */
+        var ancla = document.getElementById(anclaId);
+        if(ancla) ancla.scrollIntoView({ block:'start', behavior:'smooth' });
       });
     });
   }
@@ -3159,11 +3185,11 @@ body{background:var(--sand);}
 
     /* Filtrar puede dejar menos páginas de las que había: sin esto se
        queda en la 4 de una lista que ahora tiene 2 y no muestra nada. */
-    var paginas = Math.max(1, Math.ceil(v.length / POR_PAGINA));
-    if(pagina > paginas) pagina = paginas;
-    if(pagina < 1) pagina = 1;
-    pintarPaginas(v.length);
-    var enPagina = v.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
+    var paginas = Math.max(1, Math.ceil(v.length / PAG_LISTA.por));
+    if(PAG_LISTA.pagina > paginas) PAG_LISTA.pagina = paginas;
+    if(PAG_LISTA.pagina < 1) PAG_LISTA.pagina = 1;
+    pintarPaginas('paginas', v.length, PAG_LISTA, pintarLista, 'lista');
+    var enPagina = v.slice((PAG_LISTA.pagina - 1) * PAG_LISTA.por, PAG_LISTA.pagina * PAG_LISTA.por);
 
     cont.innerHTML = enPagina.map(function(c){
       var cuando = new Date(c.creada_en).toLocaleDateString('es-HN',
@@ -3202,7 +3228,7 @@ body{background:var(--sand);}
 
   document.getElementById('buscar').addEventListener('input', function(){
     busqueda = this.value.trim();
-    pagina = 1;
+    PAG_LISTA.pagina = 1;
     pintarLista(); pintarLimpiar();
   });
 
