@@ -1211,6 +1211,62 @@ body{background:var(--sand);}
 
 <style>
 /* ══════════════════════════════════════════════════════════════
+   PARTE 3 · LA GENTE Y EL DATO — 8 sep 2026
+   Iniciales, chips y los cupos en puntos. Igual que la parte 2:
+   hoja aparte, para poder quitarla entera.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══ 3 · LAS INICIALES ═══
+   Las tres referencias muestran caras. El panel mostraba nombres en
+   texto plano. No hay fotos, así que van las iniciales — y de paso la
+   fila gana un ancla visual por la que el ojo entra. */
+.fila{display:grid !important; grid-template-columns:auto 1fr !important;
+      gap:0 14px !important; align-items:center !important;}
+.fila .ini-p{
+  grid-row:1 / span 2; align-self:center;
+  width:38px; height:38px; border-radius:50%;
+  display:grid; place-items:center;
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.02em;
+  background:#F1F1F2; color:#5F5E63;
+}
+.fila:has(.pill.formulario) .ini-p{background:var(--e-teal-2); color:var(--e-teal-2-t);}
+.fila:has(.pill.adentro) .ini-p{background:var(--e-verde); color:var(--e-verde-t);}
+.fila:has(.pill.vino) .ini-p{background:var(--e-lila-2); color:var(--e-lila-2-t);}
+.fila:has(.pill.clase_agendada) .ini-p{background:var(--e-lila-1); color:var(--e-lila-1-t);}
+
+
+/* ═══ 5 · LOS CUPOS EN PUNTOS ═══
+   Lo tienen la agenda y el kanban. Y para THRIVE es mejor metáfora que
+   una barra: son literalmente cuatro lugares, no un porcentaje. */
+.tile .barras{gap:7px !important;}
+.tile .barras i{
+  flex:none !important; width:13px !important; height:13px !important;
+  border-radius:50% !important;
+  background:transparent !important; border:1.5px solid var(--line) !important;
+}
+.tile .barras i.lleno{background:var(--teal) !important; border-color:var(--teal) !important;}
+
+
+/* ═══ 6 · LOS CHIPS DE DATO ═══
+   La línea gris de texto corrido —«26 ago · la invitó Margaret · 2X»—
+   pasa a ser chips, como los #tags del kanban. Se leen sueltos. */
+.fila .l2{
+  display:flex !important; flex-wrap:wrap; gap:6px; align-items:center;
+  margin-top:8px !important;
+}
+.fila .l2 .chip{
+  font-style:normal; font-family:var(--mono);
+  font-size:.66rem; letter-spacing:.04em;
+  padding:4px 9px; border-radius:6px;
+  background:#F2F2F4; color:#5A595F; white-space:nowrap;
+}
+/* El primero es siempre cuándo llegó, y es el que menos importa de los
+   tres: va sin fondo para que los otros dos pesen. */
+.fila .l2 .chip.cuando{background:transparent; padding-left:0; color:var(--ink-3);}
+</style>
+
+<style>
+/* ══════════════════════════════════════════════════════════════
    PARTE 2 · BLANCO Y COLOR DE ESTADO — 8 sep 2026
 
    Va en su propia hoja, aparte de la de arriba, para que se pueda
@@ -3339,7 +3395,15 @@ body, .pn-shell{background:#F6F6F7 !important;}
       if((c.estado === 'clase_agendada' || c.estado === 'vino') && !tieneClase(c))
         faltas += '<span class="falta-chip">Sin fecha</span>';
 
+      /* Las iniciales convierten una lista de renglones en gente. Salen
+         del nombre, no hay foto que cargar — y por eso no hay estado vacío
+         posible: quien tiene nombre tiene iniciales. Van `aria-hidden`:
+         el nombre completo está al lado y un lector de pantalla que diga
+         «C M Carla Medina» no ayuda a nadie. */
+      var ini = String(c.nombre || '?').trim().split(/\s+/).slice(0,2)
+                  .map(function(x){ return x[0] || ''; }).join('').toUpperCase();
       return '<button class="fila" type="button" data-id="' + esc(c.id) + '">' +
+        '<span class="ini-p" aria-hidden="true">' + esc(ini) + '</span>' +
         '<span class="l1">' +
           /* El nombre PRIMERO. Iba detrás de la alerta y la fila se leía
              «Revisar salud · Carla Medina»: el aviso presentándose antes que
@@ -3350,7 +3414,13 @@ body, .pn-shell{background:#F6F6F7 !important;}
           '<span class="pill ' + esc(c.estado) + '">' + esc(nombreEstado(c.estado)) + '</span>' +
           faltas +
         '</span>' +
-        '<span class="l2">' + esc(linea2.join('  ·  ')) + '</span>' +
+        /* Chips en vez de una línea de texto corrido separada por puntos:
+           cada dato se lee suelto en vez de haber que parsear una frase.
+           El primero es siempre CUÁNDO llegó, y es el que menos importa
+           de los tres — por eso va apagado y los otros no. */
+        '<span class="l2">' + linea2.map(function(x, n){
+          return '<i class="chip' + (n === 0 ? ' cuando' : '') + '">' + esc(x) + '</i>';
+        }).join('') + '</span>' +
       '</button>';
     }).join('');
 
