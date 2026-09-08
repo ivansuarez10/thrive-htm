@@ -1211,62 +1211,6 @@ body{background:var(--sand);}
 
 <style>
 /* ══════════════════════════════════════════════════════════════
-   PARTE 3 · LA GENTE Y EL DATO — 8 sep 2026
-   Iniciales, chips y los cupos en puntos. Igual que la parte 2:
-   hoja aparte, para poder quitarla entera.
-   ══════════════════════════════════════════════════════════════ */
-
-/* ═══ 3 · LAS INICIALES ═══
-   Las tres referencias muestran caras. El panel mostraba nombres en
-   texto plano. No hay fotos, así que van las iniciales — y de paso la
-   fila gana un ancla visual por la que el ojo entra. */
-.fila{display:grid !important; grid-template-columns:auto 1fr !important;
-      gap:0 14px !important; align-items:center !important;}
-.fila .ini-p{
-  grid-row:1 / span 2; align-self:center;
-  width:38px; height:38px; border-radius:50%;
-  display:grid; place-items:center;
-  font-family:var(--mono); font-size:.72rem; letter-spacing:.02em;
-  background:#F1F1F2; color:#5F5E63;
-}
-.fila:has(.pill.formulario) .ini-p{background:var(--e-teal-2); color:var(--e-teal-2-t);}
-.fila:has(.pill.adentro) .ini-p{background:var(--e-verde); color:var(--e-verde-t);}
-.fila:has(.pill.vino) .ini-p{background:var(--e-lila-2); color:var(--e-lila-2-t);}
-.fila:has(.pill.clase_agendada) .ini-p{background:var(--e-lila-1); color:var(--e-lila-1-t);}
-
-
-/* ═══ 5 · LOS CUPOS EN PUNTOS ═══
-   Lo tienen la agenda y el kanban. Y para THRIVE es mejor metáfora que
-   una barra: son literalmente cuatro lugares, no un porcentaje. */
-.tile .barras{gap:7px !important;}
-.tile .barras i{
-  flex:none !important; width:13px !important; height:13px !important;
-  border-radius:50% !important;
-  background:transparent !important; border:1.5px solid var(--line) !important;
-}
-.tile .barras i.lleno{background:var(--teal) !important; border-color:var(--teal) !important;}
-
-
-/* ═══ 6 · LOS CHIPS DE DATO ═══
-   La línea gris de texto corrido —«26 ago · la invitó Margaret · 2X»—
-   pasa a ser chips, como los #tags del kanban. Se leen sueltos. */
-.fila .l2{
-  display:flex !important; flex-wrap:wrap; gap:6px; align-items:center;
-  margin-top:8px !important;
-}
-.fila .l2 .chip{
-  font-style:normal; font-family:var(--mono);
-  font-size:.66rem; letter-spacing:.04em;
-  padding:4px 9px; border-radius:6px;
-  background:#F2F2F4; color:#5A595F; white-space:nowrap;
-}
-/* El primero es siempre cuándo llegó, y es el que menos importa de los
-   tres: va sin fondo para que los otros dos pesen. */
-.fila .l2 .chip.cuando{background:transparent; padding-left:0; color:var(--ink-3);}
-</style>
-
-<style>
-/* ══════════════════════════════════════════════════════════════
    PARTE 2 · BLANCO Y COLOR DE ESTADO — 8 sep 2026
 
    Va en su propia hoja, aparte de la de arriba, para que se pueda
@@ -1387,6 +1331,333 @@ body, .pn-shell{background:#F6F6F7 !important;}
   border-left-color:var(--e-rosa-t) !important;
 }
 .tarea.salud .tarea-nom, .tarea.salud .tarea-motivo{color:var(--e-rosa-t) !important;}
+</style>
+<style>
+/* ══════════════════════════════════════════════════════════════
+   PARTE 3 · LA GENTE Y EL DATO — 8 sep 2026
+   Iniciales, chips y los cupos en puntos. Igual que la parte 2:
+   hoja aparte, para poder quitarla entera.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══ 3 · LAS INICIALES ═══
+   Las tres referencias muestran caras. El panel mostraba nombres en
+   texto plano. No hay fotos, así que van las iniciales — y de paso la
+   fila gana un ancla visual por la que el ojo entra. */
+.fila{display:grid !important; grid-template-columns:auto 1fr !important;
+      gap:0 14px !important; align-items:center !important;}
+.fila .ini-p{
+  grid-row:1 / span 2; align-self:center;
+  width:38px; height:38px; border-radius:50%;
+  display:grid; place-items:center;
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.02em;
+  background:#F1F1F2; color:#5F5E63;
+}
+.fila:has(.pill.formulario) .ini-p{background:var(--e-teal-2); color:var(--e-teal-2-t);}
+.fila:has(.pill.adentro) .ini-p{background:var(--e-verde); color:var(--e-verde-t);}
+.fila:has(.pill.vino) .ini-p{background:var(--e-lila-2); color:var(--e-lila-2-t);}
+.fila:has(.pill.clase_agendada) .ini-p{background:var(--e-lila-1); color:var(--e-lila-1-t);}
+
+
+/* ═══ 5 · LOS CUPOS EN PUNTOS ═══
+   Lo tienen la agenda y el kanban. Y para THRIVE es mejor metáfora que
+   una barra: son literalmente cuatro lugares, no un porcentaje. */
+.tile .barras{gap:7px !important;}
+.tile .barras i{
+  flex:none !important; width:13px !important; height:13px !important;
+  border-radius:50% !important;
+  background:transparent !important; border:1.5px solid var(--line) !important;
+}
+.tile .barras i.lleno{background:var(--teal) !important; border-color:var(--teal) !important;}
+
+
+/* ═══ 6 · LOS CHIPS DE DATO ═══
+   La línea gris de texto corrido —«26 ago · la invitó Margaret · 2X»—
+   pasa a ser chips, como los #tags del kanban. Se leen sueltos. */
+.fila .l2{
+  display:flex !important; flex-wrap:wrap; gap:6px; align-items:center;
+  margin-top:8px !important;
+}
+.fila .l2 .chip{
+  font-style:normal; font-family:var(--mono);
+  font-size:.66rem; letter-spacing:.04em;
+  padding:4px 9px; border-radius:6px;
+  background:#F2F2F4; color:#5A595F; white-space:nowrap;
+}
+/* El primero es siempre cuándo llegó, y es el que menos importa de los
+   tres: va sin fondo para que los otros dos pesen. */
+.fila .l2 .chip.cuando{background:transparent; padding-left:0; color:var(--ink-3);}
+</style>
+<style>
+/* ══════════════════════════════════════════════════════════════
+   PARTE 4 · EL VIDRIO — 8 sep 2026
+   Va ÚLTIMA a propósito: es la que pisa el fondo y las superficies
+   de la parte 2. El orden de estas tres hojas es el orden en que se
+   subieron, y hay que mantenerlo.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════
+   VIDRIO · propuesta 4, 8 sep 2026
+
+   Ivan mandó Flux, ZIXO y un video de Learnbox: «el glass efect me
+   gusta». Las tres hacen lo mismo — superficies traslúcidas con
+   desenfoque, flotando sobre un fondo suave de color.
+
+   ⚠️ El vidrio NO ES UN COLOR, es una relación: `backdrop-filter`
+   desenfoca LO QUE ESTÁ DETRÁS. Sobre blanco plano no hace nada. El
+   primer intento aplicaba el vidrio correctamente —medido, blur(22px)
+   saturate(1.5)— y no se veía, porque no había color que desenfocar.
+   No estaba roto: estaba vacío.
+
+   ⚠️ `-webkit-backdrop-filter` es obligatorio: Denisse abre esto en
+   Safari, en iPhone. Sin el prefijo la tarjeta queda traslúcida SIN
+   desenfoque, o sea ilegible sobre el degradado.
+   ══════════════════════════════════════════════════════════════ */
+
+body::before, body::after{display:none !important;}
+
+/* Un tono más claro que el primer intento (Ivan, 8 sep: «el azul de
+   fondo me gusta pero podríamos bajarle un tono, más claro»). Fijo,
+   para que no viaje con el scroll: si se mueve, el desenfoque cambia
+   bajo cada tarjeta y la pantalla entera parece temblar al bajar. */
+/* ⚠️ VA EN `html`, NO EN `body`, y esto costó un defecto visible: en
+   Cobros el fondo se cortaba en blanco debajo de la última tarjeta.
+
+   El navegador normalmente sube el fondo de `body` al lienzo entero, y
+   por eso casi siempre da igual dónde se declare. Pero sólo lo hace si
+   `html` NO tiene fondo propio — y `thrive.css` le pone blanco. Con eso
+   la propagación se apaga, `body` pinta únicamente su propia caja, y
+   todo lo que sobra de pantalla queda del blanco de `html`. Medido:
+   body 1274 px contra un documento de 1500. */
+html{
+  background:
+    radial-gradient(110vmax 85vmax at 4% -8%,  rgba(36,137,157,.24), transparent 58%),
+    radial-gradient(95vmax 80vmax at 102% 4%,  rgba(126,150,196,.26), transparent 60%),
+    radial-gradient(85vmax 75vmax at 78% 104%, rgba(36,137,157,.17), transparent 58%),
+    radial-gradient(70vmax 60vmax at 18% 96%,  rgba(150,176,190,.19), transparent 60%),
+    #F2F5F7 !important;
+  background-attachment:fixed !important;
+}
+body, .pn-shell, .pn-main{background:transparent !important;}
+
+:root{
+  --vidrio:rgba(255,255,255,.62);
+  --vidrio-alto:rgba(255,255,255,.86);
+  --vidrio-borde:rgba(255,255,255,.85);
+  --vidrio-linea:rgba(30,29,26,.07);
+  /* UN radio para las superficies y otro para lo que es píldora. Antes
+     convivían 11, 14, 16, 22 y «sin radio» — y ese «sin radio» era lo
+     que dejaba cantos cuadrados sueltos (Ivan, 8 sep). */
+  --r-sup:18px;
+  --r-chico:12px;
+}
+
+/* ── EL MATERIAL, en un solo sitio ── */
+.pn-lado, .tile, .tarea, .fila, .pn-caja, .ficha-caja, .hoja-caja,
+.cl-fila, .pn-buscar, .filtro, .ag-mes, .ag-dia, .pn-vacio,
+.aj-grupo, .cob-fila, .cob-mes, .cob-resumen, .inv-msg{
+  background:var(--vidrio) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+  border:1px solid var(--vidrio-borde) !important;
+  box-shadow:0 1px 2px rgba(30,29,26,.04), 0 12px 32px -16px rgba(30,29,26,.14) !important;
+}
+
+/* ── 1 · NINGÚN CANTO CUADRADO ──
+   `.cob-fila`, `.cob-mes`, `.pn-buscar` y `.qa` no declaraban radio, y
+   al darles fondo aparecían como bloques rectos en medio de todo lo
+   redondeado. */
+.tile, .tarea, .fila, .ag-mes, .ag-dia, .pn-caja, .pn-vacio,
+.aj-grupo, .cob-fila, .cob-mes, .cob-resumen, .cl-fila, .inv-msg{
+  border-radius:var(--r-sup) !important;
+}
+.pn-buscar{border-radius:999px !important;}
+
+
+/* ══════════════════════════════════════════════════════════════
+   EL AIRE · Ivan, 8 sep: «se ven pegadas, montadas, no respiran»
+
+   Tenía razón y era consecuencia directa de esta propuesta. Varias
+   listas del panel eran RENGLONES separados por una línea de un
+   píxel: sin relleno lateral y sin separación, porque la línea ya
+   hacía el trabajo. Al convertirlas en tarjetas de vidrio la línea
+   sobra y el aire pasa a ser obligatorio — y nadie se lo dio.
+
+   Medido en Cobros: separación real entre filas 0 px, y relleno
+   `14px 0px`, o sea el texto tocando el borde de la tarjeta.
+
+   Un solo ritmo para todas: --aire entre tarjetas, --dentro adentro.
+   Antes había 10 px en una lista, 12 en otra y 0 en la tercera.
+   ══════════════════════════════════════════════════════════════ */
+:root{ --aire:14px; --dentro:18px 20px; }
+
+.pn-lista, .pn-toca{gap:var(--aire) !important;}
+.pn-tiles{gap:var(--aire) !important;}
+
+/* Cobros no tenía contenedor con separación: las filas se apilaban
+   pegadas. Se separan por margen, que no depende de que el padre sea
+   flex. */
+.cob-fila{
+  padding:var(--dentro) !important;
+  margin-bottom:var(--aire) !important;
+  border-bottom:0 !important;
+}
+.cob-fila:last-child{margin-bottom:0 !important;}
+.cob-mes, .cob-resumen{margin-bottom:var(--aire) !important;}
+
+/* ⚠️ Y NADA MÁS. El primer arreglo le puso `--dentro` a `.fila`, `.tarea`,
+   `.cl-fila` y `.tile` «para unificar», y eso era pasarse: esas cuatro YA
+   eran tarjetas con su relleno bien puesto de antes — y a `.tarea`, que es
+   la más importante de la pantalla, la ENCOGÍA de 20/22 a 18/20.
+   El aire que faltaba era ENTRE tarjetas, no adentro de todas. Unificar el
+   ritmo exterior es orden; unificar el interior es aplanar la jerarquía. */
+
+/* La agenda: sus citas eran renglones con línea; ahora respiran igual
+   que todo lo demás. */
+.ag-cita{
+  padding:14px 12px !important;
+  border-bottom:0 !important;
+  margin-bottom:6px;
+}
+.ag-cita:last-child{margin-bottom:0;}
+/* `.ficha-pie` —la barra donde vive «Guardar»— era blanca con radio 0:
+   el bloque cuadrado que Ivan fotografió. Se encontró barriendo las
+   seis vistas en busca de superficies opacas sin radio, no a ojo; era
+   la única que quedaba. */
+.ficha-pie{
+  background:var(--vidrio) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+  border:1px solid var(--vidrio-borde) !important;
+  border-radius:var(--r-sup) !important;
+}
+.ficha-caja, .hoja-caja{border-radius:22px 22px 0 0 !important;}
+.pn-lado{border-radius:0 22px 22px 0 !important; border-left:0 !important;}
+.qa{border-radius:var(--r-chico) !important;}
+.main-top{
+  background:rgba(242,245,247,.62) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--vidrio-linea) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   3 · UNA SOLA SENSACIÓN AL NAVEGAR
+
+   Ivan: «el efecto de mover el mouse sobre las invitadas, así deberían
+   sentirse en todas las secciones».
+
+   La regla, para todo lo que se puede tocar: el material se vuelve más
+   sólido. Nada sube, nada crece, nada cambia de color — sobre vidrio
+   eso es lo que se lee como «esto responde», y es lo único que se
+   puede hacer sin pelear con el desenfoque.
+
+   Se declara UNA vez y se aplica a todo, en vez de que cada elemento
+   invente su hover. Eso era lo que hacía que unas partes se sintieran
+   vivas y otras muertas.
+   ══════════════════════════════════════════════════════════════ */
+.tile, .tarea, .fila, .cl-fila, .ag-cita, .inv-msg,
+.mini, .pn-copiar, .pn-txt, .ag-paso, .pn-paginas button,
+[data-v], .prog-btn, .lado-salir, .filtro, .opt, .pn-buscar{
+  transition:background 200ms var(--ease), border-color 200ms var(--ease) !important;
+}
+.tile:hover, .tarea:hover, .fila:hover, .cl-fila:hover, .ag-cita:hover, .inv-msg:hover{
+  background:var(--vidrio-alto) !important;
+  border-color:#fff !important;
+}
+/* Los controles chicos usan el mismo gesto en su escala. */
+.mini:hover, .pn-copiar:hover, .pn-txt:hover, .ag-paso:hover,
+.pn-paginas button:hover:not(:disabled), .prog-btn:hover, .lado-salir:hover, .filtro:hover{
+  background:var(--vidrio-alto) !important;
+  border-color:rgba(30,29,26,.20) !important;
+  color:var(--ink) !important;
+  transform:none !important;
+}
+[data-v]:hover{background:rgba(255,255,255,.7) !important;}
+/* Lo lleno —WhatsApp, el botón principal, la página puesta— no se
+   aclara: se oscurece. Aclarar algo lleno lo apaga. */
+.wa:hover{background:var(--ink) !important; transform:none !important; box-shadow:none !important;}
+.pn-btn:hover{background:#000 !important; transform:none !important; box-shadow:none !important;}
+.wa, .pn-btn{box-shadow:none !important;}
+/* Y el hundido al tocar, igual en todo: es la opción C del sitio. */
+.tile:active, .tarea:active, .fila:active, .cl-fila:active, .ag-cita:active,
+.mini:active, .pn-copiar:active, .wa:active, .pn-btn:active, .ag-paso:active{
+  transform:translateY(1px) !important;
+}
+:focus-visible{outline:2px solid var(--teal-deep) !important; outline-offset:2px !important;}
+
+/* ── LA AGENDA ── */
+.ag-cuerpo{display:grid; gap:18px; margin-top:24px; grid-template-columns:1fr;}
+@media (min-width:900px){ .ag-cuerpo{grid-template-columns:340px 1fr; align-items:start;} }
+.ag-mes, .ag-dia{padding:20px;}
+.ag-cab{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;}
+/* `capitalize` escribía «Agosto De 2026»: en español la preposición va
+   en minúscula. Sólo la primera letra. */
+.ag-cab b{font-family:var(--display); font-weight:600; font-size:1.02rem; letter-spacing:-.01em;}
+.ag-cab b::first-letter{text-transform:uppercase;}
+.ag-paso{
+  font:inherit; font-size:1.1rem; line-height:1; cursor:pointer;
+  width:36px; height:36px; border-radius:999px;
+  border:1px solid var(--vidrio-linea); background:rgba(255,255,255,.55); color:var(--ink-2);
+}
+.ag-sem{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px;}
+.ag-sem span{text-align:center; font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; color:var(--ink-3);}
+.ag-rejilla{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+.ag-hueco{aspect-ratio:1;}
+.ag-d{
+  aspect-ratio:1; position:relative; font:inherit; font-size:.88rem;
+  border:0; background:transparent; color:var(--ink-3); border-radius:999px;
+  display:grid; place-items:center; cursor:default; font-variant-numeric:tabular-nums;
+}
+.ag-d.tiene{color:var(--ink); font-weight:600; cursor:pointer; background:rgba(36,137,157,.12);}
+.ag-d.tiene:hover{background:rgba(36,137,157,.24);}
+.ag-d.hoy{box-shadow:inset 0 0 0 1.5px var(--teal);}
+.ag-d.puesto{background:var(--ink) !important; color:var(--white) !important;}
+.ag-pt{
+  position:absolute; bottom:5px; left:50%; transform:translateX(-50%);
+  width:5px; height:5px; border-radius:999px; background:var(--teal);
+  font-style:normal; font-size:.5rem; line-height:5px; text-align:center; color:transparent;
+}
+.ag-d.tiene .ag-pt:not(:empty){
+  width:auto; min-width:15px; height:15px; bottom:2px; border-radius:999px;
+  font-family:var(--mono); font-size:.56rem; line-height:15px; color:#fff;
+}
+.ag-d.puesto .ag-pt{background:var(--white);}
+.ag-d.puesto .ag-pt:not(:empty){color:var(--ink);}
+.ag-dia-cab{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  padding-bottom:14px; margin-bottom:6px; border-bottom:1px solid var(--vidrio-linea);
+}
+.ag-dia-cab b{font-family:var(--display); font-weight:600; font-size:1.08rem; letter-spacing:-.015em;}
+.ag-dia-cab b::first-letter{text-transform:uppercase;}
+.ag-dia-cab span{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--ink-3);}
+.ag-cita{
+  width:100%; font:inherit; text-align:left; cursor:pointer;
+  display:grid; grid-template-columns:auto auto 1fr; gap:14px; align-items:center;
+  padding:14px 10px; border:1px solid transparent; background:transparent;
+  border-radius:var(--r-chico);
+}
+.ag-hora{
+  font-family:var(--mono); font-size:.76rem; color:var(--teal-deep);
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.ag-ini{
+  width:34px; height:34px; border-radius:999px; display:grid; place-items:center;
+  background:rgba(36,137,157,.14); color:var(--teal-deep);
+  font-family:var(--mono); font-size:.68rem;
+}
+.ag-quien{min-width:0;}
+.ag-quien b{display:block; font-family:var(--display); font-weight:600; font-size:.98rem;}
+.ag-quien i{display:block; font-style:normal; font-size:.8rem; color:var(--ink-2); margin-top:2px;}
+
+/* Sin vidrio, opaco. Traslúcido SIN desenfoque deja el texto sobre el
+   degradado y no se lee; opaco se ve peor pero funciona. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .pn-lado, .tile, .tarea, .fila, .pn-caja, .ficha-caja, .hoja-caja, .cl-fila,
+  .pn-buscar, .filtro, .ag-mes, .ag-dia, .aj-grupo, .cob-fila, .cob-mes, .main-top{
+    background:#FFFFFF !important;
+  }
+}
 </style>
 </head>
 <body>
