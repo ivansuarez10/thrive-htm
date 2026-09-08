@@ -1208,6 +1208,130 @@ body{background:var(--sand);}
 .pn-apagado code{font-family:var(--mono); font-size:.86rem; background:var(--sand); padding:2px 6px; border-radius:5px;}
 .pn-apagado ol{margin:14px 0 0 18px; font-size:.95rem; color:var(--ink-2); line-height:1.9;}
 </style>
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   PARTE 2 · BLANCO Y COLOR DE ESTADO — 8 sep 2026
+
+   Va en su propia hoja, aparte de la de arriba, para que se pueda
+   quitar entera sin tocar una línea del panel original. Es a
+   propósito: esto se subió por partes y cada parte tiene que poder
+   volverse atrás sola.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══ 0 · EL PANEL SE VA A BLANCO ═══
+   Ivan, 8 sep 2026: «el color beige es lo que no me encanta, probemos
+   blanco».
+
+   El beige no era una decisión del panel: lo heredaba. `thrive.css`
+   pinta `body::before`, el degradado de arcilla que le da calidez a la
+   LANDING —«la calidez viene de las fotos, no de la paleta», y esa luz
+   es la que la sostiene—. En una página que se lee una vez, funciona.
+   En una herramienta que se mira todos los días, tiñe todo de crema.
+
+   Acá se apaga, y el panel pasa a la estructura de las referencias que
+   mandó Ivan: página en un neutro casi imperceptible y las superficies
+   en BLANCO puro encima. Es lo que hace que una tarjeta se lea como
+   tarjeta sin necesidad de sombra. */
+body::before, body::after{display:none !important;}
+body, .pn-shell{background:#F6F6F7 !important;}
+.pn-lado{background:#FFFFFF !important;}
+.pn-main{background:transparent !important;}
+.main-top{background:rgba(246,246,247,.92) !important;}
+.tile, .tarea, .fila, .pn-caja, .ficha-caja, .hoja-caja, .cl-fila, .pn-buscar, .filtro{
+  background:#FFFFFF !important;
+}
+
+:root{
+  /* Los ocho estados, de lo frío —todavía no pasa nada— a lo cálido
+     —ya está adentro—. Cada uno: superficie, borde y tinta propia. */
+  /* «Invitada» era arena y sobre blanco leía beige. Pasa a un gris
+     neutro: todavía no pasó nada, y eso es ausencia de color, no
+     un color cálido.
+     ⚠️ Acá decía que la arcilla se quedaba «porque es de la marca y
+     hace trabajo». Duró un día: el 8 sep Ivan la mandó fuera de todos
+     lados. La reemplaza la lavanda. */
+  --e-arena:#F1F1F2;      --e-arena-t:#5F5E63;   --e-arena-b:#DCDCE0;
+  --e-teal-1:#E9F3F5;     --e-teal-1-t:#1B6E7E;  --e-teal-1-b:#CFE6EB;
+  --e-teal-2:#D8EBF0;     --e-teal-2-t:#13525F;  --e-teal-2-b:#B4D8E1;
+  /* ⚠️ Acá vivía la arcilla #C08A63. Ivan, 8 sep: «el color café no
+     me encanta ya en muchos lados». Se va entera y la reemplaza
+     lavanda —que además está en sus referencias, en las tarjetas de
+     Learnbox— para las dos etapas de la clase de prueba. La alerta
+     de salud pasa a rosa: es lo que significa, y no compite con el
+     azul del fondo como sí lo hacía el café. */
+  --e-lila-1:#F0EEFA;     --e-lila-1-t:#4F4694;  --e-lila-1-b:#DCD7F2;
+  --e-lila-2:#E4DFF6;     --e-lila-2-t:#443A85;  --e-lila-2-b:#CBC3EA;
+  --e-rosa:#FBECEE;       --e-rosa-t:#9B3945;  --e-rosa-b:#F0D2D7;
+  --e-verde:#E3F0EA;      --e-verde-t:#1D6B57;   --e-verde-b:#C4E0D3;
+  --e-gris:#EDEDEF;       --e-gris-t:#5F5E63;    --e-gris-b:#DCDCE0;
+  /* «No siguió» tiene que verse apagada, pero apagada no es ilegible:
+     #8A857D daba 3.25:1. La fila ya baja a opacity .72, así que el
+     texto puede permitirse ser firme. */
+  --e-apagado:#F2F2F4;    --e-apagado-t:#6A6970; --e-apagado-b:#E3E3E7;
+}
+
+/* ═══ 1 · LAS PÍLDORAS DE ESTADO ═══
+   Ocho tintes en vez de un gris. Es el cambio que más se nota y el que
+   menos cuesta: la píldora ya existía y ya decía el estado. */
+.pill{border:1px solid transparent; font-weight:600 !important;}
+.pill.invitada     {background:var(--e-arena) !important;     color:var(--e-arena-t) !important;     border-color:var(--e-arena-b) !important;}
+.pill.escribio     {background:var(--e-teal-1) !important;    color:var(--e-teal-1-t) !important;    border-color:var(--e-teal-1-b) !important;}
+.pill.formulario   {background:var(--e-teal-2) !important;    color:var(--e-teal-2-t) !important;    border-color:var(--e-teal-2-b) !important;}
+.pill.clase_agendada{background:var(--e-lila-1) !important; color:var(--e-lila-1-t) !important; border-color:var(--e-lila-1-b) !important;}
+.pill.vino         {background:var(--e-lila-2) !important; color:var(--e-lila-2-t) !important; border-color:var(--e-lila-2-b) !important;}
+.pill.adentro      {background:var(--e-verde) !important;     color:var(--e-verde-t) !important;     border-color:var(--e-verde-b) !important;}
+.pill.lista_espera {background:var(--e-gris) !important;      color:var(--e-gris-t) !important;      border-color:var(--e-gris-b) !important;}
+.pill.no           {background:var(--e-apagado) !important;   color:var(--e-apagado-t) !important;   border-color:var(--e-apagado-b) !important;}
+/* los embudos de los otros programas, para que no queden sin color */
+.pill.interesada,.pill.conversando{background:var(--e-teal-1) !important; color:var(--e-teal-1-t) !important;}
+.pill.sesion_agendada,.pill.inscrita{background:var(--e-lila-1) !important; color:var(--e-lila-1-t) !important;}
+.pill.activa{background:var(--e-verde) !important; color:var(--e-verde-t) !important;}
+.pill.pausada{background:var(--e-gris) !important; color:var(--e-gris-t) !important;}
+
+/* ═══ 2 · LA FILA SE TIÑE POR SU ESTADO ═══
+   Es el movimiento del kanban: la superficie lleva el color, no sólo
+   una etiqueta. Se hace con :has() y sin tocar el JS — la fila ya
+   contiene su píldora. Un borde de 3px a la izquierda y nada más: la
+   fila entera teñida sería una lista de ocho colores gritando. */
+.fila{border-left:3px solid var(--line) !important; border-radius:4px 12px 12px 4px !important;}
+.fila:has(.pill.invitada)      {border-left-color:var(--e-arena-b) !important;}
+.fila:has(.pill.escribio)      {border-left-color:var(--e-teal-1-b) !important;}
+.fila:has(.pill.formulario)    {border-left-color:var(--teal) !important;}
+.fila:has(.pill.clase_agendada){border-left-color:var(--e-lila-1-b) !important;}
+.fila:has(.pill.vino)          {border-left-color:var(--e-lila-1-b) !important;}
+.fila:has(.pill.adentro)       {border-left-color:var(--e-verde-t) !important;}
+.fila:has(.pill.lista_espera)  {border-left-color:var(--e-gris-b) !important;}
+.fila:has(.pill.no)            {border-left-color:var(--e-apagado-b) !important; opacity:.72;}
+
+
+/* ═══ 4 · LA PILA SE TIÑE POR URGENCIA ═══
+   ⚠️ Tiñe por `data-estado`, NO por `data-prio`. El primer intento fue
+   por prio y no significaba nada: nueve de cada diez tareas son prio 2.
+   `prio` ORDENA la pila; el estado es lo que dice de qué se trata. */
+.tarea{
+  background:var(--white) !important;
+  border-left:3px solid var(--line) !important;
+  border-radius:4px 16px 16px 4px !important;
+}
+.tarea[data-estado="invitada"]      {border-left-color:var(--e-arena-b) !important;}
+.tarea[data-estado="escribio"]      {border-left-color:var(--e-teal-1-b) !important;}
+.tarea[data-estado="formulario"]    {border-left-color:var(--teal) !important;}
+.tarea[data-estado="clase_agendada"]{border-left-color:var(--e-lila-1-b) !important;}
+.tarea[data-estado="vino"]          {border-left-color:var(--e-lila-2-t) !important;}
+.tarea[data-estado="adentro"]       {border-left-color:var(--e-verde-t) !important;}
+.tarea[data-estado="lista_espera"]  {border-left-color:var(--e-gris-b) !important;}
+
+/* La salud es lo único que pinta la superficie entera, y por eso
+   funciona: es la única tarjeta de la pila que se ve distinta, así que
+   se encuentra sin buscarla. Si se tiñeran las ocho, ninguna
+   destacaría — que es el error que cometí pintando por `prio`. */
+.tarea.salud{
+  background:var(--e-rosa) !important;
+  border-left-color:var(--e-rosa-t) !important;
+}
+.tarea.salud .tarea-nom, .tarea.salud .tarea-motivo{color:var(--e-rosa-t) !important;}
+</style>
 </head>
 <body>
 
@@ -2737,7 +2861,12 @@ body{background:var(--sand);}
       hacer += '<button class="mini" type="button" data-hoja="' + esc(c.id) + '">Elegir mensaje</button>';
       hacer += '<button class="mini" type="button" data-ficha="' + esc(c.id) + '">Ver ficha</button>';
 
-      return '<article class="tarea' + (x.salud ? ' salud' : '') + '" style="--i:' + i + '">' +
+      /* `data-estado` sale acá y NO de `prio`. Se descubrió probándolo:
+         nueve de cada diez tareas son prio 2 —el formulario esperando, la
+         que no contesta, la deuda y la lista de espera, todas juntas—.
+         `prio` ORDENA la pila; no dice de qué se trata cada fila. */
+      return '<article class="tarea' + (x.salud ? ' salud' : '') +
+        '" data-estado="' + esc(c.estado) + '" style="--i:' + i + '">' +
         '<div class="tarea-que">' +
           '<h3 class="tarea-nom">' + (x.salud ? ICONO_ALERTA : '') + esc(c.nombre) + '</h3>' +
           '<p class="tarea-motivo">' + esc(x.motivo) + '</p>' +
