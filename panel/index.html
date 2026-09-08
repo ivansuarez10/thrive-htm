@@ -1591,6 +1591,64 @@ body, .pn-shell, .pn-main{background:transparent !important;}
    del formulario. */
 #fichaCaja, #hojaCaja{padding-bottom:0 !important;}
 
+/* ══ EL TIRADOR ══ Ivan, 8 sep: «una barrita arriba que me permita
+   deslizar hacia abajo, tipo Apple».
+
+   Va PEGAJOSA arriba del todo y la cabecera baja a `top:26px`, así se
+   apilan las dos y ninguna se va con el scroll. Sin eso el gesto sólo
+   existiría al principio de la hoja, que es justo cuando menos falta
+   —la × todavía se ve— y no cuando ella ya bajó y está lejos de todo. */
+#fichaCaja > .tirador, #hojaCaja > .tirador{
+  position:sticky; top:0; z-index:4;
+  display:block; width:calc(100% + 2 * clamp(18px,4vw,32px));
+  margin:0 calc(-1 * clamp(18px,4vw,32px));
+  border:0; background:var(--white);
+  padding:11px 0 7px; cursor:grab;
+  /* ⚠️ `touch-action:none` NO es opcional: sin él Safari se queda el
+     gesto vertical para hacer scroll y el arrastre nunca llega al
+     código. Es lo único que hay entre esto y una barrita muerta. */
+  touch-action:none;
+  -webkit-user-select:none; user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#fichaCaja > .tirador:active{cursor:grabbing;}
+#fichaCaja > .tirador::before, #hojaCaja > .tirador::before{
+  content:''; display:block; margin:0 auto;
+  width:38px; height:5px; border-radius:999px;
+  background:rgba(30,29,26,.22);
+}
+#fichaCaja > .tirador:hover::before, #hojaCaja > .tirador:hover::before{
+  background:rgba(30,29,26,.34);
+}
+/* La zona de toque real es de 44 px aunque la barrita mida 5: se
+   extiende con un pseudo-elemento para no empujar la cabecera. */
+#fichaCaja > .tirador::after, #hojaCaja > .tirador::after{
+  content:''; position:absolute; left:0; right:0; top:-9px; height:44px;
+}
+#fichaCaja > .tirador{position:sticky;}
+#fichaCaja > .ficha-top, #hojaCaja > .ficha-top{top:26px !important;}
+
+/* La hoja sigue al dedo sin transición mientras se arrastra —la pone y
+   la quita el JS—; ésta es la vuelta a su sitio cuando no alcanzó. */
+#fichaCaja, #hojaCaja{transition:transform 260ms cubic-bezier(.22,1,.36,1);}
+
+/* El velo se aclara con el arrastre. `--tira` la escribe el JS entre 1
+   y 0; sin poner nada vale 1, que es el velo de siempre. */
+#ficha, #hoja{
+  background:rgba(30,29,26,calc(.42 * var(--tira, 1))) !important;
+}
+
+@media (min-width:760px){
+  /* Arriba de 760 la hoja deja de subir desde abajo y pasa a ser un
+     diálogo centrado: arrastrar hacia abajo no significa nada ahí. El
+     JS ni siquiera la crea; esto es la red por si acaso. */
+  #fichaCaja > .tirador, #hojaCaja > .tirador{display:none;}
+  #fichaCaja > .ficha-top, #hojaCaja > .ficha-top{top:0 !important;}
+}
+@media (prefers-reduced-motion:reduce){
+  #fichaCaja, #hojaCaja{transition:none;}
+}
+
 /* ⚠️ Y el `.ficha-pie` de Ajustes, que NO está en un modal: vive en el
    flujo de la página, sobre el degradado. Al quitarle el vidrio se
    quedó con el blanco opaco y radio 0 de la regla base — o sea el mismo
@@ -4449,6 +4507,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
       '</div>';
 
     elFicha.hidden = false;
+    ponerTirador(elCaja, elFicha, cerrarFicha);
     document.body.style.overflow = 'hidden';
 
     elCaja.querySelectorAll('.pn-copiar').forEach(function(b){
@@ -4535,7 +4594,103 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 
   function cerrarFicha(){
     elFicha.hidden = true;
+    elFicha.style.removeProperty('--tira');
+    elCaja.style.transform = '';
+    elCaja.style.removeProperty('animation');
     document.body.style.overflow = '';
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     EL TIRADOR · Ivan, 8 sep: «una barrita arriba que me permita
+     deslizar hacia abajo y funcione como cerrar, tipo Apple»
+
+     Es la barrita de las hojas de iOS. No es adorno: en el teléfono
+     la hoja tapa casi toda la pantalla y la única salida era una ×
+     de 12 px arriba a la derecha — el rincón más lejos del pulgar.
+     Arrastrar hacia abajo es el gesto que Denisse ya hace veinte
+     veces al día en su propio teléfono.
+
+     Sólo donde la hoja SUBE DESDE ABAJO. Arriba de 760 px deja de
+     ser una hoja y pasa a ser un diálogo centrado: ahí arrastrar
+     hacia abajo no significa nada y el tirador no se dibuja.
+     ═══════════════════════════════════════════════════════════ */
+  var ESHOJA = window.matchMedia('(max-width:759.98px)');
+
+  function ponerTirador(caja, velo, cerrar){
+    if(!ESHOJA.matches) return;
+    if(caja.firstElementChild && caja.firstElementChild.classList.contains('tirador')) return;
+    var tira = document.createElement('button');
+    tira.type = 'button';
+    tira.className = 'tirador';
+    /* Es un botón de verdad, no un `div` con oyentes: así se alcanza
+       con el tabulador, responde a Enter y a la barra espaciadora sin
+       una línea más, y un lector de pantalla lo anuncia como cerrar.
+       El gesto es la mejora; el botón es el piso. */
+    tira.setAttribute('aria-label', 'Cerrar');
+    caja.insertBefore(tira, caja.firstChild);
+
+    var y0 = 0, t0 = 0, dy = 0, arrastrando = false;
+
+    function pintar(v){
+      caja.style.transform = v ? 'translateY(' + v + 'px)' : '';
+      /* El velo se abre con el arrastre. Sin eso el gesto se siente a
+         medias: la hoja baja pero el fondo sigue igual de oscuro, y
+         parece que se está moviendo sola en vez de que uno la mueve. */
+      velo.style.setProperty('--tira', v ? String(Math.max(0, 1 - v / 420)) : '');
+    }
+
+    tira.addEventListener('pointerdown', function(e){
+      arrastrando = true; y0 = e.clientY; t0 = e.timeStamp; dy = 0;
+      caja.style.transition = 'none';
+      /* ⚠️ Y hay que APAGAR la animación de apertura, no sólo la
+         transición. `.ficha-caja` corre `sube 420ms`, y una animación
+         CSS le gana al estilo en línea mientras vive: medido, el
+         arrastre escribía `translateY(150px)` y el navegador seguía
+         pintando los `translateY(24px)` del primer fotograma de `sube`.
+         O sea que arrastrar durante el primer medio segundo —justo
+         cuando el dedo todavía está sobre la barrita— no movía nada.
+         Se repone al cerrar, para que la próxima vez vuelva a subir. */
+      caja.style.animation = 'none';
+      tira.setPointerCapture(e.pointerId);
+    });
+
+    tira.addEventListener('pointermove', function(e){
+      if(!arrastrando) return;
+      /* Sólo hacia abajo. Hacia arriba la hoja ya está en su tope y
+         estirarla dejaría un hueco entre ella y el borde. */
+      dy = Math.max(0, e.clientY - y0);
+      pintar(dy);
+    });
+
+    function soltar(e){
+      if(!arrastrando) return;
+      arrastrando = false;
+      caja.style.transition = '';
+      /* Dos formas de cerrar, y hacen falta las dos: haberla bajado
+         lo suficiente, O haberla tirado rápido aunque sea poco. Con
+         sólo la distancia, un flick corto y decidido no cierra y se
+         siente trabado. */
+      /* ⚠️ `Math.max(1, …)` no alcanza como red. Si los dos eventos caen
+         en el mismo milisegundo —pasa con un toque muy seco, y pasa
+         siempre con eventos sintéticos— la división da una velocidad
+         enorme y un movimiento de 25 px cierra la hoja sin que nadie
+         quisiera. Debajo de 12 ms no hay velocidad que medir: se
+         descarta y manda sólo la distancia. */
+      var ms = (e.timeStamp || 0) - t0;
+      var rapido = ms > 12 && dy / ms > 0.55;
+      if(dy > 110 || (dy > 24 && rapido)){
+        caja.style.transition = 'transform 220ms cubic-bezier(.4,0,1,1)';
+        caja.style.transform = 'translateY(100%)';
+        setTimeout(cerrar, 200);
+      }else{
+        pintar(0);
+      }
+    }
+    tira.addEventListener('pointerup', soltar);
+    tira.addEventListener('pointercancel', soltar);
+    /* Un toque seco sobre la barrita también cierra: sin esto habría
+       que arrastrar 110 px para salir, y tocarla no haría nada. */
+    tira.addEventListener('click', function(){ if(dy < 6) cerrar(); });
   }
   elFicha.addEventListener('click', function(e){ if(e.target === elFicha) cerrarFicha(); });
   document.addEventListener('keydown', function(e){
@@ -4849,6 +5004,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
       b.addEventListener('click', cerrarHoja);
     });
     elHoja.hidden = false;
+    ponerTirador(elHojaCaja, elHoja, cerrarHoja);
     document.body.style.overflow = 'hidden';
   }
 
@@ -4951,6 +5107,9 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 
   function cerrarHoja(){
     elHoja.hidden = true;
+    elHoja.style.removeProperty('--tira');
+    elHojaCaja.style.transform = '';
+    elHojaCaja.style.removeProperty('animation');
     if(elFicha.hidden) document.body.style.overflow = '';
   }
   elHoja.addEventListener('click', function(e){ if(e.target === elHoja) cerrarHoja(); });
@@ -5394,6 +5553,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
       b.addEventListener('click', cerrarHoja);
     });
     elHoja.hidden = false;
+    ponerTirador(elHojaCaja, elHoja, cerrarHoja);
     document.body.style.overflow = 'hidden';
   }
 
