@@ -3212,8 +3212,12 @@ body{background:var(--sand);}
 
       return '<button class="fila" type="button" data-id="' + esc(c.id) + '">' +
         '<span class="l1">' +
-          (c.alerta_salud ? '<span class="alerta">' + ICONO_ALERTA + 'Revisar salud</span>' : '') +
+          /* El nombre PRIMERO. Iba detrás de la alerta y la fila se leía
+             «Revisar salud · Carla Medina»: el aviso presentándose antes que
+             la persona. Ivan, 8 sep. La alerta no pierde peso — sigue siendo
+             lo único rojo de la fila. */
           '<span class="nom">' + esc(c.nombre) + '</span>' +
+          (c.alerta_salud ? '<span class="alerta">' + ICONO_ALERTA + 'Revisar salud</span>' : '') +
           '<span class="pill ' + esc(c.estado) + '">' + esc(nombreEstado(c.estado)) + '</span>' +
           faltas +
         '</span>' +
