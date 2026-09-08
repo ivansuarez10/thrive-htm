@@ -1519,18 +1519,95 @@ body, .pn-shell, .pn-main{background:transparent !important;}
   margin-bottom:6px;
 }
 .ag-cita:last-child{margin-bottom:0;}
-/* `.ficha-pie` —la barra donde vive «Guardar»— era blanca con radio 0:
-   el bloque cuadrado que Ivan fotografió. Se encontró barriendo las
-   seis vistas en busca de superficies opacas sin radio, no a ojo; era
-   la única que quedaba. */
-.ficha-pie{
-  background:var(--vidrio) !important;
-  -webkit-backdrop-filter:blur(22px) saturate(150%);
-  backdrop-filter:blur(22px) saturate(150%);
-  border:1px solid var(--vidrio-borde) !important;
-  border-radius:var(--r-sup) !important;
+/* ⚠️ ══ LAS FICHAS NO LLEVAN VIDRIO ══ Ivan, 8 sep, en su iPhone:
+   «arreglemos eso porfa, es inaceptable». Tenía razón y era mío.
+
+   Yo había metido `.ficha-caja` y `.hoja-caja` en la lista del material
+   y además convertido `.ficha-pie` en una TARJETA con borde y radio.
+   Las dos cosas están mal, y por el mismo motivo de fondo:
+
+   1. Una ficha no flota sobre el panel: flota sobre un VELO OSCURO
+      —`rgba(30,29,26,.42)` con desenfoque—. El vidrio es traslúcido, o
+      sea que ese velo se cuela por debajo y la hoja entera se apaga a
+      gris sucio. El vidrio funciona sobre un degradado claro; sobre un
+      velo negro sólo baja el contraste.
+   2. La cabecera se quedó BLANCA SÓLIDA sobre esa hoja gris, así que
+      dejó de leerse como parte de la hoja y pasó a leerse como un
+      bloque blanco tapando el contenido. Lo mismo el pie: con borde y
+      18 px de radio, «Guardar» parecía una tarjeta suelta encima de un
+      campo.
+   3. Y las dos se quedaban CORTAS a los lados, porque heredan el
+      relleno lateral de la caja: por el margen que queda se veía pasar
+      el texto por debajo.
+
+   La regla que queda: **una superficie sobre un velo oscuro es sólida.**
+   El vidrio es para lo que flota sobre el fondo claro del panel. */
+.ficha-caja, .hoja-caja{
+  background:var(--white) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  border:0 !important;
+  border-radius:22px 22px 0 0 !important;
+  box-shadow:0 -10px 44px -14px rgba(30,29,26,.34) !important;
 }
-.ficha-caja, .hoja-caja{border-radius:22px 22px 0 0 !important;}
+@media (min-width:760px){
+  .ficha-caja, .hoja-caja{
+    border-radius:22px !important;
+    box-shadow:0 24px 70px -22px rgba(30,29,26,.42) !important;
+  }
+}
+
+/* La cabecera y el pie son la MISMA hoja, no piezas encima de ella:
+   mismo blanco, sin borde, sin radio, y de canto a canto. Los márgenes
+   negativos cancelan el relleno lateral de la caja y el relleno propio
+   lo devuelve, que es lo que las hace llegar al borde sin desalinear el
+   texto. Sólo dentro de los dos modales: el `.ficha-pie` de Ajustes vive
+   en el flujo normal de la página y no debe tocarse. */
+#fichaCaja > .ficha-top, #fichaCaja > .ficha-pie,
+#hojaCaja  > .ficha-top, #hojaCaja  > .ficha-pie{
+  background:var(--white) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  border-left:0 !important; border-right:0 !important;
+  border-radius:0 !important;
+  margin-left:calc(-1 * clamp(18px,4vw,32px)) !important;
+  margin-right:calc(-1 * clamp(18px,4vw,32px)) !important;
+  padding-left:clamp(18px,4vw,32px) !important;
+  padding-right:clamp(18px,4vw,32px) !important;
+}
+#fichaCaja > .ficha-top, #hojaCaja > .ficha-top{
+  border-top:0 !important;
+  border-bottom:1px solid var(--line-soft) !important;
+}
+/* ⚠️ Y el hueco por donde se colaba el texto: la hoja traía
+   `padding-bottom:34px`, y un pie pegajoso con `bottom:0` se alinea al
+   borde del CONTENIDO, no al de la hoja — o sea que quedaban 34 px de
+   hoja por debajo del pie, y por ahí se veía pasar lo que scrolleaba
+   detrás. Medido exacto: 34. El espacio de abajo lo lleva el PIE, que es
+   lo que está pegado al borde; la hoja no lleva ninguno.
+
+   Y en el iPhone ahí abajo vive la barra de gestos, que se come los
+   toques cercanos: el mismo `env()` que ya lleva el botón «Siguiente»
+   del formulario. */
+#fichaCaja, #hojaCaja{padding-bottom:0 !important;}
+
+/* ⚠️ Y el `.ficha-pie` de Ajustes, que NO está en un modal: vive en el
+   flujo de la página, sobre el degradado. Al quitarle el vidrio se
+   quedó con el blanco opaco y radio 0 de la regla base — o sea el mismo
+   bloque cuadrado que la parte 4 había venido a matar, reintroducido
+   por mí al corregir lo otro. Ahí no hace falta ninguna superficie: es
+   una fila de botones, y la caja que la contiene ya es la superficie. */
+.pn-app .vista .ficha-pie{
+  background:transparent !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  border:0 !important; border-radius:0 !important;
+}
+#fichaCaja > .ficha-pie, #hojaCaja > .ficha-pie{
+  border-bottom:0 !important;
+  border-top:1px solid var(--line-soft) !important;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom)) !important;
+}
 .pn-lado{border-radius:0 22px 22px 0 !important; border-left:0 !important;}
 .qa{border-radius:var(--r-chico) !important;}
 .main-top{
