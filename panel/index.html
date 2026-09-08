@@ -1658,6 +1658,77 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     background:#FFFFFF !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PARTE 5 · LA AGENDA — 8 sep 2026
+   Denisse le asigna la clase de prueba a cada una por separado —una
+   candidata, un día— y hasta hoy NO tenía dónde verlas todas juntas.
+   Podía saber la fecha de una abriendo su ficha, pero no si el sábado
+   tenía tres o ninguna. Lee `clase_en`, que ya existe; no agrega ni
+   pide ningún dato nuevo.
+   ══════════════════════════════════════════════════════════════ */
+.ag-cuerpo{display:grid; gap:18px; margin-top:24px; grid-template-columns:1fr;}
+@media (min-width:900px){ .ag-cuerpo{grid-template-columns:340px 1fr; align-items:start;} }
+.ag-mes, .ag-dia{padding:20px;}
+.ag-cab{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px;}
+/* `capitalize` escribía «Agosto De 2026»: en español la preposición va
+   en minúscula. Sólo la primera letra. */
+.ag-cab b{font-family:var(--display); font-weight:600; font-size:1.02rem; letter-spacing:-.01em;}
+.ag-cab b::first-letter{text-transform:uppercase;}
+.ag-paso{
+  font:inherit; font-size:1.1rem; line-height:1; cursor:pointer;
+  width:36px; height:36px; border-radius:999px;
+  border:1px solid var(--vidrio-linea); background:rgba(255,255,255,.55); color:var(--ink-2);
+}
+.ag-sem{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px;}
+.ag-sem span{text-align:center; font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; color:var(--ink-3);}
+.ag-rejilla{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+.ag-hueco{aspect-ratio:1;}
+.ag-d{
+  aspect-ratio:1; position:relative; font:inherit; font-size:.88rem;
+  border:0; background:transparent; color:var(--ink-3); border-radius:999px;
+  display:grid; place-items:center; cursor:default; font-variant-numeric:tabular-nums;
+}
+.ag-d.tiene{color:var(--ink); font-weight:600; cursor:pointer; background:rgba(36,137,157,.12);}
+.ag-d.tiene:hover{background:rgba(36,137,157,.24);}
+.ag-d.hoy{box-shadow:inset 0 0 0 1.5px var(--teal);}
+.ag-d.puesto{background:var(--ink) !important; color:var(--white) !important;}
+.ag-pt{
+  position:absolute; bottom:5px; left:50%; transform:translateX(-50%);
+  width:5px; height:5px; border-radius:999px; background:var(--teal);
+  font-style:normal; font-size:.5rem; line-height:5px; text-align:center; color:transparent;
+}
+.ag-d.tiene .ag-pt:not(:empty){
+  width:auto; min-width:15px; height:15px; bottom:2px; border-radius:999px;
+  font-family:var(--mono); font-size:.56rem; line-height:15px; color:#fff;
+}
+.ag-d.puesto .ag-pt{background:var(--white);}
+.ag-d.puesto .ag-pt:not(:empty){color:var(--ink);}
+.ag-dia-cab{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  padding-bottom:14px; margin-bottom:6px; border-bottom:1px solid var(--vidrio-linea);
+}
+.ag-dia-cab b{font-family:var(--display); font-weight:600; font-size:1.08rem; letter-spacing:-.015em;}
+.ag-dia-cab b::first-letter{text-transform:uppercase;}
+.ag-dia-cab span{font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; color:var(--ink-3);}
+.ag-cita{
+  width:100%; font:inherit; text-align:left; cursor:pointer;
+  display:grid; grid-template-columns:auto auto 1fr; gap:14px; align-items:center;
+  padding:14px 10px; border:1px solid transparent; background:transparent;
+  border-radius:var(--r-chico);
+}
+.ag-hora{
+  font-family:var(--mono); font-size:.76rem; color:var(--teal-deep);
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.ag-ini{
+  width:34px; height:34px; border-radius:999px; display:grid; place-items:center;
+  background:rgba(36,137,157,.14); color:var(--teal-deep);
+  font-family:var(--mono); font-size:.68rem;
+}
+.ag-quien{min-width:0;}
+.ag-quien b{display:block; font-family:var(--display); font-weight:600; font-size:.98rem;}
+.ag-quien i{display:block; font-style:normal; font-size:.8rem; color:var(--ink-2); margin-top:2px;}
 </style>
 </head>
 <body>
@@ -1743,6 +1814,21 @@ body, .pn-shell, .pn-main{background:transparent !important;}
           <span>Nadie está esperando nada tuyo ahora mismo.</span>
         </div>
 
+      </section>
+
+      <!-- ══════ AGENDA ══════
+           Denisse le asigna la clase de prueba a cada una por separado
+           —una candidata, un día— y hasta hoy NO tenía dónde verlas
+           todas juntas. Podía saber la fecha de una abriendo su ficha,
+           pero no si el sábado tenía tres o ninguna.
+           Lee `clase_en`, que ya existe; no agrega ningún dato. -->
+      <section class="vista" data-vista="agenda" hidden>
+        <h1>Agenda <i id="agCuenta"></i></h1>
+        <p class="sub">Las clases de prueba que ya tienen día. Tocá a cualquiera para abrir su ficha.</p>
+        <div class="ag-cuerpo">
+          <div class="ag-mes" id="agMes"></div>
+          <div class="ag-dia" id="agDia"></div>
+        </div>
       </section>
 
       <!-- ══════ INVITADAS ══════ -->
@@ -2455,6 +2541,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
         pintarPrograma(); pintarNav(); pintarDia(); pintarNuevas();
         pintarToca(); pintarCupos();
         pintarFiltros(); pintarFiltrosEdad(); pintarFiltrosHorario(); pintarLista();
+        pintarAgenda();
         if(vista === 'clientas') pintarClientas();
         if(vista === 'ajustes')  volcarAjustes();
       });
@@ -3619,6 +3706,103 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     });
   }
 
+  var AG_MES = null, AG_DIA = null;
+
+  function claveDia(d){
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') +
+           '-' + String(d.getDate()).padStart(2,'0');
+  }
+  /* Se agrupa por día de calendario EN HONDURAS, igual que el resto del
+     panel: agrupar por UTC mete la clase de las 7:30 a.m. en el día
+     anterior. Es el mismo error que costó seis horas en el pase. */
+  function claveDeClase(iso){
+    try{
+      return new Intl.DateTimeFormat('en-CA', { timeZone:'America/Tegucigalpa',
+        year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(iso));
+    }catch(e){ return claveDia(new Date(iso)); }
+  }
+  function conClase(){ return datos.filter(function(c){ return tieneClase(c); }); }
+  function porDia(){
+    var m = {};
+    conClase().forEach(function(c){
+      var k = claveDeClase(c.clase_en);
+      (m[k] = m[k] || []).push(c);
+    });
+    Object.keys(m).forEach(function(k){
+      m[k].sort(function(a,b){ return new Date(a.clase_en) - new Date(b.clase_en); });
+    });
+    return m;
+  }
+
+  function pintarAgenda(){
+    var elMes = document.getElementById('agMes'), elDia = document.getElementById('agDia');
+    if(!elMes || !elDia) return;
+    var mapa = porDia(), dias = Object.keys(mapa).sort();
+    var cuenta = document.getElementById('agCuenta');
+    if(cuenta) cuenta.textContent = conClase().length || '';
+
+    if(!dias.length){
+      elMes.innerHTML = '';
+      elDia.innerHTML = '<div class="pn-vacio">Todavía no hay ninguna clase con día asignado. ' +
+        'La fecha se le pone desde la ficha de cada una.</div>';
+      return;
+    }
+
+    var hoyK = claveDia(new Date());
+    if(!AG_DIA || !mapa[AG_DIA]) AG_DIA = dias.filter(function(k){ return k >= hoyK; })[0] || dias[dias.length-1];
+    if(!AG_MES){ var pa = AG_DIA.split('-'); AG_MES = new Date(+pa[0], +pa[1]-1, 1); }
+
+    var primero = new Date(AG_MES.getFullYear(), AG_MES.getMonth(), 1);
+    var arranca = (primero.getDay() + 6) % 7;
+    var largo = new Date(AG_MES.getFullYear(), AG_MES.getMonth()+1, 0).getDate();
+
+    var h = '<div class="ag-cab">' +
+      '<button type="button" class="ag-paso" data-mes="-1" aria-label="Mes anterior">&lsaquo;</button>' +
+      '<b>' + esc(primero.toLocaleDateString('es-HN', { month:'long', year:'numeric' })) + '</b>' +
+      '<button type="button" class="ag-paso" data-mes="1" aria-label="Mes siguiente">&rsaquo;</button></div>' +
+      '<div class="ag-sem"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>' +
+      '<div class="ag-rejilla">';
+    for(var i=0;i<arranca;i++) h += '<span class="ag-hueco"></span>';
+    for(var d=1; d<=largo; d++){
+      var k = claveDia(new Date(AG_MES.getFullYear(), AG_MES.getMonth(), d));
+      var n = (mapa[k] || []).length;
+      h += '<button type="button" class="ag-d' + (n ? ' tiene' : '') +
+        (k === AG_DIA ? ' puesto' : '') + (k === hoyK ? ' hoy' : '') +
+        '" data-dia="' + k + '"' + (n ? '' : ' disabled') + '>' + d +
+        (n ? '<i class="ag-pt">' + (n > 1 ? n : '') + '</i>' : '') + '</button>';
+    }
+    elMes.innerHTML = h + '</div>';
+
+    var delDia = mapa[AG_DIA] || [], fecha = new Date(AG_DIA + 'T12:00:00');
+    elDia.innerHTML =
+      '<div class="ag-dia-cab"><b>' +
+        esc(fecha.toLocaleDateString('es-HN', { weekday:'long', day:'numeric', month:'long' })) +
+      '</b><span>' + (delDia.length === 1 ? 'una clase' : delDia.length + ' clases') + '</span></div>' +
+      delDia.map(function(c){
+        var ini = String(c.nombre || '?').trim().split(/\s+/).slice(0,2)
+                    .map(function(x){ return x[0] || ''; }).join('').toUpperCase();
+        return '<button type="button" class="ag-cita" data-id="' + esc(c.id) + '">' +
+          '<span class="ag-hora">' + esc(horaDe(c.clase_en)) + '</span>' +
+          '<span class="ag-ini">' + esc(ini) + '</span>' +
+          '<span class="ag-quien"><b>' + esc(c.nombre) + '</b>' +
+            '<i>' + esc(nombreEstado(c.estado)) + (c.grupo ? ' &middot; ' + esc(c.grupo) : '') + '</i></span>' +
+        '</button>';
+      }).join('');
+
+    elMes.querySelectorAll('[data-mes]').forEach(function(b){
+      b.addEventListener('click', function(){
+        AG_MES = new Date(AG_MES.getFullYear(), AG_MES.getMonth() + (+b.getAttribute('data-mes')), 1);
+        pintarAgenda();
+      });
+    });
+    elMes.querySelectorAll('[data-dia]').forEach(function(b){
+      b.addEventListener('click', function(){ AG_DIA = b.getAttribute('data-dia'); pintarAgenda(); });
+    });
+    elDia.querySelectorAll('[data-id]').forEach(function(b){
+      b.addEventListener('click', function(){ abrirFicha(b.getAttribute('data-id')); });
+    });
+  }
+
   function pintarLista(){
     var cont = document.getElementById('lista');
     var v = visibles();
@@ -4704,6 +4888,12 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     hoy:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 16 2 2 4-4"/>',
     invitadas:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
     clientas:'<path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m16 11 2 2 4-4"/>',
+    /* ⚠️ Sin esta línea `ICO['agenda']` es undefined y `svg()` concatena
+       la palabra «undefined» DENTRO del SVG, que el navegador dibuja como
+       texto en el menú. Pasó en la demo y así se encontró.
+       Es un reloj sobre el calendario, para que no se confunda con «Hoy»,
+       que es el mismo calendario con un visto. */
+    agenda:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M12 13v3l2 1"/>',
     cobros:'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20"/><path d="M6 15h3"/>',
     ajustes:'<path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-4M20 13V3M1 15h6M9 8h6M17 17h6"/>'
   };
@@ -4718,6 +4908,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
      son personas, Ajustes es configuración. */
   var VISTAS = [
     ['hoy',       'Hoy',       'Su día'],
+    ['agenda',    'Agenda',    ''],
     ['invitadas', 'Invitadas', 'La gente'],
     ['clientas',  'Clientas',  ''],
     ['cobros',    'Cobros',    'El programa'],
