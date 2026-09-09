@@ -1591,6 +1591,58 @@ body, .pn-shell, .pn-main{background:transparent !important;}
    del formulario. */
 #fichaCaja, #hojaCaja{padding-bottom:0 !important;}
 
+/* ══════════════════════════════════════════════════════════════
+   LOS GESTOS · 8 sep 2026
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1 · DESLIZAR UNA FILA ── */
+.fila-env{
+  position:relative; overflow:hidden;
+  border-radius:var(--r-sup); isolation:isolate;
+}
+/* La acción vive DETRÁS, pegada al borde derecho y a todo el alto: al
+   correrse la fila no aparece un botón, se descubre una superficie que
+   ya estaba. Es la diferencia entre iOS y una animación cualquiera. */
+.fila-env > .fila-accion{
+  position:absolute; inset:0 0 0 auto; width:116px; z-index:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  background:var(--teal-deep); color:#fff; text-decoration:none;
+  font-size:.78rem; font-weight:600; box-shadow:none; border-radius:0;
+  padding:0;
+  /* ⚠️ INVISIBLE hasta que el dedo la pida, y esto NO es un detalle: la
+     fila es de vidrio, o sea traslúcida, así que el teal de atrás se
+     veía A TRAVÉS de ella y todas las filas con teléfono quedaban con
+     un lavado verde en su lado derecho —incluidas las que nadie tocó—.
+     Es la misma lección que las fichas: el vidrio muestra lo que tiene
+     detrás, y detrás de una fila no puede haber un color.
+     Sigue pintada en el marcado desde el principio; lo que se enciende
+     es la visibilidad, que no cuesta un reflujo. */
+  opacity:0; transition:opacity 120ms linear;
+}
+.fila-env.tocando > .fila-accion{opacity:1;}
+.fila-env > .fila-accion svg{width:19px; height:19px;}
+.fila-env > .fila{
+  position:relative; z-index:1;
+  /* ⚠️ `pan-y` y NO `none`: la fila vive en una lista que se desplaza en
+     vertical. Con `none` el navegador nos entrega TODOS los gestos, el de
+     bajar incluido, y la lista deja de moverse. `pan-y` le deja el
+     vertical y nos cede el horizontal, que es el reparto exacto. */
+  touch-action:pan-y;
+  transition:transform 240ms cubic-bezier(.22,1,.36,1);
+}
+/* Mientras está corrida no debe levantarse al pasar el dedo: el hover
+   y el gesto pelearían por el mismo `transform`. */
+.fila-env > .fila.abierta:hover{transform:translateX(-116px) !important;}
+
+/* ── 2 · DETENTS ── la altura la pone el JS; esto es sólo el viaje */
+#fichaCaja, #hojaCaja{
+  transition:transform 260ms cubic-bezier(.22,1,.36,1),
+             height 300ms cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-reduced-motion:reduce){
+  #fichaCaja, #hojaCaja, .fila-env > .fila{transition:none;}
+}
+
 /* ══ EL TIRADOR ══ Ivan, 8 sep: «una barrita arriba que me permita
    deslizar hacia abajo, tipo Apple».
 
@@ -1629,8 +1681,8 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 #fichaCaja > .ficha-top, #hojaCaja > .ficha-top{top:26px !important;}
 
 /* La hoja sigue al dedo sin transición mientras se arrastra —la pone y
-   la quita el JS—; ésta es la vuelta a su sitio cuando no alcanzó. */
-#fichaCaja, #hojaCaja{transition:transform 260ms cubic-bezier(.22,1,.36,1);}
+   la quita el JS—; la vuelta a su sitio y el viaje entre escalones se
+   declaran abajo, con los gestos. */
 
 /* El velo se aclara con el arrastre. `--tira` la escribe el JS entre 1
    y 0; sin poner nada vale 1, que es el velo de siempre. */
@@ -3938,6 +3990,103 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     });
   }
 
+  /* ═══════════════════════════════════════════════════════════
+     DESLIZAR UNA FILA · «swipe actions» de iOS
+
+     Hasta hoy, escribirle a alguien desde la lista pedía tres toques:
+     abrir su ficha, encontrar el botón verde, y volver. El gesto lo
+     deja en uno.
+
+     ⚠️ `touch-action:pan-y` en la fila, y NO `none`: la fila vive
+     dentro de una lista que se desplaza en vertical. Con `none` el
+     navegador nos entrega TODOS los gestos, incluido el de bajar, y
+     la lista deja de moverse. Con `pan-y` el navegador se queda el
+     vertical y nos cede el horizontal, que es exactamente el reparto
+     que hace falta.
+     ═══════════════════════════════════════════════════════════ */
+  var ABIERTA = null;
+  var DESLIZ = 116;   /* lo que mide la acción descubierta */
+
+  function cerrarDeslizadas(){
+    if(!ABIERTA) return;
+    ABIERTA.classList.remove('abierta');
+    ABIERTA.style.transform = '';
+    /* La acción se apaga DESPUÉS de que la fila terminó de volver: si se
+       apagan a la vez, se ve el teal desvanecerse debajo de una fila que
+       todavía está pasando por encima. */
+    var env = ABIERTA.parentNode;
+    setTimeout(function(){ env.classList.remove('tocando'); }, 240);
+    ABIERTA = null;
+  }
+
+  function prepararDeslizar(fila, c){
+    if(!fila.classList.contains('desliza') || !c) return;
+    var x0 = 0, y0 = 0, dx = 0, activo = false, decidido = false, arrastro = false;
+
+    fila.addEventListener('pointerdown', function(e){
+      if(e.pointerType === 'mouse') return;   /* con ratón se usa la ficha */
+      activo = true; decidido = false; arrastro = false;
+      x0 = e.clientX; y0 = e.clientY; dx = 0;
+      fila.style.transition = 'none';
+    });
+
+    fila.addEventListener('pointermove', function(e){
+      if(!activo) return;
+      var ax = e.clientX - x0, ay = e.clientY - y0;
+      /* Hasta que el gesto no se define, no se mueve nada. Decidir en el
+         primer píxel haría que cualquier scroll con el pulgar torcido
+         arrastrara la fila de lado. */
+      if(!decidido){
+        if(Math.abs(ax) < 10 && Math.abs(ay) < 10) return;
+        decidido = true;
+        arrastro = Math.abs(ax) > Math.abs(ay);
+        if(!arrastro){ activo = false; return; }
+        /* Recién acá se enciende la acción: cuando ya sabemos que el
+           gesto es horizontal. Encenderla al primer contacto la haría
+           parpadear en cada scroll. */
+        fila.parentNode.classList.add('tocando');
+      }
+      var base = fila.classList.contains('abierta') ? -DESLIZ : 0;
+      /* Sólo hacia la izquierda, y con tope: pasado el ancho de la acción
+         no hay nada más que descubrir. */
+      dx = Math.max(-DESLIZ, Math.min(0, base + ax));
+      fila.style.transform = 'translateX(' + dx + 'px)';
+    });
+
+    function soltar(){
+      if(!activo) return;
+      activo = false;
+      fila.style.transition = '';
+      if(!arrastro) return;
+      if(dx < -DESLIZ / 2){
+        if(ABIERTA && ABIERTA !== fila) cerrarDeslizadas();
+        fila.classList.add('abierta');
+        fila.style.transform = 'translateX(' + (-DESLIZ) + 'px)';
+        ABIERTA = fila;
+      }else{
+        fila.classList.remove('abierta');
+        fila.style.transform = '';
+        fila.parentNode.classList.remove('tocando');
+        if(ABIERTA === fila) ABIERTA = null;
+      }
+    }
+    fila.addEventListener('pointerup', soltar);
+    fila.addEventListener('pointercancel', soltar);
+
+    /* La acción descubierta no necesita oyente propio: es el mismo
+       `a.wa[data-quien]` de siempre y el oyente delegado la atiende.
+       Acá sólo hay que recoger la fila después. */
+    var accion = fila.previousElementSibling;
+    if(accion) accion.addEventListener('click', function(){ setTimeout(cerrarDeslizadas, 60); });
+  }
+  /* Tocar en cualquier otro lado cierra la fila abierta. Sin esto queda
+     una fila corrida a mitad de camino mientras ella hace otra cosa. */
+  document.addEventListener('pointerdown', function(e){
+    if(ABIERTA && !ABIERTA.contains(e.target) &&
+       !(ABIERTA.previousElementSibling && ABIERTA.previousElementSibling.contains(e.target)))
+      cerrarDeslizadas();
+  }, true);
+
   function pintarLista(){
     var cont = document.getElementById('lista');
     var v = visibles();
@@ -3992,7 +4141,26 @@ body, .pn-shell, .pn-main{background:transparent !important;}
          «C M Carla Medina» no ayuda a nadie. */
       var ini = String(c.nombre || '?').trim().split(/\s+/).slice(0,2)
                   .map(function(x){ return x[0] || ''; }).join('').toUpperCase();
-      return '<button class="fila" type="button" data-id="' + esc(c.id) + '">' +
+      /* ⚠️ La acción va DETRÁS de la fila, en un sobre con `overflow:hidden`,
+         no dibujada al vuelo al empezar el gesto: así ya está pintada cuando
+         el dedo la descubre y no hay un salto en el primer fotograma.
+         Sin teléfono no hay sobre — deslizar para descubrir un botón que no
+         se puede tocar es peor que no poder deslizar. */
+      /* ⚠️ La acción es EL MISMO `a.wa[data-quien]` que usa la pila de
+         tareas, no un botón nuevo: así hereda el oyente delegado que ya
+         existe y que anota «le escribiste por WhatsApp» en su historia.
+         Un camino paralelo abriría WhatsApp sin dejar rastro, y el panel
+         volvería a insistirle con alguien a quien ya le escribió. */
+      var tel = telE164(c);
+      var abre = tel
+        ? '<div class="fila-env"><a class="wa fila-accion" href="' + esc(waLink(c, '')) + '"' +
+            ' target="_blank" rel="noopener" tabindex="-1"' +
+            ' data-quien="' + esc(c.id) + '" data-que="por WhatsApp">' +
+            ICONO_WA + 'Escribirle</a>'
+        : '';
+      var cierra = tel ? '</div>' : '';
+      return abre + '<button class="fila' + (tel ? ' desliza' : '') +
+             '" type="button" data-id="' + esc(c.id) + '">' +
         '<span class="ini-p" aria-hidden="true">' + esc(ini) + '</span>' +
         '<span class="l1">' +
           /* El nombre PRIMERO. Iba detrás de la alerta y la fila se leía
@@ -4011,11 +4179,18 @@ body, .pn-shell, .pn-main{background:transparent !important;}
         '<span class="l2">' + linea2.map(function(x, n){
           return '<i class="chip' + (n === 0 ? ' cuando' : '') + '">' + esc(x) + '</i>';
         }).join('') + '</span>' +
-      '</button>';
+      '</button>' + cierra;
     }).join('');
 
     cont.querySelectorAll('.fila').forEach(function(f){
-      f.addEventListener('click', function(){ abrirFicha(f.getAttribute('data-id')); });
+      f.addEventListener('click', function(){
+        /* Si la fila está abierta, el toque la CIERRA en vez de abrir la
+           ficha. Es la regla de iOS y evita el peor caso: descubrir la
+           acción sin querer y entrar a otro lado al ir a deshacerlo. */
+        if(f.classList.contains('abierta')){ cerrarDeslizadas(); return; }
+        abrirFicha(f.getAttribute('data-id'));
+      });
+      prepararDeslizar(f, datos.filter(function(x){ return x.id === f.getAttribute('data-id'); })[0]);
     });
   }
 
@@ -4629,6 +4804,22 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     tira.setAttribute('aria-label', 'Cerrar');
     caja.insertBefore(tira, caja.firstChild);
 
+    /* ══ DETENTS ══ Una hoja de iOS no tiene una sola altura: engancha
+       en escalones. Acá son dos —media pantalla y casi entera— y abre en
+       la de en medio, que es la que deja ver la lista de atrás. Eso
+       importa más de lo que parece: con la hoja entera, Denisse pierde
+       de vista dónde estaba y cada ficha se siente como cambiar de
+       pantalla en vez de mirar a alguien de la lista.
+       Arrastrar hacia ARRIBA la sube al escalón grande; hacia abajo la
+       baja un escalón, y desde el de en medio la cierra. */
+    var ALTOS = { medio:'58svh', alto:'92svh' };
+    var nivel = 'medio';
+    function ponerNivel(n){
+      nivel = n;
+      caja.style.height = ALTOS[n];
+    }
+    ponerNivel('medio');
+
     var y0 = 0, t0 = 0, dy = 0, arrastrando = false;
 
     function pintar(v){
@@ -4656,9 +4847,15 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 
     tira.addEventListener('pointermove', function(e){
       if(!arrastrando) return;
-      /* Sólo hacia abajo. Hacia arriba la hoja ya está en su tope y
-         estirarla dejaría un hueco entre ella y el borde. */
-      dy = Math.max(0, e.clientY - y0);
+      dy = e.clientY - y0;
+      /* Hacia ARRIBA no se traslada: se estira. Trasladar una hoja
+         anclada al borde de abajo la despegaría de ese borde y dejaría
+         un hueco. Lo que crece es su altura, y sólo si hay un escalón
+         más arriba al que ir. */
+      if(dy < 0){
+        if(nivel === 'medio') caja.style.height = 'min(92svh, calc(58svh + ' + (-dy) + 'px))';
+        return;
+      }
       pintar(dy);
     });
 
@@ -4677,8 +4874,21 @@ body, .pn-shell, .pn-main{background:transparent !important;}
          quisiera. Debajo de 12 ms no hay velocidad que medir: se
          descarta y manda sólo la distancia. */
       var ms = (e.timeStamp || 0) - t0;
-      var rapido = ms > 12 && dy / ms > 0.55;
-      if(dy > 110 || (dy > 24 && rapido)){
+      var rapido = ms > 12 && Math.abs(dy) / ms > 0.55;
+
+      /* Hacia arriba: engancha en el escalón grande si subió lo
+         suficiente, y si no vuelve al de en medio. */
+      if(dy < 0){
+        ponerNivel((-dy > 70 || rapido) ? 'alto' : 'medio');
+        return;
+      }
+      /* Hacia abajo, desde el escalón grande, NO cierra: baja uno. Que
+         un gesto salte dos escalones de una es lo que hace que uno cierre
+         cosas sin querer. */
+      if(nivel === 'alto' && (dy > 110 || (dy > 24 && rapido))){
+        pintar(0); ponerNivel('medio'); return;
+      }
+      if(nivel === 'medio' && (dy > 110 || (dy > 24 && rapido))){
         caja.style.transition = 'transform 220ms cubic-bezier(.4,0,1,1)';
         caja.style.transform = 'translateY(100%)';
         setTimeout(cerrar, 200);
@@ -4688,6 +4898,46 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     }
     tira.addEventListener('pointerup', soltar);
     tira.addEventListener('pointercancel', soltar);
+
+    /* ══ VOLVER DESDE EL BORDE ══ El «interactive pop gesture» de iOS:
+       deslizar desde el borde izquierdo para salir. Se engancha en la
+       hoja entera pero SÓLO arranca en los primeros 26 px, que es lo
+       que lo hace convivir con todo lo demás: nada útil vive pegado a
+       ese borde, así que no le quita el gesto a nadie. */
+    var bx = 0, bdx = 0, borde = false;
+    caja.addEventListener('pointerdown', function(e){
+      if(e.pointerType === 'mouse') return;
+      /* ⚠️ El tirador ocupa TODO el ancho, así que agarrarlo por su
+         extremo izquierdo cae dentro de los 26 px del borde y disparaba
+         los dos gestos a la vez: la hoja bajaba y se corría de lado al
+         mismo tiempo. El tirador manda — es el gesto explícito. */
+      if(tira.contains(e.target)) return;
+      if(e.clientX - caja.getBoundingClientRect().left > 26) return;
+      borde = true; bx = e.clientX; bdx = 0;
+      caja.style.transition = 'none';
+      caja.style.animation = 'none';
+    });
+    caja.addEventListener('pointermove', function(e){
+      if(!borde) return;
+      bdx = Math.max(0, e.clientX - bx);
+      caja.style.transform = 'translateX(' + bdx + 'px)';
+      velo.style.setProperty('--tira', String(Math.max(0, 1 - bdx / 320)));
+    });
+    function soltarBorde(){
+      if(!borde) return;
+      borde = false;
+      caja.style.transition = '';
+      if(bdx > 90){
+        caja.style.transition = 'transform 200ms cubic-bezier(.4,0,1,1)';
+        caja.style.transform = 'translateX(100%)';
+        setTimeout(cerrar, 190);
+      }else{
+        caja.style.transform = '';
+        velo.style.removeProperty('--tira');
+      }
+    }
+    caja.addEventListener('pointerup', soltarBorde);
+    caja.addEventListener('pointercancel', soltarBorde);
     /* Un toque seco sobre la barrita también cierra: sin esto habría
        que arrastrar 110 px para salir, y tocarla no haría nada. */
     tira.addEventListener('click', function(){ if(dy < 6) cerrar(); });
