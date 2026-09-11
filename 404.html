@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esta página no existe · Healing Through Movement</title>
+<meta name="robots" content="noindex, nofollow">
+
+<!-- GitHub Pages sirve este archivo para CUALQUIER ruta que no exista. Hasta hoy
+     mostraba «Page not found · GitHub Pages»: en inglés, gris, de sistema. Para
+     una clienta que recibió el link por WhatsApp y lo copió a medias, esa era la
+     primera impresión del estudio.
+
+     No carga thrive.css (113 KB) a propósito: solo los tokens que usa esta
+     pantalla, en línea. Las fuentes se piden con la MISMA URL que el resto del
+     sitio, así que comparten entrada de caché en vez de crear una segunda.
+
+     No lleva firma de Denisse: el link llega de ella y eso basta. -->
+
+<link rel="icon" href="/assets/img/seal.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --linen:#FFFFFF; --ink:#1E1D1A; --ink-2:#56524A;
+    --teal-deep:#17606F; --line:rgba(30,29,26,0.12);
+    --display:'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --serif:'Bodoni Moda', ui-serif, Georgia, serif;
+    --sans:'Hanken Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --marca:'Fraunces', ui-serif, Georgia, serif;
+    --marca-ejes:'opsz' 144, 'SOFT' 30, 'WONK' 1;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--linen); color:var(--ink);
+    font-family:var(--sans); -webkit-font-smoothing:antialiased;
+    min-height:100svh; display:flex; align-items:center; justify-content:center;
+    padding:32px 24px; position:relative; overflow-x:hidden;
+  }
+
+  /* La luz de arcilla, igual que en la landing. Es donde vive la calidez del
+     sitio desde que el papel pasó a blanco puro. */
+  body::before{
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(120vmax 92vmax at 108% -10%, rgba(192,138,99,.34), rgba(192,138,99,0) 60%),
+      radial-gradient(104vmax 84vmax at -14% 104%, rgba(192,138,99,.24), rgba(192,138,99,0) 58%);
+  }
+
+  main{position:relative; z-index:1; text-align:center; max-width:30rem}
+
+  /* El logotipo, con la misma entrada letra por letra del sitio: es el único
+     gesto de la página. */
+  .marca{
+    display:flex; justify-content:center; gap:0;
+    font-family:var(--marca); font-weight:400;
+    font-variation-settings:var(--marca-ejes);
+    font-size:1.9rem; line-height:1; letter-spacing:.01em; color:var(--ink);
+  }
+  .marca i{font-style:normal; display:inline-block}
+  @media (prefers-reduced-motion:no-preference){
+    .marca i{opacity:0; transform:translateY(12px); animation:letra 620ms var(--ease) forwards}
+    .marca i:nth-child(1){animation-delay:60ms}
+    .marca i:nth-child(2){animation-delay:120ms}
+    .marca i:nth-child(3){animation-delay:180ms}
+    .marca i:nth-child(4){animation-delay:240ms}
+    .marca i:nth-child(5){animation-delay:300ms}
+    .marca i:nth-child(6){animation-delay:360ms}
+    .entra{opacity:0; animation:letra 700ms var(--ease) 440ms forwards}
+  }
+  @keyframes letra{to{opacity:1; transform:none}}
+
+  .regla{width:52px; height:1px; background:var(--line); margin:30px auto 0}
+
+  h1{
+    font-family:var(--display); font-weight:300;
+    font-size:clamp(1.75rem, 6vw, 2.6rem); line-height:1.16;
+    letter-spacing:-.015em; margin:30px 0 0; text-wrap:balance;
+  }
+  p{
+    font-size:1rem; line-height:1.65; color:var(--ink-2);
+    margin:16px auto 0; max-width:26rem;
+  }
+  /* La itálica serif solo como acento, atada al logo. Nunca en texto corrido. */
+  .acento{
+    font-family:var(--serif); font-style:italic; font-size:1.12rem;
+    color:var(--ink); margin-top:22px;
+  }
+
+  .cta{
+    display:inline-flex; align-items:center; gap:11px;
+    background:var(--teal-deep); color:#fff; text-decoration:none;
+    border-radius:999px; padding:15px 28px;
+    font-weight:600; font-size:1rem; margin-top:34px;
+    transition:background 240ms var(--ease), transform 300ms var(--ease);
+  }
+  .cta:hover{background:var(--ink)}
+  .cta:active{transform:translateY(1px)}
+  .cta svg{width:19px; height:19px; flex:none; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+
+  a:focus-visible{outline:2px solid var(--teal-deep); outline-offset:4px; border-radius:999px}
+</style>
+</head>
+
+<body>
+<main>
+  <div class="marca" aria-label="thrive">
+    <i aria-hidden="true">t</i><i aria-hidden="true">h</i><i aria-hidden="true">r</i><i aria-hidden="true">i</i><i aria-hidden="true">v</i><i aria-hidden="true">e</i>
+  </div>
+
+  <div class="regla entra"></div>
+
+  <h1 class="entra">Esta página no existe.</h1>
+
+  <p class="entra">
+    El enlace que abriste no lleva a ningún lado: puede estar viejo, o haberse
+    copiado a medias.
+  </p>
+
+  <p class="acento entra">La invitación sigue en pie.</p>
+
+  <a class="cta entra" href="/thrive/">
+    Ir a THRIVE
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</main>
+</body>
+</html>
