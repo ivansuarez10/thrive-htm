@@ -58,6 +58,32 @@ window.THRIVE = {
      que ya no están. Eso es lo que se quiere. */
   referidas: [],
 
+  /* ── Inscripciones: hasta cuándo se puede entrar ──
+     Existe porque hasta el 16 sep 2026 esta fecha era una FRASE escrita a
+     mano en la plantilla —«Las inscripciones cierran el 8 de septiembre»— y
+     nada en el sitio sabía qué día era hoy. El 14 de septiembre la landing
+     seguía en vivo invitando a una inscripción que había cerrado seis días
+     antes. No fue un descuido de nadie: era una fecha que sólo podía
+     envejecer, porque no había forma de que se enterara.
+
+     Ahora la fecha vive acá y la página decide sola en qué estado está:
+
+       abierta  → falta más que `avisoDias` para el cierre
+       ultimos  → faltan `avisoDias` o menos
+       cerrada  → ya pasó
+
+     El texto de cada estado NO vive acá, vive en la plantilla (los tres
+     `<template data-inscripciones="…">`), porque es copy y se edita como
+     copy. Acá sólo está la fecha, que es el dato.
+
+     ⚠️ Cuando abra la próxima edición hay que cambiar `cierreISO` — y
+     `build.js` avisa fuerte mientras esté vencida, justamente para que
+     nadie publique otra vez una invitación muerta. */
+  inscripciones: {
+    cierreISO: '2026-09-08T23:59:00-06:00',   // Honduras es UTC−6, sin horario de verano
+    avisoDias: 5
+  },
+
   /* ⚠️ `cuposPrueba` se quitó el 29 ago 2026. Las cuatro fechas de clase
      de prueba viven AHORA en la base, en programas.ajustes.slots, que es
      lo que lee el panel y lo que Denisse edita desde Ajustes. Tenerlas

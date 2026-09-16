@@ -225,6 +225,36 @@ if (!CFG.clase || !CFG.clase.direccion)
    aviso avisaba de una fecha global que la página ya no lee, así que era
    una alarma falsa en cada build. */
 
+/* El cierre de inscripciones SÍ se avisa, y fuerte (16 sep 2026).
+   Este aviso existe por un caso real: el 14 de septiembre la landing
+   llevaba seis días en vivo diciendo «Las inscripciones cierran el 8 de
+   septiembre». La página ahora se corrige sola en el navegador, así que
+   nadie ve una invitación muerta — pero eso tapa el síntoma, no el hueco:
+   una edición cerrada sigue siendo una landing sin nada que ofrecer.
+   Esto lo dice en voz alta cada vez que se construye. */
+const cierre = CFG.inscripciones && CFG.inscripciones.cierreISO
+  ? new Date(CFG.inscripciones.cierreISO) : null;
+if (!cierre || isNaN(cierre.getTime())) {
+  pendientes.push('config.inscripciones.cierreISO falta o no es una fecha — la landing se queda en «abierta» para siempre.');
+} else {
+  /* Por día de calendario en Honduras, igual que thrive.js y el pase. */
+  const diaHN = (d) => {
+    const v = {};
+    new Intl.DateTimeFormat('es-HN', {
+      timeZone: 'America/Tegucigalpa', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(d).forEach(x => { v[x.type] = x.value; });
+    return Date.UTC(+v.year, +v.month - 1, +v.day);
+  };
+  const faltan = Math.round((diaHN(cierre) - diaHN(new Date())) / 86400000);
+  const escrito = new Intl.DateTimeFormat('es-HN', {
+    timeZone: 'America/Tegucigalpa', day: 'numeric', month: 'long'
+  }).format(cierre);
+  if (faltan < 0)
+    pendientes.push(`Las inscripciones cerraron el ${escrito} (hace ${-faltan} ${-faltan === 1 ? 'día' : 'días'}). La landing muestra «ya cerraron». Si abre otra edición, actualizá config.inscripciones.cierreISO.`);
+  else if (faltan === 0)
+    pendientes.push(`Hoy es el último día de inscripción (${escrito}). Mañana la landing pasa a «ya cerraron».`);
+}
+
 if (pendientes.length) {
   console.log('Antes de publicar:');
   pendientes.forEach(p => console.log('  · ' + p));

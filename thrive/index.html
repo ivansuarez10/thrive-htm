@@ -1603,7 +1603,25 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
       <p class="detalle">Studio privado · estacionamiento · seguridad</p>
     </div>
 
-    <p class="cierre-fecha up">Las inscripciones cierran el <b>8 de septiembre</b>, o antes si se completan los espacios.</p>
+    <!-- El estado de la inscripción, decidido por la fecha y no por quien
+         se acuerde de editar (16 sep 2026). Hasta hoy esta línea era una
+         frase fija: el 14 de septiembre seguía diciendo que las
+         inscripciones cerraban el 8, seis días después de que cerraran.
+
+         Lo que se ve SIN JavaScript es el estado abierto, que es el que
+         sirve la mayor parte de la vida de una edición. thrive.js lo
+         reemplaza por el que corresponda leyendo `config.inscripciones`.
+         Si el script no llega, se lee una frase cierta y completa — no un
+         hueco. Esa es la razón de que el texto viva acá y no en el JS.
+
+         ⚠️ Los tres textos son COPY: se editan acá. La fecha es DATO: vive
+         en config.js. No mezclarlos. -->
+    <p class="cierre-fecha up" data-inscripciones>Las inscripciones cierran el <b data-cierre-fecha>8 de septiembre</b>, o antes si se completan los espacios.</p>
+
+    <!-- ⚠️ El verbo va DENTRO de `data-cierre-faltan`, no afuera. Con el
+         verbo afuera, el último día se leía «Quedan hoy para entrar». -->
+    <template data-inscripciones-estado="ultimos"><b data-cierre-faltan>Quedan tres días</b> para entrar a esta edición. Cierra el <b data-cierre-fecha>8 de septiembre</b>, o antes si se completan los espacios.</template>
+    <template data-inscripciones-estado="cerrada">Las inscripciones de esta edición <b>ya cerraron</b>. Si querés entrar a la siguiente, escribime y te aviso en cuanto abra.</template>
   </div>
 </section>
 
@@ -1669,8 +1687,8 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
   </div>
 </footer>
 
-<script src="/config.js?v=1742748a"></script>
+<script src="/config.js?v=1e54a9f5"></script>
 <script src="/assets/js/ajustes.js"></script>
-<script src="/assets/js/thrive.js?v=3c346bad"></script>
+<script src="/assets/js/thrive.js?v=71a8f252"></script>
 </body>
 </html>

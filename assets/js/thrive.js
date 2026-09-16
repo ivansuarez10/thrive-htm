@@ -615,6 +615,77 @@
     });
   })();
 
+  /* ───────── el estado de la inscripción ─────────
+     La landing decía «Las inscripciones cierran el 8 de septiembre» como
+     frase fija. El 14 de septiembre seguía diciéndolo, con el cierre seis
+     días atrás y el programa arrancando en dos. Nadie se equivocó: no
+     había ninguna pieza en el sitio que supiera qué día era hoy.
+
+     Esto es esa pieza. Lee `config.inscripciones.cierreISO` y reemplaza el
+     texto por el del estado que corresponda.
+
+     ⚠️ Corre DESPUÉS de ajustes.js a propósito — está más abajo en el
+     HTML—, pero no depende de él: la fecha de cierre no viene de la base.
+     Si algún día Denisse la edita desde el panel, esto sigue sirviendo con
+     sólo agregarla a `pintar()` allá.
+
+     ⚠️ Los días se cuentan por DÍA DE CALENDARIO en Honduras, no restando
+     milisegundos. Es la misma regla del pase y del panel: si no, un cierre
+     de mañana a medianoche dice «hoy» desde las once de la noche de hoy. */
+  (function () {
+    var caja = document.querySelector('[data-inscripciones]');
+    if (!caja) return;
+
+    var cfg = (window.THRIVE && window.THRIVE.inscripciones) || {};
+    var cierre = cfg.cierreISO ? new Date(cfg.cierreISO) : null;
+    /* Sin fecha válida no se toca nada: lo que ya está impreso es el estado
+       abierto, que es una frase cierta. Inventar un estado sería peor. */
+    if (!cierre || isNaN(cierre.getTime())) return;
+
+    var ZH = 'America/Tegucigalpa';
+    function diaHN(d) {
+      var p = new Intl.DateTimeFormat('es-HN', {
+        timeZone: ZH, year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(d);
+      var v = {};
+      p.forEach(function (x) { v[x.type] = x.value; });
+      return Date.UTC(+v.year, +v.month - 1, +v.day);
+    }
+
+    var faltan = Math.round((diaHN(cierre) - diaHN(new Date())) / 86400000);
+    var aviso  = cfg.avisoDias == null ? 5 : +cfg.avisoDias;
+    var estado = faltan < 0 ? 'cerrada' : (faltan <= aviso ? 'ultimos' : 'abierta');
+
+    caja.setAttribute('data-inscripciones', estado);
+
+    if (estado !== 'abierta') {
+      var molde = document.querySelector('[data-inscripciones-estado="' + estado + '"]');
+      if (molde) caja.innerHTML = molde.innerHTML;
+    }
+
+    /* La fecha se escribe desde el dato, nunca a mano: así el texto no
+       puede contradecir a `cierreISO` el día que alguien cambie uno solo. */
+    var largo = new Intl.DateTimeFormat('es-HN', {
+      timeZone: ZH, day: 'numeric', month: 'long'
+    }).format(cierre);
+    caja.querySelectorAll('[data-cierre-fecha]').forEach(function (el) {
+      el.textContent = largo;
+    });
+
+    /* La frase entera, verbo incluido, porque el número la conjuga: «hoy es
+       el último día» / «queda un día» / «quedan tres días». Con el verbo
+       fijo en la plantilla, el último día decía «Quedan hoy para entrar».
+       En letras hasta seis —se lee mejor que «quedan 3 días»— y de ahí en
+       adelante el número, porque nadie escribe «quedan once días». */
+    var LETRAS = ['', '', 'dos', 'tres', 'cuatro', 'cinco', 'seis'];
+    var frase = faltan === 0 ? 'Hoy es el último día'
+              : faltan === 1 ? 'Queda un día'
+              : 'Quedan ' + (faltan <= 6 ? LETRAS[faltan] : faltan) + ' días';
+    caja.querySelectorAll('[data-cierre-faltan]').forEach(function (el) {
+      el.textContent = frase;
+    });
+  })();
+
   /* ───────── expuesto para las otras páginas ───────── */
   window.THRIVE_RT = {
     referida: referida,
