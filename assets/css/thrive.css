@@ -657,6 +657,8 @@ body.dosvias .stag.desde-arriba.in > *{transform:none;}
    transform. */
 body.capacidades-vivas .metodo-riel .cap{opacity:0; filter:blur(3px); transform:translateY(12px);}
 body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0); transform:none;}
+/* El primer apagado, al cargar, sin transición (ver thrive.js). */
+body.caps-quietas .metodo-riel .cap{transition:none !important;}
 .metodo-riel .cap{
   font-family:var(--mono); font-size:0.63rem; letter-spacing:.26em;
   text-transform:uppercase; color:var(--ink-2);
@@ -1172,6 +1174,43 @@ body.capacidades-vivas .metodo-riel .cap.vista{opacity:1; filter:blur(0); transf
   }
   .portada-brillo{display:none;}
 }
+
+/* ═══ ya visto: el sello y la bienvenida, quietos ═══
+   Sin flash (4 oct 2026). La entrada del sello (portada e invitación) y la
+   bienvenida del formulario corren una vez por sesión. Al recargar, al
+   volver con «atrás» o la segunda vez en la pestaña, el script del <head>
+   pone html.ya-visto y acá se pinta el estado FINAL, sin animación: lo
+   mismo que ve quien pidió menos movimiento. El giro del scroll y el del
+   hover siguen: no son entradas, responden a ella. */
+html.ya-visto .portada-cuerpo{
+  transform:none; opacity:1; animation:none;
+  filter:var(--relieve-sello);
+}
+html.ya-visto .portada-brillo{display:none;}
+html.ya-visto .portada-sello .sl,
+html.ya-visto .portada-sello .sl-punto,
+html.ya-visto .bv-sello .sl,
+html.ya-visto .bv-sello .sl-punto{animation:none; opacity:1; transform:none; filter:none; will-change:auto;}
+html.ya-visto .bv-word i,
+html.ya-visto .bv-hola,
+html.ya-visto .bv-txt,
+html.ya-visto .bv-cta,
+html.ya-visto .bv-firma{animation:none; opacity:1; transform:none;}
+/* La sombra del sello de la bienvenida crece con una transición cuando
+   llega .listo; ya visto, está puesta desde el primer cuadro. */
+html.ya-visto .bv-sello .sello-vivo{transition:none; filter:var(--relieve-sello);}
+/* El resto de la portada entra con el sello —THRIVE letra por letra, la
+   línea, la frase, la señal de scroll y la foto—: ya visto, quieto y
+   entero, igual que con «Reducir movimiento». Las entradas por scroll
+   (.up, .stag, las capacidades) siguen: esas las mueve ella al bajar. */
+html.ya-visto .abre-sello,
+html.ya-visto .abre-word i,
+html.ya-visto .abre-tag,
+html.ya-visto .abre-sub,
+html.ya-visto .abre-cue,
+html.ya-visto .abre-foto .shot{animation:none; opacity:1; transform:none;}
+html.ya-visto .abre-linea .mask > span{animation:none; transform:none;}
+html.ya-visto .abre-cue .riel::after{animation:none;}
 
 /* ═══ la luz de la casa ═══
    Una sola fuente cálida para TODO el sitio, no un degradado por

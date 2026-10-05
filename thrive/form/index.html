@@ -31,7 +31,26 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=0ec424a2">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=c237c49b">
+<script>
+  /* Sin flash (4 oct 2026): la bienvenida (el sello letra por letra, 4,5 s) corre UNA vez por sesión.
+     Al recargar, al volver con «atrás» (también desde la caché del
+     navegador) o la segunda vez en la misma pestaña, se pinta quieto y
+     terminado: html.ya-visto, ver thrive.css. Va en el <head> para que
+     la clase exista ANTES del primer cuadro; puesta después, la animación
+     ya habría arrancado. sessionStorage puede fallar (modo privado): el
+     try/catch deja la animación como siempre. */
+  (function(){
+    var h = document.documentElement, k = 'htm-visto-bienve', quieto = false;
+    try{
+      var n = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      if(n && (n.type === 'reload' || n.type === 'back_forward')) quieto = true;
+    }catch(e){}
+    try{ if(sessionStorage.getItem(k)) quieto = true; sessionStorage.setItem(k, '1'); }catch(e){}
+    if(quieto) h.classList.add('ya-visto');
+    addEventListener('pageshow', function(e){ if(e.persisted) h.classList.add('ya-visto'); });
+  })();
+</script>
 </head>
 
 <body>
@@ -1402,7 +1421,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
 </div>
 
 <script src="/config.js?v=1e54a9f5"></script>
-<script src="/assets/js/thrive.js?v=71a8f252"></script>
+<script src="/assets/js/thrive.js?v=a0182769"></script>
 <script>
 (function(){
   'use strict';
@@ -1630,6 +1649,9 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     /* Se muestra SIEMPRE, en cada visita: es la presentación de la marca
        antes de pedirle nada a nadie. Decisión de Ivan, 26 ago 2026. */
     var quien = (window.THRIVE_RT && window.THRIVE_RT.referida) || '';
+    /* Ya la vio en esta sesión (o recargó, o volvió con «atrás»): la
+       bienvenida está pintada quieta y entera, así que no se espera nada. */
+    var yaVista = document.documentElement.classList.contains('ya-visto');
 
     var elNom = document.getElementById('bvNombre');
     if (quien && elNom) elNom.textContent = ', te invitó ' + quien;
@@ -1642,7 +1664,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
     setTimeout(function () {
       var sello = elBienve.querySelector('.bv-sello');
       if (sello) sello.classList.add('listo');
-    }, 3300);
+    }, yaVista ? 0 : 3300);
 
     function entrar() {
       if (elBienve.classList.contains('se-va')) return;
@@ -1664,7 +1686,7 @@ c12 -18 25 -25 47 -25 24 0 41 -11 78 -50 34 -37 54 -50 74 -50 22 0 45 -17
         entrar();
       });
       elBienve.style.cursor = 'pointer';
-    }, 1000);
+    }, yaVista ? 0 : 1000);
   }
 
   var elSteps = document.getElementById('steps');

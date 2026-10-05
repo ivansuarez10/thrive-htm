@@ -24,6 +24,25 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400..600&family=Fraunces:opsz,wght,SOFT,WONK@144,400,30,1&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="/assets/css/thrive.css">
+<script>
+  /* Sin flash (4 oct 2026): la entrada del sello de la portada corre UNA vez por sesión.
+     Al recargar, al volver con «atrás» (también desde la caché del
+     navegador) o la segunda vez en la misma pestaña, se pinta quieto y
+     terminado: html.ya-visto, ver thrive.css. Va en el <head> para que
+     la clase exista ANTES del primer cuadro; puesta después, la animación
+     ya habría arrancado. sessionStorage puede fallar (modo privado): el
+     try/catch deja la animación como siempre. */
+  (function(){
+    var h = document.documentElement, k = 'htm-visto-portada', quieto = false;
+    try{
+      var n = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      if(n && (n.type === 'reload' || n.type === 'back_forward')) quieto = true;
+    }catch(e){}
+    try{ if(sessionStorage.getItem(k)) quieto = true; sessionStorage.setItem(k, '1'); }catch(e){}
+    if(quieto) h.classList.add('ya-visto');
+    addEventListener('pageshow', function(e){ if(e.persisted) h.classList.add('ya-visto'); });
+  })();
+</script>
 </head>
 
 <body{{DATA_REFERIDA}}>

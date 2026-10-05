@@ -384,6 +384,15 @@
       /* Recién acá se apagan. El CSS las deja VISIBLES por defecto: si
          este script no llega, el pie de la sección se lee igual. */
       document.body.classList.add('capacidades-vivas');
+      /* Sin flash (4 oct 2026): al apagarse por primera vez NO se anima.
+         Antes las cuatro palabras hacían una transición de 620 ms de
+         visibles a apagadas en cada carga, aunque nadie las viera. Las
+         transiciones se encienden dos cuadros después, cuando ya están
+         en su estado de partida. */
+      document.body.classList.add('caps-quietas');
+      requestAnimationFrame(function () { requestAnimationFrame(function () {
+        document.body.classList.remove('caps-quietas');
+      }); });
 
       /* Se guarda el número de cuadro en vez de un booleano, y cada
          llamada CANCELA el anterior y pide uno nuevo.

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/css/thrive.css?v=0ec424a2">
+<link rel="stylesheet" href="/assets/css/thrive.css?v=c237c49b">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
 
@@ -434,12 +434,21 @@ body{background:var(--sand);}
 }
 .pn-limpio svg{width:20px; height:20px; color:var(--teal); flex:none;}
 
+/* Sin flash (4 oct 2026). Antes TODAS las tareas entraban escalonadas y
+   con desenfoque en cada pintado: al abrir el panel y cada vez que cambiaba
+   una sola. Ahora la primera pintura sale quieta y, después, entra solo la
+   tarea que no estaba (`.recien`, la marca pintarToca). Solo opacity y
+   transform, 220 ms, sin desenfoque. */
 @media (prefers-reduced-motion:no-preference){
-  .tarea{animation:tarea-entra 520ms var(--ease) backwards; animation-delay:calc(var(--i,0) * 70ms);}
+  .tarea.recien{animation:tarea-entra 220ms cubic-bezier(.22,1,.36,1) backwards; animation-delay:calc(var(--i,0) * 40ms);}
   @keyframes tarea-entra{
-    from{opacity:0; transform:translateY(12px); filter:blur(5px);}
-    to{opacity:1; transform:none; filter:blur(0);}
+    from{opacity:0; transform:translateY(8px);}
+    to{opacity:1; transform:none;}
   }
+}
+@media (prefers-reduced-motion:reduce){
+  .tarea.recien{animation:tarea-funde 120ms linear backwards;}
+  @keyframes tarea-funde{ from{opacity:0;} to{opacity:1;} }
 }
 
 /* ── el resto del panel, ordenado debajo ── */
@@ -860,6 +869,14 @@ body{background:var(--sand);}
   border-radius:18px; padding:16px 20px; box-shadow:var(--flota-3);
 }
 .volvio[hidden]{display:none;}
+/* La mecha: el tiempo que queda para deshacer. Vive en el borde de abajo
+   de la barra y se acorta hacia la izquierda. */
+.vuelta{position:relative; overflow:hidden;}
+.vuelta-mecha{
+  position:absolute; left:20px; right:20px; bottom:0; height:2px; border-radius:2px;
+  background:rgba(250,248,244,.55); transform-origin:left center; pointer-events:none;
+}
+@media (prefers-reduced-motion:reduce){ .vuelta-mecha{visibility:hidden;} }
 .volvio b{font-family:var(--display); font-weight:600; font-size:1.02rem; margin-right:auto;}
 .volvio button{
   flex:none; font:inherit; font-size:.9rem; cursor:pointer;
@@ -876,7 +893,7 @@ body{background:var(--sand);}
 .vuelta button.si:hover{background:#fff;}
 @media (max-width:899px){ .barras-pie{bottom:96px;} }
 @media (prefers-reduced-motion:no-preference){
-  .volvio{animation:sube-barra 380ms var(--ease);}
+  .volvio{animation:sube-barra 220ms cubic-bezier(.22,1,.36,1);}
   @keyframes sube-barra{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
 }
 
@@ -1917,6 +1934,162 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 .ag-quien b{display:block; font-family:var(--display); font-weight:600; font-size:.98rem;}
 .ag-quien i{display:block; font-style:normal; font-size:.8rem; color:var(--ink-2); margin-top:2px;}
 </style>
+<!-- ══════════ KIT DE DETALLE (4 oct 2026) ══════════
+     Copiado del kit del Estudio UX (biblioteca/motion/kit-detalle), SOLO
+     los bloques que usa el panel: el popover que nace de lo tocado, el
+     fantasma del hueco, los íconos que se transforman y el vacío que
+     invita. Inline y no en /assets: build.js solo sella thrive.css,
+     thrive.js y config.js, y un archivo nuevo sin huella se quedaría en
+     la caché vieja hasta diez minutos.
+     SIN FLASH: toda transición de acá vive bajo html.kd-live, que el JS
+     pone recién en el primer toque o tecla. Al cargar nada se mueve. -->
+<style>
+:root{
+  --kd-accent:#17606F;   /* teal profundo: el de marca no pasa contraste con blanco */
+  --kd-accent-ink:#fff;
+  --kd-ink:#1E1D1A;
+  --kd-muted:#5E584F;
+  --kd-line:#DCD4C7;
+  --kd-surface:#FFFDF9;
+  --kd-soft:#E7E0D5;
+  --kd-radius:18px;
+  --kd-shadow:0 1px 2px rgba(30,29,26,.06), 0 18px 40px -12px rgba(30,29,26,.22);
+  --kd-ease:cubic-bezier(.22,1,.36,1);
+  --kd-in:cubic-bezier(.4,0,1,1);
+}
+
+/* (a) el popover: sólido, no de vidrio. Flota sobre la agenda y tiene que
+   leerse entero aunque abajo haya un día lleno. */
+.kd-pop{
+  position:fixed; z-index:90; left:0; top:0;
+  width:min(340px, calc(100vw - 24px)); max-height:calc(100vh - 24px); overflow:auto;
+  background:var(--kd-surface); color:var(--kd-ink);
+  border:1px solid var(--kd-line); border-radius:var(--kd-radius); box-shadow:var(--kd-shadow);
+}
+.kd-pop[hidden]{display:none;}
+
+/* (b) el fantasma del hueco: va DETRÁS del número del día */
+.kd-ghost{
+  position:absolute; inset:2px; border-radius:999px; z-index:-1;
+  background:color-mix(in srgb, var(--kd-accent) 12%, transparent);
+  border:1.5px dashed color-mix(in srgb, var(--kd-accent) 60%, transparent);
+  pointer-events:none;
+}
+.kd-ghost.is-real{background:color-mix(in srgb, var(--kd-accent) 22%, transparent); border-style:solid; border-color:var(--kd-accent);}
+.kd-live .kd-ghost{transition:background-color 200ms linear, border-color 200ms linear;}
+
+/* (c) íconos de línea que se transforman */
+.kd-ico{width:18px; height:18px; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; overflow:visible;}
+.kd-ico .kd-draw{stroke-dasharray:1; stroke-dashoffset:1;}
+.is-on > .kd-ico .kd-draw{stroke-dashoffset:0;}
+.kd-ico .kd-out{transform-box:fill-box; transform-origin:center;}
+.kd-live .kd-ico .kd-draw{transition:stroke-dashoffset 220ms var(--kd-ease) 40ms;}
+.kd-live .kd-ico .kd-out{transition:opacity 140ms var(--kd-ease), transform 140ms var(--kd-ease);}
+.kd-cal.is-on .kd-ico .kd-out{opacity:0; transform:scale(.4);}
+
+/* (g) el vacío que invita: el hueco punteado ES el botón */
+.kd-empty{display:grid; gap:10px; padding:18px 4px 4px;}
+.kd-empty-ghost{
+  width:100%; min-height:56px; border-radius:var(--r-chico, 12px);
+  border:1.5px dashed var(--kd-line); background:transparent;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font:inherit; font-size:.94rem; font-weight:600; color:var(--kd-muted); cursor:pointer;
+}
+.kd-empty-ghost:hover, .kd-empty-ghost:focus-visible{border-color:var(--kd-accent); color:var(--kd-accent);}
+.kd-live .kd-empty-ghost{transition:border-color 140ms linear, color 140ms linear;}
+.kd-empty p{margin:0; font-size:.86rem; color:var(--kd-muted); text-align:center; text-wrap:pretty;}
+
+/* ── AGENDAR EN UN HUECO ── */
+/* Cada día es un botón: 44 px de área táctil como mínimo. */
+@media (min-width:900px){ .ag-cuerpo{grid-template-columns:372px 1fr;} }
+.ag-mes{padding:16px;}
+.ag-rejilla{gap:2px;}
+.ag-d{min-height:44px; min-width:0;}
+.ag-paso{width:44px; height:44px;}
+/* «nada agendado» y el conteo, a contraste AA (ink-3 daba 3,55:1). */
+.ag-dia-cab span{color:var(--ink-2);}
+.ag-otro{display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; margin:12px 0 0; font-size:.88rem; color:var(--ink-2);}
+.ag-otro button{min-height:44px; padding:0 14px; border-radius:999px; border:1px solid var(--teal-deep); background:transparent; color:var(--teal-deep); font:inherit; font-weight:600; cursor:pointer;}
+.ag-pop .ag-ok{display:flex; align-items:center; gap:10px; min-height:44px; margin:0; font-size:.92rem; color:var(--ink); cursor:pointer;}
+.ag-pop .ag-ok input{width:20px; height:20px; accent-color:var(--teal-deep); margin:0; flex:none;}
+.ag-d.libre{cursor:pointer; color:var(--ink-2); isolation:isolate;}
+.ag-d.libre:hover{background:rgba(23,96,111,.08);}
+.ag-d.pasado{color:var(--ink-3); opacity:.55;}
+/* El día libre elegido no se pinta de tinta: lo marca el fantasma (o, sin
+   él, un aro). En negro el fantasma no se veía. */
+.ag-d.libre.puesto{background:transparent !important; color:var(--ink) !important; box-shadow:inset 0 0 0 1.5px var(--ink);}
+.ci-tit{font-family:var(--display); font-weight:600; font-size:1.16rem; letter-spacing:-.02em; margin:0;}
+.ci-sub{margin-top:6px;}
+.ag-d.tiene{isolation:isolate;}
+.ag-pop{padding:16px; display:grid; gap:12px;}
+.ag-pop h3{margin:0; font-family:var(--display); font-weight:600; font-size:1.06rem; letter-spacing:-.015em;}
+.ag-pop .ag-cuando{display:flex; gap:8px; align-items:center; margin:0; font-size:.92rem; color:var(--ink-2);}
+.ag-pop .ag-cuando .kd-ico{color:var(--teal-deep);}
+.ag-pop .ag-cuando span::first-letter{text-transform:uppercase;}
+.ag-pop label{display:grid; gap:6px;}
+.ag-pop label span{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal-deep);}
+.ag-pop select{
+  width:100%; min-height:44px; font:inherit; font-size:.96rem; color:var(--ink);
+  background:#fff; border:1px solid var(--line); border-radius:var(--r-chico, 12px); padding:0 12px;
+}
+.ag-pop .ag-ojo{margin:0; font-size:.86rem; color:#7A2828; display:flex; gap:8px; align-items:flex-start;}
+.ag-pop .ag-ojo svg{width:16px; height:16px; flex:none; margin-top:2px;}
+.ag-pop .ag-err{margin:0; font-size:.86rem; color:#8A2F2F;}
+.ag-pop .ag-acts{display:flex; gap:8px; justify-content:flex-end; margin-top:2px;}
+.ag-pop .ag-acts button{
+  min-height:44px; padding:0 18px; border-radius:999px; font:inherit; font-size:.94rem; cursor:pointer;
+  border:1px solid var(--line); background:transparent; color:var(--ink-2);
+}
+.ag-pop .ag-acts .ag-si{background:var(--teal-deep); border-color:var(--teal-deep); color:#fff; font-weight:600;}
+.ag-pop .ag-acts .ag-si:disabled{background:var(--kd-soft); border-color:var(--kd-soft); color:var(--ink-2); cursor:default;}
+.ag-pop .kd-empty{padding:4px 0 0;}
+.ag-pop .kd-empty p{text-align:left;}
+.ag-mas{margin-top:10px;}
+.ag-mas .kd-empty-ghost{min-height:48px;}
+
+/* ── EL CICLO, EN SEMANAS ── */
+.ci-lista{display:grid; gap:10px; margin-top:14px;}
+.ci-fila{
+  display:grid; grid-template-columns:44px 1fr auto; gap:4px 14px; align-items:center;
+  padding:14px 16px; border-radius:var(--r-sup, 18px);
+  background:var(--vidrio, rgba(255,255,255,.62));
+  -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
+  border:1px solid var(--vidrio-borde, rgba(255,255,255,.85));
+}
+.ci-anillo{width:44px; height:44px; transform:rotate(-90deg);}
+.ci-anillo circle{fill:none; stroke-width:4;}
+.ci-anillo .bg{stroke:var(--kd-soft);}
+.ci-anillo .fg{stroke:var(--teal-deep); stroke-dasharray:1; stroke-linecap:round;}
+.ci-quien{min-width:0;}
+.ci-quien b{display:block; font-family:var(--display); font-weight:600; font-size:1rem;}
+.ci-quien small{display:block; font-size:.84rem; color:var(--ink-2); margin-top:2px;}
+.ci-renovar{
+  display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 16px;
+  border-radius:999px; font:inherit; font-size:.9rem; font-weight:600; cursor:pointer;
+  border:1px solid var(--teal-deep); background:transparent; color:var(--teal-deep);
+}
+.ci-renovar.is-on{background:var(--kd-soft); border-color:var(--kd-soft); color:var(--ink); cursor:default;}
+/* El «Sí» y el «No» viven en la misma caja: confirmar() mete el «No» al
+   lado del botón, y suelto en la rejilla caía en otra fila. */
+.ci-acts{display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+.ci-acts .cancelar{min-height:44px;}
+/* Renovar no destruye nada: la confirmación va en el teal del panel, no
+   en el rojo de las acciones que quitan algo. */
+.ci-acts .ci-renovar.confirmando,
+.ci-acts .ci-renovar.confirmando:hover{background:var(--teal-deep) !important; border-color:var(--teal-deep) !important; color:#fff !important;}
+.ci-renovar.confirmando .kd-ico{display:none;}
+.kd-live .ci-renovar{transition:background-color 200ms linear, color 200ms linear, border-color 200ms linear;}
+@media (max-width:560px){
+  .ci-fila{grid-template-columns:44px 1fr;}
+  .ci-acts{grid-column:1 / -1; justify-content:flex-start; margin-top:6px;}
+}
+
+/* Reducir movimiento: solo fundidos y cambios de color. */
+@media (prefers-reduced-motion:reduce){
+  .kd-live .kd-ico .kd-out{transition-property:opacity;}
+  .kd-live .kd-ico .kd-draw{transition:none;}
+}
+</style>
 </head>
 <body>
 
@@ -2011,7 +2184,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
            Lee `clase_en`, que ya existe; no agrega ningún dato. -->
       <section class="vista" data-vista="agenda" hidden>
         <h1>Agenda <i id="agCuenta"></i></h1>
-        <p class="sub">Las clases de prueba que ya tienen día. Tocá a cualquiera para abrir su ficha.</p>
+        <p class="sub">Tocá un día libre para agendar una clase. Tocá una clase para abrir su ficha.</p>
         <div class="ag-cuerpo">
           <div class="ag-mes" id="agMes"></div>
           <div class="ag-dia" id="agDia"></div>
@@ -2115,6 +2288,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
         <p class="sub" id="cobSub"></p>
         <div id="cobResumen"></div>
         <div id="cobLista"></div>
+        <div id="cobCiclos" class="pn-seccion"></div>
       </section>
 
       <section class="vista" data-vista="ajustes" hidden>
@@ -2198,6 +2372,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
       <b id="vueltaQue"></b>
       <button class="si" type="button" id="vueltaDeshacer">Deshacer</button>
       <button type="button" id="vueltaOk">Listo</button>
+      <i class="vuelta-mecha" id="vueltaMecha" aria-hidden="true"></i>
     </div>
     <div class="volvio" id="volvio" hidden role="status">
       <b id="volvioQue"></b>
@@ -2219,6 +2394,191 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 
 <script src="/config.js?v=1e54a9f5"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+/* ═══ Kit de detalle · Estudio UX (4 oct 2026) ═══
+   Recorte del kit de la biblioteca del estudio: solo popover, ghost,
+   toggleIcon, confirm e icon. Vanilla, sin dependencias.
+   - SIN FLASH: html.kd-live recién en el primer toque o tecla; las
+     animaciones de JS corren solo dentro de un evento de ella.
+   - Reducir movimiento: solo fundidos; el estado final llega igual.
+   - Solo transform y opacity, 120–250 ms, ease-out sin rebote. */
+(function (w, d) {
+  "use strict";
+  var root = d.documentElement;
+  var mq = w.matchMedia ? w.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function reduced() { return !!(mq && mq.matches); }
+  var EASE = "cubic-bezier(.22,1,.36,1)", IN = "cubic-bezier(.4,0,1,1)";
+  function canAnimate(el) { return !!(el && el.animate); }
+
+  function live() { root.classList.add("kd-live"); }
+  w.addEventListener("pointerdown", live, { capture: true, once: true });
+  w.addEventListener("keydown", live, { capture: true, once: true });
+
+  /* (a) popover anclado: al costado del hueco; si no entra, al otro lado; si tampoco, abajo */
+  function place(panel, r, side) {
+    var vw = root.clientWidth, vh = w.innerHeight, m = 12, gap = 8;
+    panel.style.left = "0px"; panel.style.top = "0px";
+    var pw = panel.offsetWidth, ph = panel.offsetHeight, x, y;
+    if (side !== "bottom") {
+      x = r.right + gap;
+      if (x + pw > vw - m) x = r.left - gap - pw;
+      if (x < m) side = "bottom";
+      else y = r.top + r.height / 2 - ph / 2;
+    }
+    if (side === "bottom") {
+      x = r.left + r.width / 2 - pw / 2;
+      y = r.bottom + gap;
+      if (y + ph > vh - m) y = r.top - gap - ph;
+    }
+    x = Math.max(m, Math.min(x, vw - m - pw));
+    y = Math.max(m, Math.min(y, vh - m - ph));
+    panel.style.left = Math.round(x) + "px"; panel.style.top = Math.round(y) + "px";
+  }
+
+  function popover(panel, o) {
+    o = o || {};
+    var anim = null, dir = "", opened = false, back = null, anchor = null;
+    panel.classList.add("kd-pop");
+    if (!panel.getAttribute("role")) panel.setAttribute("role", "dialog");
+    panel.hidden = true;
+    function outside(e) {
+      if (panel.contains(e.target) || (anchor && anchor.nodeType && anchor.contains(e.target))) return;
+      close("outside");
+    }
+    function key(e) {
+      if (e.key === "Escape") { e.preventDefault(); close("escape"); return; }
+      if (e.key !== "Tab") return;
+      /* Trampa de foco: mientras está abierto, Tab da la vuelta adentro. */
+      var f = [].slice.call(panel.querySelectorAll("button, select, input, textarea, a[href], [tabindex]:not([tabindex='-1'])"))
+        .filter(function (x) { return !x.disabled && x.offsetParent !== null; });
+      if (!f.length) return;
+      var i = f.indexOf(d.activeElement);
+      if (e.shiftKey && (i <= 0)) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (i === -1 || i === f.length - 1)) { e.preventDefault(); f[0].focus(); }
+    }
+    function onResize() { close("resize"); }
+    /* Con scroll se cierra: el popover es fijo y el hueco se iría de abajo.
+       Con margen de 40 px: en el iPhone, abrir el selector puede correr la
+       página unos píxeles sola, y eso no es ella haciendo scroll. */
+    var y0 = 0;
+    function onScroll() { if (Math.abs(w.scrollY - y0) > 40) close("scroll"); }
+    function running() { return anim && anim.playState === "running"; }
+    function fresh(frames, opts) { if (anim) anim.cancel(); anim = panel.animate(frames, opts); return anim; }
+    /* Nace con la forma exacta de lo tocado (translate + scale + clip-path) y se abre a su tamaño */
+    function morphFrom(r) {
+      var pw = panel.offsetWidth, ph = panel.offsetHeight;
+      var px = parseFloat(panel.style.left) || 0, py = parseFloat(panel.style.top) || 0;
+      var s = Math.max(.12, Math.min(1, Math.max(r.width / pw, r.height / ph)));
+      var dx = (r.left + r.width / 2) - (px + pw / 2), dy = (r.top + r.height / 2) - (py + ph / 2);
+      var ix = Math.max(0, pw / 2 - r.width / (2 * s)), iy = Math.max(0, ph / 2 - r.height / (2 * s));
+      var rad = parseFloat(getComputedStyle(panel).borderTopLeftRadius) || 12;
+      return {
+        from: { transform: "translate(" + dx + "px," + dy + "px) scale(" + s + ")", clipPath: "inset(" + iy + "px " + ix + "px " + iy + "px " + ix + "px round " + (8 / s) + "px)" },
+        to: { transform: "none", clipPath: "inset(0px 0px 0px 0px round " + rad + "px)" }
+      };
+    }
+    function anchorRect() {
+      if (!anchor || !anchor.isConnected) return null;
+      var r = anchor.getBoundingClientRect();
+      return r && r.width && r.height ? r : null;
+    }
+    function open(a) {
+      anchor = a;
+      if (!opened) back = d.activeElement;
+      var r = a.getBoundingClientRect();
+      var wasHidden = panel.hidden;
+      panel.hidden = false;
+      place(panel, r, o.side);
+      if (canAnimate(panel)) {
+        if (dir === "out" && running()) { anim.onfinish = null; anim.reverse(); }
+        else if (wasHidden) {
+          if (reduced()) fresh([{ opacity: 0 }, { opacity: 1 }], { duration: 120, fill: "backwards" });
+          else {
+            panel.style.transformOrigin = "50% 50%";
+            var m = morphFrom(r);
+            fresh([Object.assign({ opacity: 0 }, m.from), { opacity: 1, offset: .35 }, Object.assign({ opacity: 1 }, m.to)],
+              { duration: 240, easing: EASE, fill: "backwards" });
+          }
+        }
+        dir = "in";
+      }
+      opened = true;
+      var f = panel.querySelector("[autofocus], select, input:not([type=hidden]), textarea, button");
+      if (f) f.focus({ preventScroll: true });
+      d.addEventListener("pointerdown", outside, true);
+      d.addEventListener("keydown", key);
+      w.addEventListener("resize", onResize);
+      y0 = w.scrollY;
+      w.addEventListener("scroll", onScroll, { passive: true });
+    }
+    function close(reason) {
+      if (!opened) return;
+      opened = false;
+      d.removeEventListener("pointerdown", outside, true);
+      d.removeEventListener("keydown", key);
+      w.removeEventListener("resize", onResize);
+      w.removeEventListener("scroll", onScroll);
+      function fin() { panel.hidden = true; if (anim) anim.cancel(); anim = null; dir = ""; }
+      if (!canAnimate(panel)) fin();
+      else {
+        if (dir === "in" && running()) anim.reverse();
+        else {
+          var ar = reduced() ? null : anchorRect();
+          if (reduced()) fresh([{ opacity: 1 }, { opacity: 0 }], { duration: 100, fill: "forwards" });
+          else if (ar) { var m = morphFrom(ar); fresh([Object.assign({ opacity: 1 }, m.to), { opacity: 1, offset: .6 }, Object.assign({ opacity: 0 }, m.from)], { duration: 160, easing: IN, fill: "forwards" }); }
+          else fresh([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(.94)" }], { duration: 140, easing: IN, fill: "forwards" });
+        }
+        dir = "out";
+        anim.onfinish = fin;
+      }
+      if (reason !== "outside" && back && back.focus && d.contains(back)) back.focus({ preventScroll: true });
+      if (o.onClose) o.onClose(reason || "close");
+    }
+    return { open: open, close: close, isOpen: function () { return opened; } };
+  }
+
+  /* (b) el fantasma del hueco: crece desde donde se tocó */
+  function ghost(slot, pt) {
+    var g = d.createElement("span");
+    g.className = "kd-ghost"; g.setAttribute("aria-hidden", "true");
+    slot.appendChild(g);
+    var r = slot.getBoundingClientRect();
+    var oy = pt ? Math.max(0, Math.min(r.height, pt.y - r.top)) : r.height / 2;
+    g.style.transformOrigin = "50% " + Math.round(oy) + "px";
+    if (canAnimate(g)) {
+      reduced()
+        ? g.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120 })
+        : g.animate([{ opacity: 0, transform: "scale(.96, .2)" }, { opacity: 1, transform: "none" }], { duration: 180, easing: EASE });
+    }
+    return {
+      el: g,
+      commit: function () { g.classList.add("is-real"); },
+      discard: function () {
+        if (!canAnimate(g) || reduced() || !g.isConnected) { if (g.parentNode) g.parentNode.removeChild(g); return; }
+        var a = g.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "scale(.96, .2)" }], { duration: 130, easing: IN, fill: "forwards" });
+        a.onfinish = function () { if (g.parentNode) g.parentNode.removeChild(g); };
+      }
+    };
+  }
+
+  /* (c) íconos con intención */
+  function toggleIcon(el, on) { el.classList.toggle("is-on", on === undefined ? !el.classList.contains("is-on") : !!on); }
+  function confirm(btn, doneText) {
+    var lab = btn.querySelector(".kd-txt");
+    toggleIcon(btn, true);
+    if (lab) lab.textContent = doneText;
+  }
+  var CHECK = '<path class="kd-draw" pathLength="1" d="M5 12.5l4.2 4.2L19 7"/>';
+  var ICONS = {
+    check: '<svg class="kd-ico" viewBox="0 0 24 24" aria-hidden="true">' + CHECK + '</svg>',
+    cal: '<svg class="kd-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/><g class="kd-out"><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" stroke-width="2.4"/></g><path class="kd-draw" pathLength="1" d="M8.5 15.2l2.4 2.4 4.6-4.6"/></svg>',
+    plus: '<svg class="kd-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+  };
+  function icon(n) { return ICONS[n] || ""; }
+
+  w.KD = { popover: popover, ghost: ghost, toggleIcon: toggleIcon, confirm: confirm, icon: icon, reduced: reduced };
+})(window, document);
+</script>
 <script>
 (function(){
   'use strict';
@@ -2961,6 +3321,8 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     filtro = 'todas'; fEdad = ''; fHorario = ''; busqueda = ''; PAG_LISTA.pagina = 1;
     var b = document.getElementById('buscar'); if(b) b.value = '';
     datos = [];
+    /* Otro programa es otra pila: entra quieta, como al abrir el panel. */
+    TOCA_VISTAS = null; AG_MES = null; AG_DIA = null;
     /* Traer la gente del programa nuevo es un viaje de red. Sin esto, el
        encabezado ya decía «Taller de caídas» mientras la lista todavía
        mostraba a las de THRIVE — dos programas en la misma pantalla. */
@@ -3419,9 +3781,20 @@ body, .pn-shell, .pn-main{background:transparent !important;}
   var ICONO_WA =
     '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.6 2 2.2 6.4 2.2 11.84c0 1.74.46 3.44 1.32 4.94L2.1 22l5.36-1.4a9.8 9.8 0 0 0 4.58 1.17h.01c5.43 0 9.84-4.4 9.84-9.84 0-2.63-1.02-5.1-2.88-6.96A9.78 9.78 0 0 0 12.04 2Zm0 17.98h-.01a8.2 8.2 0 0 1-4.16-1.14l-.3-.18-3.1.81.83-3.02-.2-.31a8.13 8.13 0 0 1-1.25-4.3c0-4.51 3.68-8.18 8.2-8.18 2.19 0 4.25.85 5.8 2.4a8.14 8.14 0 0 1 2.4 5.79c0 4.52-3.68 8.19-8.2 8.19Zm4.5-6.13c-.25-.13-1.46-.72-1.69-.8-.22-.09-.39-.13-.55.12s-.63.8-.77.96c-.14.17-.28.19-.53.06-.24-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.1-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.09-.17.04-.31-.02-.44-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.17 1.71 2.62 4.15 3.67.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.46-.6 1.66-1.17.21-.58.21-1.07.15-1.17-.06-.11-.22-.17-.47-.3Z"/></svg>';
 
+  /* Las tareas que ya estaban en pantalla, por clave (quién + por qué).
+     null = todavía no se pintó nada: la primera pintura sale quieta. */
+  var TOCA_VISTAS = null;
+  function claveTarea(x){ return x.c.id + '|' + x.motivo; }
+
   function pintarToca(){
     var t = tareas();
     var cont = document.getElementById('toca');
+    /* Sin flash: entra solo lo que no estaba. Se compara contra TODAS las
+       tareas, no contra la página: pasar de página no es «llegó algo». */
+    var antes = TOCA_VISTAS, ahora = {};
+    t.forEach(function(x){ ahora[claveTarea(x)] = 1; });
+    TOCA_VISTAS = ahora;
+    var nuevas = 0;
     var limpio = document.getElementById('limpio');
 
     /* Sin pendientes la pila no deja una tarjeta vacía: desaparece, y en
@@ -3466,8 +3839,9 @@ body, .pn-shell, .pn-main{background:transparent !important;}
          nueve de cada diez tareas son prio 2 —el formulario esperando, la
          que no contesta, la deuda y la lista de espera, todas juntas—.
          `prio` ORDENA la pila; no dice de qué se trata cada fila. */
-      return '<article class="tarea' + (x.salud ? ' salud' : '') +
-        '" data-estado="' + esc(c.estado) + '" style="--i:' + i + '">' +
+      var recien = !!(antes && !antes[claveTarea(x)]);
+      return '<article class="tarea' + (x.salud ? ' salud' : '') + (recien ? ' recien' : '') +
+        '" data-estado="' + esc(c.estado) + '"' + (recien ? ' style="--i:' + (nuevas++) + '"' : '') + '>' +
         '<div class="tarea-que">' +
           '<h3 class="tarea-nom">' + (x.salud ? ICONO_ALERTA : '') + esc(c.nombre) + '</h3>' +
           '<p class="tarea-motivo">' + esc(x.motivo) + '</p>' +
@@ -3516,7 +3890,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     clearTimeout(c.reloj);
     /* Puede haberse repintado la lista debajo: si el boton ya no existe
        no hay nada que restaurar. */
-    if(c.btn && c.btn.isConnected){ c.btn.textContent = c.texto; c.btn.className = c.clase; }
+    if(c.btn && c.btn.isConnected){ c.btn.innerHTML = c.html; c.btn.className = c.clase; }
     if(c.no && c.no.isConnected) c.no.remove();
   }
 
@@ -3532,7 +3906,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     no.type = 'button'; no.className = 'cancelar'; no.textContent = 'No';
     no.addEventListener('click', function(e){ e.stopPropagation(); cerrarConfirmacion(); });
     btn.insertAdjacentElement('afterend', no);
-    CONF = { btn:btn, no:no, texto:btn.textContent, clase:btn.className, hacer:hacer };
+    CONF = { btn:btn, no:no, texto:btn.textContent, html:btn.innerHTML, clase:btn.className, hacer:hacer };
     btn.className = btn.className + ' confirmando';
     btn.textContent = siY(CONF.texto);
     /* Se cierra sola. Una fila que quedo preguntando toda la tarde es una
@@ -3542,8 +3916,52 @@ body, .pn-shell, .pn-main{background:transparent !important;}
 
   var VUELTA = null, VUELTA_RELOJ = 0;
 
+  /* ═══ el reloj de la barra, con mecha (kit de detalle, 4 oct 2026) ═══
+     La barra se iba sola sin avisar cuánto le quedaba. Ahora una línea
+     fina se va acortando: es el tiempo para deshacer, a la vista. Con el
+     puntero o el foco encima se detiene, y sigue desde donde quedó al
+     salir: nadie pierde el «Deshacer» mientras lo está por tocar.
+     Con «Reducir movimiento» la línea no se ve, pero el reloj es el mismo.
+     Sin animaciones web, cae al setTimeout de siempre. */
+  var MECHA = null, MECHA_RESTA = 0, MECHA_DESDE = 0;
+  function pararReloj(){
+    clearTimeout(VUELTA_RELOJ);
+    if(MECHA){ MECHA.cancel(); MECHA = null; }
+  }
+  function armarReloj(ms){
+    pararReloj();
+    var m = document.getElementById('vueltaMecha');
+    MECHA_RESTA = ms; MECHA_DESDE = Date.now();
+    VUELTA_RELOJ = setTimeout(cerrarVuelta, ms);
+    if(m && m.animate){
+      MECHA = m.animate([{ transform:'scaleX(1)' }, { transform:'scaleX(0)' }],
+        { duration:ms, easing:'linear', fill:'forwards' });
+    }
+  }
+  (function(){
+    var bar = document.getElementById('vuelta');
+    if(!bar) return;
+    function pausar(){
+      if(bar.hidden || !MECHA_RESTA) return;
+      clearTimeout(VUELTA_RELOJ);
+      MECHA_RESTA = Math.max(1200, MECHA_RESTA - (Date.now() - MECHA_DESDE));
+      if(MECHA) MECHA.pause();
+    }
+    function seguir(){
+      if(bar.hidden || !MECHA_RESTA) return;
+      clearTimeout(VUELTA_RELOJ);
+      MECHA_DESDE = Date.now();
+      VUELTA_RELOJ = setTimeout(cerrarVuelta, MECHA_RESTA);
+      if(MECHA) MECHA.play();
+    }
+    bar.addEventListener('mouseenter', pausar);
+    bar.addEventListener('mouseleave', seguir);
+    bar.addEventListener('focusin', pausar);
+    bar.addEventListener('focusout', function(e){ if(!bar.contains(e.relatedTarget)) seguir(); });
+  })();
+
   function cerrarVuelta(){
-    clearTimeout(VUELTA_RELOJ); VUELTA = null;
+    pararReloj(); VUELTA = null; MECHA_RESTA = 0;
     var bar = document.getElementById('vuelta');
     if(bar) bar.hidden = true;
   }
@@ -3562,8 +3980,8 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     var d = document.getElementById('vueltaDeshacer');
     d.disabled = false; d.textContent = 'Deshacer'; d.hidden = false;
     bar.hidden = false;
-    clearTimeout(VUELTA_RELOJ);
-    VUELTA_RELOJ = setTimeout(cerrarVuelta, 14000);
+    pararReloj();
+    armarReloj(14000);
   }
 
   /* Lo mismo, pero SIN «Deshacer»: para lo que de verdad no se puede
@@ -3577,8 +3995,8 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     var d = document.getElementById('vueltaDeshacer');
     if(d) d.hidden = true;
     bar.hidden = false;
-    clearTimeout(VUELTA_RELOJ);
-    VUELTA_RELOJ = setTimeout(cerrarVuelta, 9000);
+    pararReloj();
+    armarReloj(9000);
   }
 
   (function(){
@@ -3587,7 +4005,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     d.addEventListener('click', function(){
       if(!VUELTA){ cerrarVuelta(); return; }
       var f = VUELTA; VUELTA = null;
-      clearTimeout(VUELTA_RELOJ);
+      pararReloj();
       d.disabled = true; d.textContent = 'Un momento…';
       Promise.resolve().then(f).then(function(r){
         if(r && r.error){ throw r.error; }
@@ -3597,7 +4015,7 @@ body, .pn-shell, .pn-main{background:transparent !important;}
            y se corre el reloj, porque si fallo hay menos tiempo del que
            parecia. */
         VUELTA = f; d.disabled = false; d.textContent = 'No se pudo — probá otra vez';
-        clearTimeout(VUELTA_RELOJ); VUELTA_RELOJ = setTimeout(cerrarVuelta, 14000);
+        pararReloj(); armarReloj(14000);
       });
     });
     ok.addEventListener('click', cerrarVuelta);
@@ -3921,23 +4339,216 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     return m;
   }
 
+  /* ═══════════════════════════════════════════════════════════
+     AGENDAR EN EL HUECO (kit de detalle, 4 oct 2026)
+
+     Hasta hoy la Agenda solo MOSTRABA: para ponerle la clase a alguien
+     había que salir, buscarla en Invitadas, abrir su ficha y elegir la
+     fecha. Ahora se toca el día libre en el calendario: un fantasma
+     punteado marca el hueco, el popover sale de ahí con el día ya puesto
+     y se elige a quién y a qué hora.
+
+     No agrega ningún dato: escribe `clase_en`, el mismo campo que la
+     ficha, y si todavía no estaba agendada la pasa a «Clase agendada»
+     —con la fecha puesta, eso es lo que es—. Las dos cosas vuelven con
+     «Deshacer».
+     ═══════════════════════════════════════════════════════════ */
+  var AG_POP = null, AG_POP_EL = null, AG_FANTASMA = null, AG_GUARDO = false;
+
+  /* El estado «agendada» del programa abierto (THRIVE: clase_agendada;
+     1:1: sesion_agendada). Sin uno así, agendar solo pone la fecha. */
+  function estadoAgendada(){
+    var l = estadosDe();
+    for(var i = 0; i < l.length; i++) if(/_agendada$/.test(l[i].id)) return { id:l[i].id, i:i };
+    return null;
+  }
+  function posEstado(id){
+    var l = estadosDe();
+    for(var i = 0; i < l.length; i++) if(l[i].id === id) return i;
+    return -1;
+  }
+  /* A quién se le puede poner clase desde acá: sin fecha todavía, sin
+     estado de cierre, y que no haya pasado ya por la clase. */
+  function sinClaseTodavia(){
+    var ag = estadoAgendada();
+    return datos.filter(function(c){
+      if(tieneClase(c) || cierra(c.estado)) return false;
+      if(ag && posEstado(c.estado) > ag.i) return false;
+      return true;
+    }).sort(function(a, b){
+      var aa = ag && a.estado === ag.id ? 0 : 1, bb = ag && b.estado === ag.id ? 0 : 1;
+      if(aa !== bb) return aa - bb;
+      return String(a.nombre).localeCompare(String(b.nombre), 'es');
+    });
+  }
+  /* «7:30 a.m.» → «07:30», para elegirla en la lista de horas. */
+  function horaDeAjustes(){
+    var m = String(ajHora() || '').match(/(\d{1,2}):(\d{2})\s*([ap])?/i);
+    if(!m) return '07:30';
+    var h = +m[1];
+    if(m[3] && m[3].toLowerCase() === 'p' && h < 12) h += 12;
+    if(m[3] && m[3].toLowerCase() === 'a' && h === 12) h = 0;
+    return (h < 10 ? '0' : '') + h + ':' + m[2];
+  }
+  function nombreDelDia(k){
+    var f = diaLargo(new Date(k + 'T12:00:00-06:00'));
+    return f || k;
+  }
+
+  function cerrarAgendar(){ if(AG_POP && AG_POP.isOpen()) AG_POP.close('close'); }
+
+  function abrirAgendar(ancla, k, pt){
+    if(!AG_POP_EL){
+      AG_POP_EL = document.createElement('form');
+      AG_POP_EL.className = 'ag-pop';
+      AG_POP_EL.setAttribute('novalidate', '');
+      AG_POP_EL.setAttribute('aria-labelledby', 'agPopTit');
+      document.body.appendChild(AG_POP_EL);
+      AG_POP = KD.popover(AG_POP_EL, { side:'right', onClose:function(){
+        if(AG_FANTASMA && !AG_GUARDO) AG_FANTASMA.discard();
+        AG_FANTASMA = null;
+      }});
+    }
+    if(AG_POP.isOpen()) AG_POP.close('outside');
+    AG_GUARDO = false;
+
+    var gente = sinClaseTodavia();
+    var delDia = slotsActivos().filter(function(x){ return partirSlot(x.iso)[0] === k; });
+    var horaPor = delDia.length ? partirSlot(delDia[0].iso)[1] : horaDeAjustes();
+    var horas = HORAS.map(function(hh){
+      return '<option value="' + hh[0] + '"' + (hh[0] === horaPor ? ' selected' : '') + '>' + esc(hh[1]) + '</option>';
+    }).join('');
+
+    var cuerpo;
+    if(!gente.length){
+      /* Vacío que explica, no que se disculpa: dice qué falta y de dónde sale. */
+      cuerpo =
+        '<div class="kd-empty"><p>No hay nadie esperando clase. Cuando alguien llene el formulario, ' +
+        'o la agregues en Invitadas, la vas a poder agendar acá.</p></div>' +
+        '<div class="ag-acts"><button type="button" class="ag-no">Cerrar</button></div>';
+    }else{
+      cuerpo =
+        '<label><span>A quién</span><select name="quien">' +
+          gente.map(function(c){
+            return '<option value="' + esc(c.id) + '">' + esc(c.nombre) +
+              (c.alerta_salud ? ' · alerta de salud' : '') + '</option>';
+          }).join('') +
+        '</select></label>' +
+        '<label><span>Hora</span><select name="hora">' + horas + '</select></label>' +
+        '<p class="ag-ojo" hidden>' + ICONO_ALERTA + '<span>Tiene alerta de salud. Hablá con ella antes de la clase.</span></p>' +
+        /* No bloquea: pide que lo diga en voz alta (decisión del director). */
+        '<label class="ag-ok" hidden><input type="checkbox" name="hable"><span>Ya hablé con ella</span></label>' +
+        '<p class="ag-err" hidden role="alert"></p>' +
+        '<div class="ag-acts"><button type="button" class="ag-no">Cancelar</button>' +
+          '<button type="submit" class="ag-si">Agendar</button></div>';
+    }
+    AG_POP_EL.innerHTML =
+      '<h3 id="agPopTit">' + esc(esThrive() ? 'Agendar clase de prueba' : 'Agendar') + '</h3>' +
+      '<p class="ag-cuando">' + KD.icon('cal') + '<span>' + esc(nombreDelDia(k)) + '</span></p>' + cuerpo;
+    AG_POP_EL.setAttribute('data-dia', k);
+
+    var sel = AG_POP_EL.querySelector('[name=quien]');
+    var ojo = AG_POP_EL.querySelector('.ag-ojo');
+    var okH = AG_POP_EL.querySelector('.ag-ok');
+    function mirarAlerta(){
+      if(!sel || !ojo) return;
+      var c = datos.filter(function(x){ return x.id === sel.value; })[0];
+      var alerta = !!(c && c.alerta_salud);
+      ojo.hidden = !alerta;
+      if(okH){ okH.hidden = !alerta; okH.querySelector('input').checked = false; }
+      var e = AG_POP_EL.querySelector('.ag-err'); if(e) e.hidden = true;
+    }
+    if(sel) sel.addEventListener('change', mirarAlerta);
+    mirarAlerta();
+    AG_POP_EL.querySelector('.ag-no').addEventListener('click', function(){ AG_POP.close('cancel'); });
+
+    /* El fantasma va en la celda del calendario, no en el botón del día:
+       es el hueco el que se está llenando. */
+    AG_FANTASMA = ancla.classList.contains('ag-d') ? KD.ghost(ancla, pt) : null;
+    AG_POP.open(ancla);
+  }
+
+  /* Un solo oyente para el formulario del popover: se rearma por dentro
+     en cada apertura y engancharlo cada vez lo dispararía varias veces. */
+  document.addEventListener('submit', function(e){
+    if(!AG_POP_EL || e.target !== AG_POP_EL) return;
+    e.preventDefault();
+    var k = AG_POP_EL.getAttribute('data-dia');
+    var sel = AG_POP_EL.querySelector('[name=quien]'), hr = AG_POP_EL.querySelector('[name=hora]');
+    var err = AG_POP_EL.querySelector('.ag-err');
+    var c = sel && datos.filter(function(x){ return x.id === sel.value; })[0];
+    if(!c){ if(err){ err.textContent = 'Elegí a quién.'; err.hidden = false; } return; }
+    var hable = AG_POP_EL.querySelector('[name=hable]');
+    if(c.alerta_salud && hable && !hable.checked){
+      err.textContent = 'Tiene alerta de salud: marcá «Ya hablé con ella» para agendarla.'; err.hidden = false;
+      hable.focus(); return;
+    }
+    var iso = deInputHN(k + 'T' + hr.value);
+    if(!iso){ err.textContent = 'Esa hora no se entiende. Elegí otra.'; err.hidden = false; return; }
+
+    var campos = { clase_en: iso };
+    var ag = estadoAgendada();
+    if(ag && posEstado(c.estado) < ag.i) campos.estado = ag.id;
+    var previo = {};
+    Object.keys(campos).forEach(function(x){ previo[x] = c[x] !== undefined ? c[x] : null; });
+
+    /* Optimista: el hueco se llena ya; si la base dice que no, se vacía
+       y se avisa. Nunca queda pintado algo que no se guardó. */
+    AG_GUARDO = true;
+    var fantasma = AG_FANTASMA;
+    if(fantasma) fantasma.commit();
+    AG_POP.close('saved');
+
+    var texto = c.nombre + ' · ' + nombreDelDia(k) + ', ' + horaDe(iso);
+    sb.from('inscripciones').update(campos).eq('id', c.id).then(function(r){
+      if(r.error){
+        if(fantasma) fantasma.discard();
+        avisar('No se pudo agendar a ' + c.nombre + '. El día quedó libre.');
+        return;
+      }
+      ofrecerVuelta(texto, function(){
+        return sb.from('inscripciones').update(previo).eq('id', c.id).then(function(r2){
+          if(!r2.error) cargar();
+          return r2;
+        });
+      });
+      cargar();
+    });
+  });
+
   function pintarAgenda(){
     var elMes = document.getElementById('agMes'), elDia = document.getElementById('agDia');
     if(!elMes || !elDia) return;
+    cerrarAgendar();
     var mapa = porDia(), dias = Object.keys(mapa).sort();
-    var cuenta = document.getElementById('agCuenta');
-    if(cuenta) cuenta.textContent = conClase().length || '';
 
-    if(!dias.length){
-      elMes.innerHTML = '';
-      elDia.innerHTML = '<div class="pn-vacio">Todavía no hay ninguna clase con día asignado. ' +
-        'La fecha se le pone desde la ficha de cada una.</div>';
-      return;
+    /* Hoy en Honduras, igual que las clases. */
+    var hoyK = hoyHN();
+    /* Abre en el MES DE HOY (decisión del director, 4 oct 2026): es donde
+       se agenda. El día elegido es la próxima clase de este mes, o hoy. Un
+       día elegido sin clases se respeta: es donde ella está por agendar. */
+    if(!AG_MES){ AG_MES = new Date(+hoyK.slice(0,4), +hoyK.slice(5,7)-1, 1); }
+    var mesK = AG_MES.getFullYear() + '-' + String(AG_MES.getMonth()+1).padStart(2,'0');
+    if(!AG_DIA){
+      var enMes = dias.filter(function(k){ return k.slice(0,7) === mesK; });
+      AG_DIA = enMes.filter(function(k){ return k >= hoyK; })[0] || enMes[0] ||
+               (hoyK.slice(0,7) === mesK ? hoyK : mesK + '-01');
     }
 
-    var hoyK = claveDia(new Date());
-    if(!AG_DIA || !mapa[AG_DIA]) AG_DIA = dias.filter(function(k){ return k >= hoyK; })[0] || dias[dias.length-1];
-    if(!AG_MES){ var pa = AG_DIA.split('-'); AG_MES = new Date(+pa[0], +pa[1]-1, 1); }
+    /* El número del título es el de las clases del mes que se ve: «Agenda 3»
+       arriba de un mes vacío se contradecía. */
+    var delMes = dias.filter(function(k){ return k.slice(0,7) === mesK; })
+                     .reduce(function(t, k){ return t + mapa[k].length; }, 0);
+    var cuenta = document.getElementById('agCuenta');
+    if(cuenta) cuenta.textContent = delMes || '';
+
+    /* Mes vacío: se ofrece ir al mes con clases más cercano (el próximo;
+       si no hay, el último). */
+    var otroMes = null;
+    if(!delMes && dias.length){
+      var meses = dias.map(function(k){ return k.slice(0,7); });
+      otroMes = meses.filter(function(m){ return m > mesK; })[0] || meses.filter(function(m){ return m < mesK; }).pop() || null;
+    }
 
     var primero = new Date(AG_MES.getFullYear(), AG_MES.getMonth(), 1);
     var arranca = (primero.getDay() + 6) % 7;
@@ -3953,40 +4564,97 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     for(var d=1; d<=largo; d++){
       var k = claveDia(new Date(AG_MES.getFullYear(), AG_MES.getMonth(), d));
       var n = (mapa[k] || []).length;
-      h += '<button type="button" class="ag-d' + (n ? ' tiene' : '') +
+      var pasado = k < hoyK;
+      var libre = !n && !pasado;
+      var nom = nombreDelDia(k);
+      h += '<button type="button" class="ag-d' + (n ? ' tiene' : '') + (libre ? ' libre' : '') +
+        (pasado && !n ? ' pasado' : '') +
         (k === AG_DIA ? ' puesto' : '') + (k === hoyK ? ' hoy' : '') +
-        '" data-dia="' + k + '"' + (n ? '' : ' disabled') + '>' + d +
+        '" data-dia="' + k + '"' + (n || libre ? '' : ' disabled') +
+        ' aria-label="' + esc(libre ? 'Agendar el ' + nom : nom + (n ? ', ' + (n === 1 ? 'una clase' : n + ' clases') : '')) + '">' + d +
         (n ? '<i class="ag-pt">' + (n > 1 ? n : '') + '</i>' : '') + '</button>';
     }
-    elMes.innerHTML = h + '</div>';
+    h += '</div>';
+    if(otroMes){
+      var nm = new Date(+otroMes.slice(0,4), +otroMes.slice(5,7)-1, 1).toLocaleDateString('es-HN', { month:'long' });
+      h += '<p class="ag-otro"><span>Ninguna clase este mes.</span>' +
+        '<button type="button" data-ir="' + otroMes + '">Ver ' + esc(nm) + '</button></p>';
+    }
+    elMes.innerHTML = h;
 
-    var delDia = mapa[AG_DIA] || [], fecha = new Date(AG_DIA + 'T12:00:00');
-    elDia.innerHTML =
-      '<div class="ag-dia-cab"><b>' +
-        esc(fecha.toLocaleDateString('es-HN', { weekday:'long', day:'numeric', month:'long' })) +
-      '</b><span>' + (delDia.length === 1 ? 'una clase' : delDia.length + ' clases') + '</span></div>' +
-      delDia.map(function(c){
-        var ini = String(c.nombre || '?').trim().split(/\s+/).slice(0,2)
-                    .map(function(x){ return x[0] || ''; }).join('').toUpperCase();
-        return '<button type="button" class="ag-cita" data-id="' + esc(c.id) + '">' +
-          '<span class="ag-hora">' + esc(horaDe(c.clase_en)) + '</span>' +
-          '<span class="ag-ini">' + esc(ini) + '</span>' +
-          '<span class="ag-quien"><b>' + esc(c.nombre) + '</b>' +
-            '<i>' + esc(nombreEstado(c.estado)) + (c.grupo ? ' &middot; ' + esc(c.grupo) : '') + '</i></span>' +
-        '</button>';
-      }).join('');
+    pintarDiaAgenda(mapa, hoyK);
+
+    elMes.querySelectorAll('[data-ir]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var m = b.getAttribute('data-ir');
+        AG_MES = new Date(+m.slice(0,4), +m.slice(5,7)-1, 1);
+        var enEse = dias.filter(function(k){ return k.slice(0,7) === m; });
+        AG_DIA = (m > mesK ? enEse[0] : enEse[enEse.length-1]) || AG_DIA;
+        pintarAgenda();
+      });
+    });
 
     elMes.querySelectorAll('[data-mes]').forEach(function(b){
       b.addEventListener('click', function(){
         AG_MES = new Date(AG_MES.getFullYear(), AG_MES.getMonth() + (+b.getAttribute('data-mes')), 1);
+        AG_DIA = null;
         pintarAgenda();
       });
     });
     elMes.querySelectorAll('[data-dia]').forEach(function(b){
-      b.addEventListener('click', function(){ AG_DIA = b.getAttribute('data-dia'); pintarAgenda(); });
+      b.addEventListener('click', function(e){
+        var k = b.getAttribute('data-dia');
+        if(!b.classList.contains('libre')){ AG_DIA = k; pintarAgenda(); return; }
+        /* Día libre: se marca sin repintar la rejilla —repintarla se
+           llevaría la celda donde nace el fantasma— y se abre el popover. */
+        AG_DIA = k;
+        elMes.querySelectorAll('.ag-d.puesto').forEach(function(x){ x.classList.remove('puesto'); });
+        b.classList.add('puesto');
+        pintarDiaAgenda(porDia(), hoyHN());
+        var pt = (e.clientX || e.clientY) ? { x:e.clientX, y:e.clientY } : null;
+        abrirAgendar(b, k, pt);
+      });
     });
+  }
+
+  /* El detalle del día elegido, debajo (o al lado) del mes. */
+  function pintarDiaAgenda(mapa, hoyK){
+    var elDia = document.getElementById('agDia');
+    if(!elDia) return;
+    var delDia = mapa[AG_DIA] || [];
+    var pasado = AG_DIA < hoyK;
+    var cab = '<div class="ag-dia-cab"><b>' + esc(nombreDelDia(AG_DIA)) + '</b><span>' +
+      (delDia.length ? (delDia.length === 1 ? 'una clase' : delDia.length + ' clases') : 'nada agendado') +
+      '</span></div>';
+    var citas = delDia.map(function(c){
+      var ini = String(c.nombre || '?').trim().split(/\s+/).slice(0,2)
+                  .map(function(x){ return x[0] || ''; }).join('').toUpperCase();
+      return '<button type="button" class="ag-cita" data-id="' + esc(c.id) + '">' +
+        '<span class="ag-hora">' + esc(horaDe(c.clase_en)) + '</span>' +
+        '<span class="ag-ini">' + esc(ini) + '</span>' +
+        '<span class="ag-quien"><b>' + esc(c.nombre) + '</b>' +
+          '<i>' + esc(nombreEstado(c.estado)) + (c.grupo ? ' &middot; ' + esc(c.grupo) : '') + '</i></span>' +
+      '</button>';
+    }).join('');
+    var invita = '';
+    if(pasado && !delDia.length){
+      invita = '<div class="kd-empty"><p>Este día ya pasó. Elegí uno de hoy en adelante para agendar.</p></div>';
+    }else if(!pasado && !delDia.length){
+      /* Vacío que invita: el hueco punteado está donde va a caer la
+         primera clase, y es el botón. */
+      invita = '<div class="kd-empty"><button type="button" class="kd-empty-ghost" data-agendar="' + esc(AG_DIA) + '">' +
+        KD.icon('plus') + 'Agendar una clase este día</button>' +
+        '<p>Elegís a quién y a qué hora. Su ficha queda con la fecha y el pase ya se puede copiar.</p></div>';
+    }else if(!pasado){
+      invita = '<div class="ag-mas"><button type="button" class="kd-empty-ghost" data-agendar="' + esc(AG_DIA) + '">' +
+        KD.icon('plus') + 'Agendar otra este día</button></div>';
+    }
+    elDia.innerHTML = cab + citas + invita;
     elDia.querySelectorAll('[data-id]').forEach(function(b){
       b.addEventListener('click', function(){ abrirFicha(b.getAttribute('data-id')); });
+    });
+    elDia.querySelectorAll('[data-agendar]').forEach(function(b){
+      b.addEventListener('click', function(){ abrirAgendar(b, b.getAttribute('data-agendar'), null); });
     });
   }
 
@@ -4257,7 +4925,179 @@ body, .pn-shell, .pn-main{background:transparent !important;}
     return mesesEntre(aj.periodo_inicio, aj.periodo_fin);
   }
 
+  /* ═══════════════════════════════════════════════════════════
+     EL CICLO, EN SEMANAS (kit de detalle, 4 oct 2026)
+
+     Un ciclo de THRIVE son tres meses. Hasta hoy el panel no decía en
+     qué punto iba cada una: había que contar con el calendario en la
+     mano. Ahora cada una que está adentro tiene su anillo —«semana 11
+     de 13»— y, cuando el ciclo se acaba, un «Renovar ciclo».
+
+     ⚠️ Sin datos nuevos. El arranque es `cobro_desde` (o, vacío, el
+     inicio del período en Ajustes) y los ciclos se cuentan de a tres
+     meses desde ahí. Renovar ESCRIBE `cobro_hasta` tres meses más
+     allá del fin del ciclo: es el campo que ya decide hasta cuándo se
+     le cobra, así que renovar y cobrar no se pueden contradecir.
+     Lo que NO hay es un historial de renovaciones (cuándo renovó, qué
+     ciclo es «de verdad»): eso pide una tabla y quedó como pendiente de
+     SQL, no se inventó acá.
+     ═══════════════════════════════════════════════════════════ */
+  var MESES_CICLO = 3;
+  /* Las que se renovaron en ESTA sesión, para que el botón siga diciendo
+     «Renovado» después del repintado. Las que ya venían cobrándose más
+     allá del ciclo dicen «Continúa»: nadie las renovó desde acá, y
+     decir «Renovado» sería afirmar algo que el panel no sabe. */
+  var RENOVADAS_AHORA = {};
+
+  /* Sumar meses a una fecha de calendario AAAA-MM-DD. El día se recorta
+     al largo del mes: el 31 de enero más un mes es el 28 de febrero, no
+     el 3 de marzo. */
+  function masMeses(fecha, n){
+    var y = +fecha.slice(0, 4), m = +fecha.slice(5, 7) - 1 + n, dd = +fecha.slice(8, 10);
+    y += Math.floor(m / 12); m = ((m % 12) + 12) % 12;
+    var largo = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    var d = Math.min(dd, largo);
+    return y + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d;
+  }
+  function diasEntre(a, b){
+    return Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 86400000);
+  }
+
+  /* Dónde va una inscripción: qué ciclo, qué semana, cuándo termina y
+     si ya está renovada. null si no hay de dónde contar. */
+  function cicloDe(c){
+    var aj = (prog && prog.ajustes) || {};
+    var desde = String(c.cobro_desde || aj.periodo_inicio || '').slice(0, 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(desde)) return null;
+    var hoy = hoyHN();
+    var hasta = String(c.cobro_hasta || aj.periodo_fin || '').slice(0, 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(hasta)) hasta = '';
+
+    if(hoy < desde) return { antes:true, desde:desde, hasta:hasta };
+
+    /* Qué bloque de tres meses contiene a hoy. */
+    var n = 0, ini = desde, fin = corrido(masMeses(desde, MESES_CICLO), -1);
+    while(hoy > fin && n < 40){ n++; ini = masMeses(desde, MESES_CICLO * n); fin = corrido(masMeses(desde, MESES_CICLO * (n + 1)), -1); }
+    var total = Math.max(1, Math.round((diasEntre(ini, fin) + 1) / 7));
+    var semana = Math.min(total, Math.floor(diasEntre(ini, hoy) / 7) + 1);
+    return {
+      ciclo:n + 1, semana:semana, total:total, ini:ini, fin:fin, hasta:hasta,
+      /* Renovada = ya se le cobra más allá de este ciclo. */
+      renovada: !!(hasta && hasta > fin),
+      /* Sin fecha de fin no hay nada que renovar: se le cobra sin corte. */
+      abierta: !hasta
+    };
+  }
+
+  function adentroDelPrograma(){
+    return datos.filter(function(c){ return cierra(c.estado) && c.estado !== 'no'; })
+      .sort(function(a, b){ return String(a.nombre).localeCompare(String(b.nombre), 'es'); });
+  }
+
+  function pintarCiclos(){
+    var cont = document.getElementById('cobCiclos');
+    if(!cont) return;
+    var gente = adentroDelPrograma();
+    var tit = '<h2 class="ci-tit">En qué semana va cada una</h2>';
+
+    if(!gente.length){
+      cont.innerHTML = tit + '<div class="pn-vacio">Cuando alguien entre al programa, acá ves en qué semana de su ciclo va ' +
+        'y cuándo le toca renovar.</div>';
+      return;
+    }
+    var filas = gente.map(function(c){
+      var x = cicloDe(c);
+      var anillo = function(p){
+        return '<svg class="ci-anillo" viewBox="0 0 44 44" aria-hidden="true"><circle class="bg" cx="22" cy="22" r="18"/>' +
+          '<circle class="fg" cx="22" cy="22" r="18" pathLength="1" style="stroke-dashoffset:' + (1 - p).toFixed(3) + '"/></svg>';
+      };
+      var quien = '<b>' + esc(c.nombre) + (c.grupo ? ' · ' + esc(c.grupo) : '') + '</b>';
+      if(!x){
+        return '<div class="ci-fila">' + anillo(0) + '<div class="ci-quien">' + quien +
+          '<small>Falta la fecha en que arranca el programa: ponela en Ajustes y el ciclo se cuenta solo.</small></div></div>';
+      }
+      if(x.antes){
+        return '<div class="ci-fila">' + anillo(0) + '<div class="ci-quien">' + quien +
+          '<small>Arranca el ' + esc(diaCorto(x.desde)) + '</small></div></div>';
+      }
+      var ahora = !!RENOVADAS_AHORA[c.id];
+      var siguiente = 'el ciclo ' + (x.ciclo + 1) + ' arranca el ' + diaCorto(corrido(x.fin, 1));
+      /* Una sola vez cada cosa: si el botón ya dice «Renovado», el pie no lo
+         repite; si nadie la renovó desde acá, no hay botón y el pie dice
+         «Continúa». */
+      var pie = x.abierta ? 'Sin fecha de fin'
+        : x.renovada ? (ahora ? siguiente.charAt(0).toUpperCase() + siguiente.slice(1) : 'Continúa: ' + siguiente)
+        : 'Termina el ' + diaCorto(x.fin);
+      var boton = (x.abierta || (x.renovada && !ahora)) ? ''
+        : '<div class="ci-acts"><button type="button" class="ci-renovar kd-cal' + (x.renovada ? ' is-on' : '') + '" data-renovar="' + esc(c.id) + '"' +
+          (x.renovada ? ' aria-disabled="true"' : '') + '>' + KD.icon('cal') +
+          '<span class="kd-txt">' + (x.renovada ? 'Renovado' : 'Renovar ciclo') + '</span></button></div>';
+      return '<div class="ci-fila" data-ci="' + esc(c.id) + '">' + anillo(x.semana / x.total) +
+        '<div class="ci-quien">' + quien +
+          '<small>Ciclo ' + x.ciclo + ' · semana ' + x.semana + ' de ' + x.total + '</small>' +
+          '<small class="ci-pie">' + esc(pie) + '</small></div>' + boton + '</div>';
+    }).join('');
+    cont.innerHTML = tit + '<p class="sub ci-sub">Un ciclo son tres meses. Renovar extiende hasta cuándo se le cobra, ' +
+      'así que las cuotas nuevas aparecen solas arriba.</p><div class="ci-lista">' + filas + '</div>';
+
+    cont.querySelectorAll('[data-renovar]').forEach(function(b){
+      b.addEventListener('click', function(){
+        if(b.classList.contains('is-on')) return;
+        /* Las dos redes del panel: el «¿seguro?» ataja el toque sin
+           querer, y «Deshacer» arregla el que se quiso dar. */
+        confirmar(b, function(){ renovar(b.getAttribute('data-renovar'), b); });
+      });
+    });
+  }
+
+  function renovar(id, btn){
+    var c = datos.filter(function(x){ return x.id === id; })[0];
+    var x = c && cicloDe(c);
+    if(!x || x.antes || x.abierta || x.renovada) return;
+    var previo = { cobro_hasta: c.cobro_hasta || null };
+    var nuevo = masMeses(corrido(x.fin, 1), MESES_CICLO);
+    nuevo = corrido(nuevo, -1);
+
+    /* Optimista: el calendario del botón se vuelve tilde y el pie lo
+       dice ya; si la base no guarda, vuelve atrás y se avisa. */
+    var fila = btn.closest('.ci-fila'), pie = fila && fila.querySelector('.ci-pie');
+    var pieAntes = pie ? pie.textContent : '';
+    KD.confirm(btn, 'Renovado');
+    btn.setAttribute('aria-disabled', 'true');
+    if(pie) pie.textContent = 'El ciclo ' + (x.ciclo + 1) + ' arranca el ' + diaCorto(corrido(x.fin, 1));
+
+    sb.from('inscripciones').update({ cobro_hasta: nuevo }).eq('id', id).then(function(r){
+      if(r.error){
+        KD.toggleIcon(btn, false);
+        var t = btn.querySelector('.kd-txt'); if(t) t.textContent = 'Renovar ciclo';
+        btn.removeAttribute('aria-disabled');
+        if(pie) pie.textContent = pieAntes;
+        avisar('No se pudo renovar a ' + c.nombre + '. Sigue como estaba.');
+        return;
+      }
+      c.cobro_hasta = nuevo;
+      RENOVADAS_AHORA[id] = 1;
+      ofrecerVuelta(c.nombre + ' · ciclo ' + (x.ciclo + 1) + ' renovado', function(){
+        return sb.from('inscripciones').update(previo).eq('id', id).then(function(r2){
+          if(!r2.error){
+            c.cobro_hasta = previo.cobro_hasta; delete RENOVADAS_AHORA[id];
+            Promise.resolve(cargar()).then(function(){ if(vista === 'cobros') pintarCobros(); });
+          }
+          return r2;
+        });
+      });
+      /* Las cuotas cambian (hay tres meses más que cobrar): se recarga,
+         pero la fila se deja como quedó para no cortar el tilde a medio
+         dibujar. pintarCobros corre cuando llegaron los datos y el tilde
+         ya terminó (300 ms). */
+      Promise.all([ cargar(), new Promise(function(ok){ setTimeout(ok, 300); }) ]).then(function(){
+        if(vista === 'cobros') pintarCobros();
+      });
+    });
+  }
+
   function pintarCobros(){
+    pintarCiclos();
     var tit = document.getElementById('cobTit');
     var sub = document.getElementById('cobSub');
     var res = document.getElementById('cobResumen');
