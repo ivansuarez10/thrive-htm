@@ -15,3 +15,7 @@ _cmp.html
 # comparadores generados: se sirven desde acá para que los iframes carguen,
 # pero no son parte del sitio publicado
 _cmp*.html
+
+# Estudio: material de QA del panel (no se publica)
+_antes-despues/
+_banco/
