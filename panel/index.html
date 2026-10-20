@@ -8,7 +8,7 @@
 <link rel="icon" href="/assets/img/seal.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..700&family=Hanken+Grotesk:wght@300..800&family=DM+Mono:wght@400;500&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400&display=swap">
 <link rel="stylesheet" href="/assets/css/thrive.css?v=c237c49b">
 <style>
 /* ═══ el panel es una herramienta, no una página de venta ═══ */
@@ -327,6 +327,18 @@ body{background:var(--sand);}
 .pn-caja h2{font-family:var(--display); font-weight:600; font-size:1.06rem; letter-spacing:-.015em;}
 .pn-caja .ayuda{margin-top:7px; font-size:.9rem; color:var(--ink-2);}
 .pn-caja-pie{display:flex; align-items:center; gap:14px; margin-top:20px; flex-wrap:wrap;}
+/* fase 1.1 · «¿Ya está en el panel?» dentro de Agregar cliente */
+.cl-ya:empty{display:none;}
+.cl-ya{margin-top:16px;}
+.cl-ya > p{font-size:.9rem; color:var(--ink-2); margin-bottom:8px;}
+.cl-ya ul{list-style:none; margin:0; padding:0; display:grid; gap:8px;}
+.cl-ya button{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:2px 14px; width:100%; min-height:56px; padding:10px 14px;
+  text-align:left; background:var(--white, #fff); border:1px solid rgba(30,29,26,.14); border-radius:12px; color:var(--ink); font:inherit; cursor:pointer;}
+.cl-ya button:hover{border-color:rgba(30,29,26,.32);}
+.cl-ya button:focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
+.cl-ya b{font-family:var(--display); font-weight:600; font-size:1rem;}
+.cl-ya i{grid-column:1; font-style:normal; font-size:.86rem; color:var(--ink-2);}
+.cl-ya .elegir{grid-column:2; grid-row:1 / span 2; font-size:.88rem; font-weight:600; color:var(--teal);}
 .pn-txt{
   background:none; border:none; font:inherit; font-size:.92rem; color:var(--ink-2);
   cursor:pointer; padding:6px 2px; border-bottom:1px solid transparent;
@@ -2312,7 +2324,7 @@ button.f1-fila-btn{font:inherit; color:inherit; background:none; border:0; curso
 .f1-conf dl{margin-top:20px; display:grid; grid-template-columns:minmax(96px,auto) minmax(0,1fr); gap:0 16px;}
 .f1-conf dt, .f1-conf dd{padding:10px 0; border-top:1px solid var(--line-soft); font-size:.92rem;}
 .f1-conf dt{color:var(--ink-2);}
-.f1-conf .mono{font-family:var(--mono); font-size:.88rem; white-space:nowrap;}
+.f1-conf .mono{font-family:var(--mono); font-size:.88rem; overflow-wrap:anywhere;}  /* en 390 la referencia se cortaba */
 .f1-conf-leyenda{margin-top:14px; padding-top:12px; border-top:1px solid var(--line-soft); font-size:.8rem; color:var(--ink-2);}
 .f1-conf.anulada .f1-conf-monto{text-decoration:line-through; color:var(--ink-3);}
 .f1-conf-acc{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:20px;}
@@ -2529,11 +2541,13 @@ body .pn-app section h2{animation:none;}
 
         <div class="pn-caja" id="cajaCl" hidden>
           <h2>Agregar un cliente</h2>
-          <p class="ayuda">El nombre es el que va a aparecer en «invitación de ___». Escribilo como lo diría esa persona. Después cargás su acuerdo desde la ficha.</p>
+          <p class="ayuda">Si la persona ya está en el panel (por ejemplo, entró a THRIVE), escribí su nombre y elegí a la persona: se le carga el acuerdo sin repetirla. Si es alguien nuevo, el nombre es el que va a aparecer en «invitación de ___».</p>
           <div class="ficha-campos" style="margin-top:18px;">
-            <label><span>Nombre</span><input type="text" id="clNombre" maxlength="120" autocomplete="off"></label>
+            <label><span>Nombre</span><input type="text" id="clNombre" maxlength="120" autocomplete="off" aria-describedby="clYaEsta"></label>
             <label><span>Teléfono</span><input type="tel" id="clTel" placeholder="+504…" autocomplete="off"></label>
           </div>
+          <!-- fase 1.1 · Las que ya están: elegirla en vez de crear otra persona. -->
+          <div class="cl-ya" id="clYaEsta" aria-live="polite"></div>
           <div class="ficha-campos ancho" style="margin-top:14px;">
             <label><span>Link de su carpeta (opcional)</span><input type="url" id="clCarpeta" placeholder="https://drive.google.com/…" autocomplete="off"></label>
           </div>
@@ -2568,6 +2582,13 @@ body .pn-app section h2{animation:none;}
           <div class="ficha-campos ancho" style="margin-top:14px;">
             <label><span>Link de Google Maps</span><input type="url" id="ajMapa" placeholder="https://maps.app.goo.gl/…"></label>
           </div>
+          <!-- FASE 1.1: sale en el «Aviso de cobro». Columna PRIVADA de
+               ajustes: anon no la recibe (los permisos son por columna) y
+               no está en ajustes_publicos. Ver sql-propuesto/fase1-1.sql. -->
+          <div class="ficha-campos ancho" style="margin-top:14px;">
+            <label><span>Datos para transferir · uno por renglón</span><textarea id="ajTransferir" rows="3" placeholder="Banco&#10;Cuenta de ahorro 0000000000&#10;A nombre de …"></textarea></label>
+          </div>
+          <p class="ayuda" style="margin-top:8px;">Salen en el aviso de cobro que mandás por WhatsApp. Solo los ve quien recibe el aviso; el sitio público no los lee.</p>
         </div>
 
         <div class="aj-grupo">
@@ -5008,14 +5029,12 @@ body .pn-app section h2{animation:none;}
      mano. Ahora cada una que está adentro tiene su anillo —«semana 11
      de 13»— y, cuando el ciclo se acaba, un «Renovar ciclo».
 
-     ⚠️ Sin datos nuevos. El arranque es `cobro_desde` (o, vacío, el
-     inicio del período en Ajustes) y los ciclos se cuentan de a tres
-     meses desde ahí. Renovar ESCRIBE `cobro_hasta` tres meses más
-     allá del fin del ciclo: es el campo que ya decide hasta cuándo se
-     le cobra, así que renovar y cobrar no se pueden contradecir.
-     Lo que NO hay es un historial de renovaciones (cuándo renovó, qué
-     ciclo es «de verdad»): eso pide una tabla y quedó como pendiente de
-     SQL, no se inventó acá.
+     fase 1.1 · El ciclo sale del acuerdo vigente de su inscripción
+     (ciclo_inicio y ciclo_fin). Renovar pasa ese acuerdo al ciclo
+     siguiente y se puede deshacer; no toca hasta cuándo se cobra.
+     Antes escribía `inscripciones.cobro_hasta`, que no existe en
+     producción. Lo que sigue sin existir es un historial de renovaciones
+     propio: queda en el hilo del acuerdo («Cambió en el acuerdo: ciclo»).
      ═══════════════════════════════════════════════════════════ */
   var MESES_CICLO = 3;
   /* Las que se renovaron en ESTA sesión, para que el botón siga diciendo
@@ -5038,29 +5057,33 @@ body .pn-app section h2{animation:none;}
     return Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 86400000);
   }
 
-  /* Dónde va una inscripción: qué ciclo, qué semana, cuándo termina y
-     si ya está renovada. null si no hay de dónde contar. */
+  /* fase 1.1 · El ciclo vive en el ACUERDO (ciclo_inicio y ciclo_fin),
+     no en la inscripción: `inscripciones.cobro_desde/cobro_hasta` no
+     existen en producción y «Renovar» fallaba. Renovar ya no toca lo
+     que se cobra (eso lo decide el acuerdo vigente, mes a mes): pasa el
+     acuerdo al ciclo siguiente. */
+  function acuerdoDeInsc(c){
+    return F1.acuerdos.filter(function(a){ return a.inscripcion_id === c.id && (a.estado === 'vigente' || a.estado === 'pausado'); })
+      .sort(function(x, y){ return x.cobro_desde < y.cobro_desde ? 1 : -1; })[0] || null;
+  }
+  /* Dónde va: qué semana del ciclo, cuándo termina y si ya toca renovar.
+     null si no tiene acuerdo cargado. */
   function cicloDe(c){
-    var aj = (prog && prog.ajustes) || {};
-    var desde = String(c.cobro_desde || aj.periodo_inicio || '').slice(0, 10);
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(desde)) return null;
+    var a = acuerdoDeInsc(c);
+    if(!a) return null;
+    var ini = String(a.ciclo_inicio || a.cobro_desde || '').slice(0, 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(ini)) return null;
+    var fin = String(a.ciclo_fin || '').slice(0, 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(fin)) fin = corrido(masMeses(ini, MESES_CICLO), -1);
     var hoy = hoyHN();
-    var hasta = String(c.cobro_hasta || aj.periodo_fin || '').slice(0, 10);
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(hasta)) hasta = '';
-
-    if(hoy < desde) return { antes:true, desde:desde, hasta:hasta };
-
-    /* Qué bloque de tres meses contiene a hoy. */
-    var n = 0, ini = desde, fin = corrido(masMeses(desde, MESES_CICLO), -1);
-    while(hoy > fin && n < 40){ n++; ini = masMeses(desde, MESES_CICLO * n); fin = corrido(masMeses(desde, MESES_CICLO * (n + 1)), -1); }
+    if(hoy < ini) return { a:a, antes:true, ini:ini, fin:fin };
     var total = Math.max(1, Math.round((diasEntre(ini, fin) + 1) / 7));
     var semana = Math.min(total, Math.floor(diasEntre(ini, hoy) / 7) + 1);
     return {
-      ciclo:n + 1, semana:semana, total:total, ini:ini, fin:fin, hasta:hasta,
-      /* Renovada = ya se le cobra más allá de este ciclo. */
-      renovada: !!(hasta && hasta > fin),
-      /* Sin fecha de fin no hay nada que renovar: se le cobra sin corte. */
-      abierta: !hasta
+      a:a, ini:ini, fin:fin, semana:semana, total:total,
+      vencido: hoy > fin,
+      /* Se ofrece renovar en las dos últimas semanas, o ya vencido. */
+      toca: diasEntre(hoy, fin) <= 14
     };
   }
 
@@ -5089,31 +5112,29 @@ body .pn-app section h2{animation:none;}
       var quien = '<b>' + esc(c.nombre) + (c.grupo ? ' · ' + esc(c.grupo) : '') + '</b>';
       if(!x){
         return '<div class="ci-fila">' + anillo(0) + '<div class="ci-quien">' + quien +
-          '<small>Falta la fecha en que arranca el programa: ponela en Ajustes y el ciclo se cuenta solo.</small></div></div>';
+          '<small>Falta cargar su acuerdo: ahí va el ciclo.</small></div>' +
+          '<div class="ci-acts"><button type="button" class="f1-txt" data-f1-ficha="' + esc(c.persona_id) + '">Abrir su ficha</button></div></div>';
       }
-      if(x.antes){
+      var ahora = RENOVADAS_AHORA[x.a.id];
+      if(x.antes && !ahora){
         return '<div class="ci-fila">' + anillo(0) + '<div class="ci-quien">' + quien +
-          '<small>Arranca el ' + esc(diaCorto(x.desde)) + '</small></div></div>';
+          '<small>Su ciclo arranca el ' + esc(diaCorto(x.ini)) + '</small></div></div>';
       }
-      var ahora = !!RENOVADAS_AHORA[c.id];
-      var siguiente = 'el ciclo ' + (x.ciclo + 1) + ' arranca el ' + diaCorto(corrido(x.fin, 1));
-      /* Una sola vez cada cosa: si el botón ya dice «Renovado», el pie no lo
-         repite; si nadie la renovó desde acá, no hay botón y el pie dice
-         «Continúa». */
-      var pie = x.abierta ? 'Sin fecha de fin'
-        : x.renovada ? (ahora ? siguiente.charAt(0).toUpperCase() + siguiente.slice(1) : 'Continúa: ' + siguiente)
+      var pie = ahora ? 'Ciclo nuevo: ' + diaCorto(x.ini) + ' al ' + diaCorto(x.fin)
+        : x.vencido ? 'El ciclo terminó el ' + diaCorto(x.fin)
         : 'Termina el ' + diaCorto(x.fin);
-      var boton = (x.abierta || (x.renovada && !ahora)) ? ''
-        : '<div class="ci-acts"><button type="button" class="ci-renovar kd-cal' + (x.renovada ? ' is-on' : '') + '" data-renovar="' + esc(c.id) + '"' +
-          (x.renovada ? ' aria-disabled="true"' : '') + '>' + KD.icon('cal') +
-          '<span class="kd-txt">' + (x.renovada ? 'Renovado' : 'Renovar ciclo') + '</span></button></div>';
-      return '<div class="ci-fila" data-ci="' + esc(c.id) + '">' + anillo(x.semana / x.total) +
+      var boton = ahora
+        ? '<div class="ci-acts"><button type="button" class="ci-renovar kd-cal is-on" aria-disabled="true">' + KD.icon('cal') + '<span class="kd-txt">Renovado</span></button></div>'
+        : x.toca && f1Editable(x.a)
+        ? '<div class="ci-acts"><button type="button" class="ci-renovar kd-cal" data-renovar="' + esc(x.a.id) + '">' + KD.icon('cal') + '<span class="kd-txt">Renovar ciclo</span></button></div>'
+        : '';
+      return '<div class="ci-fila" data-ci="' + esc(c.id) + '">' + anillo(x.antes ? 0 : x.vencido ? 1 : x.semana / x.total) +
         '<div class="ci-quien">' + quien +
-          '<small>Ciclo ' + x.ciclo + ' · semana ' + x.semana + ' de ' + x.total + '</small>' +
+          '<small>' + (x.antes ? 'Próximo ciclo' : x.vencido ? 'Ciclo terminado' : 'Semana ' + x.semana + ' de ' + x.total) + '</small>' +
           '<small class="ci-pie">' + esc(pie) + '</small></div>' + boton + '</div>';
     }).join('');
-    cont.innerHTML = tit + '<p class="sub ci-sub">Un ciclo son tres meses. Renovar extiende hasta cuándo se le cobra, ' +
-      'así que las cuotas nuevas aparecen solas arriba.</p><div class="ci-lista">' + filas + '</div>';
+    cont.innerHTML = tit + '<p class="sub ci-sub">Un ciclo son tres meses. Renovar pasa su acuerdo al ciclo siguiente; ' +
+      'lo que se cobra no cambia: se sigue cobrando cada mes mientras el acuerdo esté vigente.</p><div class="ci-lista">' + filas + '</div>';
 
     cont.querySelectorAll('[data-renovar]').forEach(function(b){
       b.addEventListener('click', function(){
@@ -5125,54 +5146,47 @@ body .pn-app section h2{animation:none;}
     });
   }
 
-  function renovar(id, btn){
-    var c = datos.filter(function(x){ return x.id === id; })[0];
-    var x = c && cicloDe(c);
-    if(!x || x.antes || x.abierta || x.renovada) return;
-    var previo = { cobro_hasta: c.cobro_hasta || null };
-    var nuevo = masMeses(corrido(x.fin, 1), MESES_CICLO);
-    nuevo = corrido(nuevo, -1);
+  function renovar(aid, btn){
+    var a = f1Acuerdo(aid);
+    if(!a || !f1Editable(a)) return;
+    var ini = String(a.ciclo_inicio || a.cobro_desde).slice(0, 10);
+    var fin = a.ciclo_fin ? String(a.ciclo_fin).slice(0, 10) : corrido(masMeses(ini, MESES_CICLO), -1);
+    var previo = { ciclo_inicio:a.ciclo_inicio || null, ciclo_fin:a.ciclo_fin || null };
+    var nIni = corrido(fin, 1), nFin = corrido(masMeses(nIni, MESES_CICLO), -1);
+    var p = f1Persona(a.persona_id) || {};
 
-    /* Optimista: el calendario del botón se vuelve tilde y el pie lo
-       dice ya; si la base no guarda, vuelve atrás y se avisa. */
     var fila = btn.closest('.ci-fila'), pie = fila && fila.querySelector('.ci-pie');
     var pieAntes = pie ? pie.textContent : '';
     KD.confirm(btn, 'Renovado');
     btn.setAttribute('aria-disabled', 'true');
-    if(pie) pie.textContent = 'El ciclo ' + (x.ciclo + 1) + ' arranca el ' + diaCorto(corrido(x.fin, 1));
+    if(pie) pie.textContent = 'Ciclo nuevo: ' + diaCorto(nIni) + ' al ' + diaCorto(nFin);
 
-    sb.from('inscripciones').update({ cobro_hasta: nuevo }).eq('id', id).then(function(r){
+    sb.from('acuerdos').update({ ciclo_inicio:nIni, ciclo_fin:nFin }).eq('id', aid).then(function(r){
       if(r.error){
         KD.toggleIcon(btn, false);
         var t = btn.querySelector('.kd-txt'); if(t) t.textContent = 'Renovar ciclo';
         btn.removeAttribute('aria-disabled');
         if(pie) pie.textContent = pieAntes;
-        avisar('No se pudo renovar a ' + c.nombre + '. Sigue como estaba.');
+        avisar('No se pudo renovar a ' + (p.nombre || '') + '. ' + f1Claro(r.error));
         return;
       }
-      c.cobro_hasta = nuevo;
-      RENOVADAS_AHORA[id] = 1;
-      ofrecerVuelta(c.nombre + ' · ciclo ' + (x.ciclo + 1) + ' renovado', function(){
-        return sb.from('inscripciones').update(previo).eq('id', id).then(function(r2){
+      RENOVADAS_AHORA[aid] = 1;
+      ofrecerVuelta((p.nombre || '') + ' · ciclo renovado hasta el ' + diaCorto(nFin), function(){
+        return sb.from('acuerdos').update(previo).eq('id', aid).then(function(r2){
           if(!r2.error){
-            c.cobro_hasta = previo.cobro_hasta; delete RENOVADAS_AHORA[id];
-            Promise.resolve(cargar()).then(function(){ if(vista === 'cobros') pintarCobros(); });
+            delete RENOVADAS_AHORA[aid];
+            Promise.resolve(f1Recargar()).then(function(){ if(vista === 'cobros') pintarCiclos(); });
           }
           return r2;
         });
       });
-      /* Las cuotas cambian (hay tres meses más que cobrar): se recarga,
-         pero la fila se deja como quedó para no cortar el tilde a medio
-         dibujar. pintarCobros corre cuando llegaron los datos y el tilde
-         ya terminó (300 ms). */
-      Promise.all([ cargar(), new Promise(function(ok){ setTimeout(ok, 300); }) ]).then(function(){
-        if(vista === 'cobros') pintarCobros();
+      /* Se relee después del tilde (300 ms) para no cortarlo a medio dibujar. */
+      Promise.all([ f1Recargar(), new Promise(function(ok){ setTimeout(ok, 300); }) ]).then(function(){
+        if(vista === 'cobros') pintarCiclos();
       });
     });
   }
 
-  /* FASE 1: la pantalla de Cobros es otra (f1PintarCobros). El ciclo en
-     semanas de THRIVE se queda debajo, igual que antes. */
   function pintarCobros(){
     f1PintarCobros();
   }
@@ -6332,10 +6346,65 @@ body .pn-app section h2{animation:none;}
     var caja = document.getElementById('cajaCl');
     var btn  = document.getElementById('btnCl');
     var avi  = document.getElementById('clAviso');
+    var ya = document.getElementById('clYaEsta');
+    /* fase 1.1 · Todas las personas que ya existen, para no duplicar a
+       nadie: quien entró a THRIVE ya es una persona y se elige, no se
+       vuelve a crear. Solo nombre y programa: nada de salud acá. */
+    var YA = { personas:[], insc:[] }, dupAvisado = '';
+    function cargarYa(){
+      return Promise.all([
+        sb.from('personas').select('id,nombre,telefono,activa').order('nombre'),
+        sb.from('inscripciones').select('persona_id,programa_id,estado,grupo')
+      ]).then(function(r){
+        YA.personas = (r[0] && r[0].data) || []; YA.insc = (r[1] && r[1].data) || [];
+        buscarYa();
+      });
+    }
+    function dondeEsta(pid){
+      var acs = F1.acuerdos.filter(function(a){ return a.persona_id === pid && f1Vivo(a); });
+      var ins = YA.insc.filter(function(i){ return i.persona_id === pid; }).map(function(i){
+        var pr = PROGRAMAS.filter(function(x){ return x.id === i.programa_id; })[0];
+        var est = pr && (pr.estados || []).filter(function(e){ return e.id === i.estado; })[0];
+        return (pr ? pr.nombre : i.programa_id) + ' · ' + (est ? est.nombre : i.estado) + (i.grupo ? ' · grupo ' + i.grupo : '');
+      });
+      return (ins.length ? ins.join(' + ') : 'Sin programa') + (acs.length ? ' · ya tiene acuerdo' : '');
+    }
+    function coincidencias(){
+      var q = plano(document.getElementById('clNombre').value.trim());
+      if(q.length < 2) return [];
+      var partes = q.split(/\s+/);
+      return YA.personas.filter(function(p){ var n = plano(p.nombre); return partes.every(function(x){ return n.indexOf(x) >= 0; }); }).slice(0, 5);
+    }
+    function buscarYa(){
+      var m = coincidencias();
+      ya.innerHTML = !m.length ? '' : '<p>¿Es alguien que ya está en el panel? Elegí a la persona y no se repite.</p><ul>' + m.map(function(p){
+        return '<li><button type="button" data-cl-elegir="' + esc(p.id) + '"><b>' + esc(p.nombre) + '</b><i>' + esc(dondeEsta(p.id)) + '</i><span class="elegir">Elegir</span></button></li>';
+      }).join('') + '</ul>';
+    }
+    document.getElementById('clNombre').addEventListener('input', function(){ dupAvisado = ''; avi.textContent = ''; buscarYa(); });
+    ya.addEventListener('click', function(e){
+      var b = e.target.closest('[data-cl-elegir]');
+      if(!b) return;
+      var id = b.getAttribute('data-cl-elegir');
+      ['clNombre','clTel','clCarpeta'].forEach(function(i){ document.getElementById(i).value = ''; });
+      ya.innerHTML = '';
+      abrir(false);
+      /* No se escribe nada: se la suma a la lista y se abre su ficha.
+         Si no tiene acuerdo, va directo a «Cargar su acuerdo», que ya
+         ofrece su inscripción de THRIVE o de 1:1. Lo que la deja en la
+         lista para siempre es el acuerdo guardado. */
+      F1.elegidas[id] = 1; F1.sel = id; F1.hoja = null;
+      f1Recargar().then(function(){
+        f1AbrirFicha(id);
+        var vivo = F1.acuerdos.some(function(a){ return a.persona_id === id && f1Vivo(a); });
+        if(!vivo) f1MostrarHoja({ tipo:'acuerdo', pid:id, alto:true });
+      });
+    });
     function abrir(v){
       caja.hidden = !v; btn.hidden = v;
       btn.setAttribute('aria-expanded', String(v));
-      if(v) document.getElementById('clNombre').focus(); else avi.textContent = '';
+      if(v){ document.getElementById('clNombre').focus(); cargarYa(); }
+      else { avi.textContent = ''; ya.innerHTML = ''; dupAvisado = ''; }
     }
     btn.addEventListener('click', function(){ abrir(true); });
     document.getElementById('clCancelar').addEventListener('click', function(){
@@ -6348,6 +6417,13 @@ body .pn-app section h2{animation:none;}
       if(nombre.length < 2){
         avi.textContent = 'Falta el nombre.';
         document.getElementById('clNombre').focus(); return;
+      }
+      /* Mismo nombre que alguien que ya está: primero se pregunta. */
+      var igual = YA.personas.filter(function(p){ return plano(p.nombre) === plano(nombre); })[0];
+      if(igual && dupAvisado !== plano(nombre)){
+        dupAvisado = plano(nombre);
+        avi.textContent = 'Ya hay alguien con ese nombre. Si es esa persona, elegí su nombre arriba; si es alguien distinto, tocá «Agregar» de nuevo.';
+        return;
       }
       var carpeta = document.getElementById('clCarpeta').value.trim();
       if(carpeta && !/^https:\/\//.test(carpeta)){
@@ -6393,7 +6469,8 @@ body .pn-app section h2{animation:none;}
   var CAMPOS_DENISSE = [
     ['ajWhatsapp','whatsapp'],
     ['ajDireccion','direccion'],
-    ['ajMapa','mapa']
+    ['ajMapa','mapa'],
+    ['ajTransferir','datos_transferir']
   ];
   var CAMPOS_PROG = [
     ['ajHora','hora','texto'],
@@ -6825,6 +6902,8 @@ body .pn-app section h2{animation:none;}
     destinos:{},                /* recordatorio → «cliente» cuando lo cambió */
     editando:null, noMandar:null,
     acuerdoAbierto:{}, verTodosPagos:{},
+    adentro:{},                 /* persona_id de quien está «Adentro» en THRIVE */
+    elegidas:{},                /* personas que ya existían y se eligieron en «Agregar cliente» */
     hoja:null                   /* qué hay en la hoja: { tipo, … } */
   };
 
@@ -6905,8 +6984,12 @@ body .pn-app section h2{animation:none;}
       leer('acuerdos'), leer('acuerdo_versiones', sb.from('acuerdo_versiones').select('*').order('orden')),
       leer('ventanas_pago'), leer('horarios'), leer('periodo_ajustes'), leer('pagos'),
       leer('recordatorios'), leer('consultas_profesionales'), leer('periodos_cobro'), leer('ultima_tasa'),
-      leer('personas_expediente'), leer('acuerdos_en_curso')
+      leer('personas_expediente'), leer('acuerdos_en_curso'),
+      /* fase 1.1 · Quien ya está «Adentro» en THRIVE es cliente aunque
+         todavía no tenga su acuerdo cargado: tiene que estar en Clientes. */
+      leer('inscripciones', sb.from('inscripciones').select('persona_id').eq('programa_id', 'thrive').eq('estado', 'adentro'))
     ]).then(function(r){
+      F1.adentro = {}; r[12].forEach(function(x){ F1.adentro[x.persona_id] = 1; });
       F1.enCurso = {}; r[11].forEach(function(x){ F1.enCurso[x.id] = x; });
       F1.expedientes = {}; r[10].forEach(function(x){ F1.expedientes[x.persona_id] = x.carpeta_url; });
       F1.acuerdos = r[0]; F1.versiones = r[1]; F1.ventanas = r[2]; F1.horarios = r[3];
@@ -6914,6 +6997,8 @@ body .pn-app section h2{animation:none;}
       F1.periodos = r[8]; F1.tasa = r[9][0] || null;
       var ids = {}; clientas.forEach(function(p){ ids[p.id] = 1; });
       F1.acuerdos.forEach(function(a){ ids[a.persona_id] = 1; });
+      Object.keys(F1.adentro).forEach(function(id){ ids[id] = 1; });
+      Object.keys(F1.elegidas).forEach(function(id){ ids[id] = 1; });
       var lista = Object.keys(ids);
       return Promise.all([
         lista.length ? leer('personas', sb.from('personas').select('*').in('id', lista)) : [],
@@ -7450,10 +7535,22 @@ body .pn-app section h2{animation:none;}
   }
 
   /* ── CLIENTES ── */
+  function f1InscDe(pid, programa){
+    return Object.keys(F1.insc).map(function(k){ return F1.insc[k]; })
+      .filter(function(i){ return i.persona_id === pid && (!programa || i.programa_id === programa); })[0] || null;
+  }
+  /* Sin acuerdo: si está en THRIVE se dice, para que se entienda por qué
+     aparece en la lista sin nada cargado. */
+  function f1SinAcuerdoTexto(pid){
+    var t = f1InscDe(pid, 'thrive');
+    return t && t.estado === 'adentro' ? 'THRIVE' + (t.grupo ? ' ' + t.grupo : '') + ' · falta cargar su acuerdo' : 'Sin acuerdo cargado';
+  }
   function f1Gente(){
     var ids = {}, out = [];
     clientas.forEach(function(p){ ids[p.id] = 1; });
     F1.acuerdos.forEach(function(a){ ids[a.persona_id] = 1; });
+    Object.keys(F1.adentro).forEach(function(id){ ids[id] = 1; });
+    Object.keys(F1.elegidas).forEach(function(id){ ids[id] = 1; });
     Object.keys(ids).forEach(function(id){
       var p = f1Persona(id); if(!p) return;
       var acs = f1AcuerdosDe(id), vivos = acs.filter(f1Vivo);
@@ -7548,7 +7645,7 @@ body .pn-app section h2{animation:none;}
       var actuales = g.vivos.filter(f1Editable);
       if(!actuales.length) actuales = g.vivos;
       var modo = actuales.length ? actuales.map(function(a){ var h = f1HorarioTexto(a); return f1Modalidad(a) + (h ? ' · ' + h : ''); }).join(' + ')
-        : g.acs.length ? 'Cerró ' + f1El(g.acs[0].cobro_hasta) : 'Sin acuerdo cargado';
+        : g.acs.length ? 'Cerró ' + f1El(g.acs[0].cobro_hasta) : f1SinAcuerdoTexto(g.p.id);
       var e = g.exc[0];
       html += '<button type="button" class="f1-cl f1-vidrio f1-fila-btn' + (g.anterior ? ' baja' : '') + '" data-f1-ficha="' + esc(g.p.id) + '"' +
         (ancho && F1.sel === g.p.id ? ' aria-current="true"' : '') + '>' +
@@ -7625,12 +7722,15 @@ body .pn-app section h2{animation:none;}
     else if(h.tipo === 'nuevaConsulta') html = f1HtmlNuevaConsulta(h);
     else if(h.tipo === 'acuerdo') html = f1HtmlCargarAcuerdo(h);
     else if(h.tipo === 'reemplazo') html = f1HtmlReemplazo(h);
+    else if(h.tipo === 'pausa') html = f1HtmlPausa(h);
+    else if(h.tipo === 'viaje') html = f1HtmlViaje(h);
     var funde = h.funde; h.funde = false;
     caja.innerHTML = '<div class="' + (funde ? 'f1-funde' : '') + '">' + html + '</div>';
     if(h.lado) caja.scrollTop = h.scroll || 0;
     if(h.tipo === 'ficha') f1PintarHilo(h.pid);
     if(h.tipo === 'ficha' && F1.abrirVuelta){ var bv = caja.querySelector('[data-f1-vuelta="' + F1.abrirVuelta + '"]'); F1.abrirVuelta = null; if(bv) bv.click(); }
     if(h.tipo === 'pago') f1CalcularPago();
+    if(h.tipo === 'conf') f1PrepararImagenes();
     if(h.tipo === 'ventana') f1PrevistaVentana();
     if(h.foco){ var f = caja.querySelector(h.foco); if(f) f.focus({ preventScroll:true }); h.foco = null; }
   }
@@ -7670,7 +7770,7 @@ body .pn-app section h2{animation:none;}
     html += '<div class="f1-franja">';
     anulados.forEach(function(a){ html += '<p class="f1-modo">' + esc(f1Modalidad(a, true) + ' desde ' + f1El(a.cobro_desde).slice(3) + ' · No llegó a empezar') + '</p>'; });
     if(!acs.length){
-      html += '<p class="f1-modo">' + (anulados.length ? 'Sin acuerdo en curso' : 'Sin acuerdo cargado') + '</p>' +
+      html += '<p class="f1-modo">' + esc(anulados.length ? 'Sin acuerdo en curso' : f1SinAcuerdoTexto(pid)) + '</p>' +
         '<div class="f1-acciones" style="margin-top:16px"><button type="button" class="pn-btn f1-btn" data-f1-cargar-acuerdo>Cargar su acuerdo</button></div>';
     }else{
       acs.forEach(function(a){
@@ -7681,6 +7781,12 @@ body .pn-app section h2{animation:none;}
         if(a.estado === 'reemplazado') linea = 'Acuerdo anterior: ' + linea + ' · hasta ' + f1El(a.cobro_hasta).slice(3);
         if(a.estado === 'vigente' && a.reemplaza_a && a.cobro_desde > f1Hoy()) linea += ' · desde ' + f1El(a.cobro_desde).slice(3) + ', ' + f1Usd(a.precio_usd) + ' al mes';
         html += '<p class="f1-modo">' + esc(linea) + '</p>';
+        /* fase 1.1 · Pausar y Viaje largo, a mano de cada acuerdo vivo. */
+        if(F1.estado === 'ok' && (a.estado === 'vigente' || a.estado === 'pausado')){
+          var accP = (a.estado === 'vigente' ? '<button type="button" class="f1-txt" data-guarda data-f1-pausar="' + esc(a.id) + '">Pausar</button>' : '') +
+            (f1ViajePermitido(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-viaje="' + esc(a.id) + '">Viaje largo · 50 %</button>' : '');
+          if(accP) html += '<p class="f1-pie f1-pie-acuerdo">' + accP + '</p>';
+        }
         if(a.estado === 'pausado'){
           /* R4: «En pausa · horario reservado · vuelve el …» */
           var vuelta = !a.pausa_hasta ? 'sin fecha de vuelta' : a.pausa_hasta === f1Hoy() ? 'vuelve hoy'
@@ -7842,7 +7948,12 @@ body .pn-app section h2{animation:none;}
         (f1Editable(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-cambiar-ventana="' + esc(a.id) + '">Cambiar ventana</button>' : '') + '</dd>' +
       '<dt>Horario fijo</dt><dd>' + esc(f1HorarioTexto(a, true) || 'Sin horario fijo') + '</dd>' +
       '<dt>Horas de aviso</dt><dd>' + (a.aviso_horas ? esc(a.aviso_horas + ' horas') : 'Sin definir') + '</dd>' +
-      '<dt>Regla de viaje</dt><dd>' + esc(F1_VIAJE[a.regla_viaje] || a.regla_viaje) + '</dd>' +
+      '<dt>Regla de viaje</dt><dd>' + esc(F1_VIAJE[a.regla_viaje] || a.regla_viaje) +
+        (f1ViajesDe(a.id).length ? '<ul class="f1-vent-hist">' + f1ViajesDe(a.id).map(function(x){
+          var pv = f1PeriodosDe(a.id).filter(function(y){ return y.periodo_inicio === x.periodo_inicio; })[0];
+          return '<li>' + esc('50 % en ' + (pv ? f1Rango(pv.periodo_inicio, pv.periodo_fin) : f1Corto(x.periodo_inicio, true)) + ' · ' + f1Usd(x.monto_usd) + (x.motivo ? ' · ' + x.motivo : '')) +
+            (f1Editable(a) ? ' · <button type="button" class="f1-txt" data-guarda data-f1-anular-ajuste="' + esc(x.id) + '">Anular</button>' : '') + '</li>';
+        }).join('') + '</ul>' : '') + '</dd>' +
       '<dt>Ciclo</dt><dd>' + esc(a.ciclo_inicio ? f1Corto(a.ciclo_inicio, true) + (a.ciclo_fin ? ' – ' + f1Corto(a.ciclo_fin, true) : ' · sin cierre') : 'Sin fecha') + '</dd>' +
       '<dt>Quién paga</dt><dd>' + esc(quien) + '</dd>' +
       '<dt>Firmado</dt><dd>' + esc(a.firmado_en ? f1Corto(a.firmado_en, true) : 'Sin fecha') + '</dd>' +
@@ -8059,7 +8170,9 @@ body .pn-app section h2{animation:none;}
     var sig = f1PeriodosDe(a.id).filter(function(x){ return x.periodo_inicio > g.periodo_inicio; })[0];
     var v = sig ? f1Ventana(a, sig.periodo_inicio) : null;
     var prox = sig && v ? (v.tipo === 'dia_fijo' ? 'el ' + (+sig.periodo_inicio.slice(8,10)) + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1]
-      : v.dia_desde + ' al ' + v.dia_hasta + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1]) : '';
+      : v.dia_hasta >= v.dia_desde ? v.dia_desde + ' al ' + v.dia_hasta + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1]
+      /* 29–1 cruza el mes: «29 de octubre al 1 de noviembre», no «29 al 1 de octubre» */
+      : (+sig.periodo_inicio.slice(8,10)) + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1] + ' al ' + (+sig.vence.slice(8,10)) + ' de ' + F1_MES_L[+sig.vence.slice(5,7) - 1]) : '';
     var pagador = g.pagador_tipo === 'tercero' ? g.pagador_nombre : null;
     var tel = pagador ? (a.paga === 'tercero' && a.pagador_nombre === pagador ? a.pagador_telefono : null) : p.telefono;
     return {
@@ -8122,7 +8235,7 @@ body .pn-app section h2{animation:none;}
       html += '<div class="f1-conf-acc">' +
         (tel ? '<a class="wa f1-wa" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(t.completo) + '" target="_blank" rel="noopener" data-f1-mande-conf="' + esc(g.id) + '">' + ICONO_WA + 'Enviar por WhatsApp</a>'
              : '<span class="f1-ayuda">Sin el teléfono de ' + esc(primerNombre({ nombre:d.pagador || d.cliente })) + ' no se puede abrir su WhatsApp.</span>') +
-        '<button type="button" class="f1-mini" data-f1-imagen="' + esc(g.id) + '">' + f1Ico('bajar') + 'Guardar imagen</button>' +
+        f1BotonCompartir('conf:' + g.id) +
         '<button type="button" class="f1-mini" data-f1-copiar-conf="' + esc(g.id) + '">' + f1Ico('copiar') + 'Copiar texto</button></div>' +
         '<div class="f1-conf-texto"><span class="f1-rotulo">Así le llega a ' + esc(primerNombre({ nombre:d.pagador || d.cliente })) + '</span>' +
         '<p class="f1-rec-texto">' + esc(t.frase) + '</p>' +
@@ -8137,45 +8250,428 @@ body .pn-app section h2{animation:none;}
     }
     return html;
   }
-  /* La tarjeta como imagen, dibujada a mano en un canvas: sin
-     librerías. Blanca y con borde, como la de pantalla, para que
-     sobreviva a una captura o a un reenvío. */
-  function f1Imagen(g){
-    var d = f1DatosConf(g), W = 720, pad = 48, esc2 = 2;
-    var filas = [['Recibido de', d.cliente]].concat(d.pagador ? [['Pagado por', d.pagador]] : [])
-      .concat([['Concepto', d.concepto + (d.falta ? ' · abono' : '')]]).concat(d.falta ? [['Falta del período', f1Usd(d.falta, true)]] : []).concat([[d.medio === 'efectivo' ? 'Pago' : 'Transferencia', d.transf]]).concat(d.prox ? [['Próxima ventana', d.prox]] : []);
-    var H = 360 + filas.length * 52 + 70;
-    var c = document.createElement('canvas'); c.width = W * esc2; c.height = H * esc2;
-    var x = c.getContext('2d'); x.scale(esc2, esc2);
-    x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, W, H);
-    x.strokeStyle = 'rgba(30,29,26,.14)'; x.lineWidth = 2; x.strokeRect(1, 1, W - 2, H - 2);
-    var img = new Image();
-    return new Promise(function(ok){
-      img.onload = function(){ ok(true); }; img.onerror = function(){ ok(false); };
-      img.src = '/assets/img/seal.svg';
-    }).then(function(conSello){
-      if(conSello) x.drawImage(img, pad, pad, 44, 44);
-      x.fillStyle = '#1E1D1A'; x.font = '600 20px Outfit, sans-serif'; x.fillText('Healing Through Movement', pad + 58, pad + 29);
-      x.fillStyle = '#56524A'; x.font = '15px "DM Mono", monospace'; x.textAlign = 'right'; x.fillText(d.numero, W - pad, pad + 28); x.textAlign = 'left';
-      x.fillStyle = '#1E1D1A'; x.font = '500 30px Outfit, sans-serif'; x.fillText('Confirmación de pago', pad, pad + 108);
-      x.font = '44px "DM Mono", monospace'; x.fillText(d.monto, pad, pad + 172);
-      x.fillStyle = '#56524A'; x.font = '15px "DM Mono", monospace'; x.fillText(d.lps + ' · tasa de venta BAC ' + d.tasa + ' del ' + d.tasaF, pad, pad + 204);
-      var y = pad + 240;
-      filas.forEach(function(f){
-        x.strokeStyle = 'rgba(30,29,26,.08)'; x.lineWidth = 1; x.beginPath(); x.moveTo(pad, y); x.lineTo(W - pad, y); x.stroke();
-        x.fillStyle = '#56524A'; x.font = '16px "Hanken Grotesk", sans-serif'; x.fillText(f[0], pad, y + 32);
-        x.fillStyle = '#1E1D1A'; x.fillText(f[1], pad + 170, y + 32);
-        y += 52;
+  /* ═══════════════════════════════════════════════════════════
+     FASE 1.1 · AVISO DE COBRO Y CONFIRMACIÓN DE PAGO COMO IMAGEN
+     Dirección C · Talón (Ivan, 20 oct 2026): la tarjeta blanca sobre
+     lino con el troquel del pase. Diseño y medidas: encargo
+     2026-10-19-panel-fase1-ficha-cobros/salida/fase1-1-aviso/.
+     Se dibuja a mano en un <canvas> (sin librerías) a 1080 × 1350,
+     la proporción 4:5 que WhatsApp muestra entera en la burbuja.
+
+     Reglas que no se mueven:
+       · nunca «factura» ni «recibo»: pie fijo «No es un documento fiscal.»
+       · sin salud, sin asistencia: solo plata y período;
+       · el aviso no dice «vencido» ni «segundo recordatorio»;
+       · los datos para transferir NO se inventan: salen de Ajustes, y
+         si están vacíos la imagen no se genera;
+       · la imagen se genera ANTES del toque (Safari pierde el permiso
+         del gesto si se espera adentro), y nada sale sin que Denisse
+         lo mande con su dedo.
+     ═══════════════════════════════════════════════════════════ */
+  var F1_IMG = { W:1080, H:1350, L:128, R:952 };
+  F1.imagenes = {};
+  var F1_SELLO = null;
+
+  /* Las fuentes se esperan SIEMPRE antes de dibujar: un canvas no
+     espera a nadie y dibuja con la del sistema sin avisar. */
+  function f1Fuentes(){
+    if(!document.fonts || !document.fonts.load) return Promise.resolve();
+    var f = ['500 56px Outfit', '400 172px Outfit', '400 29px "Hanken Grotesk"', '500 32px "Hanken Grotesk"',
+             '400 24px "DM Mono"', '600 28px "DM Mono"', 'italic 400 40px "Bodoni Moda"'];
+    return document.fonts.ready.then(function(){
+      return Promise.all(f.map(function(x){ return document.fonts.load(x, 'US$1234567890 Áéíóú'); }));
+    }).catch(function(){});
+  }
+  function f1Sello(){
+    if(F1_SELLO) return F1_SELLO;
+    F1_SELLO = new Promise(function(ok){
+      var img = new Image();
+      img.onload = function(){ ok(img); }; img.onerror = function(){ ok(null); };
+      /* sello-aviso.svg = el sello con ancho y alto sin «pt»: Safari no le
+         da tamaño a un SVG en pt y lo dibuja vacío. */
+      img.src = '/assets/img/sello-aviso.svg';
+    });
+    return F1_SELLO;
+  }
+  function f1Partir(x, texto, ancho){
+    var out = [];
+    String(texto).split('\n').forEach(function(par){
+      var palabras = par.split(/\s+/), linea = '';
+      palabras.forEach(function(w){
+        var prueba = linea ? linea + ' ' + w : w;
+        if(linea && x.measureText(prueba).width > ancho){ out.push(linea); linea = w; } else linea = prueba;
       });
-      x.strokeStyle = 'rgba(30,29,26,.08)'; x.beginPath(); x.moveTo(pad, y); x.lineTo(W - pad, y); x.stroke();
-      x.fillStyle = '#56524A'; x.font = '14px "Hanken Grotesk", sans-serif'; x.fillText('Este comprobante no es un documento fiscal.', pad, y + 34);
-      return new Promise(function(ok){ c.toBlob(function(b){ ok(b); }, 'image/png'); });
-    }).then(function(blob){
-      if(!blob) throw new Error('sin imagen');
-      var url = URL.createObjectURL(blob), a = document.createElement('a');
-      a.href = url; a.download = 'confirmacion-' + d.numero + '.png';
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+      out.push(linea);
+    });
+    return out;
+  }
+  function f1Espaciado(x, px){ if('letterSpacing' in x) x.letterSpacing = px + 'px'; }
+
+  /* D = { ref, titulo, paraPre, paraNombre, monto, lps, estado?, filas:[[rótulo, valor]], totales?, cierre?, gracias? } */
+  function f1Lienzo(D){
+    return Promise.all([f1Fuentes(), f1Sello()]).then(function(r){
+      /* B1 (QA 1.1) · Si no entra, se compacta en este orden y el pie
+         («No es un documento fiscal.») nunca se pisa:
+         1 · cierre más chico · 2 · sin cierre · 3 · filas (datos para
+         transferir) compactas · 4 · además monto más bajo.
+         Si ni así entra, no hay imagen: se avisa en vez de mandar una rota. */
+      var NIVELES = [
+        { cierre:28, cierreLH:37.8, pad:18, fila:27, LH:33.75, monto:172 },
+        { cierre:25, cierreLH:33, pad:18, fila:27, LH:33.75, monto:172 },
+        { cierre:0, pad:18, fila:27, LH:33.75, monto:172 },
+        { cierre:0, pad:11, fila:24, LH:29, monto:172 },
+        { cierre:0, pad:9, fila:23, LH:27, monto:136 }
+      ];
+      var TOPE = 1207 - 18;
+      for(var nv = 0; nv < NIVELES.length; nv++){
+        var hecho = f1PintarLienzo(D, r[1], NIVELES[nv]);
+        if(hecho.y <= TOPE){
+          D.desborde = false; D.nivel = nv;
+          var c = hecho.c;
+          return new Promise(function(ok, mal){ c.toBlob(function(b){ b ? ok(b) : mal(new Error('sin imagen')); }, 'image/png'); });
+        }
+      }
+      D.desborde = true;
+      throw new Error('no entra');
+    });
+  }
+  function f1PintarLienzo(D, sello, N){
+    {
+      var W = F1_IMG.W, H = F1_IMG.H, L = F1_IMG.L, R = F1_IMG.R;
+      var c = document.createElement('canvas'); c.width = W; c.height = H;
+      var x = c.getContext('2d');
+      var TINTA = '#1E1D1A', INK2 = '#56524A', INK3 = '#6E6A62', TEAL = '#17606F', LINO = '#F3EFE9';
+      function txt(t, px, py, font, color, alinear){
+        x.font = font; x.fillStyle = color; x.textAlign = alinear || 'left'; x.textBaseline = 'middle'; x.fillText(t, px, py);
+      }
+      function regla(y, color, desde){ x.fillStyle = color; x.fillRect(desde || L, y, R - (desde || L), 1.5); }
+      /* fondo lino y el talón blanco */
+      x.fillStyle = LINO; x.fillRect(0, 0, W, H);
+      x.fillStyle = '#FFFFFF'; x.beginPath();
+      if(x.roundRect) x.roundRect(56, 56, 968, 1238, 30); else x.rect(56, 56, 968, 1238);
+      x.fill();
+      /* cabecera: el sello y la referencia */
+      if(sello) x.drawImage(sello, 120, 104, 124, 124);
+      f1Espaciado(x, 0);
+      txt(D.ref, R, 166, '400 24px "DM Mono", ui-monospace, monospace', INK2, 'right');
+      f1Espaciado(x, -1.12);
+      txt(D.titulo, L, 281.4, '500 56px Outfit, sans-serif', TINTA);
+      f1Espaciado(x, 0);
+      x.font = '400 32px "Hanken Grotesk", sans-serif';
+      var wPre = x.measureText(D.paraPre + ' ').width;
+      txt(D.paraPre + ' ', L, 342.8, '400 32px "Hanken Grotesk", sans-serif', INK2);
+      /* Un nombre largo se achica (hasta 24 px) y, si ni así, se recorta con «…». */
+      var tn = 32, nom = String(D.paraNombre || '');
+      x.font = '500 32px "Hanken Grotesk", sans-serif';
+      while(x.measureText(nom).width > R - L - wPre && tn > 24){ tn -= 1; x.font = '500 ' + tn + 'px "Hanken Grotesk", sans-serif'; }
+      while(x.measureText(nom).width > R - L - wPre && nom.length > 4) nom = nom.slice(0, -2).replace(/\s+$/, '') + '…';
+      txt(nom, L + wPre, 342.8, '500 ' + tn + 'px "Hanken Grotesk", sans-serif', TINTA);
+      /* el monto: Outfit 400, nunca DM Mono (su cero tachado se lee «Ø») */
+      var tam = N.monto;
+      x.font = '400 ' + tam + 'px Outfit, sans-serif'; f1Espaciado(x, -0.04 * tam);
+      while(x.measureText(D.monto).width > R - L && tam > 96){ tam -= 4; x.font = '400 ' + tam + 'px Outfit, sans-serif'; f1Espaciado(x, -0.04 * tam); }
+      txt(D.monto, L, 480.2, '400 ' + tam + 'px Outfit, sans-serif', TINTA);
+      f1Espaciado(x, 0);
+      txt(D.lps, L, 593.7, '400 29px "Hanken Grotesk", sans-serif', INK2);
+      var fin = 611.85;
+      if(D.estado){
+        x.save(); x.translate(L, 650.6 - 18); x.scale(1.5, 1.5);
+        x.strokeStyle = TEAL; x.lineWidth = 1.8; x.lineCap = 'round'; x.lineJoin = 'round';
+        x.beginPath(); x.arc(12, 12, 9.2, 0, Math.PI * 2); x.stroke();
+        x.beginPath(); x.moveTo(8, 12.3); x.lineTo(10.7, 15); x.lineTo(16.2, 9.4); x.stroke();
+        x.restore();
+        txt(D.estado, L + 50, 650.6, '500 30px "Hanken Grotesk", sans-serif', TEAL);
+        fin = 669.35;
+      }
+      /* el troquel: línea punteada y las dos muescas */
+      var T = fin + 42;
+      x.save(); x.strokeStyle = 'rgba(30,29,26,.16)'; x.lineWidth = 3; x.setLineDash([7, 5]);
+      x.beginPath(); x.moveTo(96, T + 1.5); x.lineTo(984, T + 1.5); x.stroke(); x.restore();
+      x.fillStyle = LINO;
+      [54, 1026].forEach(function(cx){ x.beginPath(); x.arc(cx, T + 1.5, 26, 0, Math.PI * 2); x.fill(); });
+      /* las filas */
+      var y = T + 3 + 26, LH = N.LH, VX = 364, PAD = N.pad, FF = '400 ' + N.fila + 'px "Hanken Grotesk", sans-serif';
+      D.filas.forEach(function(f, i){
+        if(i > 0){ regla(y, 'rgba(30,29,26,.12)'); y += 1.5; }
+        x.font = FF;
+        var lineas = f1Partir(x, f[1], R - VX);
+        lineas.forEach(function(l, j){ txt(l, VX, y + PAD + LH * j + LH / 2, FF, TINTA); });
+        txt(f[0], L, y + PAD + LH / 2, FF, INK2);
+        y += PAD + LH * lineas.length + PAD;
+      });
+      /* los totales del abono (sin impuestos ni nada que parezca fiscal) */
+      if(D.totales){
+        var TX = R - 480;
+        [['Mensualidad', D.totales.mensualidad], ['Este abono', D.totales.abono], ['Falta del período', D.totales.falta]].forEach(function(t, i){
+          var ultima = i === 2;
+          if(ultima){ regla(y, TINTA, TX); y += 1.5; }
+          txt(t[0], TX, y + 27.5, (ultima ? '600' : '400') + ' 27px "Hanken Grotesk", sans-serif', ultima ? TINTA : INK2);
+          txt(t[1], R, y + 27.5, (ultima ? '600' : '400') + ' 28px "DM Mono", ui-monospace, monospace', TINTA, 'right');
+          y += 55;
+        });
+      }
+      if(D.cierre && N.cierre){
+        y += 26;
+        var FC = '400 ' + N.cierre + 'px "Hanken Grotesk", sans-serif';
+        x.font = FC;
+        var ancho = Math.min(R - L, 40 * x.measureText('0').width);
+        var cl = f1Partir(x, D.cierre, ancho);
+        cl.forEach(function(l, j){ txt(l, L, y + N.cierreLH / 2 + N.cierreLH * j, FC, TINTA); });
+        y += N.cierreLH * cl.length;
+      }
+      if(D.gracias){
+        y += 22;
+        /* Bodoni Moda itálica en «Gracias.»: así la eligió Ivan con la C. */
+        txt('Gracias.', L, y + 25, 'italic 400 40px "Bodoni Moda", Georgia, serif', TEAL);
+        y += 50;
+      }
+      /* el pie, pegado abajo */
+      regla(1207, 'rgba(30,29,26,.08)');
+      txt('No es un documento fiscal.', L, 1242, '400 22px "Hanken Grotesk", sans-serif', INK3);
+      txt('healingthroughmovement.studio', R, 1242, '400 22px "DM Mono", ui-monospace, monospace', TEAL, 'right');
+      return { c:c, y:y };
+    }
+  }
+
+  /* ── el contenido de cada imagen, con lo que el panel ya sabe ── */
+  function f1VentanaCorta(p){
+    var a = p.periodo_inicio, b = p.vence;
+    if(a === b) return f1Corto(a);
+    return a.slice(0,7) === b.slice(0,7) ? (+a.slice(8,10)) + ' – ' + f1Corto(b) : f1Corto(a) + ' – ' + f1Corto(b);
+  }
+  function f1Slug(t){ return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  var F1_CIERRE = {
+    preventivo:'Cuando hagás la transferencia, mandá el comprobante por este chat.',
+    primero:'Si ya la hiciste, mandá el comprobante por este chat. Si te sirve otra fecha, decime.',
+    segundo:'Si te acomoda mejor otra fecha, la acordamos sin problema.'
+  };
+  function f1DatosTransferir(){ return String((AJ && AJ.datos_transferir) || '').trim(); }
+  function f1DatosAviso(x){
+    var a = x.a, p = x.p, d = f1Destino(x), cli = f1Persona(a.persona_id) || {};
+    var monto = Number(p.falta_usd) < Number(p.monto_usd) ? Number(p.falta_usd) : Number(p.monto_usd);
+    var tasa = F1.tasa ? Number(F1.tasa.tasa_venta) : 0;
+    var filas = [['Concepto', d.tipo === 'pagador' ? 'Mensualidad de ' + cli.nombre + ', ' + f1Modalidad(a, true) : 'Mensualidad ' + f1Modalidad(a, true)],
+      ['Período', f1Rango(p.periodo_inicio, p.periodo_fin, true)],
+      ['Ventana de pago', f1VentanaCorta(p)]];
+    if(Number(p.falta_usd) < Number(p.monto_usd)) filas.push(['Falta del período', f1Usd(p.falta_usd, true) + ' de ' + f1Usd(p.monto_usd, true)]);
+    filas.push(['Para transferir', f1DatosTransferir()]);
+    return {
+      tipo:'aviso', nombre:'aviso-' + f1Slug(d.nombre) + '-' + p.periodo_inicio + '.png',
+      ref:f1Corto(f1Hoy(), true), titulo:'Aviso de cobro', paraPre:'Para', paraNombre:d.nombre,
+      monto:f1Usd(monto), lps:tasa ? f1Lps(f1Lempiras(monto, tasa)) + ' · tasa de venta BAC ' + tasa + ' del ' + f1Corto(F1.tasa.tasa_fecha) : '',
+      filas:filas, cierre:F1_CIERRE[x.paso] || F1_CIERRE.preventivo
+    };
+  }
+  function f1DatosImagenConf(g){
+    var d = f1DatosConf(g), a = f1Acuerdo(g.acuerdo_id) || {};
+    var per = F1.periodos.filter(function(p){ return p.acuerdo_id === g.acuerdo_id && p.periodo_inicio === g.periodo_inicio; })[0];
+    var filas = (d.pagador ? [['Cliente', d.cliente]] : []).concat([
+      ['Concepto', 'Mensualidad ' + f1Modalidad(a, true)],
+      ['Período', f1Rango(g.periodo_inicio, g.periodo_fin, true)],
+      [g.medio === 'efectivo' ? 'Pago' : 'Transferencia', f1Corto(g.pagado_en, true) + (g.medio === 'efectivo' ? ' · efectivo' : g.comprobante_ref ? ' · ref. ··' + g.comprobante_ref : '')]
+    ]).concat(d.prox && !d.falta ? [['Próxima ventana', d.prox]] : []);
+    return {
+      tipo:'conf', nombre:'confirmacion-' + g.confirmacion_numero + '.png',
+      ref:g.confirmacion_numero, titulo:'Confirmación de pago',
+      paraPre:d.pagador ? 'Pagado por' : 'Recibido de', paraNombre:d.pagador || d.cliente,
+      monto:f1Usd(g.monto_usd), lps:f1Lps(g.monto_lempiras) + ' · tasa de venta BAC ' + Number(g.tasa_venta) + ' del ' + f1Corto(g.tasa_fecha),
+      estado:(d.falta ? 'Abono recibido el ' : 'Recibido el ') + f1Corto(g.pagado_en, true),
+      filas:filas,
+      totales:d.falta ? { mensualidad:f1Usd(per ? per.monto_usd : Number(g.monto_usd) + d.falta, true), abono:f1Usd(g.monto_usd, true), falta:f1Usd(d.falta, true) } : null,
+      gracias:true
+    };
+  }
+
+  /* ── generar ANTES del toque ── */
+  function f1DatosDeClave(k){
+    if(k.indexOf('conf:') === 0){ var g = f1PagoPorId(k.slice(5)); return g && !g.anulado ? f1DatosImagenConf(g) : null; }
+    var x = f1PorClave(k.slice(4));
+    return x ? f1DatosAviso(x) : null;
+  }
+  function f1PrepararImagenes(){
+    document.querySelectorAll('[data-f1-compartir]').forEach(function(b){
+      var k = b.getAttribute('data-f1-compartir'), D = f1DatosDeClave(k);
+      if(!D) return;
+      var firma = JSON.stringify(D), ya = F1.imagenes[k];
+      if(ya && ya.firma === firma){ if(ya.blob) f1BotonListo(k); return; }
+      F1.imagenes[k] = { firma:firma, nombre:D.nombre, blob:null };
+      f1Lienzo(D).then(function(blob){
+        var e = F1.imagenes[k]; if(!e || e.firma !== firma) return;
+        e.blob = blob; f1BotonListo(k);
+      }).catch(function(err){
+        var noEntra = err && err.message === 'no entra';
+        document.querySelectorAll('[data-f1-compartir="' + k + '"]').forEach(function(x){
+          x.textContent = noEntra ? 'No entra en la imagen: acortá tus datos para transferir en Ajustes' : 'No se pudo armar la imagen';
+        });
+      });
+    });
+  }
+  function f1BotonListo(k){
+    document.querySelectorAll('[data-f1-compartir="' + k + '"]').forEach(function(b){
+      b.disabled = false; b.removeAttribute('aria-busy');
+      var t = b.querySelector('.f1-lbl'); if(t) t.textContent = 'Compartir imagen';
+    });
+  }
+  function f1BotonCompartir(k){
+    return '<button type="button" class="f1-mini" data-f1-compartir="' + esc(k) + '" disabled aria-busy="true">' + f1Ico('bajar') + '<span class="f1-lbl">Preparando…</span></button>';
+  }
+  function f1BotonFaltanDatos(){
+    return '<button type="button" class="f1-mini" data-f1-ir-transferir>' + f1Ico('info') + 'Cargá tus datos para transferir en Ajustes</button>';
+  }
+
+  /* ── compartir: dentro del toque, solo el archivo ── */
+  function f1Compartir(k, waUrl, pendiente){
+    var e = F1.imagenes[k];
+    if(!e || !e.blob) return;
+    var archivo = null;
+    try{ archivo = new File([e.blob], e.nombre, { type:'image/png' }); }catch(err){}
+    function anotar(){ f1Pendiente(pendiente); }
+    if(archivo && navigator.canShare && navigator.share && navigator.canShare({ files:[archivo] })){
+      /* Solo el archivo, sin `text`: con los dos, WhatsApp en iOS se queda
+         con uno y tira el otro. El texto sale por «Abrir WhatsApp». */
+      navigator.share({ files:[archivo] }).then(function(){ anotar(); f1PreguntarVuelta(); })
+        .catch(function(err){ if(!err || err.name !== 'AbortError') f1Respaldo(e, waUrl, anotar); });
+      return;
+    }
+    f1Respaldo(e, waUrl, anotar);
+  }
+  /* Escritorio (o donde no se puede compartir un archivo): copiar la
+     imagen; si tampoco, descargarla. Y abrir el chat con el texto. */
+  function f1Respaldo(e, waUrl, anotar){
+    var copiar = navigator.clipboard && navigator.clipboard.write && window.ClipboardItem;
+    /* Copiar PRIMERO, con la página todavía enfocada: en Chrome, si
+       WhatsApp ya abrió, el portapapeles da «Document is not focused» y
+       todo terminaba en descarga. La escritura arranca dentro del toque;
+       la pestaña se abre en cuanto termina (o falla). */
+    var copia;
+    try{ copia = copiar ? navigator.clipboard.write([new ClipboardItem({ 'image/png':e.blob })]) : Promise.reject(new Error('sin portapapeles')); }
+    catch(err){ copia = Promise.reject(err); }
+    /* Sin 'noopener' en el tercer argumento: con él, window.open devuelve
+       null SIEMPRE y no se podría saber si el navegador la bloqueó. Se
+       corta el opener a mano. */
+    function abrirWa(){
+      if(!waUrl) return true;
+      var w = null;
+      try{ w = window.open(waUrl, '_blank'); }catch(err){ w = null; }
+      if(w){ try{ w.opener = null; }catch(err){} }
+      return !!w;
+    }
+    function descargar(){
+      var u = URL.createObjectURL(e.blob), a = document.createElement('a');
+      a.href = u; a.download = e.nombre; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(u); }, 4000);
+    }
+    copia.then(function(){ return true; }, function(){ descargar(); return false; }).then(function(copiada){
+      if(abrirWa()){
+        /* Se abrió: recién ahí queda pendiente el «¿Le mandaste…?». */
+        anotar();
+        avisar(copiada ? 'Imagen copiada. En el chat, pegala con ⌘V (o Ctrl+V). WhatsApp Web no deja mandarla sola desde acá.'
+                       : 'Se descargó la imagen. Arrastrala al chat: WhatsApp Web no deja mandarla sola desde acá.');
+        return;
+      }
+      /* El navegador bloqueó la ventana (fuera del toque): no se pregunta
+         nada, porque no salió nada. Un botón la abre dentro de un toque. */
+      ofrecerVuelta(copiada ? 'Imagen copiada. Tocá «Abrir WhatsApp» y pegala en el chat.'
+                            : 'Se descargó la imagen. Tocá «Abrir WhatsApp» y arrastrala al chat.', function(){
+        if(abrirWa()){ anotar(); return null; }
+        return { error:'bloqueada' };
+      });
+      var bd = document.getElementById('vueltaDeshacer'); if(bd) bd.textContent = 'Abrir WhatsApp';
+    });
+  }
+
+  /* ═══ fase 1.1 · PAUSA Y VIAJE LARGO ═══
+     Pausar no toca lo que se cobra: reserva el horario y saca las
+     sesiones hasta que vuelva (estado «pausado» + pausa_hasta, que ya
+     existen). El 50 % de un viaje largo es otra cosa: un ajuste «monto»
+     del período, que se anula como cualquier ajuste. Solo lo ofrecen
+     las versiones del acuerdo que lo prevén. */
+  var F1_VIAJE_50 = { completo_14_mitad_15:1, elige_activo_o_pausa_50:1 };
+  function f1ViajePermitido(a){ return !!(a && F1_VIAJE_50[a.regla_viaje]); }
+  function f1Redondo(n){ return Math.round(Number(n) * 100) / 100; }
+  /* Los 50 % de viaje que están en pie (no los puentes de un cambio de ventana). */
+  function f1ViajesDe(aid){
+    return F1.ajustes.filter(function(x){ return x.acuerdo_id === aid && x.tipo === 'monto' && !x.anulado && !x.ventana_id; })
+      .sort(function(x, y){ return x.periodo_inicio < y.periodo_inicio ? -1 : 1; });
+  }
+  /* Períodos donde se puede poner el 50 %: el que corre y los que vienen,
+     sin un 50 % ya puesto y sin más pagado que la mitad. */
+  function f1PeriodosViaje(a){
+    var mitad = f1Redondo(a.precio_usd / 2), hoy = f1Hoy(), con = {};
+    f1ViajesDe(a.id).forEach(function(x){ con[x.periodo_inicio] = 1; });
+    return f1PeriodosDe(a.id).filter(function(p){
+      return p.periodo_fin >= hoy && !p.no_se_cobra && !con[p.periodo_inicio] && Number(p.pagado_usd || 0) <= mitad;
+    });
+  }
+  function f1HtmlPausa(h){
+    var a = f1Acuerdo(h.aid), p = f1Persona(a.persona_id) || {}, v = h.vals || {};
+    return f1Top('Pausar', p.nombre + ' · ' + f1Modalidad(a), true) +
+      '<form class="f1-form" id="f1FormPausa" novalidate>' +
+      '<p class="f1-ayuda">Su horario queda reservado y no aparecen sesiones hasta que vuelva. Lo que se cobra no cambia' +
+        (f1ViajePermitido(a) ? ': si es un viaje largo, el 50 % se pone con «Viaje largo».' : '.') + '</p>' +
+      '<label class="f1-campo"' + (h.err ? ' data-error' : '') + '><span class="f1-rotulo">Vuelve el (opcional)</span><input type="date" id="f1PzFecha" min="' + f1Mas(f1Hoy(), 1) + '" value="' + esc(v.fecha || '') + '">' +
+        (h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '<p class="f1-ayuda">Si no la sabés, dejala vacía y se la ponés después.</p>') + '</label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Motivo (opcional)</span><input id="f1PzMotivo" maxlength="140" autocomplete="off" value="' + esc(v.motivo || '') + '" placeholder="Por ejemplo: viaje, lesión"></label>' +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Poner en pausa</button>' +
+        (f1ViajePermitido(a) ? '<button type="button" class="f1-mini" data-guarda data-f1-viaje="' + esc(a.id) + '">Viaje largo · 50 %</button>' : '') +
+        '<button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
+  }
+  function f1GuardarPausa(btn){
+    var h = F1.hoja, a = f1Acuerdo(h.aid), p = f1Persona(a.persona_id) || {};
+    var f = document.getElementById('f1PzFecha').value, m = document.getElementById('f1PzMotivo').value.trim();
+    h.vals = { fecha:f, motivo:m };
+    if(f && f <= f1Hoy()){ h.err = 'La fecha de vuelta tiene que ser de mañana en adelante.'; h.foco = '#f1PzFecha'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    var antes = { estado:a.estado, estado_motivo:a.estado_motivo || null };
+    sb.from('acuerdos').update({ estado:'pausado', pausa_hasta:f || null, estado_motivo:m || null }).eq('id', a.id).then(function(r){
+      if(r.error){ btn.disabled = false; avisar('No se pudo pausar. ' + f1Claro(r.error)); return; }
+      F1.hoja = { tipo:'ficha', pid:h.pid, lado:h.lado, funde:true };
+      f1Recargar();
+      ofrecerVuelta(primerNombre(p) + ' en pausa' + (f ? ' · vuelve ' + f1El(f) : ' · sin fecha de vuelta') + '.', function(){
+        /* La base borra sola la fecha de vuelta al salir de la pausa. */
+        return sb.from('acuerdos').update(antes).eq('id', a.id).then(function(r2){ if(!r2.error) f1Recargar(); return r2; });
+      });
+    });
+  }
+  function f1HtmlViaje(h){
+    var a = f1Acuerdo(h.aid), p = f1Persona(a.persona_id) || {}, v = h.vals || {};
+    var ops = f1PeriodosViaje(a), mitad = f1Redondo(a.precio_usd / 2);
+    var sel = ops.filter(function(o){ return o.periodo_inicio === v.ini; })[0] || ops[0];
+    return f1Top('Viaje largo', p.nombre + ' · ' + f1Modalidad(a), true) +
+      '<form class="f1-form" id="f1FormViaje" novalidate>' +
+      '<p class="f1-ayuda">Su acuerdo dice: ' + esc(F1_VIAJE[a.regla_viaje] || a.regla_viaje) + '. El período que elijas se cobra a la mitad; los demás, completos.</p>' +
+      (ops.length ? '' : '<p class="f1-aviso">' + f1Ico('info') + '<span>No hay un período a la vista donde se pueda poner: ya tienen el 50 % o ya se pagó más de la mitad.</span></p>') +
+      '<label class="f1-campo"><span class="f1-rotulo">Mensualidad</span><select id="f1VjPeriodo">' +
+        ops.map(function(o){ return '<option value="' + esc(o.periodo_inicio) + '"' + (sel && sel.periodo_inicio === o.periodo_inicio ? ' selected' : '') + '>' + esc(f1Rango(o.periodo_inicio, o.periodo_fin)) + '</option>'; }).join('') + '</select>' +
+        '<p class="f1-ayuda f1-num">' + esc(f1Usd(a.precio_usd)) + ' → ' + esc(f1Usd(mitad)) + ' (50 %)</p></label>' +
+      '<label class="f1-campo"' + (h.err ? ' data-error' : '') + '><span class="f1-rotulo">Motivo</span><input id="f1VjMotivo" maxlength="140" autocomplete="off" value="' + esc(v.motivo || '') + '" placeholder="Por ejemplo: viaje del 3 al 24 de noviembre">' +
+        (h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '<p class="f1-ayuda">Queda en su historial.</p>') + '</label>' +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda' + (ops.length ? '' : ' disabled') + '>Cobrar el 50 %</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
+  }
+  function f1GuardarViaje(btn){
+    var h = F1.hoja, a = f1Acuerdo(h.aid), p = f1Persona(a.persona_id) || {};
+    var ini = document.getElementById('f1VjPeriodo').value, m = document.getElementById('f1VjMotivo').value.trim();
+    h.vals = { ini:ini, motivo:m };
+    if(!m){ h.err = 'Escribí el motivo: queda en su historial.'; h.foco = '#f1VjMotivo'; f1RepintarHoja(); return; }
+    if(!ini) return;
+    var per = f1PeriodosDe(a.id).filter(function(x){ return x.periodo_inicio === ini; })[0];
+    btn.disabled = true;
+    sb.from('periodo_ajustes').insert({ acuerdo_id:a.id, periodo_inicio:ini, tipo:'monto', monto_usd:f1Redondo(a.precio_usd / 2), motivo:'Viaje largo · ' + m })
+      .select().single().then(function(r){
+        if(r.error){ btn.disabled = false; avisar('No se pudo poner el 50 %. ' + f1Claro(r.error)); return; }
+        var id = r.data.id;
+        F1.hoja = { tipo:'ficha', pid:h.pid, lado:h.lado, funde:true };
+        f1Recargar();
+        ofrecerVuelta(primerNombre(p) + ' paga el 50 % de ' + (per ? f1Rango(per.periodo_inicio, per.periodo_fin) : 'ese período') + '.', function(){
+          return sb.from('periodo_ajustes').update({ anulado:true, anulado_motivo:'Deshecho desde el panel' }).eq('id', id)
+            .then(function(r2){ if(!r2.error) f1Recargar(); return r2; });
+        });
+      });
+  }
+  function f1AnularViaje(id, motivo){
+    sb.from('periodo_ajustes').update({ anulado:true, anulado_motivo:motivo }).eq('id', id).then(function(r){
+      if(r.error){ avisar('No se pudo anular. ' + f1Claro(r.error)); return; }
+      f1Recargar(); avisar('Se anuló el 50 %: ese período vuelve a cobrarse completo.');
     });
   }
 
@@ -8342,8 +8838,10 @@ body .pn-app section h2{animation:none;}
   function f1HtmlCargarAcuerdo(h){
     var p = f1Persona(h.pid) || {}, v = h.vals || {};
     var vers = F1.versiones.filter(function(x){ return x.vigente !== false; });
-    var ver = vers.filter(function(x){ return x.id === v.version; })[0] || vers[0] || {};
     var thrive = Object.keys(F1.insc).map(function(k){ return F1.insc[k]; }).filter(function(i){ return i.persona_id === h.pid && i.programa_id === 'thrive'; })[0];
+    /* fase 1.1 · Quien viene de THRIVE arranca con la versión de grupo. */
+    var verDef = thrive ? vers.filter(function(x){ return x.modalidad === 'grupo'; })[0] : null;
+    var ver = vers.filter(function(x){ return x.id === v.version; })[0] || verDef || vers[0] || {};
     var vents = (ver.ventanas || []).map(function(x){ return [x.desde, x.hasta]; });
     var e = h.errores || {};
     function err(k){ return e[k] ? '<p class="f1-error">' + esc(e[k]) + '</p>' : ''; }
@@ -8520,6 +9018,7 @@ body .pn-app section h2{animation:none;}
     caja.innerHTML = html;
     var ci = document.getElementById('cobCiclos');
     if(ci){ if(esThrive()) pintarCiclos(); else ci.innerHTML = ''; }
+    f1PrepararImagenes();
   }
   function f1HtmlRec(x){
     var k = f1Clave(x), a = x.a, cli = f1Persona(a.persona_id) || {}, d = f1Destino(x);
@@ -8561,6 +9060,7 @@ body .pn-app section h2{animation:none;}
         acciones = '<div class="f1-rec-acc">' + (tel
             ? '<a class="wa chico f1-wa" href="https://wa.me/' + esc(tel) + '?text=' + encodeURIComponent(texto) + '" target="_blank" rel="noopener" data-f1-abrir-wa="' + esc(k) + '">' + ICONO_WA + (x.r.estado === 'abierto' ? 'Abrir otra vez' : 'Abrir WhatsApp') + '</a>'
             : '<span class="f1-ayuda">Sin el teléfono de ' + esc(primerNombre({ nombre:d.nombre })) + '.</span>') +
+          (tel ? (f1DatosTransferir() ? f1BotonCompartir('rec:' + k) : f1BotonFaltanDatos()) : '') +
           (x.r.estado === 'abierto' ? '<button type="button" class="f1-mini" data-guarda data-f1-enviado="' + esc(k) + '">Sí, salió</button>' : '') +
           '<button type="button" class="f1-mini" data-f1-editar="' + esc(k) + '">' + f1Ico('lapiz') + 'Editar</button>' +
           '<button type="button" class="f1-mini" data-f1-motivo="' + esc(k) + '">No mandar</button></div>';
@@ -8831,6 +9331,23 @@ body .pn-app section h2{animation:none;}
       confirmar(b, function(){ f1AnularPago(b.getAttribute('data-f1-anular-si'), mot.trim()); });
       return;
     }
+    if((b = q('data-f1-pausar'))){ var apz = f1Acuerdo(b.getAttribute('data-f1-pausar')); f1MostrarHoja({ tipo:'pausa', pid:apz.persona_id, aid:apz.id, foco:'#f1PzFecha' }); return; }
+    if((b = q('data-f1-viaje'))){ var avj = f1Acuerdo(b.getAttribute('data-f1-viaje')); f1MostrarHoja({ tipo:'viaje', pid:avj.persona_id, aid:avj.id, foco:'#f1VjMotivo' }); return; }
+    if((b = q('data-f1-anular-ajuste'))){
+      var ajid = b.getAttribute('data-f1-anular-ajuste');
+      if(!document.getElementById('f1AnAj')){
+        b.insertAdjacentHTML('afterend', '<span class="f1-inline" id="f1AnAj"><input id="f1AnAjMot" maxlength="140" placeholder="¿Por qué lo anulás?" aria-label="¿Por qué lo anulás?" autocomplete="off">' +
+          '<button type="button" class="f1-mini" data-guarda data-f1-anular-ajuste-si="' + esc(ajid) + '">Anular el 50 %</button><button type="button" class="f1-txt" data-f1-volver-ficha>Cancelar</button></span>');
+        document.getElementById('f1AnAjMot').focus();
+      }
+      return;
+    }
+    if((b = q('data-f1-anular-ajuste-si'))){
+      var ajid2 = b.getAttribute('data-f1-anular-ajuste-si'), motaj = document.getElementById('f1AnAjMot').value.trim();
+      if(!motaj){ avisar('Escribí por qué se anula: queda en el historial.'); document.getElementById('f1AnAjMot').focus(); return; }
+      confirmar(b, function(){ f1AnularViaje(ajid2, motaj); });
+      return;
+    }
     if((b = q('data-f1-vuelta'))){
       var avu = b.getAttribute('data-f1-vuelta'), acv = f1Acuerdo(avu);
       b.insertAdjacentHTML('afterend', '<span class="f1-inline" id="f1Vuelta"><input type="date" id="f1VueltaF" min="' + f1Mas(f1Hoy(), 1) + '" value="' + esc(acv.pausa_hasta || '') + '" aria-label="Vuelve el">' +
@@ -8889,7 +9406,28 @@ body .pn-app section h2{animation:none;}
       });
       return;
     }
-    if((b = q('data-f1-imagen'))){ var gi = f1PagoPorId(b.getAttribute('data-f1-imagen')); if(gi) f1Imagen(gi).catch(function(){ avisar('No se pudo armar la imagen. Copiá el texto.'); }); return; }
+    if((b = q('data-f1-compartir'))){
+      var kc = b.getAttribute('data-f1-compartir');
+      if(kc.indexOf('conf:') === 0){
+        var gc2 = f1PagoPorId(kc.slice(5)), dc = gc2 && f1DatosConf(gc2), telc = dc && dc.telefono ? telE164({ telefono:dc.telefono }) : '';
+        if(!gc2) return;
+        f1Compartir(kc, telc ? 'https://wa.me/' + telc + '?text=' + encodeURIComponent(f1TextoConf(gc2).frase) : null,
+          { tipo:'conf', id:gc2.id, pregunta:'¿Le mandaste la confirmación a ' + primerNombre({ nombre:dc.pagador || dc.cliente }) + '?' });
+      }else{
+        var xc = f1PorClave(kc.slice(4)); if(!xc || !xc.r) return;
+        var dd = f1Destino(xc), telr = telE164({ telefono:dd.telefono });
+        if(xc.r.estado === 'listo') sb.from('recordatorios').update({ estado:'abierto', abierto_en:new Date().toISOString() }).eq('id', xc.r.id).then(function(){ f1Cargar(); });
+        f1Compartir(kc, telr ? 'https://wa.me/' + telr + '?text=' + encodeURIComponent(f1Texto(xc)) : null,
+          { tipo:'rec', id:xc.r.id, pregunta:'¿Le mandaste el aviso a ' + primerNombre({ nombre:dd.nombre }) + '?' });
+      }
+      return;
+    }
+    if((b = q('data-f1-ir-transferir'))){
+      if(F1.hoja && !F1.hoja.lado) f1CerrarHoja();
+      irA('ajustes');
+      setTimeout(function(){ var t = document.getElementById('ajTransferir'); if(t){ t.scrollIntoView({ block:'center' }); t.focus({ preventScroll:true }); } }, 0);
+      return;
+    }
     if((b = q('data-f1-copiar-conf'))){ var gc = f1PagoPorId(b.getAttribute('data-f1-copiar-conf')); if(gc) copiar(f1TextoConf(gc).completo).then(function(){ avisar('Texto copiado.'); }); return; }
     if((b = q('data-f1-mande-conf'))){ var gm = f1PagoPorId(b.getAttribute('data-f1-mande-conf')), dm = gm && f1DatosConf(gm);
       if(gm) f1Pendiente({ tipo:'conf', id:gm.id, pregunta:'¿Le mandaste la confirmación a ' + primerNombre({ nombre:dm.pagador || dm.cliente }) + '?' }); return; }
@@ -8991,6 +9529,8 @@ body .pn-app section h2{animation:none;}
     if(f.id === 'f1FormVentana') f1GuardarVentana(btn);
     if(f.id === 'f1FormAcuerdo') f1GuardarAcuerdo(btn);
     if(f.id === 'f1FormReemplazo') f1GuardarReemplazo(btn);
+    if(f.id === 'f1FormPausa') f1GuardarPausa(btn);
+    if(f.id === 'f1FormViaje') f1GuardarViaje(btn);
     if(f.id === 'f1FormConsulta'){
       var h = F1.hoja, preg = document.getElementById('f1cPregunta').value.trim();
       if(!preg){ h.err = 'Escribí qué se le preguntó.'; h.foco = '#f1cPregunta'; f1RepintarHoja(); return; }
@@ -9128,9 +9668,10 @@ body .pn-app section h2{animation:none;}
   }
   function f1PreguntarVuelta(){
     var p = f1LeerPendiente();
-    if(!p) return false;
-    document.getElementById('volvioQue').textContent = p.pregunta;
-    document.getElementById('volvioSi').textContent = 'Sí, salió';
+    var que = document.getElementById('volvioQue'), si = document.getElementById('volvioSi');
+    if(!p || !que || !si) return false;
+    que.textContent = p.pregunta;
+    si.textContent = 'Sí, salió';
     elVolvio.hidden = false;
     elVolvio.setAttribute('data-f1', '1');
     return true;
