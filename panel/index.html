@@ -2209,6 +2209,117 @@ button.f1-fila-btn{font:inherit; color:inherit; background:none; border:0; curso
 .f1-pago i{grid-column:1 / -1; font-style:normal; font-size:.84rem; color:var(--ink-2);}  /* lempiras y número: se leen → AA */
 .f1-pago.anulado b, .f1-pago.anulado .m{text-decoration:line-through; color:var(--ink-3);}
 .f1-pie{display:flex; gap:4px 18px; flex-wrap:wrap;}
+/* ═══ FASE 2 · AGENDA ═══
+   Cuatro filas que se leen por FORMA, no por color: sesión llena,
+   personal rayado, espacio con borde punteado, feriado en una palabra. */
+:root{
+  --f2-raya:repeating-linear-gradient(135deg, rgba(30,29,26,.045) 0 6px, transparent 6px 12px);
+  --f2-punteo:1.5px dashed rgba(30,29,26,.22);
+}
+.f2-cab{display:flex; align-items:flex-end; justify-content:space-between; gap:14px 16px; flex-wrap:wrap;}
+.f2-cab .sub{margin-top:6px;}
+.f2-semana{display:grid; gap:var(--aire, 14px); margin-top:22px; grid-template-columns:repeat(5, minmax(0,1fr)); align-items:start;}
+@media (max-width:1099px){ .f2-semana{grid-template-columns:minmax(0,1fr);} }
+.f2-dia{padding:14px 12px 10px; border-radius:18px;}
+.f2-dia-cab{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 4px 8px; border-bottom:1px solid var(--line-soft); min-height:44px;}
+.f2-dia-cab b{font-family:var(--display); font-weight:600; font-size:1.02rem; letter-spacing:-.01em;}
+.f2-dia-cab b span{font-family:var(--sans); font-weight:400; font-size:.86rem; color:var(--ink-2);}
+.f1-txt.chico{font-size:.82rem; padding:8px 2px;}
+.f2-feriado{padding:18px 4px 6px;}
+.f2-feriado b{display:block; font-family:var(--display); font-weight:500; font-size:1.3rem; letter-spacing:-.02em;}
+.f2-feriado span{display:block; margin-top:4px; font-size:.88rem; color:var(--ink-2); line-height:1.45;}
+.f2-posible{margin:10px 4px 0; font-size:.84rem; color:var(--ink-2); line-height:1.45;}
+.f2-items{display:flex; flex-direction:column; gap:6px; margin-top:10px;}
+.f2-it{display:grid; grid-template-columns:auto minmax(0,1fr); gap:1px 10px; align-items:start; padding:9px 8px; border-radius:11px; width:100%; text-align:left; min-height:52px;
+  font:inherit; color:var(--ink); border:0; background:none; cursor:pointer;}
+.f2-it .f2-h{grid-row:1 / span 3; font-family:var(--mono); font-size:.74rem; color:var(--teal-deep); padding-top:2px; min-width:34px;}
+.f2-que{display:block; min-width:0;}
+.f2-que b{display:block; font-family:var(--display); font-weight:600; font-size:.94rem; letter-spacing:-.005em; line-height:1.25; overflow-wrap:anywhere;}
+.f2-que i{display:block; font-style:normal; font-size:.8rem; color:var(--ink-2); line-height:1.4;}
+.f2-estado{display:block; font-size:.8rem; color:var(--ink); font-weight:600; line-height:1.4; margin-top:2px;}
+.f2-sesion{background:rgba(255,255,255,.7);}
+.f2-sesion:hover, .f2-sesion .f2-it-abre:hover{background:var(--white);}
+.f2-sesion.afuera .f2-que b{color:var(--ink-2);}
+.f2-sesion.con-acc{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; padding:0; gap:8px;}
+.f2-it-abre{display:grid; grid-template-columns:auto minmax(0,1fr); gap:1px 10px; align-items:start; padding:9px 8px; border-radius:11px; width:100%; text-align:left; font:inherit; color:var(--ink); border:0; background:none; cursor:pointer; min-height:52px;}
+.f2-acc{padding-right:8px;}
+.f1-mini.chico{min-height:44px; padding:8px 14px; font-size:.84rem;}
+.f2-personal{background:var(--f2-raya), rgba(255,255,255,.5); cursor:pointer;}
+.f2-personal .f2-h{color:var(--ink-2);}
+.f2-personal.usado{background:rgba(255,255,255,.5);}
+.f2-espacio{border:var(--f2-punteo); background:transparent;}
+.f2-espacio .f2-que b{font-weight:500;}
+.f2-espacio .f2-h{color:var(--ink-2);}
+.f2-espacio.quieto .f2-que b, .f2-espacio.quieto .f2-h{color:var(--ink-3, #6E6A62); font-weight:400;}
+.f2-it.paso{opacity:.55;}
+.f2-sug{grid-column:2; display:flex; align-items:flex-start; gap:6px; margin-top:6px; padding-top:7px; border-top:1px solid var(--line-soft); font-size:.8rem; color:var(--ink); line-height:1.4;}
+.f2-sug svg{width:14px; height:14px; flex:none; margin-top:2px; color:var(--ink-2);}
+.f2-sug strong{font-weight:600;}
+.f2-esq{background:rgba(255,255,255,.5); cursor:default;}
+.f2-sab{display:flex; align-items:center; gap:12px; padding:16px 20px; width:100%; text-align:left; min-height:56px; margin-top:var(--aire, 14px); border-radius:18px; font:inherit; color:var(--ink); border:0; cursor:pointer;}
+.f2-sab > svg{width:18px; height:18px; color:var(--ink-2); flex:none;}
+.f2-sab span{flex:1; font-size:.93rem; color:var(--ink-2); line-height:1.45;}
+.f2-sab span b{color:var(--ink); font-weight:600;}
+.f2-debajo{display:grid; gap:var(--aire, 14px); margin-top:var(--aire, 14px); grid-template-columns:minmax(0,1fr);}
+@media (min-width:1100px){ .f2-debajo{grid-template-columns:repeat(3, minmax(0,1fr)); align-items:start;} }
+.f2-caja{padding:16px 20px 8px; border-radius:18px;}
+.f2-caja .f1-h2{margin-bottom:6px;}
+.f2-fl{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 12px; align-items:center; padding:11px 0; border-top:1px solid var(--line-soft); min-height:52px; width:100%; text-align:left; font:inherit; color:var(--ink); background:none; border-left:0; border-right:0; border-bottom:0; cursor:pointer;}
+.f2-fl:first-of-type{border-top:0;}
+.f2-fl b{font-weight:600; font-size:.95rem;}
+.f2-fl i{grid-column:1; font-style:normal; font-size:.85rem; color:var(--ink-2); line-height:1.4;}
+.f2-fl .f1-ir{grid-row:1 / span 2; grid-column:2; color:var(--ink-3, #6E6A62);}
+.f2-fl.venc b, .f2-fl.venc i{color:var(--ink-3, #6E6A62); font-weight:400;}
+.f2-dias2{display:grid; gap:22px; margin-top:22px; grid-template-columns:minmax(0,1fr);}
+@media (min-width:1100px){ .f2-dias2{grid-template-columns:repeat(2, minmax(0,1fr)); align-items:start;} }
+.f2-lista{padding:18px 20px 12px; border-radius:18px;}
+.f2-lista-cab{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+.f2-items.lista .f2-it{border-radius:12px;}
+.f2-frase{margin-top:6px; font-size:.94rem; color:var(--ink-2); line-height:1.5;}
+.f2-frase.pie{margin-top:12px; font-size:.88rem;}
+/* hojas */
+.f2-avisos{display:grid; gap:10px; margin-top:16px;}
+.f2-aviso{display:flex; align-items:center; justify-content:space-between; min-height:60px; width:100%; padding:0 18px; border-radius:14px; border:1px solid var(--line); background:var(--white); font:inherit; font-size:1rem; color:var(--ink); cursor:pointer; text-align:left;}
+.f2-aviso[aria-checked="true"]{background:var(--ink); color:var(--white); border-color:var(--ink);}
+.f2-aviso svg{width:18px; height:18px;}
+.f2-resultado{margin-top:18px; font-family:var(--display); font-weight:500; font-size:1.36rem; letter-spacing:-.015em; line-height:1.25;}
+.f2-resultado.chico{font-size:1.08rem; margin-top:14px;}
+.f2-queda{margin-top:8px; font-weight:600; font-size:.95rem;}
+.f2-porque{margin-top:6px; font-size:.9rem; color:var(--ink-2); line-height:1.5;}
+.f2-msj{margin-top:10px; padding:14px 16px; border-radius:12px; background:rgba(30,29,26,.05); font-size:.95rem; line-height:1.55;}
+.a.f2-wa, .wa.f2-wa{margin-top:12px; min-height:44px;}
+.f2-cand{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; padding:14px 0; border-top:1px solid var(--line-soft);}
+.f2-cand:first-of-type{border-top:0;}
+.f2-cand b{font-family:var(--display); font-weight:600;}
+.f2-cand-l{font-size:.88rem; color:var(--ink-2); margin-top:2px;}
+.f2-cand-l strong{color:var(--ink); font-weight:600;}
+.f2-marcas{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+.f2-marcas .f1-mini.on{background:var(--ink); color:var(--white); border-color:var(--ink);}
+.f2-ops{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.f2-op{display:flex; align-items:center; gap:10px; min-height:44px; padding:8px 14px; border:1px solid var(--line); border-radius:12px; background:var(--white); font-size:.92rem; cursor:pointer;}
+.f2-op input{width:18px; height:18px;}
+.f2-afecta{display:grid; grid-template-columns:52px minmax(0,1fr); gap:12px; padding:14px 0; border-top:1px solid var(--line-soft);}
+.f2-afecta:first-of-type{border-top:0;}
+.f2-afecta b{font-family:var(--display); font-weight:600;}
+.f2-afecta p{font-size:.9rem; color:var(--ink-2); margin-top:4px; line-height:1.5;}
+.f2-afecta p strong{color:var(--ink); font-weight:600;}
+.f2-afecta .f1-seg{margin-top:10px;}
+.f2-afecta .f2-h{font-family:var(--mono); font-size:.8rem; color:var(--teal-deep); padding-top:3px;}
+.f2-sust{margin-top:10px; width:100%; min-height:44px; padding:10px 14px; border:1px solid var(--line); border-radius:12px; font:inherit; font-size:16px;}
+.f2-nota{display:flex; gap:8px; align-items:flex-start; margin-top:12px; font-size:.88rem; color:var(--ink-2); line-height:1.5;}
+.f2-nota svg{width:16px; height:16px; flex:none; margin-top:3px;}
+.f2-propuesta{margin-top:16px; padding:16px 18px; border-radius:14px; background:rgba(30,29,26,.05);}
+.f2-propuesta p{font-size:.95rem; line-height:1.5;}
+.f2-quien{display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; padding:8px 0; border-top:1px solid var(--line-soft); font-size:.92rem; min-height:44px;}
+.f2-quien:first-of-type{border-top:0;}
+.f2-quien span{color:var(--ink-2);}
+.f2-carpeta{display:flex; align-items:center; gap:10px; margin-top:14px; padding:12px 16px; min-height:48px; border-radius:12px; background:rgba(30,29,26,.05); color:var(--ink); text-decoration:none; font-size:.95rem;}
+.f2-carpeta span{flex:1;}
+.f2-carpeta svg{width:18px; height:18px; flex:none; color:var(--ink-2);}
+.f2-ficha{margin-top:10px;}
+.ag-prueba-tit{margin-top:44px; font-family:var(--display); font-weight:600; font-size:1.25rem; letter-spacing:-.02em;}
+@media (prefers-reduced-motion:no-preference){ [aria-live] .f2-resultado{animation:f2-fundido 160ms ease-out;} }
+@keyframes f2-fundido{from{opacity:.4} to{opacity:1}}
 /* ═══ fase 1.2 ═══ */
 .f1-trato{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-top:14px;}
 .f1-trato .f1-seg button{min-height:44px; padding:0 16px;}
@@ -2485,7 +2596,10 @@ body .pn-app section h2{animation:none;}
            pero no si el sábado tenía tres o ninguna.
            Lee `clase_en`, que ya existe; no agrega ningún dato. -->
       <section class="vista" data-vista="agenda" hidden>
-        <h1>Agenda <i id="agCuenta"></i></h1>
+        <!-- FASE 2 · la agenda fija (Hoy · Mañana · Semana). Se calcula: no se guarda. -->
+        <div id="f2Agenda"></div>
+        <!-- Las clases de prueba de THRIVE: la Agenda de antes, sin cambios, más abajo -->
+        <h2 class="ag-prueba-tit">Clases de prueba <i id="agCuenta"></i></h2>
         <p class="sub">Tocá un día libre para agendar una clase. Tocá una clase para abrir su ficha.</p>
         <div class="ag-cuerpo">
           <div class="ag-mes" id="agMes"></div>
@@ -3338,7 +3452,7 @@ body .pn-app section h2{animation:none;}
       })
       .then(function(r){
         if(r.error){ console.error(r.error); return; }
-        return cargarContacto().then(f1Cargar).then(function(){ return r; });
+        return cargarContacto().then(f1Cargar).then(f2Cargar).then(function(){ return r; });
       })
       .then(function(r){
         if(!r) return;
@@ -3366,7 +3480,8 @@ body .pn-app section h2{animation:none;}
            momento en que el parpadeo se justifica, porque hay algo
            nuevo que ver. */
         var huella = JSON.stringify([datos, CONTACTO, AJ, clientas,
-          F1.estado, F1.acuerdos, F1.ventanas, F1.horarios, F1.ajustes, F1.pagos, F1.recs, F1.consultas, F1.personas]);
+          F1.estado, F1.acuerdos, F1.ventanas, F1.horarios, F1.ajustes, F1.pagos, F1.recs, F1.consultas, F1.personas,
+          F2.estado, F2.filas, F2.aus, F2.repos, F2.repGr, F2.reservas, F2.viajes, F2.marcas, F2.reeval, F2.prox, F2.feriados]);
         if(huella === ULTIMA_HUELLA) return;
         ULTIMA_HUELLA = huella;
 
@@ -4662,6 +4777,7 @@ body .pn-app section h2{animation:none;}
   });
 
   function pintarAgenda(){
+    f2PintarAgenda();   /* fase 2 · la agenda fija va arriba; las clases de prueba, abajo */
     var elMes = document.getElementById('agMes'), elDia = document.getElementById('agDia');
     if(!elMes || !elDia) return;
     cerrarAgendar();
@@ -7013,6 +7129,10 @@ body .pn-app section h2{animation:none;}
     cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
     lista:'<path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>',
     tilde:'<path d="M20 6 9 17l-5-5"/>',
+    /* fase 2 */
+    reponer:'<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/>',
+    prohibido:'<circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/>',
+    taza:'<path d="M17 8h1a3 3 0 0 1 0 6h-1"/><path d="M3 8h14v6a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M7 2v2M11 2v2"/>',
     copiar:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'
   };
   function f1Ico(n, cls){
@@ -7097,7 +7217,7 @@ body .pn-app section h2{animation:none;}
     return /[.!?]$/.test(m) ? m : m + '.';
   }
   function f1Recargar(){
-    return f1Cargar().then(function(){
+    return f1Cargar().then(f2Cargar).then(function(){
       f1Pintar();
       /* En el teléfono (y fuera de Clientes) la ficha vive en la hoja:
          nadie más la repinta, así que se repinta acá. */
@@ -7151,6 +7271,12 @@ body .pn-app section h2{animation:none;}
   }
   /* fase 1.2 · TRATO: «usted» por defecto. Al cliente, el suyo; a quien
      paga por otra persona, el de ese acuerdo. */
+  /* QA fase 2 · el saludo sigue la hora (Denisse escribe de noche). Con «vos», «Hola». */
+  function f1Saludo(U){
+    if(!U) return 'Hola';
+    var h = f1AhoraHN().hora;
+    return h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
+  }
   function f1Trato(pid){ var p = f1Persona(pid) || {}; return p.trato === 'vos' ? 'vos' : 'usted'; }
   function f1TratoPagador(a){ return a && a.pagador_trato === 'vos' ? 'vos' : 'usted'; }
   /* «la mensualidad del 15 oct al 14 nov» · «las clases del 1 al 31 oct (3 × US$25)» */
@@ -7161,6 +7287,10 @@ body .pn-app section h2{animation:none;}
     return 'las clases ' + de + per + ' (' + n + ' × ' + f1Usd(a.precio_usd) + ')';
   }
   function f1HorariosDe(a){
+    /* fase 2 · un acuerdo de grupo toma el horario de su GRUPO (una sola sesión con varias personas) */
+    if(a.grupo_id && typeof F2 !== 'undefined' && F2.gHor.length)
+      return F2.gHor.filter(function(h){ return h.grupo_id === a.grupo_id && !h.retirado; }).map(function(h){ return { dia_semana:+h.dia_semana, hora:h.hora, desde:h.desde, hasta:h.hasta }; })
+        .sort(function(x, y){ return x.dia_semana - y.dia_semana; });
     return F1.horarios.filter(function(h){ return h.acuerdo_id === a.id && !h.retirado; })
       .sort(function(x, y){ return x.dia_semana - y.dia_semana; });
   }
@@ -7321,7 +7451,7 @@ body .pn-app section h2{animation:none;}
     /* fase 1.2 · TRATO (CAMBIOS-SQL §1): con «usted» no hay voseo ni en
        los verbos. Los textos son los del 14, validados por el 04. */
     var U = (d.tipo === 'pagador' ? f1TratoPagador(x.a) : f1Trato(x.a.persona_id)) === 'usted';
-    var hola = (U ? 'Buenos días, ' : 'Hola, ') + n + '. ';
+    var hola = f1Saludo(U) + ', ' + n + '. ';
     var cierreTransf = U ? 'Cuando haga la transferencia, me envía el comprobante por aquí. ¡Muchas gracias!'
                          : 'Cuando hagás la transferencia, mandame el comprobante por aquí. ¡Gracias!';
     if(d.tipo === 'pagador')
@@ -7376,6 +7506,14 @@ body .pn-app section h2{animation:none;}
         html:'<strong>Pendiente desde ' + esc(f1El(v.p.vence_efectivo)) + '</strong> · ' + esc(partes.join(' · ')) });
     });
     filas.sort(function(x, y){ return x.orden < y.orden ? -1 : 1; });
+    /* fase 2 · «cambio de hoy o mañana sin resolver», después de los pagos.
+       Una línea por cliente: si ya tiene fila de pago, se le suma el dato. */
+    if(typeof f2Cambios === 'function') f2Cambios(dia).forEach(function(c){
+      var ya = c.pid && filas.filter(function(f){ return f.pid === c.pid; })[0];
+      if(ya){ ya.html += ' · ' + c.texto; return; }
+      filas.push(c.pid ? { tipo:'cambio', pid:c.pid, nombre:(f1Persona(c.pid) || {}).nombre, html:c.texto, repo:c.repo }
+        : { tipo:'cambio', grupo:c.grupo, nombre:c.nombre, html:c.texto });
+    });
     var nombres = {};
     band.forEach(function(x){ if(x.paso !== 'revision' && !(x.r && x.r.estado === 'abierto')) nombres[x.a.persona_id] = String((f1Persona(x.a.persona_id) || {}).nombre || ''); });
     var ns = Object.keys(nombres).map(function(k){ return nombres[k].trim(); });
@@ -7413,6 +7551,13 @@ body .pn-app section h2{animation:none;}
 
   /* ═══ LAS SESIONES FIJAS DE UN DÍA [D1] ═══ */
   function f1Sesiones(dia){
+    /* fase 2 · si la agenda está leída, las sesiones salen de ella (grupos como UNA sesión) */
+    if(typeof F2 !== 'undefined' && F2.estado === 'ok' && dia >= F2.desde && dia <= F2.hasta){
+      return f2Sesiones(dia).filter(function(x){ return ['programada','agendada','sustituta'].indexOf(x.estado) >= 0; }).map(function(x){
+        return x.tipo === 'grupo' ? { hora:f2H(x.hora), grupo:true, nombre:f2GrupoNombre(x.grupo_id), que:'Grupo', n:f2Integrantes(x.grupo_id).length, pid:null }
+          : { hora:f2H(x.hora), nombre:f2Titulo(x), que:f2Sub(x), pid:x.persona_id };
+      });
+    }
     var iso = f1Iso(dia), grupos = {}, out = [];
     F1.acuerdos.forEach(function(a){
       if(!f1DaSesiones(a, dia)) return;
@@ -7445,9 +7590,1425 @@ body .pn-app section h2{animation:none;}
     return null;
   }
 
+  /* ═══════════════════════════════════════════════════════════
+     FASE 2 · LA AGENDA (encargo 2026-10-21 · fase2.sql)
+
+     «El panel cuida su semana, no la llena.» La semana NO se guarda: la
+     calcula la base (agenda_sesiones) desde los horarios fijos, los
+     grupos, la grilla del studio, el bloque personal y los feriados. Lo
+     que se escribe son hechos: una ausencia, una reposición, un cierre
+     de HTM, un viaje, una marca en un espacio, una reevaluación.
+
+     Reglas que no se negocian (notas del 14):
+       · el bloque personal y el sábado no se ofrecen;
+       · fuera de la grilla no hay celdas: las tardes no se dibujan vacías;
+       · sin porcentajes de ocupación ni conteos de espacios libres;
+       · un hueco solo sugiere a quien no tenga que volver al studio;
+       · la reevaluación no entra en las alertas de Hoy;
+       · nada sale sin que Denisse lo apruebe.
+     ═══════════════════════════════════════════════════════════ */
+  var F2 = { estado:'cargando', rango:null, cand:{}, filas:[], porDia:{}, desde:null, hasta:null, aus:[], repos:[], repGr:[], reservas:[],
+    viajes:[], marcas:[], reeval:[], prox:[], grupos:[], gHor:[], franjas:[], feriados:[], cierres:[], bloques:[], dejados:{} };
+  try{ F2.dejados = JSON.parse(localStorage.getItem('htm-f2-dejados') || '{}') || {}; }catch(e){ F2.dejados = {}; }
+  var F2_MARCA = { evaluacion:'Evaluación', reposicion:'Reposición', cliente_nuevo:'Cliente nuevo', no_ofrecer:'No ofrecer', personal:'Personal' };
+  var F2_MARCA_ICO = { evaluacion:'lista', reposicion:'reponer', cliente_nuevo:'clientas', no_ofrecer:'prohibido', personal:'taza' };
+  var F2_NO_SUGERIR = ['no_ofrecer','personal','evaluacion','cliente_nuevo'];
+  var F2_MOTIVOS = [['salud','Salud'],['viaje','Viaje'],['trabajo','Trabajo'],['familia','Familia'],['otro','Otro']];
+  var F2_LETRA = ['', 'L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+  function f2H(h){ return String(h || '').slice(0, 5); }
+  function f2Min(h){ h = f2H(h); return +h.slice(0, 2) * 60 + +h.slice(3, 5); }
+  function f2Iso(f){ var d = f1Dow(f); return d === 0 ? 7 : d; }
+  /* La semana que se muestra: lunes a sábado. El sábado y el domingo ya
+     miran la semana que viene (de noche y el domingo abre en Semana). */
+  function f2Lunes(f){ var d = f2Iso(f); return d >= 6 ? f1Mas(f, 8 - d) : f1Mas(f, 1 - d); }
+  function f2DiaCorto(f){ return F1_DIA_C[f1Dow(f)] + ' ' + (+f.slice(8,10)); }
+  function f2DiaNombre(f){ return F1_DIA[f1Dow(f)] + ' ' + (+f.slice(8,10)); }
+  /* «hasta el sábado 24» si cae esta semana o la próxima; si no, «hasta el 31 oct» */
+  function f2Hasta(f){
+    if(!f) return 'sin vencimiento';
+    var dias = Math.round((Date.parse(f) - Date.parse(f1Hoy())) / 86400000);
+    return 'hasta el ' + (dias >= 0 && dias <= 12 ? f2DiaNombre(f) : f1Corto(f));
+  }
+  function f2Ahora(){ var n = f1AhoraHN(); return { dia:n.dia, hm:(n.hora < 10 ? '0' : '') + n.hora + ':' + (n.min < 10 ? '0' : '') + n.min }; }
+  function f2Paso(f, h){ var n = f2Ahora(); return f < n.dia || (f === n.dia && f2H(h) < n.hm); }
+  function f2Grupo(gid){ return F2.grupos.filter(function(g){ return g.id === gid; })[0] || null; }
+  function f2GrupoNombre(gid){
+    var ds = F2.gHor.filter(function(x){ return x.grupo_id === gid && !x.retirado; }).map(function(x){ return +x.dia_semana; }).sort();
+    return ds.length ? 'Grupo ' + ds.map(function(d){ return F2_LETRA[d]; }).join('/') : ((f2Grupo(gid) || {}).nombre || 'Grupo');
+  }
+  function f2Integrantes(gid){
+    return F1.acuerdos.filter(function(a){ return a.grupo_id === gid && (a.estado === 'vigente' || a.estado === 'pausado'); });
+  }
+  function f2Nombre(pid){ return (f1Persona(pid) || {}).nombre || ''; }
+  function f2Ausencia(aid, f, h){ return F2.aus.filter(function(x){ return !x.anulada && x.acuerdo_id === aid && x.fecha === f && f2H(x.hora) === f2H(h); })[0] || null; }
+  function f2RepoDe(ausId){ return F2.repos.filter(function(r){ return r.ausencia_id === ausId && r.estado !== 'anulada'; })[0] || null; }
+  function f2Viaje(aid, f){ return F2.viajes.filter(function(v){ return !v.anulado && v.acuerdo_id === aid && f >= v.desde && f < v.vuelve_el; })[0] || null; }
+  function f2ReevalEn(aid, f, h){
+    return F2.reeval.filter(function(r){ return !r.anulada && r.acuerdo_id === aid && r.estado === 'agendada' && r.sesion_fecha === f && (!h || !r.sesion_hora || f2H(r.sesion_hora) === f2H(h)); })[0] || null;
+  }
+
+  /* ═══ LEER ═══ */
+  function f2Cargar(){
+    function leer(t, q){ return (q || sb.from(t).select('*')).then(function(r){ if(r.error) throw r.error; return r.data || []; }); }
+    var hoy = f1Hoy(), lun = f2Lunes(hoy);
+    var desde = hoy < lun ? hoy : lun, hasta = f1Mas(lun, 13);
+    return Promise.all([
+      sb.rpc('agenda_sesiones', { p_desde:desde, p_hasta:hasta }).then(function(r){ if(r.error) throw r.error; return r.data || []; }),
+      leer('ausencias'), leer('reposiciones'), leer('reposiciones_grupales'), leer('reposicion_reservas'), leer('viajes'),
+      leer('espacios_marcas'), leer('reevaluaciones'), leer('reevaluaciones_proximas'), leer('grupos'), leer('grupo_horarios'),
+      leer('agenda_franjas'), leer('feriados'), leer('cierres'), leer('agenda_bloques')
+    ]).then(function(r){
+      /* lo marcado como dato de prueba no entra (fase 1.2) */
+      var prueba = F1.prueba || {}, deVerdad = function(x){ return !x.persona_id || !prueba[x.persona_id]; };
+      F2.desde = desde; F2.hasta = hasta;
+      F2.filas = r[0].filter(deVerdad); F2.porDia = {};
+      F2.filas.forEach(function(x){ (F2.porDia[x.fecha] = F2.porDia[x.fecha] || []).push(x); });
+      Object.keys(F2.porDia).forEach(function(k){ F2.porDia[k].sort(function(a, b){ return f2Min(a.hora) - f2Min(b.hora); }); });
+      var vivo = {}; F1.acuerdos.forEach(function(a){ vivo[a.id] = 1; });
+      var delAcuerdo = function(x){ return !x.acuerdo_id || vivo[x.acuerdo_id]; };
+      F2.aus = r[1].filter(delAcuerdo); F2.repos = r[2].filter(delAcuerdo); F2.repGr = r[3]; F2.reservas = r[4].filter(delAcuerdo);
+      F2.viajes = r[5].filter(delAcuerdo); F2.marcas = r[6]; F2.reeval = r[7].filter(delAcuerdo); F2.prox = r[8].filter(deVerdad);
+      F2.grupos = r[9]; F2.gHor = r[10]; F2.franjas = r[11]; F2.feriados = r[12]; F2.cierres = r[13]; F2.bloques = r[14];
+      F2.cand = {};
+      return f2CargarCandidatos();
+    }).then(function(){
+      F2.estado = 'ok';
+    }).catch(function(e){
+      console.warn('fase 2:', e && e.message);
+      F2.estado = 'error';
+    });
+  }
+  function f2Recargar(){
+    return Promise.resolve(f1Recargar());
+  }
+
+  /* ═══ CÓMO SE DICE CADA FILA ═══ */
+  function f2LineaSesion(x){
+    var a = x.acuerdo_id ? f1Acuerdo(x.acuerdo_id) : null;
+    if(x.tipo === '1a1'){
+      if(x.estado === 'ausencia'){
+        var au = f2Ausencia(x.acuerdo_id, x.fecha, x.hora), rp = au && f2RepoDe(au.id);
+        if(!au) return 'No viene';
+        if(au.resultado === 'repone' || (au.derecho && rp)){
+          if(rp && rp.estado === 'agendada') return 'No viene · repone el ' + f2DiaCorto(rp.agendada_fecha) + ' a las ' + f1Hora(rp.agendada_hora);
+          if(rp && rp.estado === 'ofrecida') return 'No viene · reposición ofrecida';
+          return 'No viene · repone ' + f2Hasta(au.fecha_limite);
+        }
+        if(au.resultado === 'realizada') return 'No viene · cuenta como realizada';
+        if(au.resultado === 'tope') return 'No viene · ya usó las reposiciones del mes';
+        if(au.resultado === 'viaje') return 'De viaje · no se repone';
+        return 'No viene · sin reposición';
+      }
+      if(x.estado === 'viaje'){ var v = f2Viaje(x.acuerdo_id, x.fecha); return 'De viaje · vuelve ' + (v ? f1El(v.vuelve_el) : ''); }
+      if(x.estado === 'pausa') return 'En pausa · horario reservado';
+      if(x.estado === 'cancelada_htm') return 'Sesión de HTM por reprogramar';
+      if(x.estado === 'movida') return 'Se movió a otra hora';
+      if(x.nota === 'Cambio de hora') return 'Cambio de hora';
+      if(f2ReevalEn(x.acuerdo_id, x.fecha, x.hora)) return 'Reevaluación en esta sesión';
+      return '';
+    }
+    if(x.tipo === 'grupo'){
+      if(x.estado === 'cancelada_htm'){
+        var rg = F2.repGr.filter(function(g){ return g.origen === 'htm' && g.grupo_id === x.grupo_id && g.sesion_fecha === x.fecha && f2H(g.sesion_hora) === f2H(x.hora); })[0];
+        return rg && rg.fecha ? 'Reposición del grupo el ' + f2DiaCorto(rg.fecha) : 'Reposición del grupo antes del ' + (rg ? f1Corto(rg.fecha_limite) : '');
+      }
+      if(x.estado === 'sustituta'){
+        var rs = F2.repGr.filter(function(g){ return g.estado === 'sustituta' && g.grupo_id === x.grupo_id && g.sesion_fecha === x.fecha; })[0];
+        return 'Con sustituta' + (rs && rs.sustituta ? ': ' + rs.sustituta : '');
+      }
+      var faltan = f2Integrantes(x.grupo_id).filter(function(ac){ return f2Ausencia(ac.id, x.fecha, x.hora); })
+        .map(function(ac){ return primerNombre(f1Persona(ac.persona_id) || {}); });
+      return faltan.length ? 'No viene' + (faltan.length > 1 ? 'n: ' : ': ') + faltan.join(' y ') : '';
+    }
+    if(x.tipo === 'reposicion'){
+      return x.estado === 'realizada' ? 'Reposición hecha' : x.estado === 'no_vino' ? 'Reposición · no vino' : '';
+    }
+    return '';
+  }
+  function f2Titulo(x){
+    if(x.tipo === '1a1' || x.tipo === 'reposicion') return f2Nombre(x.persona_id);
+    if(x.tipo === 'grupo') return f2GrupoNombre(x.grupo_id);
+    if(x.tipo === 'reposicion_grupal') return 'Espacio grupal';
+    if(x.tipo === 'bloque') return x.estado === 'usado' ? 'Personal · usado' : 'Personal';
+    return '';
+  }
+  function f2Sub(x){
+    var a = x.acuerdo_id ? f1Acuerdo(x.acuerdo_id) : null;
+    if(x.tipo === '1a1') return a ? f1Modalidad(a) : '1:1';
+    if(x.tipo === 'reposicion') return 'Reposición' + (a ? ' · ' + f1Modalidad(a) : '');
+    if(x.tipo === 'grupo'){ var n = f2Integrantes(x.grupo_id).length; return n + (n === 1 ? ' persona' : ' personas'); }
+    if(x.tipo === 'reposicion_grupal'){ var k = F2.reservas.filter(function(r){ return r.reposicion_grupal_id === x.ref_id && r.estado !== 'anulada'; }).length; return k + (k === 1 ? ' reserva' : ' reservas'); }
+    if(x.tipo === 'bloque') return f1Hora(x.hora) + ' – ' + f1Hora(x.fin);
+    return '';
+  }
+  /* ¿Quién deja el hueco? La sesión de esa hora con ausencia, viaje o movida. */
+  function f2QuienDeja(x){
+    return (F2.porDia[x.fecha] || []).filter(function(s){ return s.tipo === '1a1' && f2H(s.hora) === f2H(x.hora) && (s.estado === 'ausencia' || s.estado === 'movida' || s.estado === 'viaje'); })[0] || null;
+  }
+  function f2MarcaDe(x){
+    var dia = F2.marcas.filter(function(m){ return !m.anulada && m.franja_id === x.ref_id && m.fecha === x.fecha; })[0];
+    var fija = F2.marcas.filter(function(m){ return !m.anulada && m.franja_id === x.ref_id && !m.fecha && x.fecha >= m.desde && (!m.hasta || x.fecha <= m.hasta); })[0];
+    return dia ? { m:dia, alcance:'dia' } : fija ? { m:fija, alcance:'fija' } : null;
+  }
+  function f2TituloEspacio(x){
+    var mk = x.marca ? F2_MARCA[x.marca] : '';
+    if(x.estado === 'hueco') return 'Hueco' + (mk ? ' · ' + mk : '');
+    if(x.estado === 'libre_viaje') return 'Libre por viaje' + (mk ? ' · ' + mk : '');
+    if(x.marca === 'no_ofrecer') return 'No ofrecer';
+    if(x.marca === 'personal') return 'Personal';
+    return mk ? 'Libre · ' + mk : 'Sin decidir';
+  }
+  function f2SubEspacio(x){
+    if(x.estado === 'hueco'){ var q = f2QuienDeja(x); return q ? f2Nombre(q.persona_id) + ' no viene' : ''; }
+    if(x.estado === 'libre_viaje'){ var q2 = f2QuienDeja(x), v = q2 && f2Viaje(q2.acuerdo_id, x.fecha); return q2 ? primerNombre(f1Persona(q2.persona_id) || {}) + ' vuelve ' + (v ? f1El(v.vuelve_el) : '') : ''; }
+    var md = f2MarcaDe(x);
+    return md ? (md.alcance === 'fija' ? 'Todas las semanas' : 'Solo este día') : '';
+  }
+  /* Candidatos de un espacio, con la MISMA regla que candidatos_espacio():
+     solo si toca su jornada, nunca en lo marcado para otra cosa, ordenados
+     por la fecha límite más cercana; las de HTM (sin vencer) al final.
+     Decisión del director: un espacio que Denisse marcó «Reposición»
+     cuenta como parte de su jornada aunque quede en el borde. */
+  function f2Candidatos(x){
+    /* R2 · la lista la da la base (candidatos_espacio): pegado a su jornada o marcado
+       «Reposición», nunca a quien dejó ese mismo hueco, por fecha límite. El panel no
+       la recalcula: solo la lee. */
+    if(x.tipo !== 'espacio') return [];
+    return (F2.cand[f2Clave(x)] || []).map(function(c){ return F2.repos.filter(function(r){ return r.id === c.reposicion_id; })[0]; }).filter(Boolean);
+  }
+  function f2Sugerible(x){
+    return x.tipo === 'espacio' && !f2Paso(x.fecha, x.hora) && (x.pegado || x.marca === 'reposicion') && F2_NO_SUGERIR.indexOf(x.marca || '') < 0;
+  }
+  function f2CargarCandidatos(){
+    var esp = F2.filas.filter(f2Sugerible);
+    return Promise.all(esp.map(function(x){
+      return sb.rpc('candidatos_espacio', { p_fecha:x.fecha, p_hora:f2H(x.hora) }).then(function(r){ F2.cand[f2Clave(x)] = (r && !r.error && r.data) || []; });
+    }));
+  }
+  function f2Clave(x){ return x.fecha + '|' + f2H(x.hora); }
+  function f2Dejado(x, cands){
+    var d = F2.dejados[f2Clave(x)];
+    return !!(d && cands.every(function(r){ return d.indexOf(r.id) >= 0; }));
+  }
+
+  /* ═══ PINTAR UNA FILA ═══ */
+  function f2HtmlItem(x, op){
+    op = op || {};
+    var paso = f2Paso(x.fecha, x.fin || x.hora), h = '<span class="f2-h f1-num">' + esc(f1Hora(x.hora)) + '</span>';
+    var attr = ' data-f2-fila="' + esc(x.fecha + '|' + f2H(x.hora) + '|' + x.tipo + '|' + (x.acuerdo_id || x.grupo_id || x.ref_id || '')) + '"';
+    if(x.tipo === 'bloque'){
+      return '<button type="button" class="f2-it f2-personal f1-fila-btn' + (x.estado === 'usado' ? ' usado' : '') + '"' + attr + '>' + h +
+        '<span class="f2-que"><b>' + esc(f2Titulo(x)) + '</b><i>' + esc(f2Sub(x)) + '</i></span></button>';
+    }
+    if(x.tipo === 'espacio'){
+      var cands = f2Candidatos(x), sug = '';
+      if(cands.length && !f2Dejado(x, cands)){
+        var c0 = cands[0], a0 = f1Acuerdo(c0.acuerdo_id) || {};
+        sug = '<span class="f2-sug">' + f1Ico('reponer') + '<span><strong>' + esc(f2Nombre(a0.persona_id)) + '</strong> ' +
+          esc(c0.origen === 'htm' ? 'tiene una sesión de HTM por reprogramar' : 'tiene reposición ' + f2Hasta(c0.fecha_limite)) +
+          (cands.length > 1 ? esc(' · y ' + (cands.length - 1) + ' más') : '') + '</span></span>';
+      }
+      var quieto = !x.marca && x.estado === 'libre' || x.marca === 'no_ofrecer';
+      return '<button type="button" class="f2-it f2-espacio f1-fila-btn' + (quieto ? ' quieto' : '') + (paso ? ' paso' : '') + '"' + attr + '>' + h +
+        '<span class="f2-que"><b>' + esc(f2TituloEspacio(x)) + '</b>' + (f2SubEspacio(x) ? '<i>' + esc(f2SubEspacio(x)) + '</i>' : '') + '</span>' + sug + '</button>';
+    }
+    var linea = f2LineaSesion(x), afuera = x.estado === 'pausa' || x.estado === 'viaje' || x.estado === 'cancelada_htm' || x.estado === 'movida' || x.estado === 'ausencia';
+    var accion = '';
+    if(op.acciones && !paso && F2.estado === 'ok'){
+      if((x.tipo === '1a1' || x.tipo === 'grupo') && x.estado === 'programada')
+        accion = '<span class="f2-acc"><button type="button" class="f1-mini chico" data-guarda data-f2-noviene="' + esc(x.fecha + '|' + f2H(x.hora) + '|' + (x.acuerdo_id || '') + '|' + (x.grupo_id || '')) + '">No viene</button></span>';
+      else if(x.tipo === '1a1' && x.estado === 'ausencia'){
+        var au = f2Ausencia(x.acuerdo_id, x.fecha, x.hora), rp = au && f2RepoDe(au.id);
+        if(rp && (rp.estado === 'pendiente' || rp.estado === 'ofrecida'))
+          accion = '<span class="f2-acc"><button type="button" class="f1-mini chico" data-guarda data-f2-buscar="' + esc(rp.id) + '">Buscarle espacio</button></span>';
+      }
+    }
+    var cls = 'f2-it f2-sesion' + (paso ? ' paso' : '') + (afuera ? ' afuera' : '');
+    var cuerpo = h + '<span class="f2-que"><b>' + esc(f2Titulo(x)) + '</b><i>' + esc(f2Sub(x)) + '</i>' + (linea ? '<span class="f2-estado">' + esc(linea) + '</span>' : '') + '</span>';
+    if(accion) return '<div class="' + cls + ' con-acc"><button type="button" class="f2-it-abre f1-fila-btn"' + attr + '>' + cuerpo + '</button>' + accion + '</div>';
+    return '<button type="button" class="' + cls + ' f1-fila-btn"' + attr + '>' + cuerpo + '</button>';
+  }
+  function f2Feriado(f){ return F2.feriados.filter(function(x){ return x.fecha === f && !x.anulado; })[0] || null; }
+  function f2HtmlFeriadoPosible(f){
+    var fe = f2Feriado(f);
+    if(!fe || fe.confirmado) return '';
+    return '<p class="f2-posible">Posible feriado · ' + esc(fe.nombre) + '. Confirmalo cuando salga el comunicado. ' +
+      '<button type="button" class="f1-txt" data-guarda data-f2-feriado-si="' + esc(f) + '">Confirmar</button>' +
+      '<button type="button" class="f1-txt" data-guarda data-f2-feriado-no="' + esc(f) + '">No es feriado</button></p>';
+  }
+  /* El día entero cerrado: una sola palabra, sin filas (no cuenta como vacío). */
+  function f2EsFeriadoCerrado(f){
+    var fe = f2Feriado(f);
+    return !!(fe && fe.confirmado && !fe.cierra_desde && !fe.cierra_hasta);
+  }
+
+  /* ═══ LA VISTA AGENDA ═══ */
+  /* Una hora, una fila. En Semana el hueco (o el «libre por viaje») reemplaza
+     a la sesión que lo deja y dice quién no viene; en Hoy y Mañana se ve la
+     sesión con su «No viene», y el viaje como «libre por viaje». */
+  function f2Filas(f, modo){
+    var d = (F2.porDia[f] || []).filter(function(x){ return x.estado !== 'feriado' || (x.tipo !== '1a1' && x.tipo !== 'grupo'); });
+    function hay(tipo, hora, ests){ return d.some(function(y){ return y.tipo === tipo && f2H(y.hora) === f2H(hora) && ests.indexOf(y.estado) >= 0; }); }
+    return d.filter(function(x){
+      if(modo === 'semana' && x.tipo === '1a1' && ['ausencia','viaje','movida'].indexOf(x.estado) >= 0 && hay('espacio', x.hora, ['hueco','libre_viaje'])) return false;
+      if(modo !== 'semana' && x.tipo === 'espacio' && x.estado === 'hueco' && hay('1a1', x.hora, ['ausencia','movida'])) return false;
+      if(modo !== 'semana' && x.tipo === '1a1' && x.estado === 'viaje' && hay('espacio', x.hora, ['libre_viaje'])) return false;
+      return true;
+    });
+  }
+  function f2Sesiones(f){ return (F2.porDia[f] || []).filter(function(x){ return (x.tipo === '1a1' || x.tipo === 'grupo' || x.tipo === 'reposicion' || x.tipo === 'reposicion_grupal') && x.estado !== 'feriado'; }); }
+  function f2Cuantas(f){ return f2Sesiones(f).filter(function(x){ return ['programada','agendada','sustituta','ausencia'].indexOf(x.estado) >= 0; }).length; }
+  function f2RangoInicial(){
+    var n = f1AhoraHN();
+    if(n.dow === 0 || n.dow === 6) return 'semana';
+    return n.hora >= 18 ? 'manana' : 'hoy';
+  }
+  function f2PintarAgenda(){
+    var caja = document.getElementById('f2Agenda');
+    if(!caja) return;
+    if(!F2.rango) F2.rango = 'semana';
+    var hoy = f1Hoy(), lun = f2Lunes(hoy);
+    var seg = '<div class="f1-seg" role="radiogroup" aria-label="Qué mirar">' + [['hoy','Hoy'],['manana','Mañana'],['semana','Semana']].map(function(o){
+      return '<button type="button" role="radio" aria-checked="' + (F2.rango === o[0]) + '" data-f2-rango="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+    var sub = F2.rango === 'semana' ? 'Semana del ' + (+lun.slice(8,10)) + ' al ' + (+f1Mas(lun, 4).slice(8,10)) + ' de ' + F1_MES_L[+f1Mas(lun, 4).slice(5,7) - 1]
+      : (F2.rango === 'hoy' ? 'Hoy · ' : 'Mañana · ') + f2DiaNombre(F2.rango === 'hoy' ? hoy : f1Mas(hoy, 1));
+    var html = '<div class="f2-cab"><div><h1>Agenda</h1><p class="sub">' + esc(sub) + '</p></div>' + seg + '</div>';
+    if(F2.estado === 'cargando' || F1.estado === 'cargando'){
+      html += '<div class="f2-semana" aria-busy="true">' + [1,2,3,4,5].map(function(){ return '<section class="f2-dia f1-vidrio"><div class="f2-dia-cab"><span class="f1-skel" style="width:60%"></span></div><div class="f2-items">' +
+        [1,2,3].map(function(){ return '<div class="f2-it f2-esq"><span class="f1-skel" style="width:70%"></span></div>'; }).join('') + '</div></section>'; }).join('') + '</div>';
+    }else if(F2.estado !== 'ok'){
+      html += '<section class="f1-critico f1-solido" style="margin-top:22px"><div class="f1-crit-calma"><p>No pude leer la agenda.</p><p>No te muestro una semana que no sé si es cierta: recargá.</p>' +
+        '<p><button type="button" class="f1-mini" data-f2-recargar>Recargar</button></p></div></section>';
+    }else if(!F2.filas.some(function(x){ return x.tipo === '1a1' || x.tipo === 'grupo'; })){
+      html += '<section class="f1-critico f1-solido" style="margin-top:22px"><div class="f1-crit-calma"><p>Todavía no hay horarios fijos.</p><p>Al confirmar cada cliente, cargale su hora y aparece acá.</p></div></section>';
+    }else if(F2.rango === 'semana'){
+      html += f2HtmlSemana(lun);
+    }else{
+      html += '<div class="f2-dias2">' + f2HtmlListaDia(hoy, 'hoy') + f2HtmlListaDia(f1Mas(hoy, 1), 'manana') + '</div>';
+    }
+    caja.innerHTML = html;
+    caja.setAttribute('data-rango', F2.rango);
+  }
+  function f2HtmlSemana(lun){
+    var hoy = f1Hoy(), html = '<div class="f2-semana">';
+    for(var i = 0; i < 5; i++){
+      var f = f1Mas(lun, i), fe = f2Feriado(f);
+      var nom = F1_DIA[f1Dow(f)], tit = nom.charAt(0).toUpperCase() + nom.slice(1) + ' ' + (+f.slice(8,10));
+      html += '<section class="f2-dia f1-vidrio' + (f === hoy ? ' hoy' : '') + '" aria-label="' + esc(tit) + '">' +
+        '<div class="f2-dia-cab"><b>' + esc(tit) + (f === hoy ? '<span> · hoy</span>' : '') + '</b>' +
+        (!f2EsFeriadoCerrado(f) && f >= hoy ? '<button type="button" class="f1-txt chico" data-guarda data-f2-cancelo="' + esc(f) + '||dia">Cancelo yo</button>' : '') + '</div>';
+      if(f2EsFeriadoCerrado(f)){
+        html += '<div class="f2-feriado"><b>Feriado</b><span>' + esc(fe.nombre) + '. Sin sesiones ni espacios.</span></div></section>';
+        continue;
+      }
+      html += f2HtmlFeriadoPosible(f);
+      var filas = f2Filas(f, 'semana');
+      html += '<div class="f2-items">' + (filas.length ? filas.map(function(x){ return f2HtmlItem(x); }).join('') : '<p class="f1-vacio-linea">Día sin sesiones fijas.</p>') + '</div></section>';
+    }
+    html += '</div>';
+    /* El sábado no es columna: una línea, y solo si alguien tiene reposición pendiente */
+    var sab = f1Mas(lun, 5), pend = f2ReposAbiertas().filter(function(r){ return r.estado === 'pendiente' && (!r.fecha_limite || r.fecha_limite >= sab); });
+    if(pend.length && !f2EsFeriadoCerrado(sab)){
+      html += '<button type="button" class="f2-sab f1-vidrio f1-fila-btn" data-f2-sabado="' + esc(sab) + '">' + f1Ico('cal') +
+        '<span><b>Sábado ' + (+sab.slice(8,10)) + ' · sin horario.</b> Si decidís abrirlo, ' + (pend.length === 1 ? 'cabe 1 reposición.' : 'caben hasta ' + pend.length + ' reposiciones.') + '</span>' + f1Ico('ir', 'f1-ir') + '</button>';
+    }
+    html += '<div class="f2-debajo">' + f2HtmlCajaRepos() + f2HtmlCajaReeval() + f2HtmlCajaGrupo(lun) + '</div>';
+    return html;
+  }
+  function f2HtmlListaDia(f, cual){
+    var esManana = cual === 'manana', filas = f2Filas(f), fe = f2Feriado(f);
+    var tit = (esManana ? 'Mañana' : 'Hoy') + ' · ' + f2DiaNombre(f), n = f2Cuantas(f);
+    var html = '<section class="f2-lista f1-solido" aria-label="' + esc(tit) + '"><div class="f2-lista-cab"><h2 class="f1-h2">' + esc(tit) + (n ? ' <i>' + n + (n === 1 ? ' sesión' : ' sesiones') + '</i>' : '') + '</h2>' +
+      (!f2EsFeriadoCerrado(f) && f2Iso(f) <= 5 ? '<button type="button" class="f1-txt" data-guarda data-f2-cancelo="' + esc(f) + '||dia">Cancelo yo</button>' : '') + '</div>';
+    if(esManana){ var fr = f2FraseManana(f); if(fr) html += '<p class="f2-frase">' + esc(fr) + '</p>'; }
+    if(f2EsFeriadoCerrado(f)) return html + '<div class="f2-feriado"><b>Feriado</b><span>' + esc(fe.nombre) + '. Sin sesiones ni espacios.</span></div></section>';
+    html += f2HtmlFeriadoPosible(f);
+    if(f2Iso(f) >= 6 && !filas.length) return html + '<p class="f1-vacio-linea" style="padding:10px 0">Sin horario. El sábado no se ofrece.</p></section>';
+    html += '<div class="f2-items lista">' + (filas.length ? filas.map(function(x){ return f2HtmlItem(x, { acciones:true }); }).join('') : '<p class="f1-vacio-linea">Día sin sesiones fijas.</p>') + '</div></section>';
+    return html;
+  }
+  /* «Mañana: 6 sesiones · 1 reposición sin respuesta · vuelve Nombre (8:30)».
+     Solo nombra lo que está en la lista de ese día (ESPEC §6.3). */
+  function f2FraseManana(f){
+    var ses = f2Sesiones(f), partes = [];
+    var n1 = ses.filter(function(x){ return (x.tipo === '1a1' || x.tipo === 'reposicion') && (x.estado === 'programada' || x.estado === 'agendada'); }).length;
+    var ng = ses.filter(function(x){ return x.tipo === 'grupo' && (x.estado === 'programada' || x.estado === 'sustituta'); }).length;
+    if(n1 || ng) partes.push((n1 ? n1 + (n1 === 1 ? ' sesión' : ' sesiones') : '') + (n1 && ng ? ' y ' : '') + (ng ? (ng === 1 ? 'el grupo' : ng + ' grupos') : ''));
+    var sinResp = (F2.porDia[f] || []).filter(function(x){ return x.tipo === 'espacio'; }).map(function(x){ return f2Candidatos(x).filter(function(r){ return r.estado === 'ofrecida'; }).length; })
+      .reduce(function(t, k){ return t + k; }, 0);
+    if(sinResp) partes.push(sinResp + (sinResp === 1 ? ' reposición sin respuesta' : ' reposiciones sin respuesta'));
+    var vuelven = ses.filter(function(x){ return x.tipo === '1a1' && x.estado === 'programada' && F2.viajes.some(function(v){ return !v.anulado && v.acuerdo_id === x.acuerdo_id && v.vuelve_el === f; }); });
+    vuelven.forEach(function(x){ partes.push('vuelve ' + f2Nombre(x.persona_id) + ' (' + f1Hora(x.hora) + ')'); });
+    var rev = ses.filter(function(x){ return x.tipo === '1a1' && f2ReevalEn(x.acuerdo_id, f, x.hora); });
+    if(rev.length) partes.push('reevaluás a ' + rev.map(function(x){ return f2Nombre(x.persona_id); }).join(' y '));
+    return partes.length ? 'Mañana: ' + partes.join(' · ') + '.' : '';
+  }
+  function f2ReposAbiertas(){
+    return F2.repos.filter(function(r){ return (r.estado === 'pendiente' || r.estado === 'ofrecida') && f1Acuerdo(r.acuerdo_id); })
+      .sort(function(p, q){ if(!p.fecha_limite !== !q.fecha_limite) return p.fecha_limite ? -1 : 1; return (p.fecha_limite || '') < (q.fecha_limite || '') ? -1 : 1; });
+  }
+  function f2LineaRepo(r){
+    var hoy = f1Hoy();
+    if(r.origen === 'htm') return 'Sesión de HTM por reprogramar · sin vencimiento' + (r.estado === 'ofrecida' ? ' · ofrecida' : '');
+    if(r.previa_fecha) return 'Se reprograma: la canceló HTM · estaba el ' + f2DiaCorto(r.previa_fecha) + ' a las ' + f1Hora(r.previa_hora) + ' · ya no vence';
+    if(r.fecha_limite && r.fecha_limite < hoy) return 'Venció ' + f1El(r.fecha_limite) + ' · sin reponer';
+    return (r.estado === 'ofrecida' ? 'Ofrecida · ' : '') + 'Repone ' + f2Hasta(r.fecha_limite) + (r.estado === 'pendiente' ? ' · sin ofrecer' : '');
+  }
+  function f2HtmlCajaRepos(){
+    var rs = f2ReposAbiertas();
+    var html = '<section class="f2-caja f1-vidrio" aria-labelledby="f2RepT"><h2 class="f1-h2" id="f2RepT">Reposiciones abiertas' + (rs.length ? ' <i>' + rs.length + '</i>' : '') + '</h2>';
+    if(!rs.length) return html + '<p class="f1-vacio-linea" style="padding:8px 0 14px">Nadie tiene una reposición pendiente.</p></section>';
+    return html + rs.map(function(r){
+      var a = f1Acuerdo(r.acuerdo_id) || {}, venc = r.fecha_limite && r.fecha_limite < f1Hoy();
+      return '<button type="button" class="f2-fl f1-fila-btn' + (venc ? ' venc' : '') + '" data-f2-repo="' + esc(r.id) + '"><b>' + esc(f2Nombre(a.persona_id)) + '</b><i>' + esc(f2LineaRepo(r)) + '</i>' + f1Ico('ir', 'f1-ir') + '</button>';
+    }).join('') + '</section>';
+  }
+  /* Reevaluación: en Semana, 2 semanas antes del objetivo y nunca antes
+     de la semana 4. Habla de la persona, no de la tarea. */
+  function f2ReevalVisibles(){
+    var hoy = f1Hoy();
+    return F2.prox.filter(function(p){
+      var a = f1Acuerdo(p.acuerdo_id);
+      if(!a || (a.estado !== 'vigente' && a.estado !== 'pausado')) return false;
+      if(hoy < p.avisar_desde) return false;
+      if(p.pospuesta_hasta && p.pospuesta_hasta > hoy) return false;
+      /* Criterio de las notas del 14 (§8): en THRIVE y los grupos la reevaluación
+         la dispara el ciclo; el cambio de programa es del 1:1. */
+      if(p.tipo === 'cambio_programa' && (a.modalidad === 'grupo' || a.modalidad === 'grupo_remoto')) return false;
+      if(p.tipo === 'cierre_ciclo' && F2.reeval.some(function(r){ return !r.anulada && r.acuerdo_id === p.acuerdo_id && r.tipo === 'cierre_ciclo' && r.estado === 'hecha' && r.hecha_en >= p.base; })) return false;
+      return true;
+    }).sort(function(x, y){ return x.objetivo < y.objetivo ? -1 : 1; });
+  }
+  function f2TextoReeval(p){
+    var a = f1Acuerdo(p.acuerdo_id) || {}, n = f2Nombre(a.persona_id);
+    if(p.tipo === 'cierre_ciclo') return n + ' cierra su ciclo ' + f1El(p.objetivo) + ': buen momento para mirar todo lo que avanzó.';
+    return n + ' cumple ' + Math.max(1, p.semana - 1) + ' semanas con este programa: buen momento para ver su avance.';
+  }
+  function f2HtmlCajaReeval(){
+    var vs = f2ReevalVisibles();
+    var html = '<section class="f2-caja f1-vidrio" aria-labelledby="f2RevT"><h2 class="f1-h2" id="f2RevT">Reevaluaciones</h2>';
+    if(!vs.length) return html + '<p class="f1-vacio-linea" style="padding:8px 0 14px">Ninguna para mirar estas semanas.</p></section>';
+    return html + vs.map(function(p){
+      var a = f1Acuerdo(p.acuerdo_id) || {};
+      var linea = p.tipo === 'cierre_ciclo' ? 'Cierra su ciclo ' + f1El(p.objetivo)
+        : 'Cumple ' + Math.max(1, p.semana - 1) + ' semanas con este programa';
+      linea += p.agendada_para ? ' · ' + f2DiaCorto(p.agendada_para) : ' · elegir sesión';
+      return '<button type="button" class="f2-fl f1-fila-btn" data-f2-reeval="' + esc(p.acuerdo_id + '|' + p.tipo) + '"><b>' + esc(f2Nombre(a.persona_id)) + '</b><i>' + esc(linea) + '</i>' + f1Ico('ir', 'f1-ir') + '</button>';
+    }).join('') + '</section>';
+  }
+  function f2PuedenReservar(){
+    var hoy = f1Hoy();
+    return F2.aus.filter(function(x){ return !x.anulada && x.resultado === 'grupal' && x.derecho && (!x.fecha_limite || x.fecha_limite >= hoy) && f1Acuerdo(x.acuerdo_id) &&
+      !F2.reservas.some(function(r){ return r.ausencia_id === x.id && r.estado !== 'anulada'; }); });
+  }
+  function f2HtmlCajaGrupo(lun){
+    var hoy = f1Hoy(), html = '<section class="f2-caja f1-vidrio" aria-labelledby="f2GrT"><h2 class="f1-h2" id="f2GrT">Grupo THRIVE</h2>';
+    var prox = F2.repGr.filter(function(g){ return g.origen === 'quincenal' && g.estado === 'programada' && g.fecha >= hoy; }).sort(function(x, y){ return x.fecha < y.fecha ? -1 : 1; })[0];
+    var pueden = f2PuedenReservar().length, filas = '';
+    if(prox){
+      var k = F2.reservas.filter(function(r){ return r.reposicion_grupal_id === prox.id && r.estado !== 'anulada'; }).length;
+      filas += '<button type="button" class="f2-fl f1-fila-btn" data-f2-grupal="' + esc(prox.id) + '"><b>Espacio grupal · ' + esc(f2DiaCorto(prox.fecha) + ' ' + f1Hora(prox.hora)) + '</b><i>' +
+        esc(k + (prox.cupo ? ' de ' + prox.cupo : '') + (k === 1 ? ' reserva' : ' reservas') + (pueden ? ' · ' + pueden + (pueden === 1 ? ' persona puede reservar' : ' personas pueden reservar') : '')) + '</i>' + f1Ico('ir', 'f1-ir') + '</button>';
+    }else{
+      /* El recordatorio quincenal se dice UNA vez, en Semana */
+      var semana = f1Mas(lun, 7);
+      filas += '<button type="button" class="f2-fl f1-fila-btn" data-f2-grupal="nuevo"><b>Espacio grupal de la semana del ' + esc(f1Corto(semana)) + '</b><i>' +
+        esc('Toca publicarlo' + (pueden ? ' · ' + pueden + (pueden === 1 ? ' persona puede reservar' : ' personas pueden reservar') : '')) + '</i>' + f1Ico('ir', 'f1-ir') + '</button>';
+    }
+    F2.repGr.filter(function(g){ return g.origen === 'htm' && g.estado === 'por_programar'; }).forEach(function(g){
+      filas += '<button type="button" class="f2-fl f1-fila-btn" data-f2-grupal="' + esc(g.id) + '"><b>' + esc(f2GrupoNombre(g.grupo_id)) + '</b><i>' + esc('Reposición del grupo antes del ' + f1Corto(g.fecha_limite)) + '</i>' + f1Ico('ir', 'f1-ir') + '</button>';
+    });
+    return html + filas + '</section>';
+  }
+
+  /* ═══ HOY: la única categoría nueva ═══
+     «Cambio de hoy o mañana sin resolver»: una ausencia de hoy o mañana
+     con reposición sin ofrecer, o una cancelación de HTM sin solución.
+     Una línea por cliente (se suma a su fila si ya tiene una). */
+  function f2Cambios(dia){
+    if(F2.estado !== 'ok') return [];
+    var dias = [dia, f1Mas(dia, 1)], out = [];
+    F2.aus.forEach(function(x){
+      if(x.anulada || dias.indexOf(x.fecha) < 0) return;
+      var rp = f2RepoDe(x.id), a = f1Acuerdo(x.acuerdo_id);
+      if(!a || !rp || rp.estado !== 'pendiente') return;
+      out.push({ pid:a.persona_id, texto:'<strong>No viene ' + (x.fecha === dia ? 'hoy' : 'mañana') + ' a las ' + esc(f1Hora(x.hora)) + '</strong> · reposición sin ofrecer', repo:rp.id });
+    });
+    F2.repos.forEach(function(r){
+      if(r.origen !== 'htm' || r.estado !== 'pendiente' || dias.indexOf(r.sesion_fecha) < 0) return;
+      var a = f1Acuerdo(r.acuerdo_id); if(!a) return;
+      out.push({ pid:a.persona_id, texto:'<strong>Sesión de HTM por reprogramar</strong> · ' + (r.sesion_fecha === dia ? 'hoy' : 'mañana') + ' ' + esc(f1Hora(r.sesion_hora)), repo:r.id });
+    });
+    F2.repGr.forEach(function(g){
+      if(g.origen !== 'htm' || g.estado !== 'por_programar' || dias.indexOf(g.sesion_fecha) < 0) return;
+      out.push({ grupo:g.id, nombre:f2GrupoNombre(g.grupo_id), texto:'<strong>Reposición del grupo antes del ' + esc(f1Corto(g.fecha_limite)) + '</strong> · o hubo sustituta' });
+    });
+    return out;
+  }
+
+  /* ═══ HOJAS ═══ */
+  function f2Fila(clave){
+    var p = clave.split('|');
+    return (F2.porDia[p[0]] || []).filter(function(x){ return f2H(x.hora) === p[1] && x.tipo === p[2] && (x.acuerdo_id || x.grupo_id || x.ref_id || '') === p[3]; })[0] || null;
+  }
+  function f2Trato(pid){ return f1Trato(pid); }
+  function f2SegTrato(pid){
+    var t = f2Trato(pid);
+    return '<div class="f1-trato"><span class="f1-rotulo" id="f2TrT">Le hablás de</span><div class="f1-seg" role="radiogroup" aria-labelledby="f2TrT">' +
+      ['usted','vos'].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (t === o) + '" data-guarda data-f2-trato="' + esc(pid + '|' + o) + '">' + o + '</button>'; }).join('') + '</div></div>';
+  }
+  function f2Opcion(o){ return F1_DIA[f1Dow(o.fecha)] + ' ' + (+o.fecha.slice(8,10)) + ' a las ' + f1Hora(o.hora); }
+  /* El mensaje de ofrecer, con 1 o 2 opciones (decisión del director) */
+  function f2MensajeOfrecer(pid, ops, origen){
+    var U = f2Trato(pid) === 'usted', n = primerNombre(f1Persona(pid) || {});
+    var hola = f1Saludo(U) + ', ' + n + '. ';
+    var pre = origen === 'htm' ? (U ? 'Para reponer la sesión que no pude dar, le propongo ' : 'Para reponer la sesión que no pude dar, te propongo ') : 'Gracias por avisar con tiempo. Podemos reponer ';
+    if(ops.length === 1) return hola + pre + 'el ' + f2Opcion(ops[0]) + '. ' + (U ? '¿Le queda bien?' : '¿Te queda bien?');
+    return hola + pre + 'el ' + f2Opcion(ops[0]) + ' o el ' + f2Opcion(ops[1]) + '. ' + (U ? '¿Cuál le queda mejor?' : '¿Cuál te queda mejor?');
+  }
+  function f2Waboton(pid, texto, attrs){
+    var p = f1Persona(pid) || {}, href = waLink(p, texto);
+    if(!href) return '<p class="f1-ayuda">Sin teléfono: copiá el mensaje y mandalo por otro lado.</p>';
+    return '<a class="wa f2-wa" href="' + esc(href) + '" target="_blank" rel="noopener" ' + (attrs || '') + '>' + ICONO_WA + 'Ofrecer por WhatsApp</a>';
+  }
+
+  /* — hoja de una sesión — */
+  function f2HtmlSesion(h){
+    var x = f2Fila(h.clave);
+    if(!x) return f1Top('Sesión', '', false) + '<p class="f1-ayuda" style="margin-top:16px">Esa sesión ya no está en la agenda.</p>';
+    var tit = f2DiaNombre(x.fecha) + ' · ' + f1Hora(x.hora);
+    var html = f1Top(tit.charAt(0).toUpperCase() + tit.slice(1), f2Titulo(x) + ' · ' + f2Sub(x), false);
+    var linea = f2LineaSesion(x);
+    if(linea) html += '<p class="f2-resultado chico">' + esc(linea) + '</p>';
+    if(x.tipo === 'grupo'){
+      var ints = f2Integrantes(x.grupo_id);
+      html += '<div class="f1-sec"><span class="f1-rotulo">Quiénes</span>' + (ints.length ? ints.map(function(a){
+        var au = f2Ausencia(a.id, x.fecha, x.hora);
+        return '<p class="f2-quien"><b>' + esc(f2Nombre(a.persona_id)) + '</b>' + (au ? ' · ' + esc(au.derecho ? 'No viene · puede reservar un espacio grupal ' + f2Hasta(au.fecha_limite) : 'No viene · sin reposición grupal') : '') + '</p>';
+      }).join('') : '<p class="f1-ayuda">Todavía nadie tiene asignado este grupo. Se asigna en el acuerdo de cada persona.</p>') + '</div>';
+    }
+    var acc = '';
+    if(x.estado === 'programada' && (x.tipo === '1a1' || x.tipo === 'grupo'))
+      acc += '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-noviene="' + esc(x.fecha + '|' + f2H(x.hora) + '|' + (x.acuerdo_id || '') + '|' + (x.grupo_id || '')) + '">No viene</button>';
+    if(x.estado === 'ausencia'){
+      var au2 = f2Ausencia(x.acuerdo_id, x.fecha, x.hora), rp = au2 && f2RepoDe(au2.id);
+      if(rp && (rp.estado === 'pendiente' || rp.estado === 'ofrecida')) acc += '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-buscar="' + esc(rp.id) + '">Buscarle espacio</button>';
+    }
+    if(x.tipo === 'reposicion'){
+      var r = F2.repos.filter(function(q){ return q.id === x.ref_id; })[0];
+      if(r && r.estado === 'agendada' && x.fecha <= f1Hoy())
+        acc += '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-repo-estado="' + esc(r.id + '|realizada') + '">Vino</button><button type="button" class="f1-mini" data-guarda data-f2-repo-estado="' + esc(r.id + '|no_vino') + '">No vino</button>';
+    }
+    if(x.tipo === 'grupo' && x.estado === 'cancelada_htm'){
+      var rg = F2.repGr.filter(function(g){ return g.origen === 'htm' && g.grupo_id === x.grupo_id && g.sesion_fecha === x.fecha && g.estado === 'por_programar'; })[0];
+      if(rg) acc += '<button type="button" class="pn-btn f1-btn" data-f2-grupal="' + esc(rg.id) + '">Sustituta o reposición</button>';
+    }
+    if(['programada','agendada'].indexOf(x.estado) >= 0 && x.fecha >= f1Hoy() && x.tipo !== 'reposicion_grupal')
+      acc += '<button type="button" class="f1-mini" data-guarda data-f2-cancelo="' + esc(x.fecha + '|' + f2H(x.hora) + '|una') + '">Cancelo yo</button>';
+    if(x.persona_id) acc += '<button type="button" class="f1-txt" data-f1-ficha="' + esc(x.persona_id) + '">Abrir su ficha</button>';
+    return html + '<div class="f1-acciones" style="margin-top:18px">' + acc + '</div>';
+  }
+
+  /* — la regla, para mostrarla ANTES de guardar (registrar_ausencia la vuelve a aplicar) — */
+  function f2Reglas(a){
+    var v = f1Version(a.version_id) || {};
+    return { aviso:a.aviso_horas, tope:a.repos_tope_mes != null ? a.repos_tope_mes : v.repos_tope_mes,
+      alcance:(a.modalidad === 'grupo' || a.modalidad === 'grupo_remoto') ? 'grupal' : (a.repos_alcance || v.repos_alcance || 'mes'), version:v.nombre || '' };
+  }
+  function f2Usadas(a, fecha){
+    return F2.aus.filter(function(z){ return !z.anulada && z.acuerdo_id === a.id && z.derecho && z.resultado === 'repone' && z.fecha.slice(0,7) === fecha.slice(0,7); }).length;
+  }
+  function f2FinMes(f){ return f1Mas(masMeses(f.slice(0,8) + '01', 1), -1); }
+  function f2Sabado(f){ return f1Mas(f, 6 - f2Iso(f)); }
+  function f2Preview(a, fecha, hora, aviso, llego, motivo){
+    var r = f2Reglas(a), res, der = false, lim = null, horas = null;
+    if(llego && r.aviso != null){
+      horas = (Date.parse(fecha + 'T' + f2H(hora) + ':00-06:00') - Date.parse(llego + ':00-06:00')) / 3600000;
+      aviso = horas >= r.aviso ? 'a_tiempo' : 'tarde';
+    }
+    if(motivo === 'viaje' && f2Viaje(a.id, fecha)) res = 'viaje';
+    else if(r.alcance === 'grupal'){ res = 'grupal'; der = aviso === 'a_tiempo'; lim = der ? f1Mas(fecha, 14) : null; }
+    else if(aviso !== 'a_tiempo') res = 'realizada';
+    else if(r.tope != null && f2Usadas(a, fecha) >= r.tope) res = 'tope';
+    else { res = 'repone'; der = true; lim = r.alcance === 'semana' ? f2Sabado(fecha) : f2FinMes(fecha); }
+    return { res:res, der:der, lim:lim, aviso:aviso, horas:horas, r:r };
+  }
+  function f2HtmlAusencia(h){
+    var a = f1Acuerdo(h.aid);
+    if(!a) return f1Top('No viene', '', false) + '<p class="f1-ayuda">Elegí a la persona.</p>';
+    var nom = f2Nombre(a.persona_id), esHoy = h.fecha === f1Hoy();
+    var html = f1Top('No viene', nom + ' · ' + (esHoy ? 'hoy ' : f2DiaCorto(h.fecha) + ' ') + f1Hora(h.hora) + ' · ' + f1Modalidad(a), false);
+    if(h.hecha) return html + f2HtmlAusenciaHecha(h, a);
+    if(h.grupo){
+      var ints = f2Integrantes(h.grupo).filter(function(x){ return !f2Ausencia(x.id, h.fecha, h.hora); });
+      html += '<label class="f1-campo" style="margin-top:14px"><span class="f1-rotulo">Quién no viene</span><select id="f2AusQuien">' +
+        ints.map(function(x){ return '<option value="' + esc(x.id) + '"' + (x.id === h.aid ? ' selected' : '') + '>' + esc(f2Nombre(x.persona_id)) + '</option>'; }).join('') + '</select></label>';
+    }
+    html += '<div class="f2-avisos" role="radiogroup" aria-label="Cómo avisó">' + [['a_tiempo','Avisó a tiempo'],['tarde','Avisó tarde'],['sin_aviso','No avisó']].map(function(o){
+      return '<button type="button" role="radio" aria-checked="' + (h.aviso === o[0]) + '" class="f2-aviso" data-f2-aviso="' + o[0] + '"><span>' + o[1] + '</span>' + (h.aviso === o[0] ? f1Ico('tilde') : '') + '</button>'; }).join('') + '</div>';
+    if(h.aviso){
+      var pv = f2Preview(a, h.fecha, h.hora, h.aviso, h.llego, h.motivo), r = pv.r, res = pv.res, der = pv.der, lim = pv.lim, porEx = false;
+      if(h.excepcion && res !== 'grupal'){ porEx = true; der = !der; res = der ? 'repone' : 'sin_derecho'; lim = der ? (r.alcance === 'semana' ? f2Sabado(h.fecha) : f2FinMes(h.fecha)) : null; }
+      var frase = res === 'repone' ? 'Tiene derecho a reponer · ' + f2Hasta(lim)
+        : res === 'grupal' ? (der ? 'Puede reservar un espacio grupal ' + f2Hasta(lim) : 'Sin reposición grupal (el aviso no llegó a tiempo)')
+        : res === 'viaje' ? 'De viaje · no se repone'
+        : res === 'tope' ? 'Ya usó las reposiciones del mes · cuenta como realizada'
+        : res === 'sin_derecho' ? 'No repone' : 'Cuenta como realizada';
+      html += '<div aria-live="polite"><p class="f2-resultado">' + esc(frase) + '</p>';
+      if(porEx) html += '<p class="f2-porque">Por excepción tuya. Su acuerdo decía otra cosa. <button type="button" class="f1-txt" data-f2-excepcion>Deshacer</button></p>';
+      if(r.tope != null && res !== 'grupal'){
+        var queda = Math.max(0, r.tope - f2Usadas(a, h.fecha) - (res === 'repone' ? 1 : 0));
+        html += '<p class="f2-queda">' + (queda === 0 ? 'No le quedan reposiciones este mes.' : 'Le queda' + (queda === 1 ? ' 1 reposición' : 'n ' + queda + ' reposiciones') + ' este mes.') + '</p>';
+      }
+      var porque = 'Su acuerdo (' + r.version + ') ' + (r.aviso ? 'pide ' + r.aviso + ' horas de aviso' : 'no define horas de aviso: cuenta lo que tocaste') +
+        (r.alcance === 'semana' ? ' y reponer en la misma semana.' : r.alcance === 'mes' ? ' y reponer dentro del mes.' : '. En grupo se repone en un espacio grupal, no acumulable.');
+      if(pv.horas != null) porque += ' El mensaje llegó ' + Math.max(0, Math.round(pv.horas)) + ' horas antes.';
+      html += '<p class="f2-porque">' + esc(porque) + '</p>';
+      if(res !== 'grupal' && !porEx) html += '<p><button type="button" class="f1-txt" data-f2-excepcion>' + f1Ico('lapiz') + 'Hacer excepción</button></p>';
+      html += '</div>';
+      h.calc = { res:res, der:der, lim:lim };
+    }
+    html += '<div class="f1-sec"><label class="f1-campo"><span class="f1-rotulo">El mensaje llegó (opcional)</span><input type="datetime-local" id="f2AusLlego" value="' + esc(h.llego || '') + '"></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Motivo general (opcional, sin detalle)</span><select id="f2AusMotivo"><option value="">Sin decir</option>' +
+      F2_MOTIVOS.map(function(m){ return '<option value="' + m[0] + '"' + (h.motivo === m[0] ? ' selected' : '') + '>' + m[1] + '</option>'; }).join('') + '</select></label></div>';
+    var repone = h.calc && h.calc.res === 'repone';
+    html += '<div class="f1-hoja-pie">' + (h.aviso ? (repone ? '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-aus-ok="buscar">Guardar y buscarle espacio</button><button type="button" class="f1-txt" data-guarda data-f2-aus-ok="solo">Solo guardar</button>'
+      : '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-aus-ok="solo">Guardar</button>') : '<p class="f1-ayuda">Tocá cómo avisó.</p>') + '</div>';
+    return html;
+  }
+  /* «No corresponde reponer»: firme y cálido, la regla como dato, mirando adelante */
+  function f2MensajeNoRepone(a, fecha, res, aviso, hora){
+    var pid = a.persona_id, U = f2Trato(pid) === 'usted', n = primerNombre(f1Persona(pid) || {}), r = f2Reglas(a);
+    var cuando = fecha === f1Hoy() ? 'la sesión de hoy' : 'la sesión del ' + f2DiaNombre(fecha);
+    var proxN = null;
+    for(var j = 1; j < 14 && !proxN; j++){
+      var fj = f1Mas(fecha, j);
+      proxN = (F2.porDia[fj] || []).filter(function(x){ return x.tipo === '1a1' && x.acuerdo_id === a.id && x.estado === 'programada'; })[0] || null;
+    }
+    var cierreProx = proxN ? ' Nos vemos el ' + f2DiaNombre(proxN.fecha) + ' a las ' + f1Hora(proxN.hora) + '.' : '';
+    /* QA fase 2 · I1: si no avisó, no se le agradece un aviso que no hubo */
+    if(aviso === 'sin_aviso' && res !== 'tope'){
+      var dia = fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(fecha);
+      return f1Saludo(U) + ', ' + n + '. ' + dia + ' ' + (U ? 'no llegó' : 'no llegaste') + ' a la sesión de las ' + f1Hora(hora) + ' y no me llegó aviso; espero que ' + (U ? 'esté' : 'estés') +
+        ' bien. Según nuestro acuerdo, cuando no hay aviso la sesión cuenta como realizada y no se repone.' + cierreProx;
+    }
+    var porQue = res === 'tope' ? 'Como ya se usaron las reposiciones del mes' : r.aviso ? 'Como el aviso llegó con menos de ' + r.aviso + ' horas' : 'Como el aviso no llegó a tiempo';
+    var prox = null;
+    for(var i = 1; i < 14 && !prox; i++){
+      var f = f1Mas(fecha, i);
+      prox = (F2.porDia[f] || []).filter(function(x){ return x.tipo === '1a1' && x.acuerdo_id === a.id && x.estado === 'programada'; })[0] || null;
+    }
+    return f1Saludo(U) + ', ' + n + '. Gracias por avisarme; espero que ' + (U ? 'esté' : 'estés') + ' bien. ' + porQue +
+      ', según nuestro acuerdo ' + cuando + ' cuenta como realizada y no se repone.' + (prox ? ' Nos vemos el ' + f2DiaNombre(prox.fecha) + ' a las ' + f1Hora(prox.hora) + '.' : '');
+  }
+  function f2HtmlAusenciaHecha(h, a){
+    var au = F2.aus.filter(function(x){ return x.id === h.hecha; })[0];
+    if(!au) return '<p class="f1-ayuda" style="margin-top:14px">Registrada.</p>';
+    var html = '<p class="f2-resultado">' + esc(au.resultado === 'repone' ? 'Tiene derecho a reponer · ' + f2Hasta(au.fecha_limite) : au.resultado === 'grupal' ? (au.derecho ? 'Puede reservar un espacio grupal ' + f2Hasta(au.fecha_limite) : 'Sin reposición grupal') : 'Cuenta como realizada') + '</p>';
+    if(au.resultado === 'realizada' || au.resultado === 'tope' || au.resultado === 'sin_derecho'){
+      var t = f2MensajeNoRepone(a, au.fecha, au.resultado, au.aviso, au.hora);
+      html += '<div class="f1-sec"><span class="f1-rotulo">Si querés avisarle</span><p class="f2-msj">' + esc(t) + '</p>' +
+        (waLink(f1Persona(a.persona_id) || {}, t) ? '<a class="wa f2-wa" href="' + esc(waLink(f1Persona(a.persona_id) || {}, t)) + '" target="_blank" rel="noopener">' + ICONO_WA + 'Abrir WhatsApp</a>' : '') + '</div>';
+    }
+    return html + '<div class="f1-hoja-pie"><button type="button" class="f1-txt" data-f1-cerrar>Listo</button></div>';
+  }
+
+  /* — hoja de un espacio o hueco — */
+  function f2HtmlHueco(h){
+    var x = f2Fila(h.clave);
+    if(!x) return f1Top('Espacio', '', false) + '<p class="f1-ayuda" style="margin-top:16px">Ese espacio ya no está libre.</p>';
+    var tit = f2DiaNombre(x.fecha) + ' · ' + f1Hora(x.hora);
+    var html = f1Top(tit.charAt(0).toUpperCase() + tit.slice(1), f2TituloEspacio(x) + (f2SubEspacio(x) ? ' · ' + f2SubEspacio(x) : ''), false);
+    var cands = h.cands || (F2.cand[f2Clave(x)] || []).length && F2.cand[f2Clave(x)] || f2Candidatos(x).map(function(r){ return { reposicion_id:r.id, acuerdo_id:r.acuerdo_id, persona_id:(f1Acuerdo(r.acuerdo_id) || {}).persona_id, fecha_limite:r.fecha_limite, origen:r.origen }; });
+    if(cands.length){
+      var abierto = h.abierto || cands[0].reposicion_id;
+      html += '<div class="f1-sec"><span class="f1-rotulo">Pueden usarlo</span>' + cands.map(function(c){
+        var nom = f2Nombre(c.persona_id), linea = c.origen === 'htm' ? '<strong>Sesión de HTM por reprogramar</strong> · sin vencimiento' : '<strong>Reposición ' + esc(f2Hasta(c.fecha_limite)) + '</strong>';
+        var dia = (F2.porDia[x.fecha] || []).filter(function(s){ return s.persona_id === c.persona_id && s.tipo === '1a1'; });
+        var item = '<div class="f2-cand"><span class="f1-ini" aria-hidden="true">' + esc(iniciales(nom)) + '</span><div><b>' + esc(nom) + '</b><p class="f2-cand-l">' + linea + '</p>';
+        if(c.reposicion_id === abierto){
+          var ops = [{ fecha:x.fecha, hora:f2H(x.hora) }], t = f2MensajeOfrecer(c.persona_id, ops, c.origen);
+          item += f2SegTrato(c.persona_id) + '<p class="f2-msj">' + esc(t) + '</p><div class="f1-acciones">' + f2Waboton(c.persona_id, t, 'data-f2-ofrecer="' + esc(c.reposicion_id + '~' + x.fecha + '|' + f2H(x.hora)) + '"') + '</div>';
+        }else{
+          item += '<p><button type="button" class="f1-mini" data-f2-abrir-cand="' + esc(c.reposicion_id) + '">Ofrecérsela</button></p>';
+        }
+        return item + '</div></div>';
+      }).join('') + '</div>';
+    }else if(x.estado !== 'libre' || x.marca === 'reposicion'){
+      html += '<p class="f1-ayuda" style="margin-top:14px">' + (x.pegado || x.marca === 'reposicion' ? 'Nadie con reposición pendiente puede usarlo.' : 'Queda fuera de tu jornada de ese día: no se sugiere a nadie.') + '</p>';
+    }
+    /* las marcas: acá sí son botones */
+    var md = f2MarcaDe(x), soloDia = x.estado !== 'libre';
+    var alcance = soloDia ? 'dia' : (h.alcance || (md ? md.alcance : 'fija'));
+    html += '<div class="f1-sec"><span class="f1-rotulo">' + (cands.length ? 'O marcalo' : 'Marcalo') + '</span>' +
+      (soloDia ? '' : '<div class="f1-seg" role="radiogroup" aria-label="Cuánto vale la marca">' + [['fija','Todas las semanas'],['dia','Solo este día']].map(function(o){
+        return '<button type="button" role="radio" aria-checked="' + (alcance === o[0]) + '" data-f2-alcance="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>') +
+      '<div class="f2-marcas">' + Object.keys(F2_MARCA).map(function(k){
+        var on = md && md.m.marca === k && md.alcance === alcance;
+        return '<button type="button" class="f1-mini chico' + (on ? ' on' : '') + '" aria-pressed="' + !!on + '" data-guarda data-f2-marca="' + k + '">' + f1Ico(F2_MARCA_ICO[k]) + F2_MARCA[k] + '</button>'; }).join('') + '</div>' +
+      (soloDia ? '<p class="f1-ayuda">Un hueco es de un solo día: la marca vale solo para el ' + esc(f2DiaNombre(x.fecha)) + '.</p>' : '') +
+      (md ? '<p><button type="button" class="f1-txt" data-guarda data-f2-sin-marca>Quitar la marca</button></p>' : '') + '</div>';
+    if(cands.length) html += '<div class="f1-hoja-pie"><button type="button" class="f1-txt" data-guarda data-f2-dejar>Dejar libre</button></div>';
+    return html;
+  }
+
+  /* — buscarle espacio a una reposición — */
+  function f2HtmlBuscar(h){
+    var r = F2.repos.filter(function(q){ return q.id === h.repo; })[0];
+    if(!r) return f1Top('Buscarle espacio', '', false) + '<p class="f1-ayuda">Esa reposición ya no está abierta.</p>';
+    var a = f1Acuerdo(r.acuerdo_id) || {}, pid = a.persona_id;
+    var html = f1Top('Buscarle espacio', f2Nombre(pid) + ' · ' + (r.origen === 'htm' ? 'sesión de HTM por reprogramar' : 'repone ' + f2Hasta(r.fecha_limite)), false);
+    if(r.estado === 'ofrecida' && r.opciones && r.opciones.length){
+      html += '<div class="f1-sec"><span class="f1-rotulo">Se le ofreció</span>' + r.opciones.map(function(o){
+        return '<p class="f2-quien"><b>' + esc(f2Opcion(o)) + '</b> <button type="button" class="f1-mini chico" data-guarda data-f2-agendar="' + esc(r.id + '|' + o.fecha + '|' + f2H(o.hora)) + '">Agendar esta</button></p>'; }).join('') +
+        '<p><button type="button" class="f1-txt" data-guarda data-f2-repo-estado="' + esc(r.id + '|no_quiso') + '">Prefirió no reponer</button></p></div>';
+    }
+    var ops = h.espacios;
+    if(!ops) return html + '<p class="f1-ayuda" style="margin-top:14px">Buscando espacios…</p>';
+    if(!ops.length) return html + '<p class="f1-ayuda" style="margin-top:14px">No hay un espacio pegado a tu jornada ' + (r.fecha_limite ? 'antes del ' + esc(f1Corto(r.fecha_limite)) : 'en las próximas dos semanas') + '. Si decidís abrir el sábado, se agenda desde la Semana.</p>';
+    var sel = h.sel || [ops[0].fecha + '|' + ops[0].hora];
+    html += '<div class="f1-sec"><span class="f1-rotulo">Espacios que le sirven</span><p class="f1-ayuda">Elegí una o dos opciones.</p><div class="f2-ops">' + ops.slice(0, 8).map(function(o){
+      var k = o.fecha + '|' + o.hora, on = sel.indexOf(k) >= 0;
+      return '<label class="f2-op"><input type="checkbox" data-f2-op="' + esc(k) + '"' + (on ? ' checked' : '') + (!on && sel.length >= 2 ? ' disabled' : '') + '><span>' + esc(f2Opcion(o)) + '</span></label>'; }).join('') + '</div></div>';
+    var elegidas = sel.map(function(k){ var p = k.split('|'); return { fecha:p[0], hora:p[1] }; });
+    if(elegidas.length){
+      var t = f2MensajeOfrecer(pid, elegidas, r.origen);
+      html += f2SegTrato(pid) + '<p class="f2-msj">' + esc(t) + '</p><div class="f1-acciones">' + f2Waboton(pid, t, 'data-f2-ofrecer="' + esc(r.id + '~' + sel.join(',')) + '"') + '</div>';
+    }
+    return html;
+  }
+  function f2BuscarEspacios(h){
+    var r = F2.repos.filter(function(q){ return q.id === h.repo; })[0];
+    if(!r) return;
+    var a = f1Acuerdo(r.acuerdo_id) || {}, hoy = f1Hoy();
+    var hasta = r.fecha_limite || f1Mas(hoy, 13);
+    if(hasta < hoy){ h.espacios = []; f1RepintarHoja(); return; }
+    var desde = r.sesion_fecha > hoy ? r.sesion_fecha : hoy;
+    sb.rpc('agenda_sesiones', { p_desde:desde, p_hasta:hasta }).then(function(res){
+      var filas = (res && res.data) || [];
+      h.espacios = filas.filter(function(x){
+        if(x.tipo !== 'espacio' || F2_NO_SUGERIR.indexOf(x.marca || '') >= 0 || (!x.pegado && x.marca !== 'reposicion')) return false;
+        if(f2Paso(x.fecha, x.hora)) return false;
+        if(x.fecha === r.sesion_fecha && f2H(x.hora) === f2H(r.sesion_hora)) return false;   /* su propia sesión, no */
+        return !filas.some(function(s){ return s.fecha === x.fecha && s.persona_id === a.persona_id && f2H(s.hora) === f2H(x.hora) && (s.tipo === '1a1' || s.tipo === 'reposicion') && (s.estado === 'programada' || s.estado === 'agendada'); });
+      }).map(function(x){ return { fecha:x.fecha, hora:f2H(x.hora) }; });
+      if(F1.hoja === h) f1RepintarHoja();
+    });
+  }
+
+  /* — Cancelo yo: todo o nada — */
+  function f2Afectadas(h){
+    var d = (F2.porDia[h.fecha] || []);
+    var de = h.alcance === 'dia' ? null : h.hora, ha = h.alcance === 'una' ? (function(){ var x = d.filter(function(s){ return f2H(s.hora) === h.hora && s.tipo !== 'espacio' && s.tipo !== 'bloque'; })[0]; return x ? f2H(x.fin) : null; })() : null;
+    return { de:de, ha:ha, lista:d.filter(function(s){
+      var dentro = (!de || f2Min(s.hora) >= f2Min(de)) && (!ha || f2Min(s.hora) < f2Min(ha));
+      return dentro && (((s.tipo === '1a1' || s.tipo === 'grupo') && s.estado === 'programada') || (s.tipo === 'reposicion' && s.estado === 'agendada'));
+    }), espacios:d.filter(function(s){ return s.tipo === 'espacio' && (!de || f2Min(s.hora) >= f2Min(de)) && (!ha || f2Min(s.hora) < f2Min(ha)); }) };
+  }
+  function f2HtmlCancela(h){
+    var f = h.fecha, nom = F1_DIA[f1Dow(f)] + ' ' + (+f.slice(8,10)) + ' de ' + F1_MES_L[+f.slice(5,7) - 1];
+    var html = f1Top('Cancelo yo', nom.charAt(0).toUpperCase() + nom.slice(1), false);
+    if(h.hecho) return html + f2HtmlCancelaHecho(h);
+    var horas = (F2.porDia[f] || []).filter(function(s){ return (s.tipo === '1a1' || s.tipo === 'grupo' || s.tipo === 'reposicion') && (s.estado === 'programada' || s.estado === 'agendada'); })
+      .map(function(s){ return f2H(s.hora); }).filter(function(v, i, arr){ return arr.indexOf(v) === i; });
+    if(!h.hora && horas.length) h.hora = horas[0];
+    html += '<div class="f1-sec"><span class="f1-rotulo">Qué se cancela</span><div class="f1-seg ancho" role="radiogroup" aria-label="Qué se cancela">' +
+      [['una','Una sesión'],['desde','Desde una hora'],['dia','Todo el día']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (h.alcance === o[0]) + '" data-f2-cancela-alc="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>' +
+      (h.alcance !== 'dia' && horas.length ? '<label class="f1-campo" style="margin-top:10px"><span class="f1-rotulo">' + (h.alcance === 'una' ? 'La sesión de las' : 'Desde las') + '</span><select id="f2CanHora">' +
+        horas.map(function(x){ return '<option value="' + x + '"' + (x === h.hora ? ' selected' : '') + '>' + esc(f1Hora(x)) + '</option>'; }).join('') + '</select></label>' : '') +
+      '<label class="f1-campo"><span class="f1-rotulo">Motivo (opcional, no lo ven)</span><input id="f2CanMotivo" maxlength="140" autocomplete="off" placeholder="Por ejemplo: un imprevisto" value="' + esc(h.motivo || '') + '"></label></div>';
+    var af = f2Afectadas(h);
+    html += '<div class="f1-sec"><span class="f1-rotulo">A quién afecta · ' + af.lista.length + (af.lista.length === 1 ? ' sesión' : ' sesiones') + '</span>' + (af.lista.length ? af.lista.map(function(s){
+      if(s.tipo === 'grupo'){
+        var k = s.grupo_id, modo = (h.grupos || {})[k] || 'reposicion';
+        return '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2GrupoNombre(s.grupo_id) + ' · ' + f2Sub(s)) + '</b>' +
+          '<p><strong>Reposición del grupo antes del ' + esc(f1Corto(f1Mas(s.fecha, 30))) + '.</strong> O, si la cubre alguien, se da igual.</p>' +
+          '<div class="f1-seg" role="radiogroup" aria-label="Cómo se resuelve">' + [['reposicion','Reposición grupal'],['sustituta','Hubo sustituta']].map(function(o){
+            return '<button type="button" role="radio" aria-checked="' + (modo === o[0]) + '" data-f2-can-grupo="' + esc(k + '|' + o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div>' +
+          (modo === 'sustituta' ? '<input class="f2-sust" data-f2-sust="' + esc(k) + '" placeholder="Nombre de quien la cubre" aria-label="Nombre de quien la cubre" value="' + esc((h.sust || {})[k] || '') + '">' : '') + '</div></div>';
+      }
+      if(s.tipo === 'reposicion') return '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2Nombre(s.persona_id)) + ' · reposición</b><p><strong>Se reprograma: la canceló HTM.</strong> Ya no vence.</p></div></div>';
+      return '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2Nombre(s.persona_id) + ' · ' + f2Sub(s)) + '</b><p><strong>Sesión de HTM por reprogramar.</strong> No vence y no cuenta en su tope de reposiciones.</p></div></div>';
+    }).join('') : '<p class="f1-ayuda">No hay sesiones en ese tramo.</p>') + '</div>';
+    if(af.espacios.length) html += '<p class="f2-nota">' + f1Ico('info') + '<span>' + esc('Los espacios ' + (h.alcance === 'dia' ? 'del día' : 'del tramo') + ' (' + af.espacios.map(function(x){ return f1Hora(x.hora); }).join(' y ') + ') quedan cerrados. El bloque personal no cambia.') + '</span></p>';
+    if(h.err) html += '<p class="f1-error" role="alert">' + esc(h.err) + '</p>';
+    html += '<div class="f1-hoja-pie"><button type="button" class="pn-btn f1-btn" data-guarda data-f2-cancela-ok>' + (af.lista.length ? 'Cancelar ' + (af.lista.length === 1 ? 'la sesión' : 'las ' + af.lista.length + ' sesiones') : 'Cerrar ' + (h.alcance === 'dia' ? 'el día' : 'el tramo')) + '</button>' +
+      '<button type="button" class="f1-txt" data-f1-cerrar>Volver</button></div>';
+    return html;
+  }
+  function f2HtmlCancelaHecho(h){
+    var lis = h.hecho || [], html = '<p class="f2-resultado chico">Listo. Quedó todo pendiente y a la vista hasta que se resuelva.</p>';
+    /* QA fase 2 · I2: quien tenía una reposición agendada ese día también recibe su aviso */
+    var unos = lis.filter(function(s){ return s.tipo === '1a1' || s.tipo === 'reposicion'; }), grupos = lis.filter(function(s){ return s.tipo === 'grupo'; });
+    if(unos.length || grupos.length) html += '<div class="f1-sec"><span class="f1-rotulo">Avisarles (lo mandás vos)</span>';
+    unos.forEach(function(s){
+      var U = f2Trato(s.persona_id) === 'usted', n = primerNombre(f1Persona(s.persona_id) || {});
+      var t = f1Saludo(U) + ', ' + n + '. ' + (h.fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(h.fecha)) + ' no voy a poder dar ' + (s.tipo === 'reposicion' ? 'la reposición' : 'la sesión') + ' de las ' + f1Hora(s.hora) + '. ' +
+        (U ? 'Para no perderla, la reprogramamos: le escribo con opciones. Si tiene una preferencia, me dice.' : 'Para no perderla, la reprogramamos: te escribo con opciones. Si tenés una preferencia, decime.');
+      var href = waLink(f1Persona(s.persona_id) || {}, t);
+      html += '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2Nombre(s.persona_id)) + '</b><p class="f2-msj">' + esc(t) + '</p>' +
+        (href ? '<a class="wa f2-wa chico" href="' + esc(href) + '" target="_blank" rel="noopener">' + ICONO_WA + 'Abrir WhatsApp</a>' : '') + '</div></div>';
+    });
+    grupos.forEach(function(s){
+      var t = (h.fecha === f1Hoy() ? 'Hola. Hoy' : 'Hola. El ' + f2DiaNombre(h.fecha)) + ' no hay sesión de las ' + f1Hora(s.hora) + '. Queda pendiente la reposición del grupo: les aviso la fecha antes del ' + f1Corto(f1Mas(s.fecha, 30)) + '.';
+      html += '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2GrupoNombre(s.grupo_id)) + '</b><p class="f2-msj">' + esc(t) + '</p>' +
+        '<button type="button" class="f1-mini chico" data-f2-copiar="' + esc(t) + '">' + f1Ico('copiar') + 'Copiar para el grupo</button></div></div>';
+    });
+    if(unos.length || grupos.length) html += '</div>';
+    return html + '<div class="f1-hoja-pie"><button type="button" class="f1-txt" data-f1-cerrar>Listo</button></div>';
+  }
+
+  /* — viaje — */
+  function f2PeriodoViaje(a, desde){
+    var ps = (typeof f1PeriodosViaje === 'function' ? f1PeriodosViaje(a) : f1PeriodosDe(a.id));
+    return ps.filter(function(p){ return p.periodo_inicio <= desde && p.periodo_fin >= desde; })[0] || ps.filter(function(p){ return p.periodo_inicio > desde; })[0] || null;
+  }
+  function f2HtmlViaje(h){
+    var a = f1Acuerdo(h.aid) || {}, p = f1Persona(a.persona_id) || {};
+    var html = f1Top('Viaje', p.nombre + ' · ' + f1Modalidad(a) + (f1HorarioTexto(a) ? ' · ' + f1HorarioTexto(a) : ''), true);
+    var e = h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '';
+    html += '<form class="f1-form" id="f2FormViaje" novalidate><div class="f1-dos">' +
+      '<label class="f1-campo"><span class="f1-rotulo">Sale</span><input type="date" id="f2ViSale" value="' + esc(h.desde || '') + '"></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Vuelve</span><input type="date" id="f2ViVuelve" value="' + esc(h.vuelve || '') + '"></label></div>' + e +
+      '<label class="f1-campo"><span class="f1-rotulo">Nota (opcional)</span><input id="f2ViNota" maxlength="140" autocomplete="off" value="' + esc(h.nota || '') + '"></label>';
+    if(h.desde && h.vuelve && h.vuelve > h.desde){
+      var dias = Math.round((Date.parse(h.vuelve) - Date.parse(h.desde)) / 86400000);
+      if(h.libera){
+        html += '<div class="f1-sec"><span class="f1-rotulo">' + (a.grupo_id ? 'Su lugar en el grupo' : 'Libera su horario · ' + h.libera.length + (h.libera.length === 1 ? ' sesión' : ' sesiones')) + '</span>' +
+          (a.grupo_id ? '<p class="f1-ayuda">Su lugar en el grupo sigue reservado: el grupo se da igual.</p>'
+           : h.libera.slice(0, 12).map(function(x){ return '<p class="f2-quien"><b>' + esc(F1_DIA[f1Dow(x.fecha)].charAt(0).toUpperCase() + F1_DIA[f1Dow(x.fecha)].slice(1) + ' ' + f1Corto(x.fecha) + ' · ' + f1Hora(x.hora)) + '</b><span>Libre por viaje</span></p>'; }).join('') +
+             (h.libera.length > 12 ? '<p class="f1-ayuda">y ' + (h.libera.length - 12) + ' más</p>' : '') +
+             '<p class="f2-nota">' + f1Ico('info') + '<span>El horario sigue siendo suyo. Solo se puede usar para una reposición puntual.</span></p>') + '</div>';
+      }
+      var regla = a.regla_viaje, propone = dias >= 15 && (regla === 'completo_14_mitad_15' || regla === 'elige_activo_o_pausa_50');
+      if(propone){
+        var per = f2PeriodoViaje(a, h.desde), ver = f1Version(a.version_id) || {};
+        html += '<div class="f2-propuesta"><p><b>Viaje de ' + dias + ' días.</b> ' + esc('Su acuerdo (' + (ver.nombre || '') + ') ' + (regla === 'elige_activo_o_pausa_50' ? 'deja elegir: seguir activo pagando completo, o pausar al 50 %.' : 'dice 50 % desde los 15 días.')) + '</p>' +
+          (per ? '<div class="f1-acciones">' + (regla === 'elige_activo_o_pausa_50'
+            ? '<button type="button" class="' + (h.cobro === 'pausa50' ? 'pn-btn f1-btn' : 'f1-mini') + '" aria-pressed="' + (h.cobro === 'pausa50') + '" data-f2-vi-cobro="pausa50">Pausa al 50 % en ' + esc(f1Rango(per.periodo_inicio, per.periodo_fin)) + '</button>' +
+              '<button type="button" class="' + (h.cobro === 'completo' ? 'pn-btn f1-btn' : 'f1-mini') + '" aria-pressed="' + (h.cobro === 'completo') + '" data-f2-vi-cobro="completo">Sigue activo</button>'
+            : '<button type="button" class="' + (h.cobro === '50' ? 'pn-btn f1-btn' : 'f1-mini') + '" aria-pressed="' + (h.cobro === '50') + '" data-f2-vi-cobro="50">Cobrar el 50 % en ' + esc(f1Rango(per.periodo_inicio, per.periodo_fin)) + '</button>' +
+              '<button type="button" class="' + (h.cobro === 'completo' ? 'pn-btn f1-btn' : 'f1-mini') + '" aria-pressed="' + (h.cobro === 'completo') + '" data-f2-vi-cobro="completo">Cobrar completo</button>') + '</div>'
+           : '<p class="f1-ayuda">No hay un período a la vista para el 50 %.</p>') + '<p class="f1-ayuda">Nada se aplica hasta que lo elegís.</p></div>';
+        h.periodo = per ? per.periodo_inicio : null;
+      }else if(dias >= 15 && regla === 'sin_creditos_grupo'){
+        html += '<p class="f1-ayuda">En el grupo los viajes no generan descuentos: se cobra completo.</p>';
+      }
+    }
+    html += '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Guardar el viaje</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
+    return html;
+  }
+  function f2CalcularViaje(h){
+    var a = f1Acuerdo(h.aid);
+    if(!a || !h.desde || !h.vuelve || h.vuelve <= h.desde){ h.libera = null; return; }
+    sb.rpc('agenda_sesiones', { p_desde:h.desde, p_hasta:f1Mas(h.vuelve, -1) }).then(function(r){
+      h.libera = ((r && r.data) || []).filter(function(x){ return x.tipo === '1a1' && x.acuerdo_id === a.id && (x.estado === 'programada' || x.estado === 'ausencia'); });
+      if(F1.hoja === h) f1RepintarHoja();
+    });
+  }
+
+  /* — reevaluación y cierre de ciclo — */
+  function f2HtmlReeval(h){
+    var p = F2.prox.filter(function(x){ return x.acuerdo_id === h.aid && x.tipo === h.tipoR; })[0];
+    var a = f1Acuerdo(h.aid) || {}, pid = a.persona_id, nom = f2Nombre(pid);
+    if(!p) return f1Top('Reevaluación', nom, false) + '<p class="f1-ayuda">Nada que mirar todavía.</p>';
+    if(h.paso === 'cierre') return f2HtmlCierre(h, p, a);
+    var html = f1Top(p.tipo === 'cierre_ciclo' ? 'Cierre de ciclo' : 'Reevaluación', nom + ' · ' + f1Modalidad(a), false);
+    html += '<p class="f2-resultado">' + esc(f2TextoReeval(p)) + '</p>' +
+      '<p class="f2-porque">' + esc((p.tipo === 'cierre_ciclo' ? 'Ciclo ' : 'Programa actual desde ') + f1Corto(p.base) + (a.ciclo_fin ? ' · ciclo hasta el ' + f1Corto(a.ciclo_fin) : '')) + '</p>';
+    var carpeta = (F1.expedientes || {})[pid];
+    html += carpeta ? '<a class="f2-carpeta" href="' + esc(carpeta) + '" target="_blank" rel="noopener">' + f1Ico('carpeta') + '<span>Desde dónde partimos · su plan del ciclo</span>' + f1Ico('externo') + '</a>'
+      : '<p class="f1-ayuda">Para tener a mano desde dónde partimos, agregá el link de su carpeta en su ficha.</p>';
+    if(p.agendada_para) html += '<p class="f2-queda">Elegida para el ' + esc(f2DiaNombre(p.agendada_para)) + '.</p>';
+    if(h.paso === 'elegir'){
+      var ses = [];
+      for(var i = 0; i < 14; i++){
+        var f = f1Mas(f1Hoy(), i);
+        (F2.porDia[f] || []).forEach(function(x){
+          if(x.estado !== 'programada' || f2Paso(x.fecha, x.hora)) return;
+          if((x.tipo === '1a1' && x.acuerdo_id === a.id) || (x.tipo === 'grupo' && a.grupo_id && x.grupo_id === a.grupo_id)) ses.push(x);
+        });
+      }
+      html += '<div class="f1-sec"><span class="f1-rotulo">Sus próximas sesiones</span>' + (ses.length ? '<div class="f2-ops">' + ses.slice(0, 8).map(function(x){
+        return '<button type="button" class="f1-mini" data-guarda data-f2-reeval-ses="' + esc(x.fecha + '|' + f2H(x.hora)) + '">' + esc(f2Opcion({ fecha:x.fecha, hora:x.hora })) + '</button>'; }).join('') + '</div>' : '<p class="f1-ayuda">No tiene sesiones en las próximas dos semanas.</p>') + '</div>';
+    }else if(h.paso === 'despues'){
+      html += '<div class="f1-sec"><label class="f1-campo"><span class="f1-rotulo">¿Hasta cuándo?</span><input type="date" id="f2RevHasta" min="' + f1Mas(f1Hoy(), 1) + '" value="' + esc(h.hasta || f1Mas(f1Hoy(), 7)) + '"></label>' +
+        '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-reeval-ok="mas_adelante">Guardar</button></div>';
+    }else if(h.paso === 'hecha'){
+      html += '<div class="f1-sec"><label class="f1-campo"' + (h.err ? ' data-error' : '') + '><span class="f1-rotulo">¿Cuándo la hiciste?</span><input type="date" id="f2RevHecha" max="' + f1Hoy() + '" value="' + esc(h.hecha || f1Hoy()) + '">' +
+        (h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '<p class="f1-ayuda">Esa fecha pasa a ser la base del próximo cambio de programa.</p>') + '</label>' +
+        '<button type="button" class="pn-btn f1-btn" data-guarda data-f2-reeval-ok="hecha">Guardar</button></div>';
+    }else{
+      html += '<div class="f1-acciones" style="margin-top:16px"><button type="button" class="pn-btn f1-btn" data-f2-reeval-paso="elegir">Elegir sesión</button>' +
+        '<button type="button" class="f1-mini" data-f2-reeval-paso="despues">Más adelante</button>' +
+        '<button type="button" class="f1-txt" data-f2-reeval-paso="' + (p.tipo === 'cierre_ciclo' ? 'cierre' : 'hecha') + '">Hecha</button></div>';
+    }
+    return html;
+  }
+  function f2HtmlCierre(h, p, a){
+    var pid = a.persona_id, nom = f2Nombre(pid), v = h.vals || {};
+    var html = f1Top('Cierre de ciclo', nom + ' · ' + f1Corto(p.base) + ' – ' + f1Corto(p.objetivo, true), false);
+    var carpeta = (F1.expedientes || {})[pid];
+    if(carpeta) html += '<a class="f2-carpeta" href="' + esc(carpeta) + '" target="_blank" rel="noopener">' + f1Ico('carpeta') + '<span>Su plan del ciclo, en la carpeta</span>' + f1Ico('externo') + '</a>';
+    var cambios = F2.reeval.filter(function(r){ return !r.anulada && r.acuerdo_id === a.id && r.tipo === 'cambio_programa' && r.estado === 'hecha' && r.hecha_en >= p.base; }).map(function(r){ return f1Corto(r.hecha_en); });
+    html += '<form class="f1-form" id="f2FormCierre" novalidate>' +
+      '<label class="f1-campo"><span class="f1-rotulo">De dónde comenzamos</span><textarea id="f2CiDonde">' + esc(v.donde || '') + '</textarea><p class="f1-ayuda">Evaluación inicial: ' + esc(f1Corto(p.base)) + '</p></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Qué cambió</span><textarea id="f2CiCambio">' + esc(v.cambio || '') + '</textarea><p class="f1-ayuda">' + esc(cambios.length ? cambios.length + (cambios.length === 1 ? ' cambio de programa · ' : ' cambios de programa · ') + cambios.join(' y ') : 'Sin cambios de programa registrados en este ciclo') + '</p></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Qué trabajamos ahora</span><textarea id="f2CiAhora" placeholder="Lo que sigue en el próximo ciclo">' + esc(v.ahora || '') + '</textarea></label>' +
+      '<p class="f2-nota">' + f1Ico('info') + '<span>Es un borrador tuyo. Las fechas las pone el panel; las palabras, vos. Sin puntajes ni porcentajes.</span></p>' +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Guardar en su ficha</button><button type="button" class="f1-mini" data-f2-cierre-copiar>' + f1Ico('copiar') + 'Copiar para mandárselo</button></div></form>';
+    return html;
+  }
+  function f2TextoCierre(h){
+    var a = f1Acuerdo(h.aid) || {}, n = primerNombre(f1Persona(a.persona_id) || {});
+    function v(id){ var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+    return 'Cierre de ciclo · ' + n + '\n\nDe dónde comenzamos\n' + v('f2CiDonde') + '\n\nQué cambió\n' + v('f2CiCambio') + '\n\nQué trabajamos ahora\n' + v('f2CiAhora');
+  }
+
+  /* — espacio grupal (THRIVE) — */
+  function f2HtmlGrupal(h){
+    var hoy = f1Hoy();
+    if(h.gid === 'nuevo'){
+      var html = f1Top('Abrir espacio grupal', 'Reposiciones de THRIVE, cada dos semanas', false);
+      return html + '<form class="f1-form" id="f2FormGrupal" novalidate><div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Fecha</span><input type="date" id="f2GrFecha" min="' + f1Mas(hoy, 1) + '" value="' + esc(h.fecha || '') + '"></label>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Hora</span><input type="time" id="f2GrHora" value="' + esc(h.hora || '') + '"></label></div>' +
+        /* el espacio es de un grupo: así la base reconoce el choque con su hora fija */
+        (function(){
+          var pueden = f2PuedenReservar(), def = h.grupo || (pueden[0] && (f1Acuerdo(pueden[0].acuerdo_id) || {}).grupo_id) || ((F2.grupos.filter(function(g){ return g.activo; })[0]) || {}).id;
+          return '<label class="f1-campo"><span class="f1-rotulo">Grupo</span><select id="f2GrGrupo">' + F2.grupos.filter(function(g){ return g.activo; }).map(function(g){
+            return '<option value="' + esc(g.id) + '"' + (g.id === def ? ' selected' : '') + '>' + esc(g.nombre) + '</option>'; }).join('') + '</select></label>';
+        })() +
+        '<label class="f1-campo"><span class="f1-rotulo">Cupo</span><input type="number" id="f2GrCupo" min="1" max="30" value="' + esc(h.cupo || '4') + '"></label>' +
+        (h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '') +
+        '<p class="f1-ayuda">Si solo viene una persona, la sesión se realiza.</p>' +
+        '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Abrir el espacio</button><button type="button" class="f1-txt" data-f1-cerrar>Cancelar</button></div></form>';
+    }
+    var g = F2.repGr.filter(function(x){ return x.id === h.gid; })[0];
+    if(!g) return f1Top('Espacio grupal', '', false) + '<p class="f1-ayuda">Ya no está.</p>';
+    if(g.origen === 'htm'){
+      var html2 = f1Top('Reposición del grupo', f2GrupoNombre(g.grupo_id) + ' · sesión del ' + f2DiaNombre(g.sesion_fecha) + ' ' + f1Hora(g.sesion_hora), false);
+      html2 += '<p class="f2-resultado chico">Antes del ' + esc(f1Corto(g.fecha_limite)) + '</p>';
+      return html2 + '<form class="f1-form" id="f2FormGrupalHtm" novalidate><div class="f1-seg ancho" role="radiogroup" aria-label="Cómo se resuelve">' +
+        [['programar','Programar'],['sustituta','Hubo sustituta']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + ((h.modo || 'programar') === o[0]) + '" data-f2-gr-modo="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>' +
+        ((h.modo || 'programar') === 'programar'
+          ? '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Fecha</span><input type="date" id="f2GrFecha" min="' + hoy + '" max="' + esc(g.fecha_limite) + '"></label><label class="f1-campo"><span class="f1-rotulo">Hora</span><input type="time" id="f2GrHora"></label></div>'
+          : '<label class="f1-campo"><span class="f1-rotulo">Quién la cubrió</span><input id="f2GrSust" maxlength="80" autocomplete="off"></label>') +
+        (h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '') +
+        '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Guardar</button><button type="button" class="f1-txt" data-f1-cerrar>Cancelar</button></div></form>';
+    }
+    var res = F2.reservas.filter(function(r){ return r.reposicion_grupal_id === g.id && r.estado !== 'anulada'; });
+    var html3 = f1Top('Espacio grupal', f2DiaNombre(g.fecha) + ' · ' + f1Hora(g.hora) + (g.cupo ? ' · cupo ' + g.cupo : ''), false);
+    html3 += '<div class="f1-sec"><span class="f1-rotulo">Reservas</span>' + (res.length ? res.map(function(r){
+      var a = f1Acuerdo(r.acuerdo_id) || {};
+      return '<p class="f2-quien"><b>' + esc(f2Nombre(a.persona_id)) + '</b>' + (g.fecha <= hoy && r.estado === 'reservada'
+        ? ' <button type="button" class="f1-mini chico" data-guarda data-f2-reserva="' + esc(r.id + '|asistio') + '">Vino</button><button type="button" class="f1-txt" data-guarda data-f2-reserva="' + esc(r.id + '|no_asistio') + '">No vino</button>'
+        : ' · ' + esc(r.estado === 'asistio' ? 'vino' : r.estado === 'no_asistio' ? 'no vino' : 'reservada')) + '</p>'; }).join('') : '<p class="f1-ayuda">Nadie reservó todavía.</p>') + '</div>';
+    var pueden = f2PuedenReservar().filter(function(x){ return !x.fecha_limite || x.fecha_limite >= g.fecha; });
+    if(pueden.length && g.fecha >= hoy) html3 += '<div class="f1-sec"><span class="f1-rotulo">Reservar a…</span>' + pueden.map(function(x){
+      var a = f1Acuerdo(x.acuerdo_id) || {};
+      return '<p class="f2-quien"><b>' + esc(f2Nombre(a.persona_id)) + '</b> · faltó el ' + esc(f2DiaCorto(x.fecha)) + ' <button type="button" class="f1-mini chico" data-guarda data-f2-reservar="' + esc(g.id + '|' + x.acuerdo_id + '|' + x.id) + '">Reservar</button></p>'; }).join('') + '</div>';
+    return html3;
+  }
+  /* — sábado: solo si decidís abrirlo — */
+  function f2HtmlSabado(h){
+    var html = f1Top('Sábado ' + (+h.fecha.slice(8,10)), 'Sin horario. Solo si decidís abrirlo.', false);
+    var pend = f2ReposAbiertas().filter(function(r){ return r.estado !== 'agendada' && (!r.fecha_limite || r.fecha_limite >= h.fecha); });
+    return html + '<div class="f1-sec"><span class="f1-rotulo">Reposiciones que caben</span>' + pend.map(function(r){
+      var a = f1Acuerdo(r.acuerdo_id) || {};
+      return '<div class="f2-afecta"><span class="f2-h"></span><div><b>' + esc(f2Nombre(a.persona_id)) + '</b><p>' + esc(f2LineaRepo(r)) + '</p>' +
+        '<div class="f1-inline"><input type="time" data-f2-sab-hora="' + esc(r.id) + '" aria-label="Hora" value="09:00"><button type="button" class="f1-mini chico" data-guarda data-f2-sab-ok="' + esc(r.id) + '">Agendar el sábado</button></div></div></div>';
+    }).join('') + '</div>';
+  }
+  /* — el bloque personal: se usa solo un día — */
+  function f2HtmlBloque(h){
+    var x = f2Fila(h.clave) || {};
+    var html = f1Top('Personal', f2DiaNombre(h.clave.split('|')[0]) + ' · ' + f1Hora(x.hora) + ' – ' + f1Hora(x.fin), false);
+    if(x.estado === 'usado') return html + '<p class="f2-porque">Ese día lo usaste para trabajar. La regla no cambió: los demás días sigue protegido.</p>' +
+      '<div class="f1-acciones" style="margin-top:14px"><button type="button" class="pn-btn f1-btn" data-guarda data-f2-bloque="no">Volver a protegerlo</button></div>';
+    return html + '<p class="f2-porque">Es tu tiempo y no se ofrece. Si un día lo necesitás, usalo solo ese día: la regla no cambia.</p>' +
+      '<div class="f1-acciones" style="margin-top:14px"><button type="button" class="f1-mini" data-guarda data-f2-bloque="si">Usar este día</button></div>';
+  }
+
+  /* ═══ LA FICHA: viajes, reposiciones y grupo ═══ */
+  function f2HtmlFichaAgenda(pid){
+    if(F2.estado !== 'ok') return '';
+    var acs = F1.acuerdos.filter(function(a){ return a.persona_id === pid && (a.estado === 'vigente' || a.estado === 'pausado'); });
+    if(!acs.length) return '';
+    var html = '', hoy = f1Hoy();
+    acs.forEach(function(a){
+      var r = f2Reglas(a);
+      if(r.tope != null && r.alcance !== 'grupal'){
+        var q = Math.max(0, r.tope - f2Usadas(a, hoy));
+        html += '<p class="f2-queda">' + (q === 0 ? 'No le quedan reposiciones este mes.' : 'Le queda' + (q === 1 ? ' 1 reposición' : 'n ' + q + ' reposiciones') + ' este mes.') + '</p>';
+      }
+    });
+    var reps = F2.repos.filter(function(r){ return acs.some(function(a){ return a.id === r.acuerdo_id; }) && ['pendiente','ofrecida','agendada'].indexOf(r.estado) >= 0; });
+    reps.forEach(function(r){
+      html += '<p class="f2-quien"><b>' + esc(r.estado === 'agendada' ? 'Reposición el ' + f2DiaCorto(r.agendada_fecha) + ' a las ' + f1Hora(r.agendada_hora) : f2LineaRepo(r)) + '</b>' +
+        (r.estado !== 'agendada' && !(r.fecha_limite && r.fecha_limite < hoy) ? ' <button type="button" class="f1-mini chico" data-guarda data-f2-buscar="' + esc(r.id) + '">Buscarle espacio</button>' : '') + '</p>';
+    });
+    var vs = F2.viajes.filter(function(v){ return !v.anulado && v.vuelve_el > hoy && acs.some(function(a){ return a.id === v.acuerdo_id; }); });
+    vs.forEach(function(v){
+      html += '<p class="f2-quien"><b>' + esc((v.desde <= hoy ? 'De viaje · vuelve ' : 'Viaja del ' + f1Corto(v.desde) + ' · vuelve ') + f1El(v.vuelve_el)) + '</b>' +
+        (v.propone_50 && !v.ajuste_id ? ' · <span>el 50 % quedó sin aplicar</span>' : '') +
+        ' <button type="button" class="f1-txt" data-guarda data-f2-viaje-anular="' + esc(v.id) + '">Anular</button></p>';
+    });
+    /* R3 · I3: una reevaluación hecha se anula con motivo (no se deshace) */
+    F2.reeval.filter(function(r){ return !r.anulada && r.estado === 'hecha' && acs.some(function(a){ return a.id === r.acuerdo_id; }) && r.hecha_en >= f1Mas(hoy, -120); })
+      .sort(function(x, y){ return x.hecha_en < y.hecha_en ? 1 : -1; }).slice(0, 2).forEach(function(r){
+        html += '<p class="f2-quien"><b>' + esc((r.tipo === 'cierre_ciclo' ? 'Cierre de ciclo' : 'Reevaluación') + ' hecha ' + f1El(r.hecha_en)) + '</b>' +
+          ' <button type="button" class="f1-txt" data-guarda data-f2-reeval-anular="' + esc(r.id) + '">Anular</button></p>';
+      });
+    return html ? '<div class="f2-ficha">' + html + '</div>' : '';
+  }
+  function f2HtmlGrupoAcuerdo(a){
+    if(a.modalidad !== 'grupo' && a.modalidad !== 'grupo_remoto') return '';
+    return '<dt>Grupo de agenda</dt><dd><select data-f2-grupo-ac="' + esc(a.id) + '" aria-label="Grupo de agenda"' + (f1Editable(a) ? '' : ' disabled') + '><option value="">Sin grupo asignado</option>' +
+      F2.grupos.filter(function(g){ return g.activo; }).map(function(g){ return '<option value="' + esc(g.id) + '"' + (a.grupo_id === g.id ? ' selected' : '') + '>' + esc(g.nombre) + '</option>'; }).join('') + '</select></dd>';
+  }
+
+  /* ═══ OYENTES ═══ */
+  /* Al abrir una hoja nueva, la barra de abajo (que tapaba su botón principal en
+     escritorio) se cierra: lo que decía ya se leyó y se pasó a otra cosa. */
+  function f2Abrir(estado){ estado.alto = true; if(document.getElementById('vuelta') && !document.getElementById('vuelta').hidden) cerrarVuelta(); f1MostrarHoja(estado); }
+  function f2DespuesDeEscribir(msg, deshacer, ms){
+    return f1Recargar().then(function(){
+      if(deshacer){ ofrecerVuelta(msg, deshacer); if(ms){ pararReloj(); armarReloj(ms); } }
+      else if(msg) avisar(msg);
+    });
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target : null;
+    if(!t) return;
+    function q(attr){ return t.closest('[' + attr + ']'); }
+    var b, h = F1.hoja;
+    if((b = q('data-f2-rango'))){ F2.rango = b.getAttribute('data-f2-rango'); f2PintarAgenda(); var nb = document.querySelector('[data-f2-rango="' + F2.rango + '"]'); if(nb) nb.focus({ preventScroll:true }); return; }
+    if((b = q('data-f2-recargar'))){ F2.estado = 'cargando'; f2PintarAgenda(); f1Recargar(); return; }
+    if((b = q('data-f2-fila'))){
+      var clave = b.getAttribute('data-f2-fila'), x = f2Fila(clave);
+      if(!x) return;
+      if(x.tipo === 'espacio'){ var hh = { tipo:'f2hueco', clave:clave }; f2Abrir(hh);
+        sb.rpc('candidatos_espacio', { p_fecha:x.fecha, p_hora:f2H(x.hora) }).then(function(r){
+          if(r && !r.error && F1.hoja === hh){ hh.cands = r.data || []; f1RepintarHoja(); }
+        }); return; }
+      if(x.tipo === 'bloque'){ f2Abrir({ tipo:'f2bloque', clave:clave }); return; }
+      if(x.tipo === 'reposicion_grupal'){ f2Abrir({ tipo:'f2grupal', gid:x.ref_id }); return; }
+      f2Abrir({ tipo:'f2ses', clave:clave });
+      return;
+    }
+    if((b = q('data-f2-noviene'))){
+      var p = b.getAttribute('data-f2-noviene').split('|');
+      var aid = p[2] || (f2Integrantes(p[3]).filter(function(ac){ return !f2Ausencia(ac.id, p[0], p[1]); })[0] || {}).id;
+      if(!aid){ avisar(p[3] ? 'Ese grupo todavía no tiene personas asignadas.' : 'No encontré esa sesión.'); return; }
+      f2Abrir({ tipo:'f2aus', fecha:p[0], hora:p[1], aid:aid, grupo:p[3] || null });
+      return;
+    }
+    if((b = q('data-f2-aviso'))){ f2LeerAus(); h.aviso = b.getAttribute('data-f2-aviso'); h.excepcion = false; f1RepintarHoja(); return; }
+    if((b = q('data-f2-excepcion'))){ f2LeerAus(); h.excepcion = !h.excepcion; f1RepintarHoja(); return; }
+    if((b = q('data-f2-aus-ok'))){ f2GuardarAusencia(b, b.getAttribute('data-f2-aus-ok') === 'buscar'); return; }
+    if((b = q('data-f2-buscar'))){ var hb = { tipo:'f2buscar', repo:b.getAttribute('data-f2-buscar') }; f2Abrir(hb); f2BuscarEspacios(hb); return; }
+    if((b = q('data-f2-repo'))){
+      var rr = F2.repos.filter(function(x){ return x.id === b.getAttribute('data-f2-repo'); })[0];
+      if(!rr) return;
+      var hb2 = { tipo:'f2buscar', repo:rr.id }; f2Abrir(hb2);
+      if(!(rr.fecha_limite && rr.fecha_limite < f1Hoy())) f2BuscarEspacios(hb2); else { hb2.espacios = []; f1RepintarHoja(); }
+      return;
+    }
+    if((b = q('data-f2-abrir-cand'))){ h.abierto = b.getAttribute('data-f2-abrir-cand'); f1RepintarHoja(); return; }
+    if((b = q('data-f2-trato'))){
+      var tp = b.getAttribute('data-f2-trato').split('|');
+      if(f2Trato(tp[0]) === tp[1]) return;
+      sb.from('personas').update({ trato:tp[1] }).eq('id', tp[0]).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        (F1.personas.filter(function(x){ return x.id === tp[0]; })[0] || {}).trato = tp[1];
+        f1RepintarHoja(); f1Recargar();
+      });
+      return;
+    }
+    if((b = q('data-f2-ofrecer'))){
+      /* El enlace abre WhatsApp con el mensaje; la reposición queda «ofrecida» con sus opciones */
+      var po = b.getAttribute('data-f2-ofrecer').split('~');
+      var ops = po[1].split(',').map(function(k){ var z = k.split('|'); return { fecha:z[0], hora:z[1] }; });
+      var rid = po[0];
+      sb.from('reposiciones').update({ estado:'ofrecida', opciones:ops }).eq('id', rid).then(function(r){
+        if(r.error){ avisar('No se pudo anotar la oferta. ' + f1Claro(r.error)); return; }
+        f1CerrarHoja(); f2DespuesDeEscribir('Quedó como ofrecida. Cuando conteste, la agendás desde Reposiciones abiertas.');
+      });
+      return;
+    }
+    if((b = q('data-f2-agendar'))){
+      var pa = b.getAttribute('data-f2-agendar').split('|');
+      confirmar(b, function(){
+        sb.from('reposiciones').update({ estado:'agendada', agendada_fecha:pa[1], agendada_hora:pa[2] }).eq('id', pa[0]).then(function(r){
+          if(r.error){ avisar('No se pudo agendar. ' + f1Claro(r.error)); return; }
+          f1CerrarHoja(); f2DespuesDeEscribir('Reposición agendada el ' + f2DiaNombre(pa[1]) + ' a las ' + f1Hora(pa[2]) + '.');
+        });
+      });
+      return;
+    }
+    if((b = q('data-f2-repo-estado'))){
+      var pe = b.getAttribute('data-f2-repo-estado').split('|');
+      sb.from('reposiciones').update({ estado:pe[1] }).eq('id', pe[0]).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f1CerrarHoja(); f2DespuesDeEscribir(pe[1] === 'realizada' ? 'Reposición hecha.' : pe[1] === 'no_vino' ? 'Anotado: no vino a la reposición.' : 'Anotado: prefirió no reponer.');
+      });
+      return;
+    }
+    if((b = q('data-f2-alcance'))){ h.alcance = b.getAttribute('data-f2-alcance'); f1RepintarHoja(); return; }
+    if((b = q('data-f2-marca'))){ f2Marcar(b.getAttribute('data-f2-marca')); return; }
+    if((b = q('data-f2-sin-marca'))){ f2Marcar(null); return; }
+    if((b = q('data-f2-dejar'))){
+      var xd = f2Fila(h.clave);
+      F2.dejados[f2Clave(xd)] = f2Candidatos(xd).map(function(r){ return r.id; });
+      try{ localStorage.setItem('htm-f2-dejados', JSON.stringify(F2.dejados)); }catch(err){}
+      f1CerrarHoja(); f2PintarAgenda(); f1PintarHoy();
+      avisar('Queda libre. Si cambia algo, la sugerencia vuelve.');
+      return;
+    }
+    if((b = q('data-f2-cancelo'))){
+      var pc = b.getAttribute('data-f2-cancelo').split('|');
+      f2Abrir({ tipo:'f2cancela', fecha:pc[0], hora:pc[1] || null, alcance:pc[2] || 'dia', grupos:{}, sust:{} });
+      return;
+    }
+    if((b = q('data-f2-cancela-alc'))){ f2LeerCancela(); h.alcance = b.getAttribute('data-f2-cancela-alc'); f1RepintarHoja(); return; }
+    if((b = q('data-f2-can-grupo'))){ f2LeerCancela(); var cg = b.getAttribute('data-f2-can-grupo').split('|'); h.grupos[cg[0]] = cg[1]; f1RepintarHoja(); return; }
+    if((b = q('data-f2-cancela-ok'))){ f2LeerCancela(); f2GuardarCancela(b); return; }
+    if((b = q('data-f2-copiar'))){
+      var txt = b.getAttribute('data-f2-copiar');
+      (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function(){ avisar('Copiado. Pegalo en el grupo de WhatsApp.'); }, function(){ avisar('No se pudo copiar: seleccioná el texto.'); });
+      return;
+    }
+    if((b = q('data-f2-viaje'))){ var av = f1Acuerdo(b.getAttribute('data-f2-viaje')); f2Abrir({ tipo:'f2viaje', pid:av.persona_id, aid:av.id, foco:'#f2ViSale' }); return; }
+    if((b = q('data-f2-vi-cobro'))){ f2LeerViaje(); h.cobro = b.getAttribute('data-f2-vi-cobro'); f1RepintarHoja(); return; }
+    if((b = q('data-f2-viaje-anular'))){
+      var vid = b.getAttribute('data-f2-viaje-anular');
+      if(!document.getElementById('f2ViAn')){
+        b.insertAdjacentHTML('afterend', '<span class="f1-inline" id="f2ViAn"><input id="f2ViAnMot" maxlength="140" placeholder="¿Por qué lo anulás?" aria-label="¿Por qué lo anulás?" autocomplete="off">' +
+          '<button type="button" class="f1-mini" data-guarda data-f2-viaje-anular-si="' + esc(vid) + '">Anular el viaje</button><button type="button" class="f1-txt" data-f1-volver-ficha>Cancelar</button></span>');
+        document.getElementById('f2ViAnMot').focus();
+      }
+      return;
+    }
+    if((b = q('data-f2-reeval-anular'))){
+      var rva = b.getAttribute('data-f2-reeval-anular');
+      if(!document.getElementById('f2RvAn')){
+        b.insertAdjacentHTML('afterend', '<span class="f1-inline" id="f2RvAn"><input id="f2RvAnMot" maxlength="140" placeholder="¿Por qué la anulás?" aria-label="¿Por qué la anulás?" autocomplete="off">' +
+          '<button type="button" class="f1-mini" data-guarda data-f2-reeval-anular-si="' + esc(rva) + '">Anular</button><button type="button" class="f1-txt" data-f1-volver-ficha>Cancelar</button></span>');
+        document.getElementById('f2RvAnMot').focus();
+      }
+      return;
+    }
+    if((b = q('data-f2-reeval-anular-si'))){
+      var rva2 = b.getAttribute('data-f2-reeval-anular-si'), mra = document.getElementById('f2RvAnMot').value.trim();
+      if(!mra){ avisar('Contá por qué anulás la reevaluación: queda en su historial.'); document.getElementById('f2RvAnMot').focus(); return; }
+      sb.from('reevaluaciones').update({ anulada:true, anulada_motivo:mra }).eq('id', rva2).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f2DespuesDeEscribir('Reevaluación anulada: el próximo aviso se calcula desde la anterior.');
+      });
+      return;
+    }
+    if((b = q('data-f2-viaje-anular-si'))){
+      var vid2 = b.getAttribute('data-f2-viaje-anular-si'), mot = document.getElementById('f2ViAnMot').value.trim();
+      if(!mot){ avisar('Contá por qué anulás el viaje: queda en su historial.'); return; }
+      sb.from('viajes').update({ anulado:true, anulado_motivo:mot }).eq('id', vid2).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f2DespuesDeEscribir('Viaje anulado: su horario vuelve a estar ocupado. Si se aplicó el 50 %, se anula desde el acuerdo.');
+      });
+      return;
+    }
+    if((b = q('data-f2-reeval'))){ var pr = b.getAttribute('data-f2-reeval').split('|'), ar = f1Acuerdo(pr[0]) || {}; f2Abrir({ tipo:'f2reeval', aid:pr[0], tipoR:pr[1], pid:ar.persona_id }); return; }
+    if((b = q('data-f2-reeval-paso'))){ h.paso = b.getAttribute('data-f2-reeval-paso'); h.err = null; f1RepintarHoja(); return; }
+    if((b = q('data-f2-reeval-ses'))){ var ps2 = b.getAttribute('data-f2-reeval-ses').split('|'); f2GuardarReeval({ estado:'agendada', sesion_fecha:ps2[0], sesion_hora:ps2[1] }, 'Elegida para el ' + f2DiaNombre(ps2[0]) + '.'); return; }
+    if((b = q('data-f2-reeval-ok'))){
+      if(b.getAttribute('data-f2-reeval-ok') === 'mas_adelante'){
+        var hs = document.getElementById('f2RevHasta').value;
+        if(!hs || hs <= f1Hoy()){ avisar('Elegí una fecha de mañana en adelante.'); return; }
+        f2GuardarReeval({ estado:'mas_adelante', mas_adelante_hasta:hs }, 'Hasta el ' + f1Corto(hs) + ' no vuelve a aparecer.');
+      }else{
+        var he = document.getElementById('f2RevHecha').value;
+        if(!he){ return; }
+        var pb = F2.prox.filter(function(x){ return x.acuerdo_id === h.aid && x.tipo === 'cambio_programa'; })[0];
+        if(pb && he < f1Mas(pb.base, 28)){ h.hecha = he; h.err = 'Todavía no van 4 semanas con este programa (desde el ' + f1Corto(pb.base) + '): reevaluar antes no sirve.'; f1RepintarHoja(); return; }
+        f2GuardarReeval({ estado:'hecha', hecha_en:he }, 'Anotada. El próximo cambio de programa se cuenta desde el ' + f1Corto(he) + '.');
+      }
+      return;
+    }
+    if((b = q('data-f2-cierre-copiar'))){
+      var tc = f2TextoCierre(h);
+      (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(tc) : Promise.reject()).then(function(){ avisar('Copiado. Revisalo antes de mandarlo.'); }, function(){ avisar('No se pudo copiar.'); });
+      return;
+    }
+    if((b = q('data-f2-grupal'))){ f2Abrir({ tipo:'f2grupal', gid:b.getAttribute('data-f2-grupal') }); return; }
+    if((b = q('data-f2-gr-modo'))){ h.modo = b.getAttribute('data-f2-gr-modo'); h.err = null; f1RepintarHoja(); return; }
+    if((b = q('data-f2-reservar'))){
+      var pz = b.getAttribute('data-f2-reservar').split('|');
+      sb.from('reposicion_reservas').insert({ reposicion_grupal_id:pz[0], acuerdo_id:pz[1], ausencia_id:pz[2] }).select().single().then(function(r){
+        if(r.error){ avisar('No se pudo reservar. ' + f1Claro(r.error)); return; }
+        var nid = r.data.id;
+        f2DespuesDeEscribir('Reserva hecha.', function(){ return sb.from('reposicion_reservas').update({ estado:'anulada' }).eq('id', nid).then(function(r2){ f1Recargar(); return r2; }); });
+      });
+      return;
+    }
+    if((b = q('data-f2-reserva'))){
+      var pq = b.getAttribute('data-f2-reserva').split('|');
+      sb.from('reposicion_reservas').update({ estado:pq[1] }).eq('id', pq[0]).then(function(r){ if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; } f2DespuesDeEscribir('Anotado.'); });
+      return;
+    }
+    if((b = q('data-f2-sabado'))){ f2Abrir({ tipo:'f2sab', fecha:b.getAttribute('data-f2-sabado') }); return; }
+    if((b = q('data-f2-sab-ok'))){
+      var sid = b.getAttribute('data-f2-sab-ok'), sh = (document.querySelector('[data-f2-sab-hora="' + sid + '"]') || {}).value;
+      if(!sh){ avisar('Elegí la hora.'); return; }
+      sb.from('reposiciones').update({ estado:'agendada', agendada_fecha:h.fecha, agendada_hora:sh }).eq('id', sid).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f1CerrarHoja(); f2DespuesDeEscribir('Reposición agendada el sábado a las ' + f1Hora(sh) + '.');
+      });
+      return;
+    }
+    if((b = q('data-f2-bloque'))){
+      var xb = f2Fila(h.clave);
+      if(!xb) return;
+      if(b.getAttribute('data-f2-bloque') === 'si'){
+        sb.from('bloque_excepciones').insert({ bloque_id:xb.ref_id, fecha:xb.fecha }).select().single().then(function(r){
+          if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+          var bid = r.data.id; f1CerrarHoja();
+          f2DespuesDeEscribir('El ' + f2DiaNombre(xb.fecha) + ' el bloque personal queda usado. Los demás días sigue protegido.', function(){ return sb.from('bloque_excepciones').update({ anulada:true }).eq('id', bid).then(function(r2){ f1Recargar(); return r2; }); });
+        });
+      }else{
+        sb.from('bloque_excepciones').update({ anulada:true }).eq('bloque_id', xb.ref_id).eq('fecha', xb.fecha).eq('anulada', false).then(function(r){
+          if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+          f1CerrarHoja(); f2DespuesDeEscribir('El bloque personal vuelve a estar protegido ese día.');
+        });
+      }
+      return;
+    }
+    if((b = q('data-f2-feriado-si'))){ var fs = b.getAttribute('data-f2-feriado-si'); confirmar(b, function(){ sb.from('feriados').update({ confirmado:true }).eq('fecha', fs).then(function(r){ if(r.error){ avisar(f1Claro(r.error)); return; } f2DespuesDeEscribir('Feriado confirmado: ese día queda cerrado.'); }); }); return; }
+    if((b = q('data-f2-feriado-no'))){ var fn = b.getAttribute('data-f2-feriado-no'); confirmar(b, function(){ sb.from('feriados').update({ anulado:true }).eq('fecha', fn).then(function(r){ if(r.error){ avisar(f1Claro(r.error)); return; } f2DespuesDeEscribir('Anotado: no es feriado. El día sigue abierto.'); }); }); return; }
+  });
+  document.addEventListener('change', function(e){
+    var t = e.target, h = F1.hoja;
+    if(t.id === 'f2AusQuien'){ f2LeerAus(); h.aid = t.value; f1RepintarHoja(); return; }
+    if(t.id === 'f2AusLlego' || t.id === 'f2AusMotivo'){ f2LeerAus(); f1RepintarHoja(); return; }
+    if(t.id === 'f2CanHora'){ f2LeerCancela(); f1RepintarHoja(); return; }
+    if(t.id === 'f2ViSale' || t.id === 'f2ViVuelve'){ f2LeerViaje(); h.err = null; f2CalcularViaje(h); f1RepintarHoja(); return; }
+    if(t.hasAttribute && t.hasAttribute('data-f2-op')){
+      var k = t.getAttribute('data-f2-op'), sel = (h.sel || [h.espacios[0].fecha + '|' + h.espacios[0].hora]).slice();
+      if(t.checked){ if(sel.indexOf(k) < 0 && sel.length < 2) sel.push(k); } else sel = sel.filter(function(x){ return x !== k; });
+      h.sel = sel; f1RepintarHoja(); return;
+    }
+    if(t.hasAttribute && t.hasAttribute('data-f2-grupo-ac')){
+      var aid = t.getAttribute('data-f2-grupo-ac'), ac = f1Acuerdo(aid), antes = ac ? ac.grupo_id || null : null;
+      sb.from('acuerdos').update({ grupo_id:t.value || null }).eq('id', aid).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f2DespuesDeEscribir(t.value ? 'Asignado al ' + f2GrupoNombre(t.value) + '.' : 'Quedó sin grupo asignado.', function(){ return sb.from('acuerdos').update({ grupo_id:antes }).eq('id', aid).then(function(r2){ f1Recargar(); return r2; }); });
+      });
+    }
+  });
+  document.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.hasAttribute && t.hasAttribute('data-f2-sust') && F1.hoja){ F1.hoja.sust[t.getAttribute('data-f2-sust')] = t.value; }
+  });
+  document.addEventListener('submit', function(e){
+    var f = e.target;
+    if(!f.id || f.id.indexOf('f2Form') !== 0) return;
+    e.preventDefault();
+    var btn = f.querySelector('[type="submit"]');
+    if(f.id === 'f2FormViaje') f2GuardarViaje(btn);
+    if(f.id === 'f2FormCierre') f2GuardarCierre(btn);
+    if(f.id === 'f2FormGrupal') f2GuardarGrupal(btn);
+    if(f.id === 'f2FormGrupalHtm') f2GuardarGrupalHtm(btn);
+  });
+
+  function f2LeerAus(){
+    var h = F1.hoja; if(!h) return;
+    var l = document.getElementById('f2AusLlego'), m = document.getElementById('f2AusMotivo');
+    if(l) h.llego = l.value || ''; if(m) h.motivo = m.value || '';
+  }
+  function f2GuardarAusencia(btn, buscar){
+    var h = F1.hoja; f2LeerAus();
+    if(!h.aviso) return;
+    btn.disabled = true;
+    var a = f1Acuerdo(h.aid), excep = h.excepcion && h.calc && h.calc.res !== 'grupal';
+    var args = { p_acuerdo:h.aid, p_fecha:h.fecha, p_hora:h.hora, p_aviso:h.aviso, p_avisado_en:h.llego ? new Date(h.llego + ':00-06:00').toISOString() : null, p_motivo:h.motivo || null };
+    sb.rpc('registrar_ausencia', args).then(function(r){
+      if(r.error) throw r.error;
+      var id = r.data;
+      /* QA fase 2 · F2-B1: se guarda la MISMA fecha que se le mostró */
+      return (excep ? sb.rpc('excepcion_ausencia', { p_id:id, p_derecho:h.calc.der, p_fecha_limite:h.calc.der ? h.calc.lim : null, p_nota:null }).then(function(r2){ if(r2.error) throw r2.error; return id; }) : Promise.resolve(id));
+    }).then(function(id){
+      return f1Recargar().then(function(){
+        var deshacer = function(){
+          return sb.from('ausencias').update({ anulada:true, anulada_motivo:'Deshecho desde el panel' }).eq('id', id).then(function(r3){
+            if(r3.error) return r3;
+            var rp = f2RepoDe(id);
+            return (rp ? sb.from('reposiciones').update({ estado:'anulada', nota:'Deshecho desde el panel' }).eq('id', rp.id) : Promise.resolve({})).then(function(r4){ f1Recargar(); return r4; });
+          });
+        };
+        ofrecerVuelta('Ausencia de ' + primerNombre(f1Persona(a.persona_id) || {}) + ' registrada.', deshacer);
+        var rp = f2RepoDe(id);
+        if(buscar && rp){ var hb = { tipo:'f2buscar', repo:rp.id, alto:true }; f1MostrarHoja(hb); f2BuscarEspacios(hb); }
+        else { h.hecha = id; f1RepintarHoja(); }
+      });
+    }).catch(function(err){ btn.disabled = false; avisar('No se pudo registrar. ' + f1Claro(err)); });
+  }
+  function f2Marcar(marca){
+    var h = F1.hoja, x = f2Fila(h.clave);
+    if(!x) return;
+    var soloDia = x.estado !== 'libre', alcance = soloDia ? 'dia' : (h.alcance || ((f2MarcaDe(x) || {}).alcance) || 'fija');
+    var actual = F2.marcas.filter(function(m){ return !m.anulada && m.franja_id === x.ref_id && (alcance === 'dia' ? m.fecha === x.fecha : !m.fecha); })[0];
+    if(actual && actual.marca === marca) return;
+    var paso1 = actual ? sb.from('espacios_marcas').update({ anulada:true }).eq('id', actual.id) : Promise.resolve({});
+    paso1.then(function(r){
+      if(r && r.error) throw r.error;
+      return marca ? sb.from('espacios_marcas').insert({ franja_id:x.ref_id, fecha:alcance === 'dia' ? x.fecha : null, marca:marca }).select().single() : { data:null };
+    }).then(function(r){
+      if(r && r.error) throw r.error;
+      var nueva = r && r.data;
+      f1CerrarHoja();
+      f2DespuesDeEscribir(marca ? 'Marcado «' + F2_MARCA[marca] + '» ' + (alcance === 'dia' ? 'solo el ' + f2DiaNombre(x.fecha) : 'todas las semanas') + '.' : 'Quedó sin marca.', function(){
+        /* deshacer: la marca nueva se anula; la anterior vuelve como una marca nueva (no se reactiva una anulada) */
+        return (nueva ? sb.from('espacios_marcas').update({ anulada:true }).eq('id', nueva.id) : Promise.resolve({})).then(function(r2){
+          if(r2 && r2.error) return r2;
+          return actual ? sb.from('espacios_marcas').insert({ franja_id:actual.franja_id, fecha:actual.fecha, marca:actual.marca }).then(function(r3){ f1Recargar(); return r3; }) : (f1Recargar(), r2);
+        });
+      });
+    }).catch(function(err){ avisar('No se pudo marcar. ' + f1Claro(err)); });
+  }
+  function f2LeerCancela(){
+    var h = F1.hoja; if(!h) return;
+    var hr = document.getElementById('f2CanHora'), m = document.getElementById('f2CanMotivo');
+    if(hr) h.hora = hr.value; if(m) h.motivo = m.value;
+    document.querySelectorAll('[data-f2-sust]').forEach(function(i){ h.sust[i.getAttribute('data-f2-sust')] = i.value; });
+  }
+  function f2GuardarCancela(btn){
+    var h = F1.hoja, af = f2Afectadas(h);
+    var falta = af.lista.filter(function(s){ return s.tipo === 'grupo' && h.grupos[s.grupo_id] === 'sustituta' && !String(h.sust[s.grupo_id] || '').trim(); })[0];
+    if(falta){ h.err = 'Escribí quién cubre al ' + f2GrupoNombre(falta.grupo_id) + '.'; f1RepintarHoja(); var i = document.querySelector('[data-f2-sust="' + falta.grupo_id + '"]'); if(i) i.focus(); return; }
+    h.err = null;
+    btn.disabled = true;
+    var lista = af.lista.slice();
+    sb.rpc('cancelar_htm', { p_fecha:h.fecha, p_hora_desde:af.de, p_hora_hasta:af.ha, p_motivo:h.motivo || null }).then(function(r){
+      if(r.error) throw r.error;
+      return sb.from('reposiciones_grupales').select('*').eq('sesion_fecha', h.fecha).eq('origen', 'htm').eq('estado', 'por_programar');
+    }).then(function(r){
+      var rgs = (r && r.data) || [], pasos = [];
+      lista.filter(function(s){ return s.tipo === 'grupo' && h.grupos[s.grupo_id] === 'sustituta'; }).forEach(function(s){
+        var rg = rgs.filter(function(g){ return g.grupo_id === s.grupo_id && f2H(g.sesion_hora) === f2H(s.hora); })[0];
+        if(rg) pasos.push(sb.from('reposiciones_grupales').update({ estado:'sustituta', sustituta:String(h.sust[s.grupo_id]).trim() }).eq('id', rg.id));
+      });
+      return Promise.all(pasos);
+    }).then(function(){
+      return sb.from('cierres').select('*').eq('fecha', h.fecha).eq('anulado', false);
+    }).then(function(r){
+      var cs = ((r && r.data) || []).sort(function(x, y){ return x.creado_en < y.creado_en ? 1 : -1; }), cierre = cs[0];
+      h.hecho = lista;
+      return f1Recargar().then(function(){
+        f1RepintarHoja();
+        /* Con sustituta, la reposición del grupo ya quedó resuelta: deshacer_cancelacion()
+           la rechaza («ya se resolvió»), así que no se ofrece un Deshacer que no va a funcionar. */
+        var conSust = lista.some(function(x){ return x.tipo === 'grupo' && h.grupos[x.grupo_id] === 'sustituta'; });
+        if(cierre && conSust){ avisar('Cancelaste ' + (lista.length === 1 ? 'la sesión' : 'las ' + lista.length + ' sesiones') + '. Con sustituta no se deshace desde acá: se corrige a mano.'); return; }
+        if(cierre) ofrecerVuelta('Cancelaste ' + (lista.length === 1 ? 'la sesión' : 'las ' + lista.length + ' sesiones') + '. Queda todo pendiente.', function(){
+          /* R2 · una sola operación, todo o nada: deshacer_cancelacion() anula el cierre,
+             anula lo pendiente de HTM y devuelve a su fecha lo que estaba agendado ese día */
+          return sb.rpc('deshacer_cancelacion', { p_cierre:cierre.id, p_motivo:'Deshecho desde el panel' }).then(function(r2){
+            if(!r2.error){ f1CerrarHoja(); f1Recargar(); }
+            return r2;
+          });
+        });
+        pararReloj(); armarReloj(5000);
+      });
+    }).catch(function(err){ btn.disabled = false; avisar('No se pudo cancelar. ' + f1Claro(err)); });
+  }
+  function f2LeerViaje(){
+    var h = F1.hoja; if(!h) return;
+    var s = document.getElementById('f2ViSale'), v = document.getElementById('f2ViVuelve'), n = document.getElementById('f2ViNota');
+    if(s) h.desde = s.value; if(v) h.vuelve = v.value; if(n) h.nota = n.value;
+  }
+  function f2GuardarViaje(btn){
+    var h = F1.hoja; f2LeerViaje();
+    if(!h.desde || !h.vuelve){ h.err = 'Poné cuándo sale y cuándo vuelve.'; f1RepintarHoja(); return; }
+    if(h.vuelve <= h.desde){ h.err = 'La vuelta tiene que ser después de la salida.'; f1RepintarHoja(); return; }
+    var a = f1Acuerdo(h.aid), p = f1Persona(a.persona_id) || {};
+    btn.disabled = true;
+    var ajusteId = null, viajeId = null;
+    sb.from('viajes').insert({ acuerdo_id:a.id, desde:h.desde, vuelve_el:h.vuelve, nota:(h.nota || '').trim() || null }).select().single().then(function(r){
+      if(r.error) throw r.error;
+      viajeId = r.data.id;
+      if((h.cobro === '50' || h.cobro === 'pausa50') && h.periodo){
+        return sb.from('periodo_ajustes').insert({ acuerdo_id:a.id, periodo_inicio:h.periodo, tipo:'monto', monto_usd:Math.round(Number(a.precio_usd) * 50) / 100,
+          motivo:'Viaje largo · del ' + f1Corto(h.desde) + ' al ' + f1Corto(h.vuelve) }).select().single().then(function(r2){
+          if(r2.error) throw r2.error;
+          ajusteId = r2.data.id;
+          return sb.from('viajes').update({ ajuste_id:ajusteId }).eq('id', viajeId);
+        }).then(function(r3){
+          if(r3.error) throw r3.error;
+          return h.cobro === 'pausa50' && a.estado === 'vigente' ? sb.from('acuerdos').update({ estado:'pausado', pausa_hasta:h.vuelve, estado_motivo:'Viaje largo, 50 %' }).eq('id', a.id) : {};
+        });
+      }
+      return {};
+    }).then(function(r){
+      if(r && r.error) throw r.error;
+      F1.hoja = { tipo:'ficha', pid:a.persona_id, lado:h.lado, funde:true };
+      f2DespuesDeEscribir(primerNombre(p) + ' viaja del ' + f1Corto(h.desde) + ' al ' + f1Corto(h.vuelve) + ': su horario queda libre por viaje.', function(){
+        return sb.from('viajes').update({ anulado:true, anulado_motivo:'Deshecho desde el panel' }).eq('id', viajeId).then(function(r4){
+          if(r4.error) return r4;
+          return (ajusteId ? sb.from('periodo_ajustes').update({ anulado:true, anulado_motivo:'Deshecho desde el panel' }).eq('id', ajusteId) : Promise.resolve({})).then(function(r5){ f1Recargar(); return r5; });
+        });
+      });
+    }).catch(function(err){ btn.disabled = false; h.err = f1Claro(err); f1RepintarHoja(); });
+  }
+  function f2GuardarReeval(datos, msg){
+    var h = F1.hoja;
+    datos.acuerdo_id = h.aid; datos.tipo = h.tipoR;
+    sb.from('reevaluaciones').insert(datos).select().single().then(function(r){
+      if(r.error){ h.err = f1Claro(r.error); f1RepintarHoja(); return; }
+      var id = r.data.id; f1CerrarHoja();
+      f2DespuesDeEscribir(msg, datos.estado === 'hecha' ? null : function(){ return sb.from('reevaluaciones').update({ anulada:true }).eq('id', id).then(function(r2){ f1Recargar(); return r2; }); });
+    });
+  }
+  function f2GuardarCierre(btn){
+    var h = F1.hoja, texto = f2TextoCierre(h);
+    btn.disabled = true;
+    sb.from('reevaluaciones').insert({ acuerdo_id:h.aid, tipo:'cierre_ciclo', estado:'hecha', hecha_en:f1Hoy(), nota:texto }).select().single().then(function(r){
+      if(r.error){ btn.disabled = false; avisar('No se pudo guardar. ' + f1Claro(r.error)); return; }
+      f1CerrarHoja(); f2DespuesDeEscribir('Cierre de ciclo guardado en su ficha.');
+    });
+  }
+  function f2GuardarGrupal(btn){
+    var h = F1.hoja, fe = document.getElementById('f2GrFecha').value, ho = document.getElementById('f2GrHora').value, cu = +document.getElementById('f2GrCupo').value;
+    var gg = (document.getElementById('f2GrGrupo') || {}).value || null;
+    h.fecha = fe; h.hora = ho; h.cupo = cu; h.grupo = gg;
+    if(!fe || !ho){ h.err = 'Poné la fecha y la hora.'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    sb.from('reposiciones_grupales').insert({ grupo_id:gg, origen:'quincenal', fecha:fe, hora:ho, cupo:cu || null, estado:'programada' }).select().single().then(function(r){
+      if(r.error){ btn.disabled = false; h.err = f1Claro(r.error); f1RepintarHoja(); return; }
+      var id = r.data.id; f1CerrarHoja();
+      f2DespuesDeEscribir('Espacio grupal abierto el ' + f2DiaNombre(fe) + ' a las ' + f1Hora(ho) + '.', function(){ return sb.from('reposiciones_grupales').update({ estado:'cancelada' }).eq('id', id).then(function(r2){ f1Recargar(); return r2; }); });
+    });
+  }
+  function f2GuardarGrupalHtm(btn){
+    var h = F1.hoja, modo = h.modo || 'programar', upd;
+    if(modo === 'programar'){
+      var fe = document.getElementById('f2GrFecha').value, ho = document.getElementById('f2GrHora').value;
+      if(!fe || !ho){ h.err = 'Poné la fecha y la hora.'; f1RepintarHoja(); return; }
+      upd = { fecha:fe, hora:ho, estado:'programada' };
+    }else{
+      var su = document.getElementById('f2GrSust').value.trim();
+      if(!su){ h.err = 'Escribí quién la cubrió.'; f1RepintarHoja(); return; }
+      upd = { estado:'sustituta', sustituta:su };
+    }
+    btn.disabled = true;
+    sb.from('reposiciones_grupales').update(upd).eq('id', h.gid).then(function(r){
+      if(r.error){ btn.disabled = false; h.err = f1Claro(r.error); f1RepintarHoja(); return; }
+      f1CerrarHoja(); f2DespuesDeEscribir(modo === 'programar' ? 'Reposición del grupo programada.' : 'Anotado: hubo sustituta.');
+    });
+  }
+
   /* ═══ PINTAR ═══ */
   function f1Pintar(){
     f1PintarHoy();
+    if(vista === 'agenda') f2PintarAgenda();
     if(vista === 'clientas') f1PintarClientes();
     if(vista === 'cobros') f1PintarCobros();
     f1Offline();
@@ -7545,8 +9106,9 @@ body .pn-app section h2{animation:none;}
           '<button type="button" class="f1-mini" data-f1-mover-vuelta="' + esc(f.aid) + '">Mover la fecha</button></span></span><span></span></div>';
         return;
       }
-      var ico = f.tipo === 'recs' ? 'mensajes' : f.tipo === 'salud' ? 'info' : f.tipo === 'hablar' ? 'globo' : (f.html.indexOf('hablarlo') >= 0 ? 'globo' : 'billete');
-      var attr = f.tipo === 'recs' ? 'data-f1-ir="cobros"' : f.tipo === 'salud' ? 'data-f1-insc="' + esc(f.iid) + '"' : 'data-f1-ficha="' + esc(f.pid) + '"';
+      var ico = f.tipo === 'cambio' ? 'reponer' : f.tipo === 'recs' ? 'mensajes' : f.tipo === 'salud' ? 'info' : f.tipo === 'hablar' ? 'globo' : (f.html.indexOf('hablarlo') >= 0 ? 'globo' : 'billete');
+      var attr = f.tipo === 'cambio' ? (f.repo ? 'data-f2-buscar="' + esc(f.repo) + '"' : 'data-f2-grupal="' + esc(f.grupo) + '"')
+        : f.tipo === 'recs' ? 'data-f1-ir="cobros"' : f.tipo === 'salud' ? 'data-f1-insc="' + esc(f.iid) + '"' : 'data-f1-ficha="' + esc(f.pid) + '"';
       html += '<button type="button" class="f1-crit f1-fila-btn" ' + attr + '>' +
         '<span class="f1-crit-ico">' + f1Ico(ico) + '</span>' +
         '<span class="f1-crit-que"><b>' + esc(f.nombre) + '</b><span>' + f.html + '</span></span>' +
@@ -7564,17 +9126,28 @@ body .pn-app section h2{animation:none;}
     html += '</section>';
     html += '<section class="f1-sesiones f1-vidrio" aria-labelledby="f1SesT"><h2 class="f1-h2" id="f1SesT">Sesiones ' + (esManana ? 'de mañana' : 'de hoy') +
       (ses.length ? ' <i>' + ses.length + '</i>' : '') + '</h2><div style="margin-top:10px">';
-    if(!ses.length) html += '<p class="f1-vacio-linea" style="padding:8px 0 10px">' + (esManana ? 'Mañana no hay sesiones fijas.' : 'Día sin sesiones fijas.') + '</p>';
-    var now = f1AhoraHN(), hhmm = (now.hora < 10 ? '0' : '') + now.hora + ':' + (now.min < 10 ? '0' : '') + now.min;
-    ses.forEach(function(s){
-      var paso = !esManana && String(s.hora).slice(0,5) < hhmm;
-      var cuerpo = '<span class="f1-ses-hora">' + esc(f1Hora(s.hora)) + '</span>' +
-        '<span class="f1-ini" aria-hidden="true">' + esc(s.grupo ? 'G' : iniciales(s.nombre)) + '</span>' +
-        '<span><b>' + esc(s.nombre) + '</b><i>' + esc(s.que + (s.grupo ? ' · ' + s.n + (s.n === 1 ? ' persona' : ' personas') : '')) + '</i></span>';
-      html += s.pid
-        ? '<button type="button" class="f1-ses f1-fila-btn' + (paso ? ' paso' : '') + '" data-f1-ficha="' + esc(s.pid) + '">' + cuerpo + f1Ico('ir', 'f1-ir') + '</button>'
-        : '<div class="f1-ses' + (paso ? ' paso' : '') + '">' + cuerpo + '<span></span></div>';
-    });
+    if(typeof F2 !== 'undefined' && F2.estado === 'ok' && dia >= F2.desde && dia <= F2.hasta){
+      /* fase 2 · la sesión trae adentro lo que la afecta; el bloque personal va rayado */
+      if(f2EsFeriadoCerrado(dia)) html += '<div class="f2-feriado"><b>Feriado</b><span>' + esc(f2Feriado(dia).nombre) + '. Sin sesiones.</span></div>';
+      else{
+        var filasD = f2Filas(dia).filter(function(x){ return x.tipo !== 'espacio' || x.estado === 'libre_viaje'; });
+        if(!filasD.some(function(x){ return x.tipo !== 'bloque'; })) html += '<p class="f1-vacio-linea" style="padding:8px 0 10px">' + (esManana ? 'Mañana no hay sesiones fijas.' : 'Día sin sesiones fijas.') + '</p>';
+        html += '<div class="f2-items lista">' + filasD.map(function(x){ return f2HtmlItem(x); }).join('') + '</div>';
+      }
+      if(!esManana){ var fm = f2FraseManana(f1Mas(dia, 1)); if(fm) html += '<p class="f2-frase pie">' + esc(fm) + '</p>'; }
+    }else{
+      if(!ses.length) html += '<p class="f1-vacio-linea" style="padding:8px 0 10px">' + (esManana ? 'Mañana no hay sesiones fijas.' : 'Día sin sesiones fijas.') + '</p>';
+      var now = f1AhoraHN(), hhmm = (now.hora < 10 ? '0' : '') + now.hora + ':' + (now.min < 10 ? '0' : '') + now.min;
+      ses.forEach(function(s){
+        var paso = !esManana && String(s.hora).slice(0,5) < hhmm;
+        var cuerpo = '<span class="f1-ses-hora">' + esc(f1Hora(s.hora)) + '</span>' +
+          '<span class="f1-ini" aria-hidden="true">' + esc(s.grupo ? 'G' : iniciales(s.nombre)) + '</span>' +
+          '<span><b>' + esc(s.nombre) + '</b><i>' + esc(s.que + (s.grupo ? ' · ' + s.n + (s.n === 1 ? ' persona' : ' personas') : '')) + '</i></span>';
+        html += s.pid
+          ? '<button type="button" class="f1-ses f1-fila-btn' + (paso ? ' paso' : '') + '" data-f1-ficha="' + esc(s.pid) + '">' + cuerpo + f1Ico('ir', 'f1-ir') + '</button>'
+          : '<div class="f1-ses' + (paso ? ' paso' : '') + '">' + cuerpo + '<span></span></div>';
+      });
+    }
     html += '</div></section></div>';
     return html;
   }
@@ -7941,6 +9514,16 @@ body .pn-app section h2{animation:none;}
     else if(h.tipo === 'reemplazo') html = f1HtmlReemplazo(h);
     else if(h.tipo === 'pausa') html = f1HtmlPausa(h);
     else if(h.tipo === 'viaje') html = f1HtmlViaje(h);
+    else if(h.tipo === 'f2ses') html = f2HtmlSesion(h);
+    else if(h.tipo === 'f2aus') html = f2HtmlAusencia(h);
+    else if(h.tipo === 'f2hueco') html = f2HtmlHueco(h);
+    else if(h.tipo === 'f2buscar') html = f2HtmlBuscar(h);
+    else if(h.tipo === 'f2cancela') html = f2HtmlCancela(h);
+    else if(h.tipo === 'f2viaje') html = f2HtmlViaje(h);
+    else if(h.tipo === 'f2reeval') html = f2HtmlReeval(h);
+    else if(h.tipo === 'f2grupal') html = f2HtmlGrupal(h);
+    else if(h.tipo === 'f2sab') html = f2HtmlSabado(h);
+    else if(h.tipo === 'f2bloque') html = f2HtmlBloque(h);
     var funde = h.funde; h.funde = false;
     caja.innerHTML = '<div class="' + (funde ? 'f1-funde' : '') + '">' + html + '</div>';
     if(h.lado) caja.scrollTop = h.scroll || 0;
@@ -8006,7 +9589,9 @@ body .pn-app section h2{animation:none;}
         /* fase 1.1 · Pausar y Viaje largo, a mano de cada acuerdo vivo. */
         if(F1.estado === 'ok' && (a.estado === 'vigente' || a.estado === 'pausado')){
           var accP = (a.estado === 'vigente' ? '<button type="button" class="f1-txt" data-guarda data-f1-pausar="' + esc(a.id) + '">Pausar</button>' : '') +
-            (f1ViajePermitido(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-viaje="' + esc(a.id) + '">Viaje largo · 50 %</button>' : '');
+            (f1ViajePermitido(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-viaje="' + esc(a.id) + '">Viaje largo · 50 %</button>' : '') +
+            /* fase 2 · el viaje con fechas libera su horario y propone el 50 % */
+            '<button type="button" class="f1-txt" data-guarda data-f2-viaje="' + esc(a.id) + '">Viaje</button>';
           if(accP) html += '<p class="f1-pie f1-pie-acuerdo">' + accP + '</p>';
         }
         if(a.estado === 'pausado'){
@@ -8019,6 +9604,7 @@ body .pn-app section h2{animation:none;}
             '<button type="button" class="f1-txt" data-guarda data-f1-activo="' + esc(a.id) + '">Pasar a activo</button></p>';
         }
       });
+      html += f2HtmlFichaAgenda(pid);
       if(!vivos.length) html += '<div class="f1-acciones" style="margin-top:14px"><button type="button" class="f1-mini" data-f1-cargar-acuerdo>Cargar un acuerdo nuevo</button></div>';
       if(vivos.length){
         var prox = f1ProximaSesion(pid);
@@ -8176,6 +9762,7 @@ body .pn-app section h2{animation:none;}
     return '<dl class="f1-dl">' +
       '<dt>Versión</dt><dd>' + esc(ver.nombre) + (ver.reglas_texto ? '<small>' + esc(ver.reglas_texto) + '</small>' : '') + '</dd>' +
       '<dt>Modalidad</dt><dd>' + esc(f1Modalidad(a, true) + (f1Frecuencia(a) ? ' · ' + f1Frecuencia(a) : '')) + '</dd>' +
+      f2HtmlGrupoAcuerdo(a) +
       '<dt>Precio</dt><dd class="f1-num">' + esc(f1Usd(a.precio_usd)) + (f1PorClase(a) ? ' por clase · se cobra a mes vencido' : ' al mes') +
         (f1Editable(a) ? '<br><button type="button" class="f1-txt" data-guarda data-f1-reemplazar="' + esc(a.id) + '">Cambiar precio o modalidad</button>' : '') +
         (a.reemplaza_a ? '<small>Reemplaza al acuerdo anterior desde ' + esc(f1El(a.cobro_desde)) + '.</small>' : '') + '</dd>' +
