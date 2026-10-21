@@ -2209,6 +2209,35 @@ button.f1-fila-btn{font:inherit; color:inherit; background:none; border:0; curso
 .f1-pago i{grid-column:1 / -1; font-style:normal; font-size:.84rem; color:var(--ink-2);}  /* lempiras y número: se leen → AA */
 .f1-pago.anulado b, .f1-pago.anulado .m{text-decoration:line-through; color:var(--ink-3);}
 .f1-pie{display:flex; gap:4px 18px; flex-wrap:wrap;}
+/* ═══ fase 1.2 ═══ */
+.f1-trato{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin-top:14px;}
+.f1-trato .f1-seg button{min-height:44px; padding:0 16px;}
+.f1-trato.chico{margin-top:8px;}
+/* El borrador se ve distinto: borde punteado, sin vidrio. No cobra. */
+.f1-borrador{border:1.5px dashed rgba(30,29,26,.28); border-radius:14px; padding:14px 16px; margin:4px 0 12px; background:transparent;}
+.f1-borrador-tit{display:flex; flex-wrap:wrap; gap:2px 10px; align-items:baseline;}
+.f1-borrador-tit b{font-family:var(--display); font-weight:600; font-size:1rem;}
+.f1-borrador-tit span{font-size:.88rem; color:var(--ink-2);}
+.f1-borrador .f1-acciones{margin-top:12px;}
+.f1-borrador-avisos{list-style:none; margin:10px 0 0; padding:0; display:grid; gap:6px;}
+.f1-borrador-avisos li{display:flex; gap:8px; align-items:flex-start; font-size:.9rem; color:var(--ink);}
+.f1-borrador-avisos svg{width:18px; height:18px; flex:none; margin-top:2px; color:var(--f1-e2, #8a5a00);}
+.f1-porconf{padding:16px 18px; margin:18px 0 6px; border-radius:18px;}
+.f1-porconf-cab{display:flex; align-items:center; justify-content:space-between; gap:10px 16px; flex-wrap:wrap;}
+.f1-porconf .f1-ayuda{margin-top:6px;}
+.f1-porconf-lista{list-style:none; margin:12px 0 0; padding:0; display:grid; gap:8px;}
+.f1-pc{display:grid; gap:2px; width:100%; text-align:left; padding:12px 14px; border:1.5px dashed rgba(30,29,26,.22); border-radius:12px; background:transparent; font:inherit; color:var(--ink); cursor:pointer; min-height:56px;}
+.f1-pc b{font-family:var(--display); font-weight:600;}
+.f1-pc i{font-style:normal; font-size:.88rem; color:var(--ink-2); overflow-wrap:anywhere;}
+.f1-pc-aviso{display:flex; gap:6px; align-items:flex-start; font-size:.86rem; color:var(--f1-e2, #8a5a00);}
+.f1-pc-aviso svg{width:16px; height:16px; flex:none; margin-top:2px;}
+.f1-porconf-linea{display:flex; align-items:center; gap:8px; margin:6px 0 2px; font-size:.95rem;}
+.f1-porconf-linea svg{width:18px; height:18px; color:var(--ink-2);}
+.f1-clases{margin:10px 0 4px; padding-left:2px;}
+.f1-clases-lista{list-style:none; margin:6px 0 0; padding:0; display:grid; gap:2px;}
+.f1-clases-lista li{display:flex; align-items:center; gap:12px; font-size:.92rem; min-height:36px;}
+.aj-pruebas{list-style:none; margin:12px 0 0; padding:0; display:grid; gap:6px;}
+.aj-pruebas li{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:8px 0; border-bottom:1px solid rgba(30,29,26,.08);}
 .f1-hilo .hilo-item{padding:8px 0;}
 
 /* ═════════ hojas (formularios) ═════════ */
@@ -2616,6 +2645,9 @@ body .pn-app section h2{animation:none;}
         </div>
 
         <p class="prov" id="ajProvisional" hidden></p>
+
+        <!-- fase 1.2 · lo marcado como dato de prueba: no se borra, se ve acá -->
+        <div class="aj-grupo" id="ajPrueba" hidden></div>
 
         <p class="aj-aviso">
           <b>Ojo: el sitio público todavía no lee esto.</b>
@@ -3285,7 +3317,7 @@ body .pn-app section h2{animation:none;}
     elContenido.hidden = false;
     pintarCuenta();
     irA('hoy');
-    cargar().then(abrirFichaDeLaURL);
+    cargar().then(abrirFichaDeLaURL).then(cargarPruebas);
   }
 
   /* ═══ traer todo ═══
@@ -3300,7 +3332,7 @@ body .pn-app section h2{animation:none;}
       .then(function(){
         if(!prog) return { data: [] };
         return sb.from('inscripciones')
-          .select('*, persona:personas(id,nombre,telefono,notas,es_clienta,activa)')
+          .select('*, persona:personas(id,nombre,telefono,notas,es_clienta,activa,es_prueba,trato)')
           .eq('programa_id', prog.id)
           .order('creada_en', { ascending:false });
       })
@@ -3310,7 +3342,8 @@ body .pn-app section h2{animation:none;}
       })
       .then(function(r){
         if(!r) return;
-        datos = (r.data || []).map(function(i){
+        /* fase 1.2 · los datos de prueba no entran a Invitadas, Agenda ni cupos */
+        datos = (r.data || []).filter(function(i){ return !(i.persona && i.persona.es_prueba); }).map(function(i){
           var per = i.persona || {};
           i.nombre   = per.nombre || 'Sin nombre';
           i.telefono = per.telefono || null;
@@ -5309,6 +5342,8 @@ body .pn-app section h2{animation:none;}
       '<div class="ficha-pie">' +
         '<button class="pn-btn" type="button" id="fGuardar">Guardar</button>' +
         '<span class="guardado" id="fEstadoGuardado"></span>' +
+        /* fase 1.2 · «ddddd» y compañía: se marcan, no se borran */
+        '<button class="pn-txt" type="button" id="fPrueba">Es un dato de prueba</button>' +
       '</div>';
 
     elFicha.hidden = false;
@@ -5341,6 +5376,10 @@ body .pn-app section h2{animation:none;}
       cerrarFicha(); abrirHoja(c.id);
     });
     document.getElementById('fGuardar').addEventListener('click', function(){ guardar(c.id, this); });
+    document.getElementById('fPrueba').addEventListener('click', function(){
+      var b = this;
+      confirmar(b, function(){ cerrarFicha(); f1MarcarPrueba(c.persona_id, c.nombre, true); });
+    });
   }
 
   /* El hilo se lee por PERSONA, no por inscripción: si la misma señora
@@ -6217,7 +6256,7 @@ body .pn-app section h2{animation:none;}
     return sb.from('personas').select('*').eq('es_clienta', true).order('creada_en', { ascending:true })
       .then(function(r){
         if(r.error){ console.warn('clientas:', r.error.message); return; }
-        clientas = r.data || [];
+        clientas = (r.data || []).filter(function(c){ return !c.es_prueba; });   /* 1.2 */
       });
   }
 
@@ -6251,6 +6290,12 @@ body .pn-app section h2{animation:none;}
      ═══════════════════════════════════════════════════════════ */
   function mensajesInvitacion(cl){
     var n = primerNombre(cl);
+    /* fase 1.2 · con «usted», cálido pero sin voseo y sin el corazón */
+    if(cl.trato !== 'vos') return [
+      { que:'Para tu cliente', texto:'Hola, ' + n + '. Con mucho gusto le dejo aquí la invitación de THRIVE que le comenté.' },
+      { que:'Para tu cliente', texto:'Y para que no tenga que pensar qué escribir, puede mandarlo así:' },
+      { que:'Para que lo reenvíe', texto:'Hola. Mi coach está abriendo THRIVE, un grupo pequeño de entrenamiento de fuerza para mujeres, y pensé en usted porque creo que le podría gustar. Está abriendo algunas clases de prueba por invitación.\n\nLe paso el link para que vea de qué se trata:\n' + linkDe(cl) }
+    ];
     return [
       { que:'Para tu cliente', texto:'Hiiii ' + n + ' ♥ Aquí te dejo la invitación de THRIVE que te comenté.' },
       { que:'Para tu cliente', texto:'Y para que no tengás que pensar qué escribirle 😄, podés mandárselo así:' },
@@ -6903,6 +6948,7 @@ body .pn-app section h2{animation:none;}
     editando:null, noMandar:null,
     acuerdoAbierto:{}, verTodosPagos:{},
     adentro:{},                 /* persona_id de quien está «Adentro» en THRIVE */
+    clases:[], prueba:{},       /* fase 1.2 · clases (cobro por clase) · personas marcadas como prueba */
     elegidas:{},                /* personas que ya existían y se eligieron en «Agregar cliente» */
     hoja:null                   /* qué hay en la hoja: { tipo, … } */
   };
@@ -6987,8 +7033,11 @@ body .pn-app section h2{animation:none;}
       leer('personas_expediente'), leer('acuerdos_en_curso'),
       /* fase 1.1 · Quien ya está «Adentro» en THRIVE es cliente aunque
          todavía no tenga su acuerdo cargado: tiene que estar en Clientes. */
-      leer('inscripciones', sb.from('inscripciones').select('persona_id').eq('programa_id', 'thrive').eq('estado', 'adentro'))
+      leer('inscripciones', sb.from('inscripciones').select('persona_id').eq('programa_id', 'thrive').eq('estado', 'adentro')),
+      /* fase 1.2 · las clases de quien paga por clase */
+      leer('clases')
     ]).then(function(r){
+      F1.clases = r[13];
       F1.adentro = {}; r[12].forEach(function(x){ F1.adentro[x.persona_id] = 1; });
       F1.enCurso = {}; r[11].forEach(function(x){ F1.enCurso[x.id] = x; });
       F1.expedientes = {}; r[10].forEach(function(x){ F1.expedientes[x.persona_id] = x.carpeta_url; });
@@ -7007,6 +7056,19 @@ body .pn-app section h2{animation:none;}
     }).then(function(r){
       F1.personas = r[0];
       F1.insc = {}; r[1].forEach(function(i){ F1.insc[i.id] = i; });
+      /* fase 1.2 · DATOS DE PRUEBA: lo marcado no entra a ninguna lista ni
+         cuenta (Hoy, Clientes, Cobros, recordatorios). No se borra nada:
+         se ve y se revierte desde Ajustes › Datos de prueba. */
+      F1.prueba = {};
+      F1.personas.forEach(function(x){ if(x.es_prueba) F1.prueba[x.id] = 1; });
+      F1.personas = F1.personas.filter(function(x){ return !x.es_prueba; });
+      var deVerdad = function(x){ return !F1.prueba[x.persona_id]; };
+      var acPrueba = {}; F1.acuerdos.forEach(function(a){ if(F1.prueba[a.persona_id]) acPrueba[a.id] = 1; });
+      F1.acuerdos = F1.acuerdos.filter(deVerdad); F1.periodos = F1.periodos.filter(deVerdad);
+      F1.pagos = F1.pagos.filter(deVerdad); F1.consultas = F1.consultas.filter(deVerdad);
+      F1.recs = F1.recs.filter(function(x){ return !acPrueba[x.acuerdo_id]; });
+      F1.clases = F1.clases.filter(function(x){ return !acPrueba[x.acuerdo_id]; });
+      Object.keys(F1.prueba).forEach(function(id){ delete F1.adentro[id]; delete F1.elegidas[id]; });
       F1.estado = 'ok'; F1.leidoEn = new Date().toISOString();
     }).catch(function(e){
       console.warn('fase 1:', e && e.message);
@@ -7068,15 +7130,35 @@ body .pn-app section h2{animation:none;}
   /* R3: los horarios de cualquier acuerdo no anulado, con desde ≤ día ≤
      hasta y no retirados (la base los corta al cerrar). ⚠️ Decisión del
      09: un acuerdo EN PAUSA (viaje largo) no muestra sesiones. */
-  function f1DaSesiones(a, dia){ return a.estado !== 'anulado' && a.estado !== 'pausado'; }
+  function f1DaSesiones(a, dia){ return a.estado !== 'anulado' && a.estado !== 'pausado' && a.estado !== 'borrador'; }
   function f1Version(id){ return F1.versiones.filter(function(v){ return v.id === id; })[0] || { nombre:id }; }
   function f1Acuerdo(id){ return F1.acuerdos.filter(function(a){ return a.id === id; })[0] || null; }
   function f1Programa(a){ var i = F1.insc[a.inscripcion_id]; return i ? i.programa_id : ''; }
   function f1Grupo(a){ var i = F1.insc[a.inscripcion_id]; return i && i.grupo ? i.grupo : ''; }
+  /* fase 1.2 · modalidades nuevas: 1:1 a domicilio y grupal remoto */
+  var F1_MODAL = { uno_a_uno_remoto:'1:1 remoto', uno_a_uno_domicilio:'1:1 a domicilio', grupo_remoto:'Grupal remoto' };
   function f1Modalidad(a, largo){
     if(a.modalidad === 'grupo') return f1Programa(a) === 'thrive' ? 'THRIVE' + (f1Grupo(a) ? ' ' + f1Grupo(a) : '') : 'Grupo';
-    if(a.modalidad === 'uno_a_uno_remoto') return '1:1 remoto';
+    if(F1_MODAL[a.modalidad]) return F1_MODAL[a.modalidad];
     return largo ? '1:1 presencial' : '1:1';
+  }
+  /* «2x semana». Solo se muestra: no cambia el cobro. */
+  function f1Frecuencia(a){ return a && a.frecuencia_semana ? a.frecuencia_semana + 'x semana' : ''; }
+  function f1PorClase(a){ return !!(a && a.forma_cobro === 'por_clase'); }
+  function f1ClasesDe(aid, ini, fin){
+    return F1.clases.filter(function(c){ return c.acuerdo_id === aid && !c.anulada && (!ini || c.fecha >= ini) && (!fin || c.fecha <= fin); })
+      .sort(function(x, y){ return x.fecha < y.fecha ? -1 : 1; });
+  }
+  /* fase 1.2 · TRATO: «usted» por defecto. Al cliente, el suyo; a quien
+     paga por otra persona, el de ese acuerdo. */
+  function f1Trato(pid){ var p = f1Persona(pid) || {}; return p.trato === 'vos' ? 'vos' : 'usted'; }
+  function f1TratoPagador(a){ return a && a.pagador_trato === 'vos' ? 'vos' : 'usted'; }
+  /* «la mensualidad del 15 oct al 14 nov» · «las clases del 1 al 31 oct (3 × US$25)» */
+  function f1QueSeCobra(a, p, deQuien){
+    var per = f1DelAl(p.periodo_inicio, p.periodo_fin), de = deQuien ? 'de ' + deQuien + ' ' : '';
+    if(!f1PorClase(a)) return 'la mensualidad ' + de + per;
+    var n = f1ClasesDe(a.id, p.periodo_inicio, p.periodo_fin).length;
+    return 'las clases ' + de + per + ' (' + n + ' × ' + f1Usd(a.precio_usd) + ')';
   }
   function f1HorariosDe(a){
     return F1.horarios.filter(function(h){ return h.acuerdo_id === a.id && !h.retirado; })
@@ -7104,6 +7186,12 @@ body .pn-app section h2{animation:none;}
   function f1EstadoEn(p, dia){
     if(!dia || dia === f1Hoy()) return p.estado;
     if(p.no_se_cobra) return 'no_se_cobra';
+    /* fase 1.2 · por clase: mientras corre, «en curso»; sin clases, nada que cobrar */
+    if(f1PorClase(f1Acuerdo(p.acuerdo_id))){
+      if(dia < p.periodo_inicio) return Number(p.monto_usd) > 0 && Number(p.pagado_usd) >= Number(p.monto_usd) ? 'cubierto' : 'futuro';
+      if(dia <= p.periodo_fin) return 'en_curso';
+      if(Number(p.monto_usd) === 0) return 'sin_clases';
+    }
     if(Number(p.pagado_usd) >= Number(p.monto_usd)) return 'cubierto';
     if(dia < p.periodo_inicio) return 'futuro';
     if(p.extension_hasta && dia <= p.extension_hasta) return 'extendido';
@@ -7164,7 +7252,8 @@ body .pn-app section h2{animation:none;}
   var F1_CERRADO = ['enviado','descartado','sin_efecto','resuelto'];
   function f1PasoDe(a, p, dia){
     var est = f1EstadoEn(p, dia);
-    if(est === 'cubierto' || est === 'no_se_cobra') return null;
+    /* fase 1.2 · un período por clase en curso o sin clases no se recuerda */
+    if(est === 'cubierto' || est === 'no_se_cobra' || est === 'en_curso' || est === 'sin_clases') return null;
     var vivos = a.estado !== 'cerrado';
     var due = [];
     if(p.extension_hasta){
@@ -7227,26 +7316,31 @@ body .pn-app section h2{animation:none;}
     var monto = Number(x.p.falta_usd) < Number(x.p.monto_usd) ? Number(x.p.falta_usd) : Number(x.p.monto_usd);
     var tasa = F1.tasa ? Number(F1.tasa.tasa_venta) : 0;
     var lps = tasa ? f1Lps(f1Lempiras(monto, tasa)) : '';
-    /* La tasa es la ÚLTIMA que se usó, no la de hoy: se dice con su fecha. */
-    var deTasa = tasa ? ' a la tasa de venta BAC del ' + f1Corto(F1.tasa.tasa_fecha) : '';
-    var per = f1DelAl(x.p.periodo_inicio, x.p.periodo_fin);
     var falta = Number(x.p.falta_usd) < Number(x.p.monto_usd);
     var cuanto = (falta ? 'faltan ' : '') + f1Usd(monto) + (lps ? ' (' + lps + ')' : '');
-    if(d.tipo === 'pagador'){
-      return 'Hola, ' + n + '. Te escribo por la mensualidad de ' + primerNombre(d.cliente) + ' ' + per + ': ' + cuanto +
-        '. Cuando hagás la transferencia, mandame el comprobante por aquí. ¡Gracias!';
-    }
+    /* fase 1.2 · TRATO (CAMBIOS-SQL §1): con «usted» no hay voseo ni en
+       los verbos. Los textos son los del 14, validados por el 04. */
+    var U = (d.tipo === 'pagador' ? f1TratoPagador(x.a) : f1Trato(x.a.persona_id)) === 'usted';
+    var hola = (U ? 'Buenos días, ' : 'Hola, ') + n + '. ';
+    var cierreTransf = U ? 'Cuando haga la transferencia, me envía el comprobante por aquí. ¡Muchas gracias!'
+                         : 'Cuando hagás la transferencia, mandame el comprobante por aquí. ¡Gracias!';
+    if(d.tipo === 'pagador')
+      return hola + (U ? 'Le escribo por ' : 'Te escribo por ') + f1QueSeCobra(x.a, x.p, primerNombre(d.cliente)) + ': ' + cuanto + '. ' + cierreTransf;
+    var que = f1QueSeCobra(x.a, x.p);
     if(x.paso === 'preventivo'){
-      var abierta = f1Hoy() >= x.p.periodo_inicio;
-      return 'Hola, ' + n + '. Te recuerdo que ' + (abierta ? 'está abierta, hasta el ' + (+x.p.vence.slice(8,10)) + ', ' : 'mañana ' + (+x.p.periodo_inicio.slice(8,10)) + ' toca ') +
-        'la mensualidad ' + per + ': ' + f1Usd(monto) + (lps ? ' (' + lps + deTasa + ')' : '') +
-        '. Cuando hagás la transferencia, mandame el comprobante por aquí. ¡Gracias!';
+      /* La tasa es la ÚLTIMA que se usó, no la de hoy: se dice con su fecha. */
+      var conTasa = lps ? ' (' + lps + ', tasa de venta BAC del ' + f1Corto(F1.tasa.tasa_fecha) + ')' : '';
+      var abre = f1Mas(x.p.fecha_preventivo, 1), abierta = f1Hoy() >= abre;
+      return hola + (U ? 'Le recuerdo que ' : 'Te recuerdo que ') +
+        (abierta ? 'está abierta, hasta el ' + (+x.p.vence.slice(8,10)) + ', la ventana de ' : 'mañana ' + (+abre.slice(8,10)) + ' abre la ventana de ') +
+        que + ': ' + f1Usd(monto) + conTasa + '. ' + cierreTransf;
     }
     if(x.paso === 'primero')
-      return 'Hola, ' + n + '. Te escribo por la mensualidad ' + per + ': ' + cuanto +
-        '. Si ya la hiciste, mandame el comprobante y lo registro. Si necesitás unos días, decime qué fecha te queda bien.';
-    return 'Hola, ' + n + '. Te escribo de nuevo por la mensualidad ' + per + ' (' + (falta ? 'faltan ' : '') + f1Usd(monto) +
-      (lps ? ' · ' + lps : '') + '). Si te acomoda mejor otra fecha, la acordamos sin problema.';
+      return hola + (U ? 'Le escribo por ' : 'Te escribo por ') + que + ': ' + cuanto + '. ' +
+        (U ? 'Si ya la hizo, me envía el comprobante y lo registro. Si necesita unos días, dígame qué fecha le queda bien.'
+           : 'Si ya la hiciste, mandame el comprobante y lo registro. Si necesitás unos días, decime qué fecha te queda bien.');
+    return hola + (U ? 'Le escribo de nuevo por ' : 'Te escribo de nuevo por ') + que + ' (' + (falta ? 'faltan ' : '') + f1Usd(monto) +
+      (lps ? ' · ' + lps : '') + '). ' + (U ? 'Si le acomoda mejor otra fecha, la acordamos sin problema.' : 'Si te acomoda mejor otra fecha, la acordamos sin problema.');
   }
 
   /* ═══ LO CRÍTICO DE UN DÍA (Hoy y Mañana) ═══
@@ -7387,6 +7481,9 @@ body .pn-app section h2{animation:none;}
         return '<button type="button" role="radio" aria-checked="' + (F1.rango === o[0]) + '" data-f1-rango="' + o[0] + '">' + o[1] + '</button>';
       }).join('') + '</div>';
     var html = '<div class="f1-hoy-cab"><h1>' + esc(titular) + '</h1>' + seg + '</div>';
+    /* fase 1.2 · los borradores no cuentan en Hoy: solo esta línea */
+    var nb = F1.estado === 'ok' ? f1BorradoresDe().length : 0;
+    if(nb) html += '<p class="f1-porconf-linea">' + f1Ico('lista') + '<button type="button" class="f1-txt" data-f1-ir="clientas">Tenés ' + nb + (nb === 1 ? ' acuerdo por confirmar' : ' acuerdos por confirmar') + '</button></p>';
 
     if(F1.estado === 'cargando'){
       html += '<div class="f1-hoy-cuerpo"><section class="f1-critico f1-solido" aria-busy="true"><div class="f1-critico-cab"><h2 class="f1-h2">Para resolver hoy</h2></div>' +
@@ -7534,6 +7631,125 @@ body .pn-app section h2{animation:none;}
     return html + '</div>';
   }
 
+  /* ═══ fase 1.2 · ACUERDOS EN BORRADOR ═══
+     Cargados pero sin confirmar: no generan períodos, cobros ni
+     recordatorios (la base no los cuenta). Se corrigen libres y salen de
+     ahí de dos formas: «Confirmar» o «Descartar». Lo marcado con ⚠️ en
+     sus notas es lo que la carga dejó para revisar. */
+  function f1BorradoresDe(pid){
+    return F1.acuerdos.filter(function(a){ return a.estado === 'borrador' && (!pid || a.persona_id === pid); })
+      .sort(function(x, y){ var px = (f1Persona(x.persona_id) || {}).nombre || '', py = (f1Persona(y.persona_id) || {}).nombre || ''; return px.localeCompare(py, 'es'); });
+  }
+  function f1AvisosBorrador(a){
+    return String(a.notas || '').split('\n').filter(function(l){ return l.indexOf('\u26A0') >= 0; })
+      .map(function(l){ return l.replace(/\u26A0\uFE0F?/g, '').trim(); }).filter(Boolean);
+  }
+  function f1BorradorListo(a){ return !f1AvisosBorrador(a).length && !!f1Ventana(a); }
+  function f1BorradorResumen(a){
+    var v = f1Ventana(a);
+    return f1Modalidad(a, true) + (f1Frecuencia(a) ? ' · ' + f1Frecuencia(a) : '') + ' · ' + f1Usd(a.precio_usd) + (f1PorClase(a) ? ' por clase' : ' al mes') +
+      ' · ' + (v ? 'paga ' + f1VentanaTexto(v) + ' desde ' + f1El(a.cobro_desde) : 'falta la ventana de pago');
+  }
+  function f1HtmlBorradorCaja(a){
+    var av = f1AvisosBorrador(a);
+    return '<div class="f1-borrador"><p class="f1-borrador-tit"><b>Acuerdo por confirmar</b><span>No cobra ni recuerda hasta que lo confirmés.</span></p>' +
+      '<p class="f1-modo">' + esc(f1BorradorResumen(a)) + '</p>' +
+      (a.firmado_en ? '' : '<p class="f1-modo">Sin acuerdo nuevo firmado</p>') +
+      (av.length ? '<ul class="f1-borrador-avisos">' + av.map(function(t){ return '<li>' + f1Ico('info') + '<span>' + esc(t) + '</span></li>'; }).join('') + '</ul>' : '') +
+      (F1.estado === 'ok' ? '<div class="f1-acciones"><button type="button" class="pn-btn f1-btn" data-guarda data-f1-confirmar="' + esc(a.id) + '">Confirmar</button>' +
+        '<button type="button" class="f1-mini" data-guarda data-f1-borrador="' + esc(a.id) + '">' + f1Ico('lapiz') + 'Corregir</button>' +
+        '<button type="button" class="f1-txt" data-guarda data-f1-descartar="' + esc(a.id) + '">Descartar</button></div>' : '') + '</div>';
+  }
+  function f1HtmlPorConfirmar(){
+    var bs = f1BorradoresDe();
+    if(!bs.length) return '';
+    var listos = bs.filter(f1BorradorListo);
+    return '<section class="f1-porconf f1-vidrio" aria-labelledby="f1PcT"><div class="f1-porconf-cab"><h2 class="f1-h2" id="f1PcT">Por confirmar (' + bs.length + ')</h2>' +
+      (listos.length ? '<button type="button" class="pn-btn chico" data-guarda data-f1-confirmar-todos>' + (listos.length === bs.length ? (bs.length === 1 ? 'Confirmar' : 'Confirmar los ' + bs.length) : listos.length === 1 ? 'Confirmar el que está listo' : 'Confirmar los ' + listos.length + ' listos') + '</button>' : '') + '</div>' +
+      '<p class="f1-ayuda">Acuerdos cargados que todavía no cobran ni recuerdan. Los que tienen algo para revisar se confirman desde su ficha.</p><ul class="f1-porconf-lista">' +
+      bs.map(function(a){
+        var p = f1Persona(a.persona_id) || {}, av = f1AvisosBorrador(a), v = f1Ventana(a);
+        return '<li><button type="button" class="f1-fila-btn f1-pc" data-f1-ficha="' + esc(a.persona_id) + '"><b>' + esc(p.nombre || '') + '</b><i>' + esc(f1BorradorResumen(a)) + '</i>' +
+          (av.length ? '<span class="f1-pc-aviso">' + f1Ico('info') + esc(av.join(' · ')) + '</span>' : '') + '</button></li>';
+      }).join('') + '</ul></section>';
+  }
+  /* Confirmar es todo o nada (confirmar_acuerdos) y no tiene vuelta: un
+     acuerdo confirmado no vuelve a borrador. Por eso pide el «¿seguro?». */
+  /* QA 1.2 · Un borrador cuyo cobro ya empezó genera, al confirmarlo,
+     cobros que ya abrieron. Se dice antes: «queda pendiente el cobro de…». */
+  /* El aviso va arriba de los botones mientras el botón pregunta «¿seguro?»;
+     se puede confirmar igual con el segundo toque. */
+  function f1MostrarAvisoConfirmar(b, textos){
+    var ya = document.getElementById('f1AvisoConf'); if(ya) ya.remove();
+    textos = textos.filter(Boolean);
+    if(!textos.length || b.classList.contains('confirmando')) return;
+    var donde = b.closest('.f1-acciones') || b.closest('.f1-porconf-cab');
+    if(donde) donde.insertAdjacentHTML('beforebegin', '<p class="f1-aviso" id="f1AvisoConf" role="status">' + f1Ico('info') + '<span>' + esc(textos.join(' ')) + '</span></p>');
+  }
+  function f1PendientesAlConfirmar(a){
+    var v = f1Ventana(a), hoy = f1Hoy(), out = [];
+    if(!v || f1PorClase(a) || a.cobro_desde > hoy) return out;
+    for(var m = a.cobro_desde.slice(0,8) + '01', g = 0; m <= hoy && g < 24; m = masMeses(m, 1), g++){
+      var ini = QAdiaEnMes(m, v.dia_desde);
+      if(ini < a.cobro_desde || ini > hoy) continue;
+      var fin = f1Mas(QAdiaEnMes(masMeses(m, 1), v.dia_desde), -1);
+      out.push(f1Rango(ini, fin) + ' (' + f1Usd(a.precio_usd) + ')');
+    }
+    return out;
+  }
+  function f1AvisoAlConfirmar(a, conNombre){
+    var ps = f1PendientesAlConfirmar(a);
+    if(!ps.length) return '';
+    return (conNombre ? (f1Persona(a.persona_id) || {}).nombre + ': ' : '') + 'Al confirmar, queda pendiente el cobro de ' + ps.join(' y de ') + '.';
+  }
+  function f1ConfirmarBorradores(ids, nombre){
+    if(!ids.length) return;
+    sb.rpc('confirmar_acuerdos', { p_ids:ids }).then(function(r){
+      if(r.error){ avisar('No se pudo confirmar. ' + f1Claro(r.error)); return; }
+      f1Recargar();
+      avisar(ids.length === 1 ? 'Acuerdo ' + (nombre ? 'de ' + nombre + ' ' : '') + 'confirmado: desde ahora cobra y recuerda.'
+        : ids.length + ' acuerdos confirmados: desde ahora cobran y recuerdan.');
+    });
+  }
+  /* ═══ fase 1.2 · LAS CLASES (cobro por clase) ═══ */
+  function f1HtmlClases(a, c){
+    var cl = f1ClasesDe(a.id, c.periodo_inicio, c.periodo_fin);
+    return '<div class="f1-clases"><span class="f1-rotulo">Clases ' + esc(f1Rango(c.periodo_inicio, c.periodo_fin)) + '</span>' +
+      (cl.length ? '<ul class="f1-clases-lista">' + cl.map(function(x){
+        return '<li><span class="f1-num">' + esc(f1DiaLargo(x.fecha)) + '</span>' + (F1.estado === 'ok' && f1Editable(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-anular-clase="' + esc(x.id) + '">Anular</button>' : '') + '</li>';
+      }).join('') + '</ul>' : '<p class="f1-ayuda">Ninguna anotada en este período.</p>') +
+      (F1.estado === 'ok' && f1Editable(a) ? '<p class="f1-pie"><button type="button" class="f1-mini" data-guarda data-f1-clase="' + esc(a.id) + '">' + f1Ico('cal') + 'Anotar clase</button></p>' : '') + '</div>';
+  }
+  /* ═══ fase 1.2 · DATOS DE PRUEBA ═══ */
+  var PRUEBAS = [];
+  function cargarPruebas(){
+    return sb.from('personas').select('id,nombre,es_clienta').eq('es_prueba', true).order('nombre').then(function(r){
+      PRUEBAS = (r && !r.error && r.data) || []; pintarPruebas();
+    }, function(){});
+  }
+  function pintarPruebas(){
+    var caja = document.getElementById('ajPrueba');
+    if(!caja) return;
+    caja.hidden = !PRUEBAS.length;
+    if(!PRUEBAS.length){ caja.innerHTML = ''; return; }
+    var abierto = !!F1.verPruebas;
+    caja.innerHTML = '<h2>Datos de prueba</h2><p class="ayuda">Lo que marcaste como dato de prueba no aparece en ninguna lista ni cuenta. No se borró: se revierte desde acá.</p>' +
+      '<button type="button" class="pn-txt" data-f1-ver-pruebas aria-expanded="' + abierto + '">' + (abierto ? 'Ocultar' : 'Ver datos de prueba (' + PRUEBAS.length + ')') + '</button>' +
+      (abierto ? '<ul class="aj-pruebas">' + PRUEBAS.map(function(x){ return '<li><span>' + esc(x.nombre) + '</span><button type="button" class="pn-txt" data-guarda data-f1-no-prueba="' + esc(x.id) + '">No es de prueba</button></li>'; }).join('') + '</ul>' : '');
+  }
+  function f1MarcarPrueba(pid, nombre, si){
+    sb.from('personas').update({ es_prueba:si }).eq('id', pid).then(function(r){
+      if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+      if(si && F1.sel === pid) F1.sel = null;
+      if(si && F1.hoja && F1.hoja.pid === pid){ F1.hoja = null; if(!elHoja.hidden) cerrarHoja(); }
+      Promise.resolve(cargar()).then(cargarPruebas);
+      if(si) ofrecerVuelta((nombre || 'Esa persona') + ' quedó como dato de prueba: ya no aparece en las listas.', function(){
+        return sb.from('personas').update({ es_prueba:false }).eq('id', pid).then(function(r2){ if(!r2.error) Promise.resolve(cargar()).then(cargarPruebas); return r2; });
+      });
+      else avisar((nombre || 'Esa persona') + ' vuelve a aparecer en las listas.');
+    });
+  }
+
   /* ── CLIENTES ── */
   function f1InscDe(pid, programa){
     return Object.keys(F1.insc).map(function(k){ return F1.insc[k]; })
@@ -7542,6 +7758,7 @@ body .pn-app section h2{animation:none;}
   /* Sin acuerdo: si está en THRIVE se dice, para que se entienda por qué
      aparece en la lista sin nada cargado. */
   function f1SinAcuerdoTexto(pid){
+    if(f1BorradoresDe(pid).length) return 'Acuerdo por confirmar';
     var t = f1InscDe(pid, 'thrive');
     return t && t.estado === 'adentro' ? 'THRIVE' + (t.grupo ? ' ' + t.grupo : '') + ' · falta cargar su acuerdo' : 'Sin acuerdo cargado';
   }
@@ -7623,7 +7840,7 @@ body .pn-app section h2{animation:none;}
     if(ancho && (!F1.sel || !gente.some(function(g){ return g.p.id === F1.sel; })) && pagina.length) F1.sel = pagina[0].p.id;
 
     var filtros = [['todos','Todos'],['uno','1:1'],['remoto','Remoto'],['grupo','Grupo'],['pausados','Pausados'],['anteriores','Anteriores']];
-    var html = head + '<div class="f1-md"><div class="f1-md-lista">' +
+    var html = head + (F1.estado === 'ok' ? f1HtmlPorConfirmar() : '') + '<div class="f1-md"><div class="f1-md-lista">' +
       '<div class="f1-controles">' +
         '<label class="pn-buscar">' + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
           '<input type="search" id="f1Buscar" placeholder="Buscar por nombre" autocomplete="off" aria-label="Buscar por nombre" value="' + esc(F1.q) + '"></label>' +
@@ -7769,17 +7986,22 @@ body .pn-app section h2{animation:none;}
     /* la franja de los 3 segundos */
     html += '<div class="f1-franja">';
     anulados.forEach(function(a){ html += '<p class="f1-modo">' + esc(f1Modalidad(a, true) + ' desde ' + f1El(a.cobro_desde).slice(3) + ' · No llegó a empezar') + '</p>'; });
-    if(!acs.length){
+    /* fase 1.2 · los acuerdos en BORRADOR, distintos: no cobran ni recuerdan */
+    var bors = f1BorradoresDe(pid);
+    bors.forEach(function(a){ html += f1HtmlBorradorCaja(a); });
+    if(!acs.length && bors.length){
+      /* solo el borrador: nada más que decir arriba */
+    }else if(!acs.length){
       html += '<p class="f1-modo">' + esc(anulados.length ? 'Sin acuerdo en curso' : f1SinAcuerdoTexto(pid)) + '</p>' +
         '<div class="f1-acciones" style="margin-top:16px"><button type="button" class="pn-btn f1-btn" data-f1-cargar-acuerdo>Cargar su acuerdo</button></div>';
     }else{
       acs.forEach(function(a){
         var h = f1HorarioTexto(a, true);
-        var linea = f1Modalidad(a, true) + (h ? ' · ' + h : '');
+        var linea = f1Modalidad(a, true) + (f1Frecuencia(a) ? ' · ' + f1Frecuencia(a) : '') + (f1PorClase(a) ? ' · por clase' : '') + (h ? ' · ' + h : '');
 
         if(a.estado === 'cerrado') linea += ' · cerró ' + f1El(a.cobro_hasta) + (a.estado_motivo ? ' (' + a.estado_motivo + ')' : '');
         if(a.estado === 'reemplazado') linea = 'Acuerdo anterior: ' + linea + ' · hasta ' + f1El(a.cobro_hasta).slice(3);
-        if(a.estado === 'vigente' && a.reemplaza_a && a.cobro_desde > f1Hoy()) linea += ' · desde ' + f1El(a.cobro_desde).slice(3) + ', ' + f1Usd(a.precio_usd) + ' al mes';
+        if(a.estado === 'vigente' && a.reemplaza_a && a.cobro_desde > f1Hoy()) linea += ' · desde ' + f1El(a.cobro_desde).slice(3) + ', ' + f1Usd(a.precio_usd) + (f1PorClase(a) ? ' por clase' : ' al mes');
         html += '<p class="f1-modo">' + esc(linea) + '</p>';
         /* fase 1.1 · Pausar y Viaje largo, a mano de cada acuerdo vivo. */
         if(F1.estado === 'ok' && (a.estado === 'vigente' || a.estado === 'pausado')){
@@ -7812,6 +8034,11 @@ body .pn-app section h2{animation:none;}
       else if(exc.length) html += '<ul class="f1-exc-lista">' + exc.map(function(e){ return '<li>' + f1Ico(e.ico) + '<p>' + e.largo + '</p></li>'; }).join('') + '</ul>';
       else html += '<p class="f1-nada">Nada pendiente</p>';
     }
+    /* fase 1.2 · cómo se le escribe: «usted» por defecto */
+    var trato = f1Trato(pid);
+    html += '<div class="f1-trato"><span class="f1-rotulo" id="f1TratoT">Le escribo de</span><div class="f1-seg" role="radiogroup" aria-labelledby="f1TratoT">' +
+      [['usted','usted'],['vos','vos']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (trato === o[0]) + '" data-guarda data-f1-trato="' + o[0] + '">' + o[1] + '</button>'; }).join('') +
+      '</div></div>';
     var carpeta = (F1.expedientes || {})[pid];
     html += '<div class="f1-expediente" id="f1Exp">' + (carpeta
       ? '<a class="f1-mini" href="' + esc(carpeta) + '" target="_blank" rel="noopener">' + f1Ico('carpeta') + 'Abrir expediente' + f1Ico('externo') + '</a>'
@@ -7842,20 +8069,26 @@ body .pn-app section h2{animation:none;}
           est = '<strong>Extensión hasta ' + esc(f1El(c.extension_hasta)) + '</strong> · avisos en pausa' + (Number(c.falta_usd) < Number(c.monto_usd) ? ' · faltan ' + esc(f1Usd(c.falta_usd)) : '');
         }else if(c.estado === 'en_ventana'){
           est = 'En ventana · hasta ' + esc(f1El(c.vence)) + (Number(c.falta_usd) < Number(c.monto_usd) ? ' · faltan ' + esc(f1Usd(c.falta_usd)) : '');
+        }else if(c.estado === 'en_curso'){
+          /* fase 1.2 · por clase: se cobra a mes vencido; mientras corre, nada que recordar */
+          var nc = f1ClasesDe(a.id, c.periodo_inicio, c.periodo_fin).length;
+          est = 'En curso · ' + nc + (nc === 1 ? ' clase anotada' : ' clases anotadas') + ' · se cobra en la ventana ' + esc(f1VentanaCorta(c)); botones = false;
+        }else if(c.estado === 'sin_clases'){
+          est = 'Sin clases en este período: no hay nada que cobrar'; botones = false;
         }else if(c.estado === 'futuro'){
-          est = 'Abre ' + esc(f1El(c.periodo_inicio)); botones = true;
+          est = 'Abre ' + esc(f1El(c.periodo_inicio)); botones = !f1PorClase(a);
         }else{
           botones = false;
           est = (c.estado === 'no_se_cobra' ? 'Sin cobro este período' : 'Cubierta') + (sig && v ? ' · próxima ventana ' + esc(v.tipo === 'dia_fijo' ? 'el ' + f1Corto(sig.periodo_inicio) : v.dia_desde + '–' + v.dia_hasta + ' ' + F1_MES[+sig.periodo_inicio.slice(5,7) - 1]) : '');
         }
-        html += '<div class="f1-cobro"><span class="per">Mensualidad' + esc(lbl) + ' ' + esc(f1Rango(c.periodo_inicio, c.periodo_fin)) + '</span>' +
+        html += '<div class="f1-cobro"><span class="per">' + (f1PorClase(a) ? 'Clases' : 'Mensualidad') + esc(lbl) + ' ' + esc(f1Rango(c.periodo_inicio, c.periodo_fin)) + '</span>' +
           '<span class="monto f1-num">' + esc(f1Usd(c.monto_usd)) + '</span>' +
           '<span class="estado' + (botones ? '' : ' e3') + '">' + est + '</span>' +
           (botones && F1.estado === 'ok' ? '<div class="f1-acciones"><button type="button" class="pn-btn f1-btn" data-guarda data-f1-pagar="' + esc(a.id) + '|' + esc(c.periodo_inicio) + '">Registrar pago</button>' +
             (c.estado === 'futuro' ? '' : '<button type="button" class="f1-mini" data-guarda data-f1-extension="' + esc(a.id) + '|' + esc(c.periodo_inicio) + '">' + f1Ico('reloj') + 'Dar extensión</button>') + '</div>' : '') +
           /* Cubierta: igual se puede adelantar el próximo. */
-          (!botones && F1.estado === 'ok' && sig && sig.estado === 'futuro' && f1Editable(a) ? '<div class="f1-acciones" style="margin-top:6px"><button type="button" class="f1-txt" data-guarda data-f1-pagar="' + esc(a.id) + '|' + esc(sig.periodo_inicio) + '">Registrar un pago adelantado</button></div>' : '') +
-          '</div>';
+          (!botones && F1.estado === 'ok' && sig && sig.estado === 'futuro' && f1Editable(a) && !f1PorClase(a) ? '<div class="f1-acciones" style="margin-top:6px"><button type="button" class="f1-txt" data-guarda data-f1-pagar="' + esc(a.id) + '|' + esc(sig.periodo_inicio) + '">Registrar un pago adelantado</button></div>' : '') +
+          '</div>' + (f1PorClase(a) ? f1HtmlClases(a, c) : '');
       });
       html += '</div>';
     }
@@ -7877,7 +8110,7 @@ body .pn-app section h2{animation:none;}
         var abierto = !!F1.acuerdoAbierto[a.id], v = f1Ventana(a), ver = f1Version(a.version_id);
         html += '<div class="f1-acuerdo"><button type="button" class="f1-acuerdo-btn f1-fila-btn" data-f1-acuerdo="' + esc(a.id) + '" aria-expanded="' + abierto + '" aria-controls="f1ac-' + esc(a.id) + '">' +
           '<span class="que"><span class="f1-rotulo">Acuerdo' + (acs.length > 1 ? ' · ' + esc(f1Modalidad(a)) : '') + '</span><b>' + esc(ver.nombre) + '</b>' +
-          '<span>Paga ' + esc(f1VentanaTexto(v)) + ' · ' + esc(f1Usd(a.precio_usd)) + ' al mes</span></span>' +
+          '<span>Paga ' + esc(f1VentanaTexto(v)) + ' · ' + esc(f1Usd(a.precio_usd)) + (f1PorClase(a) ? ' por clase' : ' al mes') + '</span></span>' +
           '<span class="f1-chev">' + f1Ico('abajo') + '</span></button>' +
           '<div id="f1ac-' + esc(a.id) + '"' + (abierto ? '' : ' hidden') + '>' + f1HtmlAcuerdoTabla(a) + '</div></div>';
       });
@@ -7906,7 +8139,9 @@ body .pn-app section h2{animation:none;}
         : '<button type="button" class="f1-txt" data-guarda data-f1-anteriores="' + esc(pid) + '">Pasar a Anteriores</button>') +
       /* Borrar de verdad solo existe para quien no tiene NADA guardado
          (lo decide la función de la base, bloque 14 de fase1.sql). */
-      (esCl && !acs.length ? '<button type="button" class="f1-txt" data-f1-borrar="' + esc(pid) + '">Borrar</button>' : '') +
+      (esCl && !acs.length && !f1BorradoresDe(pid).length ? '<button type="button" class="f1-txt" data-f1-borrar="' + esc(pid) + '">Borrar</button>' : '') +
+      /* fase 1.2 · no se borra: se marca y sale de las listas */
+      '<button type="button" class="f1-txt" data-guarda data-f1-prueba="' + esc(pid) + '">Es un dato de prueba</button>' +
       '</div>';
     return html;
   }
@@ -7940,14 +8175,14 @@ body .pn-app section h2{animation:none;}
     var quien = a.paga === 'tercero' ? 'Otra persona: ' + a.pagador_nombre + (a.pagador_telefono ? ' · ' + a.pagador_telefono : '') : 'Directo';
     return '<dl class="f1-dl">' +
       '<dt>Versión</dt><dd>' + esc(ver.nombre) + (ver.reglas_texto ? '<small>' + esc(ver.reglas_texto) + '</small>' : '') + '</dd>' +
-      '<dt>Modalidad</dt><dd>' + esc(f1Modalidad(a, true)) + '</dd>' +
-      '<dt>Precio</dt><dd class="f1-num">' + esc(f1Usd(a.precio_usd)) + ' al mes' +
+      '<dt>Modalidad</dt><dd>' + esc(f1Modalidad(a, true) + (f1Frecuencia(a) ? ' · ' + f1Frecuencia(a) : '')) + '</dd>' +
+      '<dt>Precio</dt><dd class="f1-num">' + esc(f1Usd(a.precio_usd)) + (f1PorClase(a) ? ' por clase · se cobra a mes vencido' : ' al mes') +
         (f1Editable(a) ? '<br><button type="button" class="f1-txt" data-guarda data-f1-reemplazar="' + esc(a.id) + '">Cambiar precio o modalidad</button>' : '') +
         (a.reemplaza_a ? '<small>Reemplaza al acuerdo anterior desde ' + esc(f1El(a.cobro_desde)) + '.</small>' : '') + '</dd>' +
       '<dt>Ventana de pago</dt><dd>Paga ' + esc(f1VentanaTexto(f1Ventana(a))) + '<ul class="f1-vent-hist">' + hist + '</ul>' +
         (f1Editable(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-cambiar-ventana="' + esc(a.id) + '">Cambiar ventana</button>' : '') + '</dd>' +
       '<dt>Horario fijo</dt><dd>' + esc(f1HorarioTexto(a, true) || 'Sin horario fijo') + '</dd>' +
-      '<dt>Horas de aviso</dt><dd>' + (a.aviso_horas ? esc(a.aviso_horas + ' horas') : 'Sin definir') + '</dd>' +
+      '<dt>Horas de aviso</dt><dd>' + (a.aviso_horas ? esc(a.aviso_horas + ' horas') : 'No definido en el acuerdo') + '</dd>' +
       '<dt>Regla de viaje</dt><dd>' + esc(F1_VIAJE[a.regla_viaje] || a.regla_viaje) +
         (f1ViajesDe(a.id).length ? '<ul class="f1-vent-hist">' + f1ViajesDe(a.id).map(function(x){
           var pv = f1PeriodosDe(a.id).filter(function(y){ return y.periodo_inicio === x.periodo_inicio; })[0];
@@ -7955,8 +8190,12 @@ body .pn-app section h2{animation:none;}
             (f1Editable(a) ? ' · <button type="button" class="f1-txt" data-guarda data-f1-anular-ajuste="' + esc(x.id) + '">Anular</button>' : '') + '</li>';
         }).join('') + '</ul>' : '') + '</dd>' +
       '<dt>Ciclo</dt><dd>' + esc(a.ciclo_inicio ? f1Corto(a.ciclo_inicio, true) + (a.ciclo_fin ? ' – ' + f1Corto(a.ciclo_fin, true) : ' · sin cierre') : 'Sin fecha') + '</dd>' +
-      '<dt>Quién paga</dt><dd>' + esc(quien) + '</dd>' +
-      '<dt>Firmado</dt><dd>' + esc(a.firmado_en ? f1Corto(a.firmado_en, true) : 'Sin fecha') + '</dd>' +
+      '<dt>Quién paga</dt><dd>' + esc(quien) +
+        /* fase 1.2 · el trato de quien paga, junto a «Quién paga» */
+        (a.paga === 'tercero' ? '<div class="f1-trato chico"><span class="f1-rotulo" id="f1PtT-' + esc(a.id) + '">Le escribo de</span><div class="f1-seg" role="radiogroup" aria-labelledby="f1PtT-' + esc(a.id) + '">' +
+          ['usted','vos'].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (f1TratoPagador(a) === o) + '"' + (f1Editable(a) ? '' : ' disabled') + ' data-guarda data-f1-trato-pagador="' + esc(a.id) + '|' + o + '">' + o + '</button>'; }).join('') +
+          '</div></div>' : '') + '</dd>' +
+      '<dt>Firmado</dt><dd>' + esc(a.firmado_en ? f1Corto(a.firmado_en, true) : 'Sin acuerdo nuevo firmado') + '</dd>' +
       '<dt>Estado</dt><dd>' + esc({ vigente:'Vigente', pausado:'En pausa', cerrado:'Cerrado', reemplazado:'Reemplazado' }[a.estado] || a.estado) +
         (a.estado_motivo ? ' · ' + esc(a.estado_motivo) : '') + (a.cobro_hasta ? '<small>Se cobra hasta ' + esc(f1Corto(a.cobro_hasta, true)) + '</small>' : '') + '</dd>' +
     '</dl>';
@@ -8169,15 +8408,17 @@ body .pn-app section h2{animation:none;}
     var a = f1Acuerdo(g.acuerdo_id) || {}, p = f1Persona(g.persona_id) || {};
     var sig = f1PeriodosDe(a.id).filter(function(x){ return x.periodo_inicio > g.periodo_inicio; })[0];
     var v = sig ? f1Ventana(a, sig.periodo_inicio) : null;
-    var prox = sig && v ? (v.tipo === 'dia_fijo' ? 'el ' + (+sig.periodo_inicio.slice(8,10)) + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1]
-      : v.dia_hasta >= v.dia_desde ? v.dia_desde + ' al ' + v.dia_hasta + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1]
+    /* fase 1.2 · por clase, el período siguiente se paga en la ventana del mes que sigue */
+    var abre = sig ? (f1PorClase(a) && sig.fecha_preventivo ? f1Mas(sig.fecha_preventivo, 1) : sig.periodo_inicio) : null;
+    var prox = sig && v ? (v.tipo === 'dia_fijo' ? 'el ' + (+abre.slice(8,10)) + ' de ' + F1_MES_L[+abre.slice(5,7) - 1]
+      : v.dia_hasta >= v.dia_desde ? v.dia_desde + ' al ' + v.dia_hasta + ' de ' + F1_MES_L[+abre.slice(5,7) - 1]
       /* 29–1 cruza el mes: «29 de octubre al 1 de noviembre», no «29 al 1 de octubre» */
-      : (+sig.periodo_inicio.slice(8,10)) + ' de ' + F1_MES_L[+sig.periodo_inicio.slice(5,7) - 1] + ' al ' + (+sig.vence.slice(8,10)) + ' de ' + F1_MES_L[+sig.vence.slice(5,7) - 1]) : '';
+      : (+abre.slice(8,10)) + ' de ' + F1_MES_L[+abre.slice(5,7) - 1] + ' al ' + (+sig.vence.slice(8,10)) + ' de ' + F1_MES_L[+sig.vence.slice(5,7) - 1]) : '';
     var pagador = g.pagador_tipo === 'tercero' ? g.pagador_nombre : null;
     var tel = pagador ? (a.paga === 'tercero' && a.pagador_nombre === pagador ? a.pagador_telefono : null) : p.telefono;
     return {
       numero:g.confirmacion_numero, cliente:p.nombre, pagador:pagador, telefono:tel,
-      concepto:'Mensualidad ' + f1Modalidad(a) + ' · ' + f1Rango(g.periodo_inicio, g.periodo_fin, true),
+      concepto:(f1PorClase(a) ? 'Clases ' + f1Modalidad(a) + ' (' + f1ClasesCuenta(a, g.periodo_inicio, g.periodo_fin) + ')' : 'Mensualidad ' + f1Modalidad(a)) + ' · ' + f1Rango(g.periodo_inicio, g.periodo_fin, true),
       monto:f1Usd(g.monto_usd, true), lps:f1Lps(g.monto_lempiras),
       tasa:String(Number(g.tasa_venta)), tasaF:f1Corto(g.tasa_fecha, true),
       transf:f1Corto(g.pagado_en, true) + (g.medio === 'efectivo' ? ' · efectivo' : g.comprobante_ref ? ' · ref. ··' + g.comprobante_ref : ''),
@@ -8197,9 +8438,14 @@ body .pn-app section h2{animation:none;}
   }
   function f1TextoConf(g){
     var d = f1DatosConf(g), saludo = primerNombre({ nombre:d.pagador || d.cliente });
+    /* fase 1.2 · trato: «Muchas gracias.» con usted, «Gracias.» con vos */
+    var ac = f1Acuerdo(g.acuerdo_id) || {};
+    var gracias = (d.pagador ? f1TratoPagador(ac) : f1Trato(g.persona_id)) === 'usted' ? 'Muchas gracias.' : 'Gracias.';
+    var deQ = d.pagador ? 'de ' + primerNombre({ nombre:d.cliente }) + ' ' : '';
+    var cosa = f1PorClase(ac) ? 'las clases ' : 'la mensualidad ';
     var frase = d.falta
-      ? '¡Recibido, ' + saludo + '! Quedó registrado el abono de ' + d.monto + ' a la mensualidad ' + (d.pagador ? 'de ' + primerNombre({ nombre:d.cliente }) + ' ' : '') + d.periodo + '. Faltan ' + f1Usd(d.falta, true) + '. Gracias.'
-      : '¡Recibido, ' + saludo + '! Quedó registrada la mensualidad ' + (d.pagador ? 'de ' + primerNombre({ nombre:d.cliente }) + ' ' : '') + d.periodo + '. Gracias.';
+      ? '¡Recibido, ' + saludo + '! Quedó registrado el abono de ' + d.monto + ' a ' + cosa + deQ + d.periodo + '. Faltan ' + f1Usd(d.falta, true) + '. ' + gracias
+      : '¡Recibido, ' + saludo + '! Quedó ' + (f1PorClase(ac) ? 'registrado el pago de las clases ' : 'registrada la mensualidad ') + deQ + d.periodo + '. ' + gracias;
     var bloque = ['CONFIRMACIÓN DE PAGO · ' + d.numero, 'Healing Through Movement', '',
       'Recibido de: ' + d.cliente].concat(d.pagador ? ['Pagado por: ' + d.pagador] : []).concat([
       'Concepto: ' + d.concepto + (d.falta ? ' (abono)' : ''), 'Monto: ' + d.monto].concat(d.falta ? ['Falta del período: ' + f1Usd(d.falta, true)] : []).concat([
@@ -8312,14 +8558,15 @@ body .pn-app section h2{animation:none;}
     return Promise.all([f1Fuentes(), f1Sello()]).then(function(r){
       /* B1 (QA 1.1) · Si no entra, se compacta en este orden y el pie
          («No es un documento fiscal.») nunca se pisa:
-         1 · cierre más chico · 2 · sin cierre · 3 · filas (datos para
-         transferir) compactas · 4 · además monto más bajo.
+         1 · filas (datos para transferir) compactas · 2 · además cierre más
+         chico · 3 · monto más bajo · 4 · recién ahí, sin cierre.
          Si ni así entra, no hay imagen: se avisa en vez de mandar una rota. */
       var NIVELES = [
+        /* QA 1.2 · primero se compactan las filas; el cierre es lo último que se va */
         { cierre:28, cierreLH:37.8, pad:18, fila:27, LH:33.75, monto:172 },
-        { cierre:25, cierreLH:33, pad:18, fila:27, LH:33.75, monto:172 },
-        { cierre:0, pad:18, fila:27, LH:33.75, monto:172 },
-        { cierre:0, pad:11, fila:24, LH:29, monto:172 },
+        { cierre:28, cierreLH:37.8, pad:11, fila:24, LH:29, monto:172 },
+        { cierre:25, cierreLH:33, pad:9, fila:23, LH:27, monto:172 },
+        { cierre:25, cierreLH:33, pad:9, fila:23, LH:27, monto:136 },
         { cierre:0, pad:9, fila:23, LH:27, monto:136 }
       ];
       var TOPE = 1207 - 18;
@@ -8435,39 +8682,52 @@ body .pn-app section h2{animation:none;}
 
   /* ── el contenido de cada imagen, con lo que el panel ya sabe ── */
   function f1VentanaCorta(p){
-    var a = p.periodo_inicio, b = p.vence;
+    /* fase 1.2 · por clase se paga en la ventana SIGUIENTE (abre el día después del preventivo) */
+    var a = f1PorClase(f1Acuerdo(p.acuerdo_id)) && p.fecha_preventivo ? f1Mas(p.fecha_preventivo, 1) : p.periodo_inicio, b = p.vence;
     if(a === b) return f1Corto(a);
     return a.slice(0,7) === b.slice(0,7) ? (+a.slice(8,10)) + ' – ' + f1Corto(b) : f1Corto(a) + ' – ' + f1Corto(b);
   }
   function f1Slug(t){ return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  /* fase 1.2 · el cierre del Aviso en los dos tratos (CAMBIOS-SQL §1) */
   var F1_CIERRE = {
-    preventivo:'Cuando hagás la transferencia, mandá el comprobante por este chat.',
-    primero:'Si ya la hiciste, mandá el comprobante por este chat. Si te sirve otra fecha, decime.',
-    segundo:'Si te acomoda mejor otra fecha, la acordamos sin problema.'
+    vos:{ preventivo:'Cuando hagás la transferencia, mandá el comprobante por este chat.',
+          primero:'Si ya la hiciste, mandá el comprobante por este chat. Si te sirve otra fecha, decime.',
+          segundo:'Si te acomoda mejor otra fecha, la acordamos sin problema.' },
+    usted:{ preventivo:'Cuando haga la transferencia, envíe el comprobante por este chat.',
+            primero:'Si ya la hizo, envíe el comprobante por este chat. Si le sirve otra fecha, me dice.',
+            segundo:'Si le acomoda mejor otra fecha, la acordamos sin problema.' }
   };
+  function f1Cierre(paso, trato){ var c = F1_CIERRE[trato === 'vos' ? 'vos' : 'usted']; return c[paso] || c.preventivo; }
+  /* «3 clases × US$25 = US$75» */
+  function f1ClasesCuenta(a, ini, fin){
+    var n = f1ClasesDe(a.id, ini, fin).length;
+    return n + (n === 1 ? ' clase' : ' clases') + ' × ' + f1Usd(a.precio_usd) + ' = ' + f1Usd(n * Number(a.precio_usd));
+  }
   function f1DatosTransferir(){ return String((AJ && AJ.datos_transferir) || '').trim(); }
   function f1DatosAviso(x){
     var a = x.a, p = x.p, d = f1Destino(x), cli = f1Persona(a.persona_id) || {};
     var monto = Number(p.falta_usd) < Number(p.monto_usd) ? Number(p.falta_usd) : Number(p.monto_usd);
     var tasa = F1.tasa ? Number(F1.tasa.tasa_venta) : 0;
-    var filas = [['Concepto', d.tipo === 'pagador' ? 'Mensualidad de ' + cli.nombre + ', ' + f1Modalidad(a, true) : 'Mensualidad ' + f1Modalidad(a, true)],
-      ['Período', f1Rango(p.periodo_inicio, p.periodo_fin, true)],
-      ['Ventana de pago', f1VentanaCorta(p)]];
+    var cosa = f1PorClase(a) ? 'Clases' : 'Mensualidad';
+    var filas = [['Concepto', d.tipo === 'pagador' ? cosa + ' de ' + cli.nombre + ', ' + f1Modalidad(a, true) : cosa + ' ' + f1Modalidad(a, true)],
+      ['Período', f1Rango(p.periodo_inicio, p.periodo_fin, true)]];
+    if(f1PorClase(a)) filas.push(['Clases', f1ClasesCuenta(a, p.periodo_inicio, p.periodo_fin)]);
+    filas.push(['Ventana de pago', f1VentanaCorta(p)]);
     if(Number(p.falta_usd) < Number(p.monto_usd)) filas.push(['Falta del período', f1Usd(p.falta_usd, true) + ' de ' + f1Usd(p.monto_usd, true)]);
     filas.push(['Para transferir', f1DatosTransferir()]);
     return {
       tipo:'aviso', nombre:'aviso-' + f1Slug(d.nombre) + '-' + p.periodo_inicio + '.png',
       ref:f1Corto(f1Hoy(), true), titulo:'Aviso de cobro', paraPre:'Para', paraNombre:d.nombre,
       monto:f1Usd(monto), lps:tasa ? f1Lps(f1Lempiras(monto, tasa)) + ' · tasa de venta BAC ' + tasa + ' del ' + f1Corto(F1.tasa.tasa_fecha) : '',
-      filas:filas, cierre:F1_CIERRE[x.paso] || F1_CIERRE.preventivo
+      filas:filas, cierre:f1Cierre(x.paso, d.tipo === 'pagador' ? f1TratoPagador(a) : f1Trato(a.persona_id))
     };
   }
   function f1DatosImagenConf(g){
     var d = f1DatosConf(g), a = f1Acuerdo(g.acuerdo_id) || {};
     var per = F1.periodos.filter(function(p){ return p.acuerdo_id === g.acuerdo_id && p.periodo_inicio === g.periodo_inicio; })[0];
     var filas = (d.pagador ? [['Cliente', d.cliente]] : []).concat([
-      ['Concepto', 'Mensualidad ' + f1Modalidad(a, true)],
-      ['Período', f1Rango(g.periodo_inicio, g.periodo_fin, true)],
+      ['Concepto', (f1PorClase(a) ? 'Clases ' : 'Mensualidad ') + f1Modalidad(a, true)],
+      ['Período', f1Rango(g.periodo_inicio, g.periodo_fin, true)]]).concat(f1PorClase(a) ? [['Clases', f1ClasesCuenta(a, g.periodo_inicio, g.periodo_fin)]] : []).concat([
       [g.medio === 'efectivo' ? 'Pago' : 'Transferencia', f1Corto(g.pagado_en, true) + (g.medio === 'efectivo' ? ' · efectivo' : g.comprobante_ref ? ' · ref. ··' + g.comprobante_ref : '')]
     ]).concat(d.prox && !d.falta ? [['Próxima ventana', d.prox]] : []);
     return {
@@ -8832,89 +9092,157 @@ body .pn-app section h2{animation:none;}
       '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Agregar</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
   }
 
-  /* ── CARGAR SU ACUERDO (cliente sin acuerdo) ──
-     Nada se escribe hasta «Guardar». Al elegir la versión se llenan solos
-     aviso, regla de viaje y la ventana. */
-  function f1HtmlCargarAcuerdo(h){
-    var p = f1Persona(h.pid) || {}, v = h.vals || {};
+  /* ── CARGAR SU ACUERDO (cliente sin acuerdo) · y CORREGIR UN BORRADOR ──
+     Nada se escribe hasta «Guardar». La modalidad va primero y elige sola
+     la versión vigente de esa modalidad (fase 1.2: «las reglas son las
+     mismas para todos; lo que cambia es el precio»). Con h.aid, el mismo
+     formulario corrige un acuerdo en BORRADOR, que se edita libre. */
+  var F1_MODALIDADES = [['uno_a_uno','1:1 presencial'],['uno_a_uno_remoto','1:1 remoto'],['uno_a_uno_domicilio','1:1 a domicilio'],
+    ['grupo','THRIVE (su grupo)'],['grupo:grupal','Grupo (fuera de THRIVE)'],['grupo_remoto','Grupal remoto']];
+  function f1EsGrupo(m){ return String(m || '').indexOf('grupo') === 0; }
+  function f1VersionDe(mod){
     var vers = F1.versiones.filter(function(x){ return x.vigente !== false; });
-    var thrive = Object.keys(F1.insc).map(function(k){ return F1.insc[k]; }).filter(function(i){ return i.persona_id === h.pid && i.programa_id === 'thrive'; })[0];
-    /* fase 1.1 · Quien viene de THRIVE arranca con la versión de grupo. */
-    var verDef = thrive ? vers.filter(function(x){ return x.modalidad === 'grupo'; })[0] : null;
-    var ver = vers.filter(function(x){ return x.id === v.version; })[0] || verDef || vers[0] || {};
+    return vers.filter(function(x){ return x.modalidad === (f1EsGrupo(mod) ? 'grupo' : 'uno_a_uno'); })[0] || vers[0] || {};
+  }
+  function f1ProgramaDe(mod){ return mod === 'grupo' ? 'thrive' : f1EsGrupo(mod) ? 'grupal' : 'uno-a-uno'; }
+  function f1ValsDeBorrador(a){
+    var v = f1Ventana(a), hs = f1HorariosDe(a);
+    var mod = a.modalidad === 'grupo' ? (f1Programa(a) === 'thrive' ? 'grupo' : 'grupo:grupal') : a.modalidad;
+    var ven = !v ? '' : v.tipo === 'dia_fijo' ? 'fijo' : v.dia_desde + '-' + v.dia_hasta;
+    return { modalidad:mod, version:a.version_id, forma:a.forma_cobro || 'mensual', precio:String(Number(a.precio_usd)),
+      frecuencia:a.frecuencia_semana ? String(a.frecuencia_semana) : '', ciclo:a.ciclo_inicio || '', firmado:a.firmado_en || '',
+      ventana:ven, fijo:v && v.tipo === 'dia_fijo' ? String(v.dia_desde) : '', otraD:v ? String(v.dia_desde) : '', otraH:v ? String(v.dia_hasta) : '',
+      desde:a.cobro_desde, paga:a.paga, pagNom:a.pagador_nombre || '', pagTel:a.pagador_telefono || '', pagTrato:a.pagador_trato || 'usted',
+      notas:a.notas || '', dias:hs.map(function(x){ return x.dia_semana; }), hora:hs[0] ? String(hs[0].hora).slice(0,5) : '' };
+  }
+  function f1HtmlCargarAcuerdo(h){
+    var p = f1Persona(h.pid) || {};
+    var bor = h.aid ? f1Acuerdo(h.aid) : null;
+    if(bor && !h.vals) h.vals = f1ValsDeBorrador(bor);
+    var v = h.vals || {};
+    var vers = F1.versiones.filter(function(x){ return x.vigente !== false || (bor && x.id === bor.version_id); });
+    var thrive = f1InscDe(h.pid, 'thrive');
+    var mod = v.modalidad || (thrive ? 'grupo' : 'uno_a_uno');
+    var ver = vers.filter(function(x){ return x.id === v.version; })[0] || f1VersionDe(mod);
     var vents = (ver.ventanas || []).map(function(x){ return [x.desde, x.hasta]; });
+    var forma = v.forma === 'por_clase' ? 'por_clase' : 'mensual';
     var e = h.errores || {};
     function err(k){ return e[k] ? '<p class="f1-error">' + esc(e[k]) + '</p>' : ''; }
     var dias = v.dias || [];
-    return f1Top('Cargar su acuerdo', p.nombre, true) +
+    var venSel = v.ventana || (vents[0] ? vents[0].join('-') : 'fijo');
+    var enLista = vents.some(function(x){ return x.join('-') === venSel; });
+    if(venSel !== 'fijo' && venSel !== 'otra' && !enLista){ v.otraD = v.otraD || venSel.split('-')[0]; v.otraH = v.otraH || venSel.split('-')[1]; venSel = 'otra'; }
+    var mods = F1_MODALIDADES.filter(function(o){ return o[0] !== 'grupo' || thrive || mod === 'grupo'; });
+    return f1Top(bor ? 'Corregir el borrador' : 'Cargar su acuerdo', p.nombre, true) +
       '<form class="f1-form" id="f1FormAcuerdo" novalidate>' +
+      (bor ? '<p class="f1-aviso">' + f1Ico('info') + '<span>Es un borrador: no cobra ni recuerda hasta que lo confirmés. Mientras tanto se corrige todo.</span></p>' : '') +
       '<fieldset><legend>1 · Modalidad y acuerdo</legend>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Modalidad</span><select id="f1aModalidad">' +
+          mods.map(function(o){ return '<option value="' + o[0] + '"' + (mod === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
         '<label class="f1-campo"><span class="f1-rotulo">Versión del acuerdo</span><select id="f1aVersion">' +
           vers.map(function(x){ return '<option value="' + esc(x.id) + '"' + (x.id === ver.id ? ' selected' : '') + '>' + esc(x.nombre) + '</option>'; }).join('') + '</select>' +
-          '<p class="f1-ayuda">' + esc((ver.aviso_horas ? 'Aviso de ' + ver.aviso_horas + ' horas · ' : '') + (F1_VIAJE[ver.regla_viaje] || '')) + '</p></label>' +
-        '<label class="f1-campo"><span class="f1-rotulo">Modalidad</span><select id="f1aModalidad">' +
-          [['uno_a_uno','1:1 presencial'],['uno_a_uno_remoto','1:1 remoto']].concat(thrive ? [['grupo','THRIVE (su grupo)']] : [])
-            .map(function(o){ return '<option value="' + o[0] + '"' + ((v.modalidad || (ver.modalidad === 'grupo' && thrive ? 'grupo' : 'uno_a_uno')) === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
-        '<label class="f1-campo"' + (e.precio ? ' data-error' : '') + '><span class="f1-rotulo">Precio al mes</span><span class="f1-prefijo"><span>US$</span><input id="f1aPrecio" inputmode="decimal" value="' + esc(v.precio || '') + '"></span>' + err('precio') + '</label>' +
+          '<p class="f1-ayuda">' + esc('Aviso: ' + (ver.aviso_horas ? ver.aviso_horas + ' horas' : 'no definido en el acuerdo') + ' · ' + (F1_VIAJE[ver.regla_viaje] || '')) + '</p></label>' +
+        '<div class="f1-campo"><span class="f1-rotulo" id="f1aFormaT">Se cobra</span><div class="f1-seg ancho" role="radiogroup" aria-labelledby="f1aFormaT">' +
+          '<button type="button" role="radio" aria-checked="' + (forma === 'mensual') + '" data-f1-forma="mensual">Al mes</button>' +
+          '<button type="button" role="radio" aria-checked="' + (forma === 'por_clase') + '" data-f1-forma="por_clase">Por clase</button></div>' +
+          (forma === 'por_clase' ? '<p class="f1-ayuda">Anotás cada clase en su ficha y se cobran todas juntas en la ventana del mes siguiente.</p>' : '') + '</div>' +
+        '<label class="f1-campo"' + (e.precio ? ' data-error' : '') + '><span class="f1-rotulo">' + (forma === 'por_clase' ? 'Precio por clase' : 'Precio al mes') + '</span><span class="f1-prefijo"><span>US$</span><input id="f1aPrecio" inputmode="decimal" value="' + esc(v.precio || '') + '"></span>' + err('precio') + '</label>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Veces por semana</span><select id="f1aFrecuencia"><option value="">Sin definir</option>' +
+          [1,2,3,4,5,6].map(function(n){ return '<option value="' + n + '"' + (String(v.frecuencia) === String(n) ? ' selected' : '') + '>' + n + 'x semana</option>'; }).join('') + '</select></label>' +
         '<label class="f1-campo"><span class="f1-rotulo">Inicio del ciclo</span><input type="date" id="f1aCiclo" value="' + esc(v.ciclo || '') + '"><p class="f1-ayuda">Vacío, arranca el día que se le empieza a cobrar.</p></label>' +
         '<label class="f1-campo"><span class="f1-rotulo">Firmado el</span><input type="date" id="f1aFirmado" max="' + f1Hoy() + '" value="' + esc(v.firmado || '') + '">' +
-          '<p class="f1-ayuda">La fecha que dice el acuerdo firmado. Si no la tenés a mano, dejala vacía.</p></label>' +
+          '<p class="f1-ayuda">La fecha que dice el acuerdo firmado. Vacía, la ficha dice «Sin acuerdo nuevo firmado».</p></label>' +
       '</fieldset>' +
-      '<fieldset><legend>2 · Horario fijo</legend><div class="f1-radios f1-dias">' +
+      (bor ? '<fieldset><legend>2 · Horario fijo</legend><p class="f1-ayuda">' + esc(f1HorarioTexto(bor, true) || 'Sin horario fijo') + '. El horario se corrige después de confirmar.</p></fieldset>'
+      : '<fieldset><legend>2 · Horario fijo</legend><div class="f1-radios f1-dias">' +
         [1,2,3,4,5,6].map(function(d){ return '<label><input type="checkbox" value="' + d + '" data-f1-dia' + (dias.indexOf(d) >= 0 ? ' checked' : '') + '>' + F1_DIA_C[d] + '</label>'; }).join('') + '</div>' +
         '<label class="f1-campo"><span class="f1-rotulo">Hora</span><input type="time" id="f1aHora" value="' + esc(v.hora || '') + '"></label>' +
-        '<p class="f1-ayuda">Solo para «próxima sesión». Feriados y reposiciones llegan en la fase 2.</p></fieldset>' +
+        '<p class="f1-ayuda">Solo para «próxima sesión». Feriados y reposiciones llegan en la fase 2.</p></fieldset>') +
       '<fieldset><legend>3 · Pago</legend><div class="f1-radios" role="radiogroup" aria-label="Ventana de pago">' +
-        vents.map(function(x){ var k = x[0] + '-' + x[1]; return '<label><input type="radio" name="f1av" value="' + k + '"' + ((v.ventana || (vents[0] && vents[0].join('-'))) === k ? ' checked' : '') + '>' + x[0] + ' al ' + x[1] + '</label>'; }).join('') +
-        '<label><input type="radio" name="f1av" value="fijo"' + (v.ventana === 'fijo' || !vents.length ? ' checked' : '') + '>El mismo día cada mes: <input type="number" min="1" max="31" id="f1aFijo" value="' + esc(v.fijo || '') + '" aria-label="Día fijo"></label></div>' + err('ventana') +
+        vents.map(function(x){ var k = x[0] + '-' + x[1]; return '<label><input type="radio" name="f1av" value="' + k + '"' + (venSel === k ? ' checked' : '') + '>' + x[0] + ' al ' + x[1] + '</label>'; }).join('') +
+        '<label><input type="radio" name="f1av" value="otra"' + (venSel === 'otra' ? ' checked' : '') + '>Otra: del <input type="number" min="1" max="31" id="f1aOtraD" value="' + esc(v.otraD || '') + '" aria-label="Abre el día"> al <input type="number" min="1" max="31" id="f1aOtraH" value="' + esc(v.otraH || '') + '" aria-label="Cierra el día"></label>' +
+        '<label><input type="radio" name="f1av" value="fijo"' + (venSel === 'fijo' ? ' checked' : '') + '>El mismo día cada mes: <input type="number" min="1" max="31" id="f1aFijo" value="' + esc(v.fijo || '') + '" aria-label="Día fijo"></label></div>' + err('ventana') +
         '<label class="f1-campo"><span class="f1-rotulo">Se le cobra desde</span><input type="date" id="f1aDesde" value="' + esc(v.desde || f1Hoy()) + '"><p class="f1-ayuda">El primer período abre en la primera apertura de la ventana desde esa fecha.</p></label>' +
         '<div class="f1-campo"><span class="f1-rotulo" id="f1aPagaT">Quién paga</span><div class="f1-seg ancho" role="radiogroup" aria-labelledby="f1aPagaT">' +
           '<button type="button" role="radio" aria-checked="' + (v.paga !== 'tercero') + '" data-f1-paga="directo">Directo</button>' +
           '<button type="button" role="radio" aria-checked="' + (v.paga === 'tercero') + '" data-f1-paga="tercero">Otra persona</button></div>' +
-          (v.paga === 'tercero' ? '<div class="f1-dos" style="margin-top:10px"><input id="f1aPagNom" placeholder="Nombre" autocomplete="off" value="' + esc(v.pagNom || '') + '" aria-label="Nombre de quien paga"><input id="f1aPagTel" type="tel" placeholder="WhatsApp +504…" autocomplete="off" value="' + esc(v.pagTel || '') + '" aria-label="WhatsApp de quien paga"></div>' + err('pagador') : '') + '</div>' +
+          (v.paga === 'tercero' ? '<div class="f1-dos" style="margin-top:10px"><input id="f1aPagNom" placeholder="Nombre" autocomplete="off" value="' + esc(v.pagNom || '') + '" aria-label="Nombre de quien paga"><input id="f1aPagTel" type="tel" placeholder="WhatsApp +504…" autocomplete="off" value="' + esc(v.pagTel || '') + '" aria-label="WhatsApp de quien paga"></div>' + err('pagador') +
+            '<div class="f1-trato chico"><span class="f1-rotulo" id="f1aPtT">A quien paga le escribo de</span><div class="f1-seg" role="radiogroup" aria-labelledby="f1aPtT">' +
+              ['usted','vos'].map(function(o){ return '<button type="button" role="radio" aria-checked="' + ((v.pagTrato || 'usted') === o) + '" data-f1-pagtrato="' + o + '">' + o + '</button>'; }).join('') + '</div></div>' : '') + '</div>' +
       '</fieldset>' +
-      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Guardar el acuerdo</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
+      (bor ? '<label class="f1-campo"><span class="f1-rotulo">Notas</span><textarea id="f1aNotas">' + esc(v.notas || '') + '</textarea><p class="f1-ayuda">Cuando revisés lo marcado como pendiente de confirmar, borrá esa línea: así entra en «Confirmar los listos».</p></label>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>' + (bor ? 'Guardar el borrador' : 'Guardar el acuerdo') + '</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
   }
   function f1LeerAcuerdo(){
     var h = F1.hoja, v = h.vals = h.vals || {};
     function val(id){ var el = document.getElementById(id); return el ? el.value : (v[id] || ''); }
-    v.version = val('f1aVersion'); v.modalidad = val('f1aModalidad'); v.precio = val('f1aPrecio'); v.ciclo = val('f1aCiclo');
-    v.hora = val('f1aHora'); v.desde = val('f1aDesde'); v.fijo = val('f1aFijo'); v.firmado = val('f1aFirmado');
-    var r = document.querySelector('input[name="f1av"]:checked'); v.ventana = r ? r.value : '';
-    v.dias = [].slice.call(document.querySelectorAll('[data-f1-dia]:checked')).map(function(x){ return +x.value; });
+    function campo(id, k){ var el = document.getElementById(id); if(el) v[k] = el.value; }
+    campo('f1aVersion', 'version'); campo('f1aModalidad', 'modalidad'); campo('f1aPrecio', 'precio'); campo('f1aCiclo', 'ciclo');
+    campo('f1aHora', 'hora'); campo('f1aDesde', 'desde'); campo('f1aFijo', 'fijo'); campo('f1aFirmado', 'firmado');
+    campo('f1aFrecuencia', 'frecuencia'); campo('f1aOtraD', 'otraD'); campo('f1aOtraH', 'otraH'); campo('f1aNotas', 'notas');
+    var r = document.querySelector('input[name="f1av"]:checked'); if(r) v.ventana = r.value;
+    if(document.querySelector('[data-f1-dia]')) v.dias = [].slice.call(document.querySelectorAll('[data-f1-dia]:checked')).map(function(x){ return +x.value; });
     if(document.getElementById('f1aPagNom')){ v.pagNom = val('f1aPagNom'); v.pagTel = val('f1aPagTel'); }
     return v;
   }
   function f1GuardarAcuerdo(btn){
     var h = F1.hoja, v = f1LeerAcuerdo(), e = {};
+    var bor = h.aid ? f1Acuerdo(h.aid) : null;
+    var mod = v.modalidad || 'uno_a_uno';
     var precio = f1Num(v.precio);
-    if(!(precio > 0)) e.precio = 'Poné el precio al mes.';
-    var vd = v.ventana === 'fijo' ? [+v.fijo, +v.fijo] : String(v.ventana).split('-').map(Number);
+    if(!(precio > 0)) e.precio = v.forma === 'por_clase' ? 'Poné el precio de una clase.' : 'Poné el precio al mes.';
+    var vd = v.ventana === 'fijo' ? [+v.fijo, +v.fijo] : v.ventana === 'otra' ? [+v.otraD, +v.otraH] : String(v.ventana).split('-').map(Number);
     if(!(vd[0] >= 1 && vd[0] <= 31 && vd[1] >= 1 && vd[1] <= 31)) e.ventana = 'Elegí la ventana de pago.';
     if(v.paga === 'tercero' && !String(v.pagNom || '').trim()) e.pagador = 'Escribí el nombre de quien paga.';
     if(Object.keys(e).length){ h.errores = e; f1RepintarHoja(); return; }
-    var ver = f1Version(v.version), aplica = QAdiaEnMes(v.desde, vd[0]);
+    var ver = f1Version(v.version || f1VersionDe(mod).id), aplica = QAdiaEnMes(v.desde, vd[0]);
     if(aplica < v.desde) aplica = QAdiaEnMes(masMeses(v.desde.slice(0,8) + '01', 1), vd[0]);
     btn.disabled = true; btn.textContent = 'Guardando…';
-    var programa = v.modalidad === 'grupo' ? 'thrive' : 'uno-a-uno';
-    var insc = Object.keys(F1.insc).map(function(k){ return F1.insc[k]; }).filter(function(i){ return i.persona_id === h.pid && i.programa_id === programa; })[0];
+    var programa = f1ProgramaDe(mod), modBase = mod === 'grupo:grupal' ? 'grupo' : mod;
+    var insc = f1InscDe(h.pid, programa);
     var conInsc = insc ? Promise.resolve(insc.id)
-      : sb.from('inscripciones').insert({ persona_id:h.pid, programa_id:'uno-a-uno', estado:'activa', origen:'manual' }).select().single()
+      : sb.from('inscripciones').insert({ persona_id:h.pid, programa_id:programa, estado:'activa', origen:'manual' }).select().single()
           .then(function(r){ if(r.error) throw r.error; return r.data.id; });
+    var tipoV = v.ventana === 'fijo' ? 'dia_fijo' : 'rango';
+    var datos = {
+      version_id:ver.id, modalidad:modBase, precio_usd:precio, forma_cobro:v.forma === 'por_clase' ? 'por_clase' : 'mensual',
+      frecuencia_semana:v.frecuencia ? +v.frecuencia : null,
+      aviso_horas:ver.aviso_horas || null, regla_viaje:ver.regla_viaje || 'sin_definir',
+      ciclo_inicio:v.ciclo || aplica, ciclo_fin:f1Mas(masMeses(v.ciclo || aplica, 3), -1), firmado_en:v.firmado || null,
+      paga:v.paga === 'tercero' ? 'tercero' : 'directo',
+      pagador_nombre:v.paga === 'tercero' ? String(v.pagNom).trim() : null,
+      pagador_telefono:v.paga === 'tercero' ? (String(v.pagTel || '').trim() || null) : null,
+      pagador_trato:v.paga === 'tercero' && v.pagTrato === 'vos' ? 'vos' : 'usted'
+    };
+    if(bor){
+      /* BORRADOR: se corrige el acuerdo y, si cambió, la ventana y el
+         cobro (borrador_cobro anula la anterior, también hacia atrás). */
+      var vAnt = f1Ventana(bor);
+      var cambiaV = !vAnt || vAnt.tipo !== tipoV || vAnt.dia_desde !== vd[0] || vAnt.dia_hasta !== vd[1] || bor.cobro_desde !== aplica;
+      conInsc.then(function(iid){
+        datos.inscripcion_id = iid; datos.notas = String(v.notas || '').trim() || null;
+        return sb.from('acuerdos').update(datos).eq('id', bor.id);
+      }).then(function(r){
+        if(r.error) throw r.error;
+        return cambiaV ? sb.rpc('borrador_cobro', { p_acuerdo:bor.id, p_tipo:tipoV, p_desde:vd[0], p_hasta:vd[1], p_cobro_desde:aplica }) : { data:null };
+      }).then(function(r){
+        if(r.error) throw r.error;
+        F1.hoja = { tipo:'ficha', pid:h.pid, lado:h.lado, funde:true };
+        return f1Recargar().then(function(){ avisar('Borrador guardado. Sigue sin cobrar hasta que lo confirmés.'); });
+      }).catch(function(err){
+        btn.disabled = false; btn.textContent = 'Guardar el borrador';
+        avisar('No se pudo guardar el borrador. ' + f1Claro(err));
+      });
+      return;
+    }
     conInsc.then(function(iid){
-      return sb.from('acuerdos').insert({
-        persona_id:h.pid, inscripcion_id:iid, version_id:ver.id, modalidad:v.modalidad, precio_usd:precio,
-        aviso_horas:ver.aviso_horas || null, regla_viaje:ver.regla_viaje || 'sin_definir',
-        ciclo_inicio:v.ciclo || aplica, ciclo_fin:f1Mas(masMeses(v.ciclo || aplica, 3), -1), firmado_en:v.firmado || null,
-        cobro_desde:aplica, paga:v.paga === 'tercero' ? 'tercero' : 'directo',
-        pagador_nombre:v.paga === 'tercero' ? String(v.pagNom).trim() : null,
-        pagador_telefono:v.paga === 'tercero' ? (String(v.pagTel || '').trim() || null) : null
-      }).select().single();
+      datos.persona_id = h.pid; datos.inscripcion_id = iid; datos.cobro_desde = aplica;
+      return sb.from('acuerdos').insert(datos).select().single();
     }).then(function(r){
       if(r.error) throw r.error;
       var aid = r.data.id;
       var hs = (v.dias || []).map(function(d){ return { acuerdo_id:aid, dia_semana:d, hora:v.hora, duracion_min:60, desde:aplica }; });
-      return sb.from('ventanas_pago').insert({ acuerdo_id:aid, tipo:v.ventana === 'fijo' ? 'dia_fijo' : 'rango', dia_desde:vd[0], dia_hasta:vd[1], aplica_desde:aplica })
+      return sb.from('ventanas_pago').insert({ acuerdo_id:aid, tipo:tipoV, dia_desde:vd[0], dia_hasta:vd[1], aplica_desde:aplica })
         .then(function(r2){ if(r2.error) throw r2.error; return hs.length && v.hora ? sb.from('horarios').insert(hs) : { data:[] }; })
         .then(function(r3){ if(r3.error) throw r3.error; });
     }).then(function(){
@@ -8941,10 +9269,13 @@ body .pn-app section h2{animation:none;}
       (ops.length ? '' : '<p class="f1-aviso">' + f1Ico('info') + '<span>No hay ningún período sin pagar a la vista. Probá de nuevo cuando abra el próximo.</span></p>') +
       '<label class="f1-campo"><span class="f1-rotulo">Desde el período que abre el</span><select id="f1rDesde">' +
         ops.map(function(o){ return '<option value="' + o.periodo_inicio + '"' + (v.desde === o.periodo_inicio ? ' selected' : '') + '>' + esc(f1Corto(o.periodo_inicio, true)) + '</option>'; }).join('') + '</select></label>' +
-      '<label class="f1-campo"' + (h.err ? ' data-error' : '') + '><span class="f1-rotulo">Precio nuevo al mes</span><span class="f1-prefijo"><span>US$</span><input id="f1rPrecio" inputmode="decimal" value="' + esc(v.precio != null ? v.precio : Number(a.precio_usd).toFixed(2)) + '"></span>' +
+      '<label class="f1-campo"' + (h.err ? ' data-error' : '') + '><span class="f1-rotulo">Precio nuevo (al mes, o de una clase)</span><span class="f1-prefijo"><span>US$</span><input id="f1rPrecio" inputmode="decimal" value="' + esc(v.precio != null ? v.precio : Number(a.precio_usd).toFixed(2)) + '"></span>' +
         (h.err ? '<p class="f1-error">' + esc(h.err) + '</p>' : '') + '</label>' +
       '<label class="f1-campo"><span class="f1-rotulo">Modalidad</span><select id="f1rModalidad">' +
-        [['uno_a_uno','1:1 presencial'],['uno_a_uno_remoto','1:1 remoto'],['grupo','Grupo']].map(function(o){ return '<option value="' + o[0] + '"' + ((v.modalidad || a.modalidad) === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
+        [['uno_a_uno','1:1 presencial'],['uno_a_uno_remoto','1:1 remoto'],['uno_a_uno_domicilio','1:1 a domicilio'],['grupo','Grupo'],['grupo_remoto','Grupal remoto']].map(function(o){ return '<option value="' + o[0] + '"' + ((v.modalidad || a.modalidad) === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
+      /* fase 1.2 · la forma de cobro mueve plata como el precio: se cambia acá */
+      '<label class="f1-campo"><span class="f1-rotulo">Se cobra</span><select id="f1rForma">' +
+        [['mensual','Al mes'],['por_clase','Por clase']].map(function(o){ return '<option value="' + o[0] + '"' + ((v.forma || a.forma_cobro || 'mensual') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>' +
       '<label class="f1-campo"><span class="f1-rotulo">Firmado el (opcional)</span><input type="date" id="f1rFirmado" max="' + f1Hoy() + '" value="' + esc(v.firmado || '') + '"><p class="f1-ayuda">La fecha del acuerdo nuevo firmado. Vacía si todavía no se firmó.</p></label>' +
       '<label class="f1-campo"><span class="f1-rotulo">Motivo (opcional)</span><input id="f1rMotivo" maxlength="140" autocomplete="off" value="' + esc(v.motivo || '') + '"></label>' +
       '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda' + (ops.length ? '' : ' disabled') + '>Guardar el cambio</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
@@ -8953,15 +9284,16 @@ body .pn-app section h2{animation:none;}
     var h = F1.hoja, a = f1Acuerdo(h.aid);
     var v = h.vals = { desde:document.getElementById('f1rDesde').value, precio:document.getElementById('f1rPrecio').value,
       modalidad:document.getElementById('f1rModalidad').value, motivo:document.getElementById('f1rMotivo').value.trim(),
-      firmado:document.getElementById('f1rFirmado').value };
+      firmado:document.getElementById('f1rFirmado').value, forma:document.getElementById('f1rForma').value };
     var precio = f1Num(v.precio);
     if(!(precio > 0)){ h.err = 'Poné el precio nuevo.'; h.foco = '#f1rPrecio'; f1RepintarHoja(); return; }
     btn.disabled = true;
     sb.rpc('reemplazar_acuerdo', { p_id:a.id, p_desde:v.desde, p_precio:precio,
-        p_modalidad:v.modalidad !== a.modalidad ? v.modalidad : null, p_version:null, p_motivo:v.motivo || null, p_firmado:v.firmado || null }).then(function(r){
+        p_modalidad:v.modalidad !== a.modalidad ? v.modalidad : null, p_version:null, p_motivo:v.motivo || null, p_firmado:v.firmado || null,
+        p_forma_cobro:v.forma !== (a.forma_cobro || 'mensual') ? v.forma : null }).then(function(r){
       if(r.error){ btn.disabled = false; h.err = f1Claro(r.error); f1RepintarHoja(); return; }
       F1.hoja = { tipo:'ficha', pid:h.pid, lado:h.lado, funde:true };
-      f1Recargar().then(function(){ avisar('Desde ' + f1El(v.desde) + ' cobra ' + f1Usd(precio) + ' al mes. El acuerdo anterior queda en su historial.'); });
+      f1Recargar().then(function(){ avisar('Desde ' + f1El(v.desde) + ' cobra ' + f1Usd(precio) + (v.forma === 'por_clase' ? ' por clase' : ' al mes') + '. El acuerdo anterior queda en su historial.'); });
     });
   }
   function f1Volver(){
@@ -9331,6 +9663,111 @@ body .pn-app section h2{animation:none;}
       confirmar(b, function(){ f1AnularPago(b.getAttribute('data-f1-anular-si'), mot.trim()); });
       return;
     }
+    /* ═══ fase 1.2 ═══ */
+    if((b = q('data-f1-forma'))){ f1LeerAcuerdo(); F1.hoja.vals.forma = b.getAttribute('data-f1-forma'); f1RepintarHoja(); return; }
+    if((b = q('data-f1-pagtrato'))){ f1LeerAcuerdo(); F1.hoja.vals.pagTrato = b.getAttribute('data-f1-pagtrato'); f1RepintarHoja(); return; }
+    if((b = q('data-f1-trato'))){
+      var tpid = F1.hoja && F1.hoja.pid, tnuevo = b.getAttribute('data-f1-trato'), tper = f1Persona(tpid) || {};
+      if(!tpid || f1Trato(tpid) === tnuevo) return;
+      var tantes = f1Trato(tpid);
+      sb.from('personas').update({ trato:tnuevo }).eq('id', tpid).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f1Recargar();
+        ofrecerVuelta('A ' + primerNombre(tper) + ' le escribís de «' + tnuevo + '».', function(){
+          return sb.from('personas').update({ trato:tantes }).eq('id', tpid).then(function(r2){ if(!r2.error) f1Recargar(); return r2; });
+        });
+      });
+      return;
+    }
+    if((b = q('data-f1-trato-pagador'))){
+      var tp = b.getAttribute('data-f1-trato-pagador').split('|'), tac = f1Acuerdo(tp[0]);
+      if(!tac || f1TratoPagador(tac) === tp[1]) return;
+      var tpAntes = f1TratoPagador(tac);
+      sb.from('acuerdos').update({ pagador_trato:tp[1] }).eq('id', tac.id).then(function(r){
+        if(r.error){ avisar('No se pudo. ' + f1Claro(r.error)); return; }
+        f1Recargar();
+        ofrecerVuelta('A ' + primerNombre({ nombre:tac.pagador_nombre }) + ' le escribís de «' + tp[1] + '».', function(){
+          return sb.from('acuerdos').update({ pagador_trato:tpAntes }).eq('id', tac.id).then(function(r2){ if(!r2.error) f1Recargar(); return r2; });
+        });
+      });
+      return;
+    }
+    if((b = q('data-f1-prueba'))){
+      var prp = b.getAttribute('data-f1-prueba'), prn = (f1Persona(prp) || {}).nombre;
+      confirmar(b, function(){ f1MarcarPrueba(prp, prn, true); });
+      return;
+    }
+    if((b = q('data-f1-ver-pruebas'))){ F1.verPruebas = !F1.verPruebas; pintarPruebas(); var vb = document.querySelector('[data-f1-ver-pruebas]'); if(vb) vb.focus(); return; }
+    if((b = q('data-f1-no-prueba'))){
+      var npid = b.getAttribute('data-f1-no-prueba'), npn = (PRUEBAS.filter(function(x){ return x.id === npid; })[0] || {}).nombre;
+      f1MarcarPrueba(npid, npn, false);
+      return;
+    }
+    if((b = q('data-f1-clase'))){
+      var cla = f1Acuerdo(b.getAttribute('data-f1-clase'));
+      if(!document.getElementById('f1Clase')){
+        b.insertAdjacentHTML('afterend', '<span class="f1-inline" id="f1Clase"><input type="date" id="f1ClaseF" min="' + esc(cla.cobro_desde) + '" max="' + f1Hoy() + '" value="' + f1Hoy() + '" aria-label="Fecha de la clase">' +
+          '<button type="button" class="f1-mini" data-guarda data-f1-clase-ok="' + esc(cla.id) + '">Anotar</button><button type="button" class="f1-txt" data-f1-volver-ficha>Cancelar</button></span>');
+        b.remove(); document.getElementById('f1ClaseF').focus();
+      }
+      return;
+    }
+    if((b = q('data-f1-clase-ok'))){
+      var cid = b.getAttribute('data-f1-clase-ok'), cf = document.getElementById('f1ClaseF').value;
+      if(!cf){ avisar('Elegí la fecha de la clase.'); return; }
+      if(cf > f1Hoy()){ avisar('Una clase se anota cuando ya pasó.'); return; }
+      b.disabled = true;
+      sb.from('clases').insert({ acuerdo_id:cid, fecha:cf }).select().single().then(function(r){
+        if(r.error){ b.disabled = false; avisar('No se pudo anotar. ' + f1Claro(r.error)); return; }
+        var nid = r.data.id;
+        f1Recargar();
+        ofrecerVuelta('Clase del ' + f1El(cf) + ' anotada.', function(){
+          return sb.from('clases').update({ anulada:true, anulada_motivo:'Deshecho desde el panel' }).eq('id', nid).then(function(r2){ if(!r2.error) f1Recargar(); return r2; });
+        });
+      });
+      return;
+    }
+    if((b = q('data-f1-anular-clase'))){
+      var acid = b.getAttribute('data-f1-anular-clase');
+      if(!document.getElementById('f1AnCl')){
+        b.insertAdjacentHTML('afterend', '<span class="f1-inline" id="f1AnCl"><input id="f1AnClMot" maxlength="140" placeholder="¿Por qué la anulás?" aria-label="¿Por qué la anulás?" autocomplete="off">' +
+          '<button type="button" class="f1-mini" data-guarda data-f1-anular-clase-si="' + esc(acid) + '">Anular la clase</button><button type="button" class="f1-txt" data-f1-volver-ficha>Cancelar</button></span>');
+        document.getElementById('f1AnClMot').focus();
+      }
+      return;
+    }
+    if((b = q('data-f1-anular-clase-si'))){
+      var acid2 = b.getAttribute('data-f1-anular-clase-si'), acm = document.getElementById('f1AnClMot').value.trim();
+      if(!acm){ avisar('Escribí por qué se anula: queda en el historial.'); document.getElementById('f1AnClMot').focus(); return; }
+      sb.from('clases').update({ anulada:true, anulada_motivo:acm }).eq('id', acid2).then(function(r){
+        if(r.error){ avisar('No se pudo anular. ' + f1Claro(r.error)); return; }
+        f1Recargar(); avisar('Clase anulada: ya no se cobra.');
+      });
+      return;
+    }
+    if((b = q('data-f1-borrador'))){ var bra = f1Acuerdo(b.getAttribute('data-f1-borrador')); f1MostrarHoja({ tipo:'acuerdo', pid:bra.persona_id, aid:bra.id, alto:true }); return; }
+    if((b = q('data-f1-confirmar'))){
+      var cfa = b.getAttribute('data-f1-confirmar'), cfp = f1Persona((f1Acuerdo(cfa) || {}).persona_id) || {};
+      f1MostrarAvisoConfirmar(b, [f1AvisoAlConfirmar(f1Acuerdo(cfa))]);
+      confirmar(b, function(){ f1ConfirmarBorradores([cfa], primerNombre(cfp)); });
+      return;
+    }
+    if((b = q('data-f1-confirmar-todos'))){
+      var lis = f1BorradoresDe().filter(f1BorradorListo), ids = lis.map(function(a){ return a.id; });
+      f1MostrarAvisoConfirmar(b, lis.map(function(a){ return f1AvisoAlConfirmar(a, true); }));
+      confirmar(b, function(){ f1ConfirmarBorradores(ids); });
+      return;
+    }
+    if((b = q('data-f1-descartar'))){
+      var dsa = b.getAttribute('data-f1-descartar');
+      confirmar(b, function(){
+        sb.from('acuerdos').update({ estado:'anulado' }).eq('id', dsa).then(function(r){
+          if(r.error){ avisar('No se pudo descartar. ' + f1Claro(r.error)); return; }
+          f1Recargar(); avisar('Borrador descartado. Queda en su historial.');
+        });
+      });
+      return;
+    }
     if((b = q('data-f1-pausar'))){ var apz = f1Acuerdo(b.getAttribute('data-f1-pausar')); f1MostrarHoja({ tipo:'pausa', pid:apz.persona_id, aid:apz.id, foco:'#f1PzFecha' }); return; }
     if((b = q('data-f1-viaje'))){ var avj = f1Acuerdo(b.getAttribute('data-f1-viaje')); f1MostrarHoja({ tipo:'viaje', pid:avj.persona_id, aid:avj.id, foco:'#f1VjMotivo' }); return; }
     if((b = q('data-f1-anular-ajuste'))){
@@ -9512,7 +9949,7 @@ body .pn-app section h2{animation:none;}
     e.preventDefault();
     var g = b.closest('[role="radiogroup"]'), bs = [].slice.call(g.querySelectorAll('[role="radio"]')), i = bs.indexOf(b);
     i = e.key === 'Home' ? 0 : e.key === 'End' ? bs.length - 1 : (i + (e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 1) + bs.length) % bs.length;
-    var attr = ['data-f1-rango','data-f1-medio','data-f1-quien','data-f1-paga'].filter(function(a){ return bs[i].hasAttribute(a); })[0];
+    var attr = ['data-f1-rango','data-f1-medio','data-f1-quien','data-f1-paga','data-f1-forma','data-f1-pagtrato','data-f1-trato','data-f1-trato-pagador'].filter(function(a){ return bs[i].hasAttribute(a); })[0];
     var val = attr && bs[i].getAttribute(attr);
     bs[i].click();
     var nuevo = attr && document.querySelector('[' + attr + '="' + val + '"]');
@@ -9559,6 +9996,8 @@ body .pn-app section h2{animation:none;}
     if(t.id === 'f1Periodo'){ f1LeerPago(); var p = t.value.split('|'); F1.hoja.aid = p[0]; F1.hoja.ini = p[1]; F1.hoja.vals.monto = null; f1RepintarHoja(); return; }
     if(t.id === 'f1Archivo'){ F1.hoja.archivo = t.files && t.files[0] || null; f1LeerPago(); f1RepintarHoja(); return; }
     if(t.id === 'f1aVersion'){ f1LeerAcuerdo(); F1.hoja.vals.ventana = ''; f1RepintarHoja(); return; }
+    /* fase 1.2 · la modalidad elige sola la versión vigente de su modalidad */
+    if(t.id === 'f1aModalidad'){ f1LeerAcuerdo(); F1.hoja.vals.version = f1VersionDe(t.value).id; F1.hoja.vals.ventana = ''; f1RepintarHoja(); return; }
     if(t.id === 'f1vDesde'){ F1.hoja.desde = t.value; f1PrevistaVentana(); return; }
     if(t.name === 'f1v'){ f1PrevistaVentana(); return; }
   });
