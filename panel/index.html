@@ -7291,8 +7291,14 @@ body .pn-app section h2{animation:none;}
     if(a.grupo_id && typeof F2 !== 'undefined' && F2.gHor.length)
       return F2.gHor.filter(function(h){ return h.grupo_id === a.grupo_id && !h.retirado; }).map(function(h){ return { dia_semana:+h.dia_semana, hora:h.hora, desde:h.desde, hasta:h.hasta }; })
         .sort(function(x, y){ return x.dia_semana - y.dia_semana; });
-    return F1.horarios.filter(function(h){ return h.acuerdo_id === a.id && !h.retirado; })
+    var todos = F1.horarios.filter(function(h){ return h.acuerdo_id === a.id && !h.retirado; })
       .sort(function(x, y){ return x.dia_semana - y.dia_semana; });
+    if(arguments[1]) return todos;
+    /* fase 2.1 · lo que rige hoy (o, si todo empieza más adelante, lo que viene): un
+       horario que ya terminó o el que entra la semana que viene no se mezclan con el de hoy */
+    var hoy = f1Hoy(), vig = todos.filter(function(h){ return !h.hasta || h.hasta >= hoy; });
+    var ya = vig.filter(function(h){ return !h.desde || h.desde <= hoy; });
+    return ya.length ? ya : vig;
   }
   /* «mar y jue 8:30» · «lun, mié y vie 7:30» · «martes y jueves 8:30» */
   function f1HorarioTexto(a, largo){
@@ -7561,7 +7567,7 @@ body .pn-app section h2{animation:none;}
     var iso = f1Iso(dia), grupos = {}, out = [];
     F1.acuerdos.forEach(function(a){
       if(!f1DaSesiones(a, dia)) return;
-      f1HorariosDe(a).forEach(function(h){
+      f1HorariosDe(a, true).forEach(function(h){
         if(h.dia_semana !== iso || h.desde > dia || (h.hasta && h.hasta < dia)) return;
         var per = f1Persona(a.persona_id) || {};
         if(a.modalidad === 'grupo'){
@@ -7580,7 +7586,7 @@ body .pn-app section h2{animation:none;}
     var acs = f1AcuerdosDe(pid);
     for(var i = 0; i < 15; i++){
       var dia = f1Mas(now.dia, i), iso = f1Iso(dia), mejor = null;
-      acs.forEach(function(a){ if(!f1DaSesiones(a, dia)) return; f1HorariosDe(a).forEach(function(h){
+      acs.forEach(function(a){ if(!f1DaSesiones(a, dia)) return; f1HorariosDe(a, true).forEach(function(h){
         if(h.dia_semana !== iso || h.desde > dia || (h.hasta && h.hasta < dia)) return;
         if(i === 0 && String(h.hora).slice(0,5) <= hhmm) return;
         if(!mejor || h.hora < mejor.hora) mejor = { dia:dia, hora:h.hora };
@@ -9005,6 +9011,139 @@ body .pn-app section h2{animation:none;}
     });
   }
 
+  /* ═══════════════════════════════════════════════════════════
+     FASE 2.1 · EDITAR EL HORARIO DE UN ACUERDO QUE YA EXISTE
+     Sin SQL nuevo: `horarios` acepta insert y update del equipo (fase1.sql
+     §13) y no tiene candado. Nada se borra:
+       · en borrador se corrige libre (los de antes se retiran);
+       · confirmado, el cambio corre desde una fecha: el horario viejo
+         termina el día antes (hasta) y el nuevo empieza ese día (desde).
+     Los grupos van a la hora de su grupo: ahí no hay horario propio.
+     ═══════════════════════════════════════════════════════════ */
+  function f21Lunes(){ var h = f1Hoy(); return f1Mas(h, ((8 - f2Iso(h)) % 7) || 7); }
+  function f21Vigentes(a, desde){
+    return F1.horarios.filter(function(h){ return h.acuerdo_id === a.id && !h.retirado && (!h.hasta || h.hasta >= (desde || f1Hoy())); });
+  }
+  function f21Avisos(a, dias, hora, dur, desde){
+    var out = [], ini = f2Min(hora), fin = ini + dur;
+    function cruza(x, y){ return ini < y && fin > x; }
+    dias.forEach(function(d){
+      var nom = F1_DIA[d % 7];
+      (F2.bloques || []).forEach(function(b){
+        if(!b.retirado && +b.dia_semana === d && cruza(f2Min(b.hora_inicio), f2Min(b.hora_fin))) out.push('El ' + nom + ' se cruza con tu bloque personal (' + f1Hora(b.hora_inicio) + ' a ' + f1Hora(b.hora_fin) + ').');
+      });
+      (F2.gHor || []).forEach(function(g){
+        if(!g.retirado && +g.dia_semana === d && (!g.hasta || g.hasta >= desde) && cruza(f2Min(g.hora), f2Min(g.hora) + (g.duracion_min || 60)))
+          out.push('El ' + nom + ' a esa hora está el ' + f2GrupoNombre(g.grupo_id) + '.');
+      });
+      F1.horarios.forEach(function(h){
+        if(h.retirado || h.acuerdo_id === a.id || +h.dia_semana !== d || (h.hasta && h.hasta < desde)) return;
+        var o = f1Acuerdo(h.acuerdo_id);
+        if(!o || o.estado === 'anulado' || o.estado === 'cerrado' || o.estado === 'reemplazado') return;
+        if(cruza(f2Min(h.hora), f2Min(h.hora) + (h.duracion_min || 60))) out.push('El ' + nom + ' a esa hora ya tiene sesión ' + f2Nombre(o.persona_id) + (o.estado === 'borrador' ? ' (acuerdo por confirmar)' : '') + '.');
+      });
+    });
+    /* feriados confirmados en las próximas 8 semanas, en esos días */
+    (F2.feriados || []).forEach(function(fe){
+      if(!fe.confirmado || fe.anulado || fe.fecha < desde || fe.fecha > f1Mas(desde, 56)) return;
+      if(dias.indexOf(f2Iso(fe.fecha)) >= 0) out.push('El ' + f2DiaNombre(fe.fecha) + ' es feriado (' + fe.nombre + '): ese día no hay sesión.');
+    });
+    return out.filter(function(v, i, arr){ return arr.indexOf(v) === i; });
+  }
+  function f21HtmlHorario(h){
+    var a = f1Acuerdo(h.aid) || {}, p = f1Persona(a.persona_id) || {}, bor = a.estado === 'borrador';
+    var html = f1Top('Editar horario', p.nombre + ' · ' + f1Modalidad(a), true);
+    if(a.modalidad === 'grupo'){
+      return html + '<p class="f2-porque" style="margin-top:14px">' + (a.grupo_id ? 'Va a la hora de su grupo: ' + esc(f2GrupoNombre(a.grupo_id) + ' · ' + (f1HorarioTexto(a, true) || '')) + '. Para cambiarla, cambiá su grupo en el acuerdo.'
+        : 'Un grupo no tiene horario propio: va a la hora de su grupo. Asignale su grupo en el acuerdo («Grupo de agenda»).') + '</p>';
+    }
+    var act = f21Vigentes(a);
+    if(!h.dias){ h.dias = act.map(function(x){ return +x.dia_semana; }); h.hora = act[0] ? f2H(act[0].hora) : ''; h.dur = act[0] ? (act[0].duracion_min || 60) : 60; }
+    if(!bor && !h.desde) h.desde = f21Lunes();
+    var desde = bor ? (a.cobro_desde > f1Hoy() ? a.cobro_desde : f1Hoy()) : h.desde;
+    var avisos = h.dias.length && h.hora ? f21Avisos(a, h.dias, h.hora, +h.dur, desde) : [];
+    html += '<form class="f1-form" id="f21FormHorario" novalidate>' +
+      (bor ? '<p class="f1-aviso">' + f1Ico('info') + '<span>Es un borrador: el horario se corrige libre.</span></p>'
+           : '<p class="f1-ayuda" style="margin-top:12px">Ahora: ' + esc(f1HorarioTexto(a, true) || 'sin horario fijo') + '. El cambio corre desde la fecha que elijas; lo de antes queda en su historial.</p>') +
+      '<div class="f1-campo"><span class="f1-rotulo">Días</span><div class="f1-radios f1-dias">' + [1,2,3,4,5].map(function(d){
+        return '<label><input type="checkbox" value="' + d + '" data-f21-dia' + (h.dias.indexOf(d) >= 0 ? ' checked' : '') + '>' + F1_DIA_C[d] + '</label>'; }).join('') + '</div>' +
+        '<p class="f1-ayuda">De a varios días a la vez. El sábado no es parte de la semana fija.</p></div>' +
+      '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Hora</span><input type="time" id="f21Hora" value="' + esc(h.hora || '') + '"></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Duración</span><select id="f21Dur">' + [45,60,75,90,120].map(function(m){ return '<option value="' + m + '"' + (+h.dur === m ? ' selected' : '') + '>' + m + ' min</option>'; }).join('') + '</select></label></div>' +
+      (bor ? '' : '<label class="f1-campo"><span class="f1-rotulo">Desde</span><input type="date" id="f21Desde" min="' + f1Mas(f1Hoy(), 1) + '" value="' + esc(h.desde) + '"><p class="f1-ayuda">Por defecto, la semana que viene. El horario de ahora termina el día antes.</p></label>') +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      (avisos.length ? '<div class="f2-propuesta" role="status"><p><b>Ojo antes de guardar</b></p>' + avisos.map(function(t){ return '<p class="f2-nota">' + f1Ico('info') + '<span>' + esc(t) + '</span></p>'; }).join('') + '</div>' : '') +
+      (h.dias.length && h.hora ? '<p class="f2-queda">Así queda: ' + esc(f21Texto(h.dias, h.hora) + (bor ? '' : ' · desde el ' + f2DiaNombre(h.desde))) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>' + (avisos.length ? 'Guardar igual' : 'Guardar el horario') + '</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
+    return html;
+  }
+  function f21Texto(dias, hora){
+    var ds = dias.slice().sort().map(function(d){ return F1_DIA[d % 7]; });
+    return (ds.length === 1 ? ds[0] : ds.slice(0, -1).join(', ') + ' y ' + ds[ds.length - 1]) + ' ' + f1Hora(hora);
+  }
+  function f21Leer(){
+    var h = F1.hoja; if(!h || h.tipo !== 'f21hor') return;
+    if(document.querySelector('[data-f21-dia]')) h.dias = [].slice.call(document.querySelectorAll('[data-f21-dia]:checked')).map(function(x){ return +x.value; });
+    var ho = document.getElementById('f21Hora'), du = document.getElementById('f21Dur'), de = document.getElementById('f21Desde');
+    if(ho) h.hora = ho.value; if(du) h.dur = +du.value; if(de) h.desde = de.value;
+  }
+  function f21Guardar(btn){
+    var h = F1.hoja; f21Leer(); h.err = null;
+    var a = f1Acuerdo(h.aid), bor = a.estado === 'borrador';
+    if(!h.dias.length){ h.err = 'Elegí al menos un día.'; f1RepintarHoja(); return; }
+    if(!h.hora){ h.err = 'Poné la hora.'; f1RepintarHoja(); return; }
+    if(!bor && (!h.desde || h.desde <= f1Hoy())){ h.err = 'El cambio empieza de mañana en adelante.'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    var desde = bor ? a.cobro_desde : h.desde, viejos = f21Vigentes(a, bor ? null : h.desde);
+    if(bor) viejos = F1.horarios.filter(function(x){ return x.acuerdo_id === a.id && !x.retirado; });
+    /* lo que no empezó todavía se retira; lo que ya corre, termina el día antes */
+    var retirar = viejos.filter(function(x){ return bor || x.desde >= h.desde; }), cortar = bor ? [] : viejos.filter(function(x){ return x.desde < h.desde; });
+    var antesCortar = cortar.map(function(x){ return { id:x.id, hasta:x.hasta || null }; });
+    var nuevos = h.dias.slice().sort().map(function(d){ return { acuerdo_id:a.id, dia_semana:d, hora:h.hora, duracion_min:+h.dur || 60, desde:desde }; });
+    var idsNuevos = [];
+    var paso1 = retirar.length ? sb.from('horarios').update({ retirado:true }).in('id', retirar.map(function(x){ return x.id; })) : Promise.resolve({});
+    paso1.then(function(r){
+      if(r && r.error) throw r.error;
+      return cortar.length ? sb.from('horarios').update({ hasta:f1Mas(h.desde, -1) }).in('id', cortar.map(function(x){ return x.id; })) : {};
+    }).then(function(r){
+      if(r && r.error) throw r.error;
+      return sb.from('horarios').insert(nuevos).select();
+    }).then(function(r){
+      if(r.error) throw r.error;
+      idsNuevos = (r.data || []).map(function(x){ return x.id; });
+      var pid = a.persona_id;
+      F1.hoja = { tipo:'ficha', pid:pid, lado:h.lado, funde:true };
+      return f1Recargar().then(function(){
+        ofrecerVuelta(primerNombre(f1Persona(pid) || {}) + ': ' + f21Texto(h.dias, h.hora) + (bor ? '' : ' desde el ' + f2DiaNombre(h.desde)) + '.', function(){
+          /* Deshacer: el nuevo se retira y lo de antes vuelve como estaba */
+          return sb.from('horarios').update({ retirado:true }).in('id', idsNuevos).then(function(r1){
+            if(r1.error) return r1;
+            var pasos = [];
+            if(retirar.length) pasos.push(sb.from('horarios').update({ retirado:false }).in('id', retirar.map(function(x){ return x.id; })));
+            var porHasta = {};
+            antesCortar.forEach(function(x){ var k = x.hasta || ''; (porHasta[k] = porHasta[k] || []).push(x.id); });
+            Object.keys(porHasta).forEach(function(k){ pasos.push(sb.from('horarios').update({ hasta:k || null }).in('id', porHasta[k])); });
+            return Promise.all(pasos).then(function(rs){ var e = rs.filter(function(x){ return x && x.error; })[0]; f1Recargar(); return e || {}; });
+          });
+        });
+      });
+    }).catch(function(err){ btn.disabled = false; h.err = 'No se pudo guardar. ' + f1Claro(err); f1RepintarHoja(); });
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('[data-f21-horario]');
+    if(!b) return;
+    var a = f1Acuerdo(b.getAttribute('data-f21-horario'));
+    if(a) f1MostrarHoja({ tipo:'f21hor', pid:a.persona_id, aid:a.id, alto:true, foco:'#f21Hora' });
+  });
+  document.addEventListener('change', function(e){
+    var t = e.target;
+    if(F1.hoja && F1.hoja.tipo === 'f21hor' && t.closest && t.closest('#f21FormHorario')){ f21Leer(); F1.hoja.err = null; f1RepintarHoja(); }
+  });
+  document.addEventListener('submit', function(e){
+    if(e.target.id !== 'f21FormHorario') return;
+    e.preventDefault(); f21Guardar(e.target.querySelector('[type="submit"]'));
+  });
+
   /* ═══ PINTAR ═══ */
   function f1Pintar(){
     f1PintarHoy();
@@ -9227,10 +9366,12 @@ body .pn-app section h2{animation:none;}
     var av = f1AvisosBorrador(a);
     return '<div class="f1-borrador"><p class="f1-borrador-tit"><b>Acuerdo por confirmar</b><span>No cobra ni recuerda hasta que lo confirmés.</span></p>' +
       '<p class="f1-modo">' + esc(f1BorradorResumen(a)) + '</p>' +
+      '<p class="f1-modo">' + esc(f1HorarioTexto(a, true) ? 'Horario: ' + f1HorarioTexto(a, true) : 'Sin horario fijo todavía') + '</p>' +
       (a.firmado_en ? '' : '<p class="f1-modo">Sin acuerdo nuevo firmado</p>') +
       (av.length ? '<ul class="f1-borrador-avisos">' + av.map(function(t){ return '<li>' + f1Ico('info') + '<span>' + esc(t) + '</span></li>'; }).join('') + '</ul>' : '') +
       (F1.estado === 'ok' ? '<div class="f1-acciones"><button type="button" class="pn-btn f1-btn" data-guarda data-f1-confirmar="' + esc(a.id) + '">Confirmar</button>' +
         '<button type="button" class="f1-mini" data-guarda data-f1-borrador="' + esc(a.id) + '">' + f1Ico('lapiz') + 'Corregir</button>' +
+        (a.modalidad !== 'grupo' ? '<button type="button" class="f1-mini" data-guarda data-f21-horario="' + esc(a.id) + '">' + f1Ico('cal') + (f1HorariosDe(a).length ? 'Editar horario' : 'Cargar horario') + '</button>' : '') +
         '<button type="button" class="f1-txt" data-guarda data-f1-descartar="' + esc(a.id) + '">Descartar</button></div>' : '') + '</div>';
   }
   function f1HtmlPorConfirmar(){
@@ -9524,6 +9665,7 @@ body .pn-app section h2{animation:none;}
     else if(h.tipo === 'f2grupal') html = f2HtmlGrupal(h);
     else if(h.tipo === 'f2sab') html = f2HtmlSabado(h);
     else if(h.tipo === 'f2bloque') html = f2HtmlBloque(h);
+    else if(h.tipo === 'f21hor') html = f21HtmlHorario(h);
     var funde = h.funde; h.funde = false;
     caja.innerHTML = '<div class="' + (funde ? 'f1-funde' : '') + '">' + html + '</div>';
     if(h.lado) caja.scrollTop = h.scroll || 0;
@@ -9768,7 +9910,9 @@ body .pn-app section h2{animation:none;}
         (a.reemplaza_a ? '<small>Reemplaza al acuerdo anterior desde ' + esc(f1El(a.cobro_desde)) + '.</small>' : '') + '</dd>' +
       '<dt>Ventana de pago</dt><dd>Paga ' + esc(f1VentanaTexto(f1Ventana(a))) + '<ul class="f1-vent-hist">' + hist + '</ul>' +
         (f1Editable(a) ? '<button type="button" class="f1-txt" data-guarda data-f1-cambiar-ventana="' + esc(a.id) + '">Cambiar ventana</button>' : '') + '</dd>' +
-      '<dt>Horario fijo</dt><dd>' + esc(f1HorarioTexto(a, true) || 'Sin horario fijo') + '</dd>' +
+      '<dt>Horario fijo</dt><dd>' + esc(f1HorarioTexto(a, true) || 'Sin horario fijo') +
+        /* fase 2.1 · el horario de un acuerdo que ya existe se edita desde acá */
+        ((f1Editable(a) || a.estado === 'borrador') ? '<br><button type="button" class="f1-txt" data-guarda data-f21-horario="' + esc(a.id) + '">Editar horario</button>' : '') + '</dd>' +
       '<dt>Horas de aviso</dt><dd>' + (a.aviso_horas ? esc(a.aviso_horas + ' horas') : 'No definido en el acuerdo') + '</dd>' +
       '<dt>Regla de viaje</dt><dd>' + esc(F1_VIAJE[a.regla_viaje] || a.regla_viaje) +
         (f1ViajesDe(a.id).length ? '<ul class="f1-vent-hist">' + f1ViajesDe(a.id).map(function(x){
@@ -10740,7 +10884,7 @@ body .pn-app section h2{animation:none;}
         '<label class="f1-campo"><span class="f1-rotulo">Firmado el</span><input type="date" id="f1aFirmado" max="' + f1Hoy() + '" value="' + esc(v.firmado || '') + '">' +
           '<p class="f1-ayuda">La fecha que dice el acuerdo firmado. Vacía, la ficha dice «Sin acuerdo nuevo firmado».</p></label>' +
       '</fieldset>' +
-      (bor ? '<fieldset><legend>2 · Horario fijo</legend><p class="f1-ayuda">' + esc(f1HorarioTexto(bor, true) || 'Sin horario fijo') + '. El horario se corrige después de confirmar.</p></fieldset>'
+      (bor ? '<fieldset><legend>2 · Horario fijo</legend><p class="f1-ayuda">' + esc(f1HorarioTexto(bor, true) || 'Sin horario fijo') + '. El horario se edita aparte, con «Editar horario» en el borrador.</p></fieldset>'
       : '<fieldset><legend>2 · Horario fijo</legend><div class="f1-radios f1-dias">' +
         [1,2,3,4,5,6].map(function(d){ return '<label><input type="checkbox" value="' + d + '" data-f1-dia' + (dias.indexOf(d) >= 0 ? ' checked' : '') + '>' + F1_DIA_C[d] + '</label>'; }).join('') + '</div>' +
         '<label class="f1-campo"><span class="f1-rotulo">Hora</span><input type="time" id="f1aHora" value="' + esc(v.hora || '') + '"></label>' +
