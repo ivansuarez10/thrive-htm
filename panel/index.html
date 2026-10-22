@@ -2492,6 +2492,134 @@ button.f1-fila-btn{font:inherit; color:inherit; background:none; border:0; curso
    cargar: los títulos de las secciones aparecían a medio escribir. El
    panel es una herramienta: sus títulos están quietos. */
 body .pn-app section h2{animation:none;}
+
+/* ══════════════════════════════════════════════════════════════
+   FASE 3 · INTERESADOS, ONBOARDING Y PLANTILLAS (22 oct 2026)
+   Del ESPEC del 05 (tokens.css, bloque «FASE 3»), con el prefijo f3-.
+   Lo propio: la fila de cuatro carriles y el campo-hueco de la
+   plantilla, que va PUNTEADO en tinta (no rosa: falta es falta).
+   ══════════════════════════════════════════════════════════════ */
+.f3-totales{margin-top:10px; font-size:1rem; color:var(--ink-2); line-height:1.6;}
+.f3-totales b{color:var(--ink); font-weight:600;}
+.f3-controles{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.f3-controles .pn-buscar{flex:1 1 220px; margin:0;}
+.f3-controles .f3-nuevo{margin-left:auto;}
+.f3-controles .f3-nuevo svg{width:18px; height:18px;}
+.f3-tramo{margin-top:26px;}
+.f3-tramo > .f1-rotulo-gris{display:block; margin-bottom:10px;}
+.f3-tramo > .f1-rotulo-gris i{font-style:normal; color:var(--ink-3); letter-spacing:.06em; margin-left:6px;}
+.f3-vacio{margin-top:26px; font-size:1rem; color:var(--ink-2);}
+.f3-int{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:6px 14px; padding:6px 18px 6px 6px; min-height:72px;}
+.f3-int + .f3-int{margin-top:10px;}
+.f3-int.activo{background:var(--white); border-color:rgba(30,29,26,.14); box-shadow:var(--flota-2);}
+.f3-int-abre{display:grid; grid-template-columns:auto minmax(0,1fr); gap:2px 14px; align-items:center; padding:10px 0 10px 12px; min-height:60px; border-radius:14px;}
+.f3-int-abre .f1-ini{grid-row:1 / span 2;}
+.f3-int .quien b{display:block; font-family:var(--display); font-weight:600; font-size:1.04rem; letter-spacing:-.01em;}
+.f3-int .quien i{display:block; font-style:normal; font-size:.86rem; color:var(--ink-2); line-height:1.4;}
+.f3-int .paso{grid-column:2; font-size:.9rem; line-height:1.45;}
+.f3-int .paso small{display:block; font-size:.8rem; color:var(--ink-2);}
+.f3-int .paso strong{font-weight:600; color:var(--ink);}
+.f3-int .acc{justify-self:end;}
+@media (min-width:1100px){
+  .f3-int-abre{grid-template-columns:auto minmax(0,1.25fr) minmax(0,1fr); gap:4px 18px;}
+  .f3-int-abre .f1-ini{grid-row:auto;}
+  .f3-int .paso{grid-column:3;}
+}
+@media (max-width:520px){
+  .f3-int{grid-template-columns:minmax(0,1fr); padding:4px 14px 14px 4px;}
+  .f3-int .acc{justify-self:start; margin-left:64px;}
+}
+.f3-paso strong{font-weight:500;}
+.f1-prox .cuando.f3-paso{font-size:clamp(1.5rem,5.4vw,2rem);}
+.f3-resp{margin-top:16px; padding:14px 16px; border-radius:14px; background:rgba(30,29,26,.04);}
+.f3-resp-bot{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+.f1-mini.f3-on{border-color:var(--ink); color:var(--ink);}
+.f3-seg{display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:2px 12px; align-items:center; padding:12px 0; border-top:1px solid var(--line-soft); min-height:58px;}
+.f3-seg:first-of-type{border-top:0; padding-top:0;}
+.f3-seg .n{width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-family:var(--mono); font-size:.72rem; border:1.5px solid var(--ink); color:var(--ink); grid-row:1 / span 2; box-sizing:border-box;}
+.f3-seg.despues .n{border-color:var(--line); color:var(--ink-3);}
+.f3-seg b{font-weight:600; font-size:.96rem;}
+.f3-seg.despues b{font-weight:500; color:var(--ink-2);}
+.f3-seg i{grid-column:2; font-style:normal; font-size:.85rem; color:var(--ink-2);}
+.f3-seg .acc{grid-column:3; grid-row:1 / span 2;}
+.f3-tope{margin-top:12px; font-size:.9rem; color:var(--ink); font-weight:600;}
+.f3-tope span{font-weight:400; color:var(--ink-2);}
+.f3-cierre{display:flex; gap:10px; flex-wrap:wrap; padding:16px 0 22px; border-bottom:1px solid var(--line-soft);}
+.f3-cierre svg{width:16px; height:16px;}
+#f3Etapa{font:inherit; font-size:.92rem; border:1px solid var(--line); border-radius:10px; padding:8px 10px; min-height:44px; max-width:100%; background:var(--white);}
+/* elegir de una lista (radio grande): 58 px, círculo de 20 que se llena con un borde de 6 */
+.f1-form .opciones, .f3-motivos{display:grid; gap:8px;}
+.opcion.f3-opcion, .opciones .opcion{display:grid; grid-template-columns:20px minmax(0,1fr); gap:2px 12px; align-items:center; padding:13px 16px; border-radius:12px; border:1px solid var(--line); background:var(--white); text-align:left; width:100%; min-height:58px; font:inherit; cursor:pointer; color:inherit;}
+.opciones .opcion .r, .f3-opcion .r{width:20px; height:20px; border-radius:50%; border:1.5px solid var(--ink-3); grid-row:1 / span 2; box-sizing:border-box;}
+.opciones .opcion[aria-checked="true"], .f3-opcion[aria-checked="true"]{border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink);}
+.opciones .opcion[aria-checked="true"] .r, .f3-opcion[aria-checked="true"] .r{border:6px solid var(--ink);}
+.opciones .opcion b, .f3-opcion b{font-weight:600; font-size:.96rem;}
+.opciones .opcion i{font-style:normal; font-size:.85rem; color:var(--ink-2); grid-column:2;}
+.f3-check-l{display:flex; gap:10px; align-items:center; min-height:44px; font-size:.94rem; color:var(--ink-2);}
+.f3-check-l input{width:20px; height:20px; accent-color:var(--ink);}
+.f3-ya{margin-top:4px; padding:12px 14px; border-radius:12px; background:rgba(30,29,26,.04); display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+.f3-ya p{width:100%; font-size:.92rem;}
+.f3-dijo{margin-top:10px; font-weight:600; font-size:.95rem;}
+.f3-que-pasa{display:flex; gap:10px; align-items:flex-start; font-size:.9rem; color:var(--ink-2); line-height:1.5; margin-top:6px;}
+.f3-que-pasa svg{width:18px; height:18px; flex:none; margin-top:2px;}
+/* la casilla del kit (pieza c): cuadro de 24 con radio 7, sin anidar */
+.f3-check{display:grid; grid-template-columns:24px minmax(0,1fr) auto; gap:2px 12px; align-items:start; padding:12px 0; border-top:1px solid var(--line-soft); min-height:56px;}
+.f1-sec > .f3-check:nth-child(2), .f1-sec > .f3-completo + .f3-check{border-top:0;}
+.f3-check .box{width:24px; height:24px; border-radius:7px; border:1.5px solid rgba(30,29,26,.32); display:grid; place-items:center; background:var(--white); margin-top:1px; box-sizing:border-box; grid-row:1 / span 2;}
+.f3-check.hecho .box{background:var(--ink); border-color:var(--ink); color:var(--white);}
+.f3-check .box svg{width:14px; height:14px; stroke-width:2.6;}
+.f3-check b{font-weight:500; font-size:.97rem; line-height:1.35;}
+.f3-check b small{font-weight:400; font-size:.8rem; color:var(--ink-2); margin-left:4px;}
+.f3-check.hecho b{color:var(--ink-2);}
+.f3-check i{grid-column:2; font-style:normal; font-size:.84rem; color:var(--ink-2); line-height:1.45;}
+.f3-check.espera b{font-weight:600; color:var(--ink);}
+.f3-check .acc{grid-column:3; grid-row:1; display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+.f3-check .dentro{grid-column:2 / -1; margin-top:10px;}
+.f3-check .dentro .f1-seg.ancho button{white-space:normal; padding:0 8px; line-height:1.2; min-height:44px; font-size:.86rem;}
+.f3-aplica .f1-ayuda{font-size:.84rem;}
+.f3-completo{display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-weight:600; font-size:.96rem;}
+.f3-completo svg{width:20px; height:20px;}
+.f3-autoriz{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 12px; align-items:center; padding:12px 0; border-top:1px solid var(--line-soft); min-height:58px;}
+.f1-sec > .f3-autoriz:nth-child(2){border-top:0;}
+.f3-autoriz b{font-weight:500; font-size:.96rem;}
+.f3-autoriz i{grid-column:1; font-style:normal; font-size:.85rem; color:var(--ink-2);}
+.f3-autoriz i strong{color:var(--ink); font-weight:600;}
+.f3-autoriz .acc{grid-column:2; grid-row:1 / span 2;}
+/* plantillas */
+.f3-plt{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 12px; align-items:center; padding:13px 16px; border-radius:12px; border:1px solid var(--line); background:var(--white); width:100%; text-align:left; min-height:52px;}
+.f3-plt + .f3-plt{margin-top:8px;}
+.f3-plt b{font-weight:600; font-size:.97rem;}
+.f3-plt[aria-current="true"]{border:2px solid var(--ink); padding:12px 15px;}
+.f3-trato{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.f3-previa{margin-top:14px; background:var(--white); border:1px solid var(--line); border-radius:14px; padding:16px 18px; font-size:1rem; line-height:1.85; white-space:pre-line; overflow-wrap:anywhere;}
+.f3-hc{display:inline; padding:2px 8px; border-radius:7px; background:var(--teal-pale); color:var(--teal-deep); font-weight:600; font-size:.96rem; -webkit-box-decoration-break:clone; box-decoration-break:clone;}
+.f3-hc.suyo{background:rgba(30,29,26,.07); color:var(--ink);}
+.f3-hc.vacio{background:transparent; color:var(--ink-2); font-weight:500; outline:1.5px dashed rgba(30,29,26,.45); outline-offset:-1px;}
+.f3-leyenda{margin-top:8px; font-size:.84rem; color:var(--ink-2);}
+.f3-campo{margin-top:14px;}
+.f1-campo.f3-campo.vacio input{border-style:dashed; border-color:rgba(30,29,26,.45);}
+.f3-pie .f3-falta{background:var(--ink-3); border-color:var(--ink-3); cursor:default; opacity:1;}
+.f3-mandaste{font-size:.98rem; margin-right:4px;}
+.f3-catalogo{padding-top:10px;}
+.f3-cat-g{margin-top:16px;}
+.f3-cat-g .f1-rotulo-gris{display:block; margin-bottom:4px;}
+.f3-cat-g button{display:flex; justify-content:space-between; gap:10px; padding:10px 0; border-top:1px solid var(--line-soft); font-size:.94rem; min-height:44px; align-items:center; width:100%;}
+.f3-cat-g button:first-of-type{border-top:0;}
+.f3-cat-g small{font-size:.8rem; color:var(--ink-2); flex:none;}
+/* Hoy: la línea de interesados, al pie del bloque sólido. No es una alerta. */
+.f3-linea{display:flex; align-items:center; gap:12px; padding:14px 22px; min-height:52px; font-size:.92rem; color:var(--ink-2); border-top:1px solid var(--line-soft);}
+.f3-linea > svg:first-child{width:18px; height:18px; flex:none;}
+.f3-linea span{flex:1;}
+.f3-linea b{color:var(--ink); font-weight:600;}
+
+.f3-controles{margin-top:20px;}
+.f3-controles + .f1-md{margin-top:0;}
+.f3-bloquea{display:flex; gap:11px; align-items:flex-start; font-size:.98rem; line-height:1.45; padding:18px 0 0;}
+.f3-bloquea svg{width:18px; height:18px; margin-top:2px; flex:none;}
+.f3-bloquea strong{font-weight:600;}
+.f3-bloquea span span{color:var(--ink-2);}
+.f3-copiado{width:100%; display:flex; gap:8px; align-items:center; font-size:.9rem; color:var(--ink-2);}
+.f3-copiado svg{width:18px; height:18px;}
 </style>
 
 </head>
@@ -2606,6 +2734,9 @@ body .pn-app section h2{animation:none;}
           <div class="ag-dia" id="agDia"></div>
         </div>
       </section>
+
+      <!-- ══════ INTERESADOS (fase 3) ══════ -->
+      <section class="vista" data-vista="interesados" hidden><div id="f3Inter"></div></section>
 
       <!-- ══════ INVITADAS ══════ -->
       <section class="vista" data-vista="invitadas" hidden>
@@ -2731,6 +2862,11 @@ body .pn-app section h2{animation:none;}
           <div class="ficha-campos ancho" style="margin-top:14px;">
             <label><span>Datos para transferir · uno por renglón</span><textarea id="ajTransferir" rows="3" placeholder="Banco&#10;Cuenta de ahorro 0000000000&#10;A nombre de …"></textarea></label>
           </div>
+          <!-- FASE 3: los dos links que las plantillas ponen solas -->
+          <div class="ficha-campos" style="margin-top:14px;">
+            <label><span>Link de Calendly para la llamada</span><input type="url" id="ajCalendly" placeholder="https://calendly.com/…"></label>
+            <label><span>Link de tu Google Form de onboarding</span><input type="url" id="ajFormOnb" placeholder="https://forms.gle/…"></label>
+          </div>
           <p class="ayuda" style="margin-top:8px;">Salen en el aviso de cobro que mandás por WhatsApp. Solo los ve quien recibe el aviso; el sitio público no los lee.</p>
         </div>
 
@@ -2745,6 +2881,9 @@ body .pn-app section h2{animation:none;}
           </div>
           <div id="ajGrupos"></div>
         </div>
+
+        <!-- FASE 3 · Ajustes › Plantillas -->
+        <div id="f3AjCaja"></div>
 
         <div class="aj-grupo" id="ajSlotsCaja">
           <h2>Clases de prueba</h2>
@@ -3452,7 +3591,7 @@ body .pn-app section h2{animation:none;}
       })
       .then(function(r){
         if(r.error){ console.error(r.error); return; }
-        return cargarContacto().then(f1Cargar).then(f2Cargar).then(function(){ return r; });
+        return cargarContacto().then(f1Cargar).then(f2Cargar).then(f3Cargar).then(function(){ return r; });
       })
       .then(function(r){
         if(!r) return;
@@ -5993,6 +6132,17 @@ body .pn-app section h2{animation:none;}
   var elHoja = document.getElementById('hoja');
   var elHojaCaja = document.getElementById('hojaCaja');
 
+  /* fase 3 · el guion sale de la tabla de plantillas (thrive_<id>); lo de
+     arriba queda como respaldo y por el «cuando» y el «porque», que son
+     ayuda de pantalla, no texto del mensaje. De vos, como siempre; con el
+     segmentado se puede pasar a usted. */
+  var THR_TRATO = 'vos';
+  function guion(m){
+    var pl = typeof F3 !== 'undefined' ? f3Pl('thrive_' + m.id) : null;
+    if(!pl) return m;
+    return { id:m.id, programas:m.programas, titulo:pl.nombre, cuando:m.cuando, porque:m.porque, estados:pl.momentos || m.estados,
+      texto:THR_TRATO === 'usted' ? pl.texto_usted : pl.texto_vos, tabla:true };
+  }
   function abrirHoja(id){
     var c = datos.filter(function(x){ return x.id === id; })[0];
     if(!c) return;
@@ -6002,10 +6152,10 @@ body .pn-app section h2{animation:none;}
        tiene los suyos. En THRIVE aparecía junto a los once de Denisse y
        encima con el mismo título que «Primer mensaje», que son dos
        cosas distintas con el mismo nombre en la misma lista. */
-    var propios = MENSAJES.filter(function(m){
+    var propios = MENSAJES.map(guion).filter(function(m){
       return m.programas && m.programas.indexOf(prog.id) !== -1;
     });
-    var suyos = propios.length ? propios : MENSAJES.filter(function(m){ return !m.programas; });
+    var suyos = propios.length ? propios : MENSAJES.map(guion).filter(function(m){ return !m.programas; });
     var sug   = suyos.filter(function(m){ return m.estados && m.estados.indexOf(c.estado) !== -1; });
     var resto = suyos.filter(function(m){ return !m.estados || m.estados.indexOf(c.estado) === -1; });
 
@@ -6043,9 +6193,10 @@ body .pn-app section h2{animation:none;}
   }
 
   function verMensaje(c, msgId){
-    var m = MENSAJES.filter(function(x){ return x.id === msgId; })[0];
+    var m = MENSAJES.map(guion).filter(function(x){ return x.id === msgId; })[0];
     if(!m) return;
     var auto = autoHuecos(c);
+    auto.link_form = auto.link; auto.link_pase = auto.pase; auto.dia = auto['día'];
 
     /* El texto se parte en trozos y huecos. Los que el panel sabe
        llenar entran ya escritos; los demás quedan como campos. */
@@ -6055,8 +6206,9 @@ body .pn-app section h2{animation:none;}
       if(!h) return esc(t);
       var clave = h[1];
       var valor = auto[clave] || '';
+      var rot = m.tabla && typeof F3 !== 'undefined' ? f3Campo(clave).nombre.toLowerCase() : clave;
       return '<input type="text" data-hueco="' + esc(clave) + '" value="' + esc(valor) + '"' +
-             ' placeholder="' + esc(clave) + '" aria-label="' + esc(clave) + '"' +
+             ' placeholder="' + esc(rot) + '" aria-label="' + esc(rot) + '"' +
              ' size="' + Math.max(8, Math.min(40, (valor || clave).length)) + '">';
     }).join('');
 
@@ -6065,6 +6217,8 @@ body .pn-app section h2{animation:none;}
         '<h2 id="hojaTit">' + esc(m.titulo) + '</h2>' +
         '<button class="ficha-x" type="button" data-cerrar-hoja aria-label="Cerrar">&times;</button>' +
       '</div>' +
+      (m.tabla ? '<div class="f1-trato" style="margin-top:12px"><span class="f1-rotulo" id="thrTrT">Le hablás de</span><div class="f1-seg" role="radiogroup" aria-labelledby="thrTrT">' +
+        ['vos','usted'].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (THR_TRATO === o) + '" data-thr-trato="' + o + '">' + o + '</button>'; }).join('') + '</div></div>' : '') +
       '<div class="ficha-sec"><h3>Como le va a llegar</h3>' +
         '<div class="msg-texto" id="msgTexto">' + html + '</div>' +
         '<div class="msg-porque"><b>Por qué está escrito así</b>' + esc(m.porque) + '</div>' +
@@ -6133,6 +6287,7 @@ body .pn-app section h2{animation:none;}
       });
     });
     elHojaCaja.querySelector('[data-volver]').addEventListener('click', function(){ abrirHoja(c.id); });
+    elHojaCaja.querySelectorAll('[data-thr-trato]').forEach(function(b){ b.addEventListener('click', function(){ THR_TRATO = b.getAttribute('data-thr-trato'); verMensaje(c, msgId); }); });
     elHojaCaja.querySelectorAll('[data-cerrar-hoja]').forEach(function(b){
       b.addEventListener('click', cerrarHoja);
     });
@@ -6163,6 +6318,7 @@ body .pn-app section h2{animation:none;}
     hoy:'<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 16 2 2 4-4"/>',
     invitadas:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
     clientas:'<path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m16 11 2 2 4-4"/>',
+    interesados:'<path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M19 8v6M16 11h6"/>',
     /* ⚠️ Sin esta línea `ICO['agenda']` es undefined y `svg()` concatena
        la palabra «undefined» DENTRO del SVG, que el navegador dibuja como
        texto en el menú. Pasó en la demo y así se encontró.
@@ -6184,7 +6340,8 @@ body .pn-app section h2{animation:none;}
   var VISTAS = [
     ['hoy',       'Hoy',       'Su día'],
     ['agenda',    'Agenda',    ''],
-    ['invitadas', 'Invitadas', 'La gente'],
+    ['interesados', 'Interesados', 'La gente'],
+    ['invitadas', 'Invitadas', ''],
     ['clientas',  'Clientes',  ''],
     /* «El negocio» y no «El programa» (fase 1): Cobros y Clientes son de
        HTM entero, no del programa que esté abierto arriba. */
@@ -6255,11 +6412,12 @@ body .pn-app section h2{animation:none;}
        el dato que cambia y el que se olvida. */
     var mp = document.getElementById('migaProg');
     /* Clientes y Cobros son de HTM entero: la miga no dice el programa. */
-    if(mp && prog) mp.textContent = (v === 'clientas' || v === 'cobros') ? 'HTM' : prog.nombre;
+    if(mp && prog) mp.textContent = (v === 'clientas' || v === 'cobros' || v === 'interesados') ? 'HTM' : prog.nombre;
     pintarNav();
     window.scrollTo(0, 0);
     if(v === 'hoy')      f1PintarHoy();
     if(v === 'clientas') pintarClientas();
+    if(v === 'interesados') f3PintarInteresados();
     if(v === 'cobros')   pintarCobros();
     if(v === 'ajustes')  volcarAjustes();
   }
@@ -6631,7 +6789,10 @@ body .pn-app section h2{animation:none;}
     ['ajWhatsapp','whatsapp'],
     ['ajDireccion','direccion'],
     ['ajMapa','mapa'],
-    ['ajTransferir','datos_transferir']
+    ['ajTransferir','datos_transferir'],
+    /* fase 3 · los links que llenan solos las plantillas (columnas nuevas: ver fase3-09-textos.sql) */
+    ['ajCalendly','link_calendly'],
+    ['ajFormOnb','link_form_onboarding']
   ];
   var CAMPOS_PROG = [
     ['ajHora','hora','texto'],
@@ -6852,6 +7013,8 @@ body .pn-app section h2{animation:none;}
   })();
 
   function volcarAjustes(){
+    var c3 = document.getElementById('f3AjCaja');
+    if(c3 && typeof F3 !== 'undefined') c3.innerHTML = f3HtmlAjustes();
     pintarSlots();
     CAMPOS_DENISSE.forEach(function(f){
       var el = document.getElementById(f[0]);
@@ -7217,7 +7380,7 @@ body .pn-app section h2{animation:none;}
     return /[.!?]$/.test(m) ? m : m + '.';
   }
   function f1Recargar(){
-    return f1Cargar().then(f2Cargar).then(function(){
+    return f1Cargar().then(f2Cargar).then(f3Cargar).then(function(){
       f1Pintar();
       /* En el teléfono (y fuera de Clientes) la ficha vive en la hoja:
          nadie más la repinta, así que se repinta acá. */
@@ -7226,7 +7389,7 @@ body .pn-app section h2{animation:none;}
   }
 
   /* ═══ EL MODELO DE CADA PERSONA ═══ */
-  function f1Persona(id){ return F1.personas.filter(function(p){ return p.id === id; })[0] || clientas.filter(function(p){ return p.id === id; })[0] || null; }
+  function f1Persona(id){ return F1.personas.filter(function(p){ return p.id === id; })[0] || clientas.filter(function(p){ return p.id === id; })[0] || (typeof F3 !== 'undefined' ? f3Persona(id) : null) || null; }
   /* R3 (QA, R2-B1): un acuerdo REEMPLAZADO sigue vivo hasta su
      cobro_hasta —cobra, recuerda y tiene sesiones— y lo que quedó
      pendiente se sigue viendo después, como el de un acuerdo cerrado.
@@ -7457,6 +7620,9 @@ body .pn-app section h2{animation:none;}
     /* fase 1.2 · TRATO (CAMBIOS-SQL §1): con «usted» no hay voseo ni en
        los verbos. Los textos son los del 14, validados por el 04. */
     var U = (d.tipo === 'pagador' ? f1TratoPagador(x.a) : f1Trato(x.a.persona_id)) === 'usted';
+    /* fase 3 · el texto sale de la tabla de plantillas (y sale igual que antes) */
+    var t3 = f3TextoCobro(x, d, U, n, monto, lps, falta);
+    if(t3 != null) return t3;
     var hola = f1Saludo(U) + ', ' + n + '. ';
     var cierreTransf = U ? 'Cuando haga la transferencia, me envía el comprobante por aquí. ¡Muchas gracias!'
                          : 'Cuando hagás la transferencia, mandame el comprobante por aquí. ¡Gracias!';
@@ -7512,6 +7678,8 @@ body .pn-app section h2{animation:none;}
         html:'<strong>Pendiente desde ' + esc(f1El(v.p.vence_efectivo)) + '</strong> · ' + esc(partes.join(' · ')) });
     });
     filas.sort(function(x, y){ return x.orden < y.orden ? -1 : 1; });
+    /* fase 3 · un interesado que escribió y nadie le contestó desde ayer: después de los pagos */
+    if(esHoy && typeof F3 !== 'undefined') f3AlertasHoy().forEach(function(f){ filas.push(f); });
     /* fase 2 · «cambio de hoy o mañana sin resolver», después de los pagos.
        Una línea por cliente: si ya tiene fila de pago, se le suma el dato. */
     if(typeof f2Cambios === 'function') f2Cambios(dia).forEach(function(c){
@@ -7531,8 +7699,9 @@ body .pn-app section h2{animation:none;}
        que hay que contestar antes de agendar: va arriba, antes de las
        sesiones (QA independiente, I6). Solo en Hoy. */
     if(esHoy){
-      tareas().filter(function(t){ return t.salud; }).forEach(function(t){
-        filas.push({ tipo:'salud', iid:t.c.id, nombre:t.c.nombre,
+      /* R2 · el orden de Hoy: salud → pagos → interesado → cambios → el resto */
+      tareas().filter(function(t){ return t.salud; }).reverse().forEach(function(t){
+        filas.unshift({ tipo:'salud', iid:t.c.id, nombre:t.c.nombre,
           html:'<strong>Revisar su salud antes de agendar</strong> · ' + esc(prog ? prog.nombre : '') });
       });
     }
@@ -7730,10 +7899,13 @@ body .pn-app section h2{animation:none;}
     if(x.tipo === 'reposicion'){
       return x.estado === 'realizada' ? 'Reposición hecha' : x.estado === 'no_vino' ? 'Reposición · no vino' : '';
     }
+    if(F2_INTERES[x.tipo]) return x.estado === 'realizada' ? 'Hecha' : x.estado === 'no_vino' ? 'No vino' : '';
     return '';
   }
+  /* fase 3 · llamada, evaluación y clase de prueba son sesiones como las demás */
+  var F2_INTERES = { llamada:'Llamada', evaluacion:'Evaluación', clase_prueba:'Clase de prueba' };
   function f2Titulo(x){
-    if(x.tipo === '1a1' || x.tipo === 'reposicion') return f2Nombre(x.persona_id);
+    if(x.tipo === '1a1' || x.tipo === 'reposicion' || F2_INTERES[x.tipo]) return f2Nombre(x.persona_id);
     if(x.tipo === 'grupo') return f2GrupoNombre(x.grupo_id);
     if(x.tipo === 'reposicion_grupal') return 'Espacio grupal';
     if(x.tipo === 'bloque') return x.estado === 'usado' ? 'Personal · usado' : 'Personal';
@@ -7746,6 +7918,7 @@ body .pn-app section h2{animation:none;}
     if(x.tipo === 'grupo'){ var n = f2Integrantes(x.grupo_id).length; return n + (n === 1 ? ' persona' : ' personas'); }
     if(x.tipo === 'reposicion_grupal'){ var k = F2.reservas.filter(function(r){ return r.reposicion_grupal_id === x.ref_id && r.estado !== 'anulada'; }).length; return k + (k === 1 ? ' reserva' : ' reservas'); }
     if(x.tipo === 'bloque') return f1Hora(x.hora) + ' – ' + f1Hora(x.fin);
+    if(F2_INTERES[x.tipo]) return F2_INTERES[x.tipo] + (x.nota === 'Por video' ? ' · por video' : ' · en el studio');
     return '';
   }
   /* ¿Quién deja el hueco? La sesión de esa hora con ausencia, viaje o movida. */
@@ -8069,6 +8242,9 @@ body .pn-app section h2{animation:none;}
   function f2MensajeOfrecer(pid, ops, origen){
     var U = f2Trato(pid) === 'usted', n = primerNombre(f1Persona(pid) || {});
     var hola = f1Saludo(U) + ', ' + n + '. ';
+    var t3 = f3Texto(origen === 'htm' ? (ops.length === 1 ? 'reponer_htm_una' : 'reponer_htm') : (ops.length === 1 ? 'ofrecer_reposicion_una' : 'ofrecer_reposicion'),
+      U ? 'usted' : 'vos', { saludo:f1Saludo(U), nombre:n, opcion_1:f2Opcion(ops[0]), opcion_2:ops[1] ? f2Opcion(ops[1]) : null });
+    if(t3 != null) return t3;
     var pre = origen === 'htm' ? (U ? 'Para reponer la sesión que no pude dar, le propongo ' : 'Para reponer la sesión que no pude dar, te propongo ') : 'Gracias por avisar con tiempo. Podemos reponer ';
     if(ops.length === 1) return hola + pre + 'el ' + f2Opcion(ops[0]) + '. ' + (U ? '¿Le queda bien?' : '¿Te queda bien?');
     return hola + pre + 'el ' + f2Opcion(ops[0]) + ' o el ' + f2Opcion(ops[1]) + '. ' + (U ? '¿Cuál le queda mejor?' : '¿Cuál te queda mejor?');
@@ -8196,6 +8372,8 @@ body .pn-app section h2{animation:none;}
     /* QA fase 2 · I1: si no avisó, no se le agradece un aviso que no hubo */
     if(aviso === 'sin_aviso' && res !== 'tope'){
       var dia = fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(fecha);
+      var t3a = f3Texto('no_aviso', U ? 'usted' : 'vos', { saludo:f1Saludo(U), nombre:n, cuando:dia, hora:f1Hora(hora), cierre:cierreProx });
+      if(t3a != null) return t3a;
       return f1Saludo(U) + ', ' + n + '. ' + dia + ' ' + (U ? 'no llegó' : 'no llegaste') + ' a la sesión de las ' + f1Hora(hora) + ' y no me llegó aviso; espero que ' + (U ? 'esté' : 'estés') +
         ' bien. Según nuestro acuerdo, cuando no hay aviso la sesión cuenta como realizada y no se repone.' + cierreProx;
     }
@@ -8205,6 +8383,9 @@ body .pn-app section h2{animation:none;}
       var f = f1Mas(fecha, i);
       prox = (F2.porDia[f] || []).filter(function(x){ return x.tipo === '1a1' && x.acuerdo_id === a.id && x.estado === 'programada'; })[0] || null;
     }
+    var t3b = f3Texto('cancelacion_tardia', U ? 'usted' : 'vos', { saludo:f1Saludo(U), nombre:n, por_que:porQue, sesion:cuando,
+      cierre:prox ? ' Nos vemos el ' + f2DiaNombre(prox.fecha) + ' a las ' + f1Hora(prox.hora) + '.' : '' });
+    if(t3b != null) return t3b;
     return f1Saludo(U) + ', ' + n + '. Gracias por avisarme; espero que ' + (U ? 'esté' : 'estés') + ' bien. ' + porQue +
       ', según nuestro acuerdo ' + cuando + ' cuenta como realizada y no se repone.' + (prox ? ' Nos vemos el ' + f2DiaNombre(prox.fecha) + ' a las ' + f1Hora(prox.hora) + '.' : '');
   }
@@ -8350,14 +8531,17 @@ body .pn-app section h2{animation:none;}
     if(unos.length || grupos.length) html += '<div class="f1-sec"><span class="f1-rotulo">Avisarles (lo mandás vos)</span>';
     unos.forEach(function(s){
       var U = f2Trato(s.persona_id) === 'usted', n = primerNombre(f1Persona(s.persona_id) || {});
-      var t = f1Saludo(U) + ', ' + n + '. ' + (h.fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(h.fecha)) + ' no voy a poder dar ' + (s.tipo === 'reposicion' ? 'la reposición' : 'la sesión') + ' de las ' + f1Hora(s.hora) + '. ' +
+      var t = f3Texto('cancelacion_htm', U ? 'usted' : 'vos', { saludo:f1Saludo(U), nombre:n, cuando:h.fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(h.fecha),
+        sesion:s.tipo === 'reposicion' ? 'la reposición' : 'la sesión', hora:f1Hora(s.hora) });
+      if(t == null) t = f1Saludo(U) + ', ' + n + '. ' + (h.fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(h.fecha)) + ' no voy a poder dar ' + (s.tipo === 'reposicion' ? 'la reposición' : 'la sesión') + ' de las ' + f1Hora(s.hora) + '. ' +
         (U ? 'Para no perderla, la reprogramamos: le escribo con opciones. Si tiene una preferencia, me dice.' : 'Para no perderla, la reprogramamos: te escribo con opciones. Si tenés una preferencia, decime.');
       var href = waLink(f1Persona(s.persona_id) || {}, t);
       html += '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2Nombre(s.persona_id)) + '</b><p class="f2-msj">' + esc(t) + '</p>' +
         (href ? '<a class="wa f2-wa chico" href="' + esc(href) + '" target="_blank" rel="noopener">' + ICONO_WA + 'Abrir WhatsApp</a>' : '') + '</div></div>';
     });
     grupos.forEach(function(s){
-      var t = (h.fecha === f1Hoy() ? 'Hola. Hoy' : 'Hola. El ' + f2DiaNombre(h.fecha)) + ' no hay sesión de las ' + f1Hora(s.hora) + '. Queda pendiente la reposición del grupo: les aviso la fecha antes del ' + f1Corto(f1Mas(s.fecha, 30)) + '.';
+      var t = f3Texto('cancelacion_htm_grupo', 'vos', { cuando:h.fecha === f1Hoy() ? 'Hoy' : 'El ' + f2DiaNombre(h.fecha), hora:f1Hora(s.hora), fecha_limite:f1Corto(f1Mas(s.fecha, 30)) });
+      if(t == null) t = (h.fecha === f1Hoy() ? 'Hola. Hoy' : 'Hola. El ' + f2DiaNombre(h.fecha)) + ' no hay sesión de las ' + f1Hora(s.hora) + '. Queda pendiente la reposición del grupo: les aviso la fecha antes del ' + f1Corto(f1Mas(s.fecha, 30)) + '.';
       html += '<div class="f2-afecta"><span class="f2-h f1-num">' + esc(f1Hora(s.hora)) + '</span><div><b>' + esc(f2GrupoNombre(s.grupo_id)) + '</b><p class="f2-msj">' + esc(t) + '</p>' +
         '<button type="button" class="f1-mini chico" data-f2-copiar="' + esc(t) + '">' + f1Ico('copiar') + 'Copiar para el grupo</button></div></div>';
     });
@@ -8600,6 +8784,7 @@ body .pn-app section h2{animation:none;}
         }); return; }
       if(x.tipo === 'bloque'){ f2Abrir({ tipo:'f2bloque', clave:clave }); return; }
       if(x.tipo === 'reposicion_grupal'){ f2Abrir({ tipo:'f2grupal', gid:x.ref_id }); return; }
+      if(F2_INTERES[x.tipo]){ f2Abrir({ tipo:'f3ses', sid:x.ref_id }); return; }
       f2Abrir({ tipo:'f2ses', clave:clave });
       return;
     }
@@ -9144,11 +9329,1336 @@ body .pn-app section h2{animation:none;}
     e.preventDefault(); f21Guardar(e.target.querySelector('[type="submit"]'));
   });
 
+  /* ═══════════════════════════════════════════════════════════
+     FASE 3 · INTERESADOS, ONBOARDING Y PLANTILLAS (22 oct 2026)
+
+     Del encargo 2026-10-22-panel-fase3-interesados (FLUJO y MODELO-DATOS
+     del 12, ESPEC del 05, notas del 01 y del 14, CAMBIOS-SQL-R2). Escrito
+     contra sql-propuesto/fase3.sql, que TODAVÍA NO EXISTE en producción.
+
+     Las reglas que ordenan todo lo de abajo:
+       · Es una lista de personas con su próximo paso, no un tablero:
+         sin %, metas, ingreso potencial ni palabras de CRM.
+       · Cada fila tiene UNA acción: la del paso siguiente.
+       · Seguimientos con tope: 2, y se cierra sin insistir. La fila dice
+         lo que queda, nunca cuántos fueron sin respuesta.
+       · Nada sale solo: todo mensaje sale de una plantilla que Denisse
+         aprueba y manda ella. El hilo guarda QUÉ plantilla, nunca el texto.
+       · Salud nunca en un mensaje: la lista blanca de campos y la ayuda
+         fija bajo «Lo que entendí» y «Foco».
+       · La tabla de plantillas es la única fuente: los textos de cobro,
+         agenda y THRIVE también salen de ahí (y salen igual que antes).
+     ═══════════════════════════════════════════════════════════ */
+  var F3 = { estado:'cargando', lista:[], inter:{}, segs:[], ses:[], etapas:[], onbCat:[], onb:[], parq:[], autz:[], medica:[],
+    plant:[], campos:[], msjs:[], personas:[], prog:'todos', cerrados:false, q:'', sel:null, plegado:{} };
+  var F3_TRAMOS = [['conociendonos','Conociéndonos'],['evaluacion','Evaluación o clase de prueba'],['propuesta','Propuesta'],['cerrado','Cerrados']];
+  var F3_FUENTE = { recomendacion_cliente:'recomendación', profesional_salud:'profesional de salud', instagram:'Instagram', pagina:'página', calendly:'Calendly', otro:'otro' };
+  var F3_MOTIVO = [['no_respondio','No respondió'],['horario','El horario'],['precio','El precio'],['no_era_para_htm','No era para HTM'],['mas_adelante','Más adelante'],['otro','Otro']];
+  var F3_PROG = { 'uno-a-uno':'1:1', thrive:'THRIVE', grupal:'Grupal' };
+  var F3_MODAL = { uno_a_uno:'1:1 presencial', uno_a_uno_remoto:'1:1 remoto', uno_a_uno_domicilio:'1:1 a domicilio', grupo:'Grupal', grupo_remoto:'Grupal remoto', thrive:'THRIVE' };
+  var F3_GRUPOS = [['conocerse','Conocerse'],['evaluacion_propuesta','Evaluación y propuesta'],['seguimiento_interes','Seguimiento · tope de 2'],
+    ['empezar','Empezar'],['agenda','Agenda'],['seguimiento','Seguimiento de clientes'],['cobros','Cobros'],['derivar','Derivar'],['instagram','Instagram'],['thrive','THRIVE']];
+
+  /* ═══ LEER ═══ */
+  function f3Cargar(){
+    function leer(t, q){ return (q || sb.from(t).select('*')).then(function(r){ if(r.error) throw r.error; return r.data || []; }); }
+    return Promise.all([
+      leer('interesados_lista'), leer('interesados'), leer('seguimientos'), leer('sesiones_interes'),
+      leer('etapas_interes', sb.from('etapas_interes').select('*').order('orden')), leer('onboarding_catalogo', sb.from('onboarding_catalogo').select('*').order('orden')),
+      leer('onboarding_pasos'), leer('parq'), leer('autorizaciones'), leer('autorizacion_medica'),
+      leer('plantillas', sb.from('plantillas').select('*').order('orden')), leer('plantilla_campos'), leer('mensajes')
+    ]).then(function(r){
+      var prueba = F1.prueba || {};
+      F3.lista = r[0].filter(function(x){ return !prueba[x.persona_id]; });
+      F3.inter = {}; r[1].forEach(function(x){ F3.inter[x.inscripcion_id] = x; });
+      F3.segs = r[2]; F3.ses = r[3]; F3.etapas = r[4]; F3.onbCat = r[5]; F3.onb = r[6]; F3.parq = r[7]; F3.autz = r[8]; F3.medica = r[9];
+      F3.plant = r[10]; F3.campos = r[11]; F3.msjs = r[12];
+      var ids = {}; F3.lista.forEach(function(x){ ids[x.persona_id] = 1; });
+      F3.ses.forEach(function(s){ var x = f3Item(s.inscripcion_id); if(x) ids[x.persona_id] = 1; });
+      var lista = Object.keys(ids);
+      return Promise.all([
+        lista.length ? leer('personas', sb.from('personas').select('*').in('id', lista)) : [],
+        leer('inscripciones', sb.from('inscripciones').select('id,persona_id,programa_id,estado,grupo,clase_en,creada_en,origen,referida_por'))
+      ]);
+    }).then(function(r){
+      F3.personas = r[0];
+      F3.insc = {}; r[1].forEach(function(i){ F3.insc[i.id] = i; });
+      F3.estado = 'ok';
+    }).catch(function(e){
+      console.warn('fase 3:', e && e.message);
+      var sinPermiso = e && (e.code === '42501' || /permission|row-level/i.test(e.message || ''));
+      F3.estado = sinPermiso ? 'permiso' : 'error';
+    });
+  }
+  function f3Item(iid){ return F3.lista.filter(function(x){ return x.inscripcion_id === iid; })[0] || null; }
+  function f3Persona(pid){ return F3.personas.filter(function(p){ return p.id === pid; })[0] || null; }
+  function f3Prog(id){ return PROGRAMAS.filter(function(p){ return p.id === id; })[0] || null; }
+  function f3EstadoPara(progId, etapa){
+    var p = f3Prog(progId), out = null;
+    ((p && p.estados) || []).forEach(function(e){ if(e.etapa === etapa && !e.legado) out = e.id; });
+    return out;
+  }
+  function f3SesDe(iid){ return F3.ses.filter(function(s){ return s.inscripcion_id === iid; }).sort(function(a, b){ return (a.fecha + a.hora) < (b.fecha + b.hora) ? -1 : 1; }); }
+  function f3SegsDe(iid){
+    var ronda = F3.segs.filter(function(s){ return s.inscripcion_id === iid; }).reduce(function(m, s){ return Math.max(m, s.ronda); }, 0);
+    return F3.segs.filter(function(s){ return s.inscripcion_id === iid && s.ronda === ronda; }).sort(function(a, b){ return a.numero - b.numero; });
+  }
+  function f3MsjsDe(iid){ return F3.msjs.filter(function(m){ return m.inscripcion_id === iid && m.estado === 'enviado'; }).sort(function(a, b){ return a.creado_en < b.creado_en ? 1 : -1; }); }
+  function f3Uuid(){
+    try{ if(window.crypto && crypto.randomUUID) return crypto.randomUUID(); }catch(e){}
+    return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, function(){ return (Math.random() * 16 | 0).toString(16); });
+  }
+  function f3Origen(x){
+    var p = F3_PROG[x.programa_id] || ((f3Prog(x.programa_id) || {}).nombre || '');
+    var quien = '';
+    if(x.referido_persona_id){ var rp = f1Persona(x.referido_persona_id); if(rp) quien = rp.nombre; }
+    if(!quien && x.referido_nombre) quien = x.referido_nombre;
+    var de = quien ? 'recomendación de ' + quien : (F3_FUENTE[x.fuente] || '');
+    return p + (de ? ' · ' + de : '');
+  }
+
+  /* ═══ LAS PLANTILLAS (una sola fuente) ═══ */
+  function f3Pl(id){ return F3.plant.filter(function(p){ return p.id === id && p.activa !== false; })[0] || null; }
+  function f3Campo(id){ return F3.campos.filter(function(c){ return c.id === id; })[0] || { id:id, nombre:id.replace(/_/g, ' '), origen:'denisse', ayuda:null }; }
+  function f3Rellenar(texto, vals){
+    return String(texto).replace(/\{([a-z_0-9]+)\}/g, function(m, k){ return vals && vals[k] != null ? String(vals[k]) : m; });
+  }
+  /* El texto de una plantilla con sus campos puestos, o null si la tabla
+     no está leída (entonces el panel usa lo de antes: nunca queda mudo). */
+  function f3Texto(id, trato, vals){
+    var p = f3Pl(id);
+    if(!p) return null;
+    return f3Rellenar(trato === 'vos' ? p.texto_vos : p.texto_usted, vals);
+  }
+
+  /* ═══ CÓMO VA CADA INTERESADO ═══
+     Devuelve la etapa en texto chico, el próximo paso (con su palabra en
+     600) y la UNA acción. La fecha ordena la lista: lo vencido primero. */
+  function f3Paso(x){
+    var hoy = f1Hoy(), segs = f3SegsDe(x.inscripcion_id), pend = segs.filter(function(s){ return s.estado === 'pendiente'; })[0];
+    var ses = f3SesDe(x.inscripcion_id).filter(function(s){ return s.estado === 'agendada'; })[0];
+    var i = F3.insc[x.inscripcion_id] || {}, it = F3.inter[x.inscripcion_id] || {};
+    var r = { etapa:x.etapa_nombre, fecha:x.proximo_paso_fecha || null };
+    function acc(txt, attr){ r.acc = { txt:txt, attr:attr }; }
+    var iid = esc(x.inscripcion_id);
+    if(x.tramo === 'cerrado'){
+      var mot = (F3_MOTIVO.filter(function(m){ return m[0] === x.motivo_cierre; })[0] || [0, ''])[1];
+      r.paso = x.etapa === 'seguimiento_futuro'
+        ? '<strong>Retomar ' + esc(x.seguimiento_futuro_el ? f1El(x.seguimiento_futuro_el) : 'más adelante') + '</strong>' + (mot ? ' · ' + esc(mot.toLowerCase()) : '')
+        : esc(mot || 'Cerrado');
+      r.fecha = x.seguimiento_futuro_el || null;
+      acc('Reabrir', 'data-f3-reabrir="' + iid + '"');
+      return r;
+    }
+    if(x.respuesta === 'si' && (x.etapa === 'esperando_respuesta' || x.etapa === 'oferta_enviada')){
+      r.etapa = 'Respondió que sí'; r.paso = '<strong>Pasar a cliente</strong>'; r.fecha = x.respuesta_en || hoy;
+      acc('Pasar a cliente', 'data-f3-cliente="' + iid + '"'); return r;
+    }
+    if(pend){
+      r.fecha = pend.fecha;
+      var ord = pend.numero === 1 ? '1.er' : '2.º';
+      if(pend.fecha <= hoy){
+        r.paso = '<strong>' + ord + ' seguimiento ' + (pend.fecha === hoy ? 'hoy' : 'desde ' + esc(f1El(pend.fecha))) + '</strong> · ' + (pend.numero === 1 ? 'después queda 1' : 'es el último');
+        acc('Revisar mensaje', 'data-f3-msg="' + iid + '|seguimiento_' + pend.numero + '"');
+      }else{
+        r.paso = ord + ' seguimiento ' + esc(f1El(pend.fecha)) + ' · ' + (pend.numero === 1 ? 'después queda 1' : 'es el último');
+        acc('Respondió', 'data-f3-int="' + iid + '|resp"');
+      }
+      return r;
+    }
+    if((x.etapa === 'esperando_respuesta') && segs.length && segs.every(function(s){ return s.estado === 'enviado'; }) && segs.length === 2){
+      r.paso = '<strong>Sin respuesta</strong> · ¿cerramos?'; r.fecha = segs[1].enviado_en || segs[1].fecha;
+      acc('Cerrar con cariño', 'data-f3-cerrar="' + iid + '"'); return r;
+    }
+    if(ses){
+      var q = ses.tipo === 'llamada' ? 'Llamada' : ses.tipo === 'evaluacion' ? 'Evaluación' : 'Clase de prueba';
+      var cuando = ses.fecha === hoy ? 'hoy' : ses.fecha === f1Mas(hoy, 1) ? 'mañana' : f2DiaNombre(ses.fecha);
+      r.paso = '<strong>' + esc(q + ' ' + cuando + ' ' + f1Hora(ses.hora)) + '</strong>' + (ses.modo === 'video' ? ' · por video' : ' · en el studio');
+      r.fecha = ses.fecha;
+      if(ses.link && ses.fecha === hoy) r.acc = { txt:'Abrir el link', href:ses.link };
+      else acc(ses.fecha < hoy || (ses.fecha === hoy && f2H(ses.hora) <= f2Ahora().hm) ? '¿Cómo fue?' : 'Ver', 'data-f3-ses="' + esc(ses.id) + '"');
+      return r;
+    }
+    if(x.respuesta === 'duda'){ r.paso = '<strong>Tiene dudas</strong> · respondele'; acc('Escribirle', 'data-f3-msg="' + iid + '|"'); return r; }
+    var e = x.etapa, thrive = x.programa_id === 'thrive';
+    if(e === 'nuevo'){
+      var creada = String(i.creada_en || '').slice(0, 10), hhn = creada ? aInputHN(i.creada_en).slice(0, 10) : '';
+      r.fecha = hhn || null;
+      r.paso = hhn === hoy ? '<strong>Te escribió hoy</strong> · respondele' : hhn === f1Mas(hoy, -1) ? '<strong>Te escribió ayer</strong> · respondele hoy' : '<strong>Escribió ' + esc(f1El(hhn)) + '</strong> · respondele';
+      acc('Responder', 'data-f3-msg="' + iid + '|"'); return r;
+    }
+    if(e === 'respondido'){
+      if(thrive){ r.paso = 'Explicale THRIVE'; acc('Escribirle', 'data-f3-msg="' + iid + '|explicar_thrive"'); }
+      else { r.paso = '<strong>Mandale el link</strong> para la llamada'; acc('Mandar el link', 'data-f3-msg="' + iid + '|enviar_calendly"'); }
+      return r;
+    }
+    if(e === 'llamada_por_agendar'){
+      var mando = f3MsjsDe(x.inscripcion_id).some(function(m){ return m.plantilla_id === 'enviar_calendly'; });
+      if(mando){ r.paso = 'Le mandaste el link · cargá la llamada cuando reserve'; acc('Agendar llamada', 'data-f3-agendar="' + iid + '|llamada"'); }
+      else { r.paso = '<strong>Mandale el link hoy</strong>'; r.fecha = r.fecha || hoy; acc('Mandar el link', 'data-f3-msg="' + iid + '|enviar_calendly"'); }
+      return r;
+    }
+    if(e === 'llamada_agendada'){ r.paso = 'Llamada sin día en el panel'; acc('Agendar', 'data-f3-agendar="' + iid + '|llamada"'); return r; }
+    if(e === 'llamada_realizada'){ r.paso = '<strong>Mandale el resumen</strong> de la llamada'; acc('Escribir el resumen', 'data-f3-msg="' + iid + '|resumen_llamada"'); return r; }
+    if(e === 'evaluacion_pendiente'){
+      if(thrive && i.clase_en){ r.paso = 'Clase de prueba ' + esc(f1El(aInputHN(i.clase_en).slice(0, 10))); acc('Ver', 'data-f3-int="' + iid + '"'); return r; }
+      var tipo = (x.programa_id === 'uno-a-uno') ? 'evaluacion' : 'clase_prueba';
+      r.paso = 'Elegir día para la ' + (tipo === 'evaluacion' ? 'evaluación' : 'clase de prueba');
+      acc('Agendar', 'data-f3-agendar="' + iid + '|' + tipo + '"'); return r;
+    }
+    if(e === 'evaluacion_realizada'){ r.paso = '<strong>Mandale la propuesta</strong>'; acc('Mandar propuesta', 'data-f3-msg="' + iid + '|propuesta"'); return r; }
+    if(e === 'oferta_enviada' || e === 'esperando_respuesta'){ r.paso = 'Propuesta enviada · elegí cuándo seguir'; acc('Quedo esperando', 'data-f3-esperar="' + iid + '"'); return r; }
+    r.paso = esc(x.proximo_paso || '');
+    acc('Ver', 'data-f3-int="' + iid + '"');
+    return r;
+  }
+
+  /* ═══ LA VISTA INTERESADOS ═══ */
+  function f3Visibles(){
+    var q = plano(F3.q || '');
+    return F3.lista.filter(function(x){
+      if(F3.prog !== 'todos' && x.programa_id !== F3.prog) return false;
+      if(q && plano(x.nombre).indexOf(q) < 0) return false;
+      return F3.cerrados ? x.tramo === 'cerrado' : x.tramo !== 'cerrado';
+    });
+  }
+  function f3EnLado(){ return vista === 'interesados' && window.matchMedia('(min-width:1100px)').matches && !!document.getElementById('f3Lado'); }
+  function f3PintarInteresados(){
+    var caja = document.getElementById('f3Inter');
+    if(!caja) return;
+    var abiertos = F3.lista.filter(function(x){ return x.tramo !== 'cerrado'; });
+    var cuenta = {}; abiertos.forEach(function(x){ cuenta[x.tramo] = (cuenta[x.tramo] || 0) + 1; });
+    var tot = [['conociendonos','conociéndonos'],['evaluacion','en evaluación'],['propuesta','en propuesta']].filter(function(t){ return cuenta[t[0]]; })
+      .map(function(t){ return '<b>' + cuenta[t[0]] + '</b> ' + t[1]; }).join(' · ');
+    var html = '<h1>Interesados</h1>' + (F3.estado === 'ok' && tot ? '<p class="f3-totales">' + tot + '</p>' : '<p class="sub">Quienes te escribieron y todavía no empiezan.</p>');
+    if(F3.estado !== 'ok' && F3.estado !== 'cargando'){
+      caja.innerHTML = html + '<section class="f1-critico f1-solido" style="margin-top:20px"><div class="f1-crit-calma"><p>' +
+        (F3.estado === 'permiso' ? 'Tu usuario no tiene acceso a los interesados. Pedíselo a Ivan.' : 'No pude leer los interesados. Recargá.') + '</p></div></section>';
+      return;
+    }
+    var nCerr = F3.lista.filter(function(x){ return x.tramo === 'cerrado'; }).length;
+    var progs = [['todos','Todos'],['uno-a-uno','1:1'],['thrive','THRIVE'],['grupal','Grupal']];
+    html += '<div class="f3-controles">' +
+      '<label class="pn-buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
+        '<input type="search" id="f3Buscar" placeholder="Buscar por nombre" autocomplete="off" aria-label="Buscar por nombre" value="' + esc(F3.q) + '"></label>' +
+      '<label class="f1-sel"><span>Programa</span><select id="f3Prog" aria-label="Filtrar por programa">' + progs.map(function(p){
+        return '<option value="' + p[0] + '"' + (F3.prog === p[0] ? ' selected' : '') + '>' + p[1] + '</option>'; }).join('') + '</select></label>' +
+      '<button type="button" class="f1-txt" data-f3-cerrados aria-pressed="' + F3.cerrados + '">' + (F3.cerrados ? 'Ver los abiertos' : 'Cerrados · ' + nCerr) + '</button>' +
+      '<button type="button" class="pn-btn f1-btn f3-nuevo" data-guarda data-f3-alta>' + KD.icon('plus') + 'Nuevo interesado</button></div>'
+    html += '<div class="f1-md"><div class="f1-md-lista">';
+    if(F3.estado === 'cargando'){
+      html += '<div class="f1-lista">' + [1,2,3].map(function(){ return '<div class="f1-cl f1-vidrio"><span class="f1-ini"></span><span><span class="f1-skel" style="width:50%"></span></span><span></span></div>'; }).join('') + '</div>';
+    }else{
+      var vs = f3Visibles().map(function(x){ x.p3 = f3Paso(x); return x; });
+      var hoy = f1Hoy();
+      vs.sort(function(a, b){
+        var fa = a.p3.fecha, fb = b.p3.fecha;
+        var va = fa && fa <= hoy ? 0 : 1, vb = fb && fb <= hoy ? 0 : 1;
+        if(va !== vb) return va - vb;
+        if(!fa !== !fb) return fa ? -1 : 1;
+        if(fa !== fb) return fa < fb ? -1 : 1;
+        return String(a.nombre).localeCompare(String(b.nombre), 'es');
+      });
+      if(!F3.lista.filter(function(x){ return x.tramo !== 'cerrado'; }).length && !F3.cerrados){
+        html += '<p class="f3-vacio">Nadie esperando nada tuyo. Cuando alguien escriba, usá «Nuevo interesado».</p>';
+      }else if(!vs.length){
+        html += '<div class="pn-vacio">' + (F3.q ? 'No encontré a «' + esc(F3.q) + '». ¿Lo escribiste distinto?' : F3.cerrados ? 'No hay nadie cerrado en este programa.' : 'Nadie en este programa.') +
+          ' <button type="button" class="f1-txt" data-f3-todos>Ver todos</button></div>';
+      }
+      F3_TRAMOS.forEach(function(t){
+        var del = vs.filter(function(x){ return x.tramo === t[0]; });
+        if(!del.length) return;
+        html += '<div class="f3-tramo"><p class="f1-rotulo-gris">' + esc(t[1]) + ' <i>' + del.length + '</i></p>' + del.map(f3HtmlFila).join('') + '</div>';
+      });
+    }
+    html += '</div><section class="f1-lado" id="f3Lado" aria-label="Ficha del interesado"></section></div>';
+    var activo = document.activeElement && document.activeElement.id, pos = activo === 'f3Buscar' ? document.activeElement.selectionStart : null;
+    caja.innerHTML = html;
+    if(activo === 'f3Buscar'){ var b = document.getElementById('f3Buscar'); b.focus(); try{ b.setSelectionRange(pos, pos); }catch(e){} }
+    if(f3EnLado() && F3.estado === 'ok'){
+      var hay = F3.sel && f3Visibles().some(function(x){ return x.inscripcion_id === F3.sel; });
+      if(!hay){ var pri = document.querySelector('#f3Inter [data-f3-int]'); if(pri){ F3.sel = pri.getAttribute('data-f3-int'); hay = true; if(F1.hoja && F1.hoja.lado) F1.hoja = null; pri.closest('.f3-int').classList.add('activo'); } }
+      if(F1.hoja && F1.hoja.lado && F1.hoja.tipo && F1.hoja.tipo.indexOf('f3') === 0) f1RepintarHoja();
+      else if(hay) f1MostrarHoja({ tipo:'f3int', iid:F3.sel });
+      else document.getElementById('f3Lado').innerHTML = '<p class="f1-lado-vacio">Elegí a alguien de la lista.</p>';
+    }
+  }
+  function f3HtmlFila(x){
+    var p = x.p3 || f3Paso(x), sel = f3EnLado() && F3.sel === x.inscripcion_id;
+    var accion = p.acc ? (p.acc.href
+      ? '<a class="f1-mini chico" href="' + esc(p.acc.href) + '" target="_blank" rel="noopener">' + esc(p.acc.txt) + '</a>'
+      : '<button type="button" class="f1-mini chico" data-guarda ' + p.acc.attr + '>' + esc(p.acc.txt) + '</button>') : '';
+    return '<div class="f3-int f1-vidrio' + (sel ? ' activo' : '') + '"' + (sel ? ' aria-current="true"' : '') + '>' +
+      '<button type="button" class="f3-int-abre f1-fila-btn" data-f3-int="' + esc(x.inscripcion_id) + '">' +
+        '<span class="f1-ini" aria-hidden="true">' + esc(iniciales(x.nombre)) + '</span>' +
+        '<span class="quien"><b>' + esc(x.nombre) + '</b><i>' + esc(f3Origen(x)) + '</i></span>' +
+        '<span class="paso"><small>' + esc(p.etapa) + '</small>' + p.paso + '</span></button>' +
+      '<span class="acc">' + accion + '</span></div>';
+  }
+
+  /* ═══ LA FICHA DEL INTERESADO ═══ */
+  function f3HtmlInteresado(h){
+    var x = f3Item(h.iid);
+    if(!x) return f1Top('Ya no está en Interesados', '') + '<p class="f1-ayuda" style="margin-top:16px">Puede que haya pasado a cliente. Buscá su nombre en Clientes.</p>';
+    var per = f3Persona(x.persona_id) || { nombre:x.nombre }, p = f3Paso(x), it = F3.inter[x.inscripcion_id] || {}, i = F3.insc[x.inscripcion_id] || {};
+    var wa = telE164(per) ? '<a class="wa chico f1-wa" href="' + esc(waLink(per, '')) + '" target="_blank" rel="noopener">' + ICONO_WA + 'WhatsApp</a>' : '';
+    var html = f1Top(x.nombre, '', false, wa);
+    var modo = [F3_MODAL[x.modalidad_interes] || F3_PROG[x.programa_id] || '', x.horario_requerido ? 'necesita ' + x.horario_requerido : ''].filter(Boolean).join(' · ');
+    html += '<div class="f1-franja">' + (modo ? '<p class="f1-modo">' + esc(modo) + '</p>' : '') +
+      '<p class="f1-prox"><span class="f1-rotulo">Próximo paso</span><span class="cuando f3-paso">' + p.paso + '</span></p>';
+    var cerrado = x.tramo === 'cerrado';
+    html += '<div class="f1-acciones" style="margin-top:16px">' + (p.acc ? (p.acc.href
+        ? '<a class="pn-btn f1-btn" href="' + esc(p.acc.href) + '" target="_blank" rel="noopener">' + esc(p.acc.txt) + '</a>'
+        : '<button type="button" class="pn-btn f1-btn" data-guarda ' + p.acc.attr + '>' + esc(p.acc.txt) + '</button>') : '') +
+      (!cerrado && p.acc && p.acc.txt !== 'Respondió' ? '<button type="button" class="f1-mini" data-guarda data-f3-int="' + esc(x.inscripcion_id) + '|resp" aria-expanded="' + !!h.resp + '">Respondió</button>' : '') +
+      (!cerrado && (x.tramo === 'propuesta' || x.etapa === 'evaluacion_realizada') && !(p.acc && /data-f3-cliente/.test(p.acc.attr || '')) ? '<button type="button" class="f1-txt" data-guarda data-f3-cliente="' + esc(x.inscripcion_id) + '">Pasar a cliente</button>' : '') +
+      '</div>';
+    if(h.resp && !cerrado){
+      html += '<div class="f3-resp" role="group" aria-label="Qué respondió"><p class="f1-rotulo-gris">Qué respondió</p><div class="f3-resp-bot">' +
+        [['si','Que sí'],['duda','Tiene dudas'],['no','Que no']].map(function(o){
+          return '<button type="button" class="f1-mini' + (h.respNo && o[0] === 'no' ? ' f3-on' : '') + '" data-guarda data-f3-resp="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+      if(h.respNo){
+        html += '<p class="f1-ayuda" style="margin-top:12px">¿Por qué no sigue? Una palabra alcanza.</p>' + f3HtmlMotivos(h.motivo) +
+          '<div class="f1-acciones"><button type="button" class="pn-btn f1-btn" data-guarda data-f3-resp-no>Cerrar</button></div>';
+      }
+      html += (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') + '</div>';
+    }
+    html += '</div>';
+    /* seguimientos: lo que queda, nunca cuántos fueron sin respuesta */
+    var segs = f3SegsDe(x.inscripcion_id);
+    if(!cerrado && (x.tramo === 'propuesta' || segs.length)){
+      html += '<div class="f1-sec"><span class="f1-rotulo">Seguimientos</span>';
+      var s1 = segs.filter(function(s){ return s.numero === 1; })[0], s2 = segs.filter(function(s){ return s.numero === 2; })[0];
+      function fila(n, s){
+        var texto, sub, ahora = s && s.estado === 'pendiente' && s.fecha <= f1Hoy();
+        if(!s){ texto = n === 1 ? 'Cuando quedes esperando respuesta' : '7 días después del primero'; sub = n === 1 ? 'A los 3 o 4 días, lo elegís vos' : 'Si no responde'; }
+        else if(s.estado === 'enviado'){ texto = 'Salió ' + f1El(s.enviado_en || s.fecha); sub = n === 1 ? 'El primero' : 'El último'; }
+        else if(s.estado === 'cancelado'){ texto = 'No hizo falta'; sub = s.cancelado_motivo || ''; }
+        else { texto = (ahora ? 'Hoy, ' : '') + f2DiaNombre(s.fecha) + (n === 2 ? ', si no responde' : ''); sub = ahora ? 'Listo para revisar' : (n === 1 ? 'El primero' : '7 días después del primero'); }
+        return '<div class="f3-seg' + (!s || s.estado !== 'pendiente' ? ' despues' : '') + '"><span class="n">' + n + '</span><b>' + esc(texto.charAt(0).toUpperCase() + texto.slice(1)) + '</b><i>' + esc(sub) + '</i>' +
+          (ahora ? '<span class="acc"><button type="button" class="f1-mini chico" data-guarda data-f3-msg="' + esc(x.inscripcion_id) + '|seguimiento_' + n + '">Revisar</button></span>' : '') + '</div>';
+      }
+      html += fila(1, s1) + fila(2, s2) + '<p class="f3-tope">Después del 2.º no hay más. <span>Se cierra sin insistir.</span></p>';
+      if(!segs.length && (x.etapa === 'oferta_enviada' || x.etapa === 'esperando_respuesta'))
+        html += '<div class="f1-acciones"><button type="button" class="f1-mini" data-guarda data-f3-esperar="' + esc(x.inscripcion_id) + '">Quedo esperando</button></div>';
+      html += '</div>';
+    }
+    if(!cerrado) html += '<div class="f3-cierre"><button type="button" class="f1-mini" data-guarda data-f3-cerrar="' + esc(x.inscripcion_id) + '">Cerrar con cariño</button>' +
+      '<button type="button" class="f1-mini" data-guarda data-f3-cerrar="' + esc(x.inscripcion_id) + '|futuro">' + f1Ico('cal') + 'Seguimiento futuro</button></div>';
+    /* sesiones (llamada, evaluación, clase de prueba) */
+    var ses = f3SesDe(x.inscripcion_id).filter(function(s){ return s.estado !== 'cancelada'; });
+    if(ses.length){
+      html += '<div class="f1-sec"><span class="f1-rotulo">Llamada y evaluación</span>' + ses.map(function(s){
+        var q = s.tipo === 'llamada' ? 'Llamada' : s.tipo === 'evaluacion' ? 'Evaluación' : 'Clase de prueba';
+        var est = s.estado === 'realizada' ? 'Hecha' : s.estado === 'no_vino' ? 'No vino' : 'Agendada';
+        return '<button type="button" class="f1-consulta f1-fila-btn" data-f3-ses="' + esc(s.id) + '"><b>' + esc(q + ' · ' + f2DiaNombre(s.fecha) + ' ' + f1Hora(s.hora)) + '</b>' +
+          '<i>' + esc(est + ' · ' + (s.modo === 'video' ? 'por video' : 'en el studio') + (Number(s.precio_usd) ? ' · ' + f1Usd(s.precio_usd) : ' · sin costo')) + '</i>' + f1Ico('ir', 'f1-ir') + '</button>';
+      }).join('') + '</div>';
+    }
+    /* de dónde llegó */
+    var etapas = f3EtapasAbiertas(x.programa_id);
+    var quien = x.referido_persona_id ? ((f1Persona(x.referido_persona_id) || {}).nombre || '') : (x.referido_nombre || '');
+    html += '<div class="f1-sec"><span class="f1-rotulo">De dónde llegó</span><dl class="f1-dl">' +
+      '<dt>Fuente</dt><dd>' + esc(F3_FUENTE[x.fuente] ? F3_FUENTE[x.fuente].charAt(0).toUpperCase() + F3_FUENTE[x.fuente].slice(1) : 'Sin anotar') + '</dd>' +
+      (quien ? '<dt>' + (x.referido_tipo === 'profesional' ? 'Profesional que le refirió' : 'Quién le recomendó HTM') + '</dt><dd>' + esc(quien) + '</dd>' : '') +
+      '<dt>Llegó</dt><dd>' + esc(i.creada_en ? f1DiaLargo(aInputHN(i.creada_en).slice(0, 10)) + ' ' + F1_MES[+aInputHN(i.creada_en).slice(5, 7) - 1] : '') + '</dd>' +
+      '<dt>Último contacto</dt><dd>' + esc(x.ultimo_contacto ? f1El(aInputHN(x.ultimo_contacto).slice(0, 10)) : 'Todavía no le escribiste') + '</dd>' +
+      '<dt>Etapa</dt><dd>' + (cerrado ? esc(x.etapa_nombre) : '<select id="f3Etapa" aria-label="Mover de etapa" data-iid="' + esc(x.inscripcion_id) + '">' + etapas.map(function(e){
+        return '<option value="' + esc(e.id) + '"' + (e.id === x.etapa ? ' selected' : '') + '>' + esc(e.nombre) + '</option>'; }).join('') + '</select>') + '</dd></dl>' +
+      '<button type="button" class="f1-txt" data-guarda data-f3-alta="' + esc(x.inscripcion_id) + '">Corregir sus datos</button></div>';
+    html += '<div class="f1-sec"><span class="f1-rotulo">Lo que pasó</span><div class="hilo f1-hilo" id="f1Hilo"><p class="f1-ayuda">Cargando…</p></div></div>';
+    return html;
+  }
+  function f3EtapasAbiertas(progId){
+    var p = f3Prog(progId), out = [];
+    F3.etapas.forEach(function(e){ if(e.tramo !== 'cerrado' && f3EstadoPara(progId, e.id)) out.push(e); });
+    return out;
+  }
+  function f3HtmlMotivos(sel){
+    return '<div class="f3-motivos" role="radiogroup" aria-label="Motivo">' + F3_MOTIVO.map(function(m){
+      return '<button type="button" class="opcion f3-opcion" role="radio" aria-checked="' + (sel === m[0]) + '" data-f3-motivo="' + m[0] + '"><span class="r"></span><b>' + esc(m[1]) + '</b></button>';
+    }).join('') + '</div>';
+  }
+
+  /* ═══ NUEVO INTERESADO (o corregir sus datos) ═══ */
+  function f3HtmlAlta(h){
+    var v = h.v || (h.v = { prog:'uno-a-uno', fuente:'instagram', trato:'usted', refTipo:'cliente' });
+    if(h.iid && !h.cargado){
+      var x = f3Item(h.iid) || {}, it = F3.inter[h.iid] || {}, per = f3Persona(x.persona_id) || {};
+      v.nombre = per.nombre; v.tel = per.telefono; v.prog = x.programa_id; v.fuente = it.fuente || x.fuente || 'otro'; v.trato = per.trato || 'usted';
+      v.refPid = it.referido_persona_id || ''; v.refNombre = it.referido_nombre || ''; v.refTipo = it.referido_tipo || (v.refPid ? 'cliente' : 'otro');
+      v.horario = it.horario_requerido || ''; v.modal = it.modalidad_interes || ''; h.cargado = true;
+    }
+    var html = f1Top(h.iid ? 'Corregir sus datos' : 'Nuevo interesado', h.iid ? v.nombre : 'Quien te escribió y todavía no empieza', !!h.iid && false);
+    var ya = !h.iid && v.nombre && v.nombre.trim().length > 2 ? f3YaEsta(v.nombre) : [];
+    var clientes = f1Gente().filter(function(g){ return !g.anterior; }).map(function(g){ return g.p; }).sort(function(a, b){ return String(a.nombre).localeCompare(String(b.nombre), 'es'); });
+    html += '<form class="f1-form" id="f3FormAlta" novalidate>' +
+      '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Nombre</span><input id="f3Nombre" maxlength="120" autocomplete="off" value="' + esc(v.nombre || '') + '"' + (h.iid ? ' disabled' : '') + '></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Teléfono</span><input id="f3Tel" type="tel" placeholder="+504…" autocomplete="off" value="' + esc(v.tel || '') + '"' + (h.iid ? ' disabled' : '') + '></label></div>' +
+      (ya.length && !v.pid ? '<div class="f3-ya" role="status"><p><b>Ya está en el panel:</b></p>' + ya.map(function(p){
+        return '<button type="button" class="f1-mini" data-f3-es="' + esc(p.id) + '">Es ' + esc(p.nombre) + '</button>'; }).join('') + '<p class="f1-ayuda">Si es la misma persona, elegí su nombre: no se crea otra.</p></div>' : '') +
+      (v.pid ? '<p class="f1-aviso">' + f1Ico('info') + '<span>Se usa a ' + esc((f1Persona(v.pid) || {}).nombre || '') + ', que ya estaba. <button type="button" class="f1-txt" data-f3-es="">Es otra persona</button></span></p>' : '') +
+      '<div class="f1-campo"><span class="f1-rotulo" id="f3ProgT">Programa</span><div class="f1-seg ancho" role="radiogroup" aria-labelledby="f3ProgT">' +
+        [['uno-a-uno','1:1'],['thrive','THRIVE'],['grupal','Grupal']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (v.prog === o[0]) + '" data-f3-v="prog|' + o[0] + '"' + (h.iid ? ' disabled' : '') + '>' + o[1] + '</button>'; }).join('') + '</div></div>' +
+      '<label class="f1-campo"><span class="f1-rotulo">¿Cómo llegó?</span><select id="f3Fuente">' + Object.keys(F3_FUENTE).map(function(k){
+        return '<option value="' + k + '"' + (v.fuente === k ? ' selected' : '') + '>' + esc(F3_FUENTE[k].charAt(0).toUpperCase() + F3_FUENTE[k].slice(1)) + '</option>'; }).join('') + '</select></label>';
+    if(v.fuente === 'recomendacion_cliente'){
+      html += '<label class="f1-campo"><span class="f1-rotulo">¿Quién le recomendó HTM?</span><select id="f3RefPid"><option value="">Otra persona (escribí su nombre abajo)</option>' + clientes.map(function(p){
+        return '<option value="' + esc(p.id) + '"' + (v.refPid === p.id ? ' selected' : '') + '>' + esc(p.nombre) + '</option>'; }).join('') + '</select></label>' +
+        (!v.refPid ? '<label class="f1-campo"><span class="f1-rotulo">Nombre de quien le recomendó HTM</span><input id="f3RefNombre" maxlength="80" autocomplete="off" value="' + esc(v.refNombre || '') + '"></label>' : '');
+    }else if(v.fuente === 'profesional_salud'){
+      html += '<label class="f1-campo"><span class="f1-rotulo">Profesional que le refirió</span><input id="f3RefNombre" maxlength="80" autocomplete="off" placeholder="Nombre y oficio" value="' + esc(v.refNombre || '') + '"><p class="f1-ayuda">Solo quién es, no el motivo.</p></label>';
+    }
+    html += '<div class="f1-campo"><span class="f1-rotulo" id="f3TratoT">¿Cómo te escribió?</span><div class="f1-seg" role="radiogroup" aria-labelledby="f3TratoT">' +
+        [['usted','de usted'],['vos','de vos']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (v.trato === o[0]) + '" data-f3-v="trato|' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>' +
+      '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Horario que necesita (opcional)</span><input id="f3Horario" maxlength="80" autocomplete="off" placeholder="Por ejemplo: martes y jueves temprano" value="' + esc(v.horario || '') + '"></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Modalidad (opcional)</span><select id="f3Modal"><option value="">Sin decidir</option>' + Object.keys(F3_MODAL).map(function(k){
+        return '<option value="' + k + '"' + (v.modal === k ? ' selected' : '') + '>' + esc(F3_MODAL[k]) + '</option>'; }).join('') + '</select></label></div>' +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>' + (h.iid ? 'Guardar' : 'Agregar') + '</button><button type="button" class="f1-txt" data-f3-cancelar>Cancelar</button></div></form>';
+    return html;
+  }
+  function f3YaEsta(nombre){
+    var q = plano(nombre).trim(); if(q.length < 3) return [];
+    var vistos = {}, out = [];
+    F3.personas.concat(F1.personas || [], clientas || []).forEach(function(p){
+      if(!p || vistos[p.id] || p.es_prueba) return; vistos[p.id] = 1;
+      var n = plano(p.nombre || '');
+      if(n === q || (q.length >= 5 && n.indexOf(q) === 0)) out.push(p);
+    });
+    return out.slice(0, 3);
+  }
+  function f3LeerAlta(){
+    var h = F1.hoja; if(!h || h.tipo !== 'f3alta') return;
+    var v = h.v;
+    function val(id){ var el = document.getElementById(id); return el ? el.value : undefined; }
+    if(val('f3Nombre') !== undefined) v.nombre = val('f3Nombre');
+    if(val('f3Tel') !== undefined) v.tel = val('f3Tel');
+    if(val('f3Fuente') !== undefined) v.fuente = val('f3Fuente');
+    if(val('f3RefPid') !== undefined) v.refPid = val('f3RefPid');
+    if(val('f3RefNombre') !== undefined) v.refNombre = val('f3RefNombre');
+    if(val('f3Horario') !== undefined) v.horario = val('f3Horario');
+    if(val('f3Modal') !== undefined) v.modal = val('f3Modal');
+  }
+  function f3GuardarAlta(btn){
+    var h = F1.hoja; f3LeerAlta(); var v = h.v; h.err = null;
+    var datos = { fuente:v.fuente, referido_tipo:null, referido_persona_id:null, referido_nombre:null,
+      horario_requerido:(v.horario || '').trim() || null, modalidad_interes:v.modal || null };
+    if(v.fuente === 'recomendacion_cliente'){
+      if(v.refPid){ datos.referido_tipo = 'cliente'; datos.referido_persona_id = v.refPid; }
+      else if((v.refNombre || '').trim()){ datos.referido_tipo = 'otro'; datos.referido_nombre = v.refNombre.trim(); }
+    }else if(v.fuente === 'profesional_salud' && (v.refNombre || '').trim()){ datos.referido_tipo = 'profesional'; datos.referido_nombre = v.refNombre.trim(); }
+    if(h.iid){
+      btn.disabled = true;
+      var existe = !!F3.inter[h.iid], x = f3Item(h.iid);
+      var q = existe ? sb.from('interesados').update(datos).eq('inscripcion_id', h.iid) : sb.from('interesados').insert(Object.assign({ inscripcion_id:h.iid }, datos));
+      q.then(function(r){
+        if(r.error) throw r.error;
+        return x ? sb.from('personas').update({ trato:v.trato }).eq('id', x.persona_id) : null;
+      }).then(function(r){
+        if(r && r.error) throw r.error;
+        return f1Recargar();
+      }).then(function(){ f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar('Datos guardados.'); })
+        .catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+      return;
+    }
+    var nombre = (v.nombre || '').trim();
+    if(nombre.length < 2){ h.err = 'Falta el nombre.'; f1RepintarHoja(); return; }
+    var estado = f3EstadoPara(v.prog, 'nuevo');
+    if(!estado){ h.err = 'Ese programa todavía no tiene la etapa «Nuevo». Avisale a Ivan.'; f1RepintarHoja(); return; }
+    var pidYa = v.pid || null;
+    if(pidYa){
+      var ins = Object.keys(F3.insc).map(function(k){ return F3.insc[k]; }).filter(function(i){ return i.persona_id === pidYa && i.programa_id === v.prog; })[0];
+      if(ins){ h.err = 'Ya está en ' + (F3_PROG[v.prog] || v.prog) + '. Abrí su ficha desde la lista.'; f1RepintarHoja(); return; }
+    }
+    btn.disabled = true;
+    var pid = pidYa || f3Uuid(), iid = f3Uuid();
+    (pidYa ? Promise.resolve({}) : sb.from('personas').insert({ id:pid, nombre:nombre.slice(0, 120), telefono:(v.tel || '').trim() || null, trato:v.trato }))
+      .then(function(r){ if(r.error) throw r.error;
+        return sb.from('inscripciones').insert({ id:iid, persona_id:pid, programa_id:v.prog, estado:estado, origen:'manual',
+          referida_por:datos.referido_persona_id ? ((f1Persona(datos.referido_persona_id) || {}).nombre || null) : datos.referido_nombre }); })
+      .then(function(r){ if(r.error) throw r.error; return sb.from('interesados').insert(Object.assign({ inscripcion_id:iid }, datos)); })
+      .then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+      .then(function(){
+        F3.sel = iid; F3.cerrados = false;
+        if(vista !== 'interesados') irA('interesados');
+        f1MostrarHoja({ tipo:'f3int', iid:iid });
+        avisar(primerNombre({ nombre:nombre }) + ' quedó en Interesados, en «Nuevo».');
+      })
+      .catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+
+  /* ═══ CERRAR, REABRIR, ESPERAR ═══ */
+  function f3HtmlCerrar(h){
+    var x = f3Item(h.iid) || {};
+    var html = f1Top(h.futuro ? 'Seguimiento futuro' : 'Cerrar con cariño', x.nombre || '', false);
+    if(!h.motivo) h.motivo = h.futuro ? 'mas_adelante' : 'no_respondio';
+    if(h.futuro && !h.fecha) h.fecha = f1Mas(f1Hoy(), 91);
+    html += '<form class="f1-form" id="f3FormCerrar" novalidate>' +
+      (h.futuro ? '<p class="f1-ayuda" style="margin-top:12px">Solo si dijo «más adelante». Ese día vuelve a aparecer en tu Semana' + (x.programa_id === 'thrive' ? '; en THRIVE es la lista de espera' : '') + '.</p>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Retomar el</span><input type="date" id="f3Futuro" min="' + f1Mas(f1Hoy(), 1) + '" value="' + esc(h.fecha) + '"></label>'
+        : '<p class="f1-ayuda" style="margin-top:12px">No se borra: queda en «Cerrados», con su motivo, y se puede reabrir si vuelve a escribir.</p>') +
+      '<div class="f1-campo"><span class="f1-rotulo">Motivo, en una palabra</span>' + f3HtmlMotivos(h.motivo) + '</div>' +
+      (h.futuro ? '' : '<label class="f3-check-l"><input type="checkbox" id="f3Mandar"' + (h.mandar ? ' checked' : '') + '> Mandarle «Cerrar sin insistir» (lo revisás antes)</label>') +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>' + (h.futuro ? 'Guardar el seguimiento futuro' : 'Cerrar') + '</button><button type="button" class="f1-txt" data-f3-volver-int="' + esc(h.iid) + '">Cancelar</button></div></form>';
+    return html;
+  }
+  function f3GuardarCerrar(btn){
+    var h = F1.hoja, f = document.getElementById('f3Futuro'), m = document.getElementById('f3Mandar');
+    if(f) h.fecha = f.value; if(m) h.mandar = m.checked;
+    h.err = null;
+    if(h.futuro && (!h.fecha || h.fecha <= f1Hoy())){ h.err = 'La fecha de seguimiento futuro tiene que ser después de hoy.'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    var x = f3Item(h.iid) || {};
+    sb.rpc('cerrar_interesado', { p_insc:h.iid, p_motivo:h.motivo, p_futuro:h.futuro ? h.fecha : null }).then(function(r){
+      if(r.error) throw r.error;
+      return f1Recargar();
+    }).then(function(){
+      if(h.mandar){ f3AbrirMensaje(h.iid, 'cerrar_sin_insistir'); return; }
+      F3.sel = h.iid; f1MostrarHoja({ tipo:'f3int', iid:h.iid });
+      avisar(h.futuro ? 'Queda para retomar ' + f1El(h.fecha) + '.' : primerNombre(x) + ' quedó en «Cerrados». No se borró nada.');
+    }).catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+  function f3HtmlReabrir(h){
+    var x = f3Item(h.iid) || {}, et = f3EtapasAbiertas(x.programa_id);
+    if(!h.etapa) h.etapa = et.filter(function(e){ return e.id === 'respondido'; })[0] ? 'respondido' : (et[0] || {}).id;
+    return f1Top('Reabrir', x.nombre || '', false) + '<form class="f1-form" id="f3FormReabrir" novalidate><p class="f1-ayuda" style="margin-top:12px">Volvió a escribir. ¿En qué etapa retoma?</p>' +
+      '<div class="opciones f3-motivos" role="radiogroup" aria-label="Etapa">' + et.map(function(e){
+        return '<button type="button" class="opcion f3-opcion" role="radio" aria-checked="' + (h.etapa === e.id) + '" data-f3-etapa-r="' + esc(e.id) + '"><span class="r"></span><b>' + esc(e.nombre) + '</b></button>'; }).join('') + '</div>' +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Reabrir</button><button type="button" class="f1-txt" data-f3-volver-int="' + esc(h.iid) + '">Cancelar</button></div></form>';
+  }
+  function f3HtmlEsperar(h){
+    var x = f3Item(h.iid) || {};
+    if(!h.dias) h.dias = 3;
+    return f1Top('Quedo esperando', x.nombre || '', false) + '<form class="f1-form" id="f3FormEsperar" novalidate>' +
+      '<p class="f1-ayuda" style="margin-top:12px">Si no responde, el panel te deja listo un seguimiento. Después hay uno más, 7 días más tarde, y ahí se cierra sin insistir.</p>' +
+      '<div class="f1-campo"><span class="f1-rotulo" id="f3DiasT">El primer seguimiento va</span><div class="f1-seg" role="radiogroup" aria-labelledby="f3DiasT">' +
+      [3, 4].map(function(d){ return '<button type="button" role="radio" aria-checked="' + (h.dias === d) + '" data-f3-dias="' + d + '">a los ' + d + ' días</button>'; }).join('') + '</div></div>' +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Listo</button><button type="button" class="f1-txt" data-f3-volver-int="' + esc(h.iid) + '">Cancelar</button></div></form>';
+  }
+
+  /* ═══ AGENDAR LLAMADA, EVALUACIÓN O CLASE DE PRUEBA ═══
+     Primero los espacios marcados «Evaluación» o «Cliente nuevo» pegados a
+     su jornada; nunca el bloque personal, un feriado ni una hora ocupada
+     (eso lo dice la base). El sábado, solo a mano. */
+  function f3Espacios(tipo){
+    if(typeof F2 === 'undefined' || F2.estado !== 'ok') return [];
+    var hoy = f1Hoy(), out = [];
+    F2.filas.forEach(function(x){
+      /* el hueco y el libre por viaje son primero de las reposiciones */
+      if(x.tipo !== 'espacio' || x.estado !== 'libre' || f2Paso(x.fecha, x.hora) || x.fecha < hoy) return;
+      if(['no_ofrecer','personal','reposicion'].indexOf(x.marca || '') >= 0) return;
+      if(f1Dow(x.fecha) === 6) return;
+      var buena = x.marca === 'evaluacion' || x.marca === 'cliente_nuevo';
+      if(!buena && !x.pegado) return;
+      out.push({ fecha:x.fecha, hora:f2H(x.hora), marca:x.marca, buena:buena });
+    });
+    out.sort(function(a, b){ if(a.buena !== b.buena) return a.buena ? -1 : 1; return (a.fecha + a.hora) < (b.fecha + b.hora) ? -1 : 1; });
+    return tipo === 'llamada' ? [] : out.slice(0, 4);
+  }
+  function f3HtmlAgendar(h){
+    var x = f3Item(h.iid) || {}, thrive = x.programa_id === 'thrive', grupo = thrive || x.programa_id === 'grupal';
+    if(!h.sesTipo) h.sesTipo = grupo ? 'clase_prueba' : 'evaluacion';
+    if(!h.modo) h.modo = h.sesTipo === 'llamada' ? 'video' : 'studio';
+    if(h.precio == null) h.precio = '0';
+    var tipos = grupo ? [['clase_prueba','Clase de prueba']] : [['llamada','Llamada'],['evaluacion','Evaluación']];
+    if(grupo && x.programa_id === 'grupal') tipos = [['llamada','Llamada'],['clase_prueba','Clase de prueba']];
+    var esp = f3Espacios(h.sesTipo);
+    if(h.elegido == null) h.elegido = esp.length ? 0 : -1;
+    var html = f1Top('Agendar', x.nombre || '', false) + '<form class="f1-form" id="f3FormAgendar" novalidate>';
+    html += '<div class="f1-campo"><span class="f1-rotulo" id="f3TipoT">Qué es</span><div class="f1-seg ancho" role="radiogroup" aria-labelledby="f3TipoT">' +
+      tipos.map(function(t){ return '<button type="button" role="radio" aria-checked="' + (h.sesTipo === t[0]) + '" data-f3-ag="tipo|' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div></div>' +
+      '<div class="f1-campo"><span class="f1-rotulo" id="f3ModoT">Dónde</span><div class="f1-seg ancho" role="radiogroup" aria-labelledby="f3ModoT">' +
+      [['studio','En el studio'],['video','Por video']].map(function(t){ return '<button type="button" role="radio" aria-checked="' + (h.modo === t[0]) + '" data-f3-ag="modo|' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div></div>';
+    html += '<div class="f1-campo"><span class="f1-rotulo">Cuándo</span>';
+    if(h.sesTipo === 'llamada') html += '<p class="f1-ayuda" style="margin-bottom:10px">Si reservó por Calendly, poné el día y la hora que eligió.</p>';
+    if(esp.length){
+      html += '<div class="opciones" role="radiogroup" aria-label="Espacios para esto">' + esp.map(function(o, k){
+        return '<button type="button" class="opcion" role="radio" aria-checked="' + (h.elegido === k) + '" data-f3-esp="' + k + '"><span class="r"></span><b>' + esc(f2DiaNombre(o.fecha).replace(/^./, function(c){ return c.toUpperCase(); }) + ' · ' + f1Hora(o.hora)) + '</b>' +
+          '<i>' + esc(o.marca === 'evaluacion' ? 'Espacio de evaluación' : o.marca === 'cliente_nuevo' ? 'Espacio para cliente nuevo' : 'Pegado a tu jornada') + '</i></button>'; }).join('') +
+        '<button type="button" class="opcion" role="radio" aria-checked="' + (h.elegido === -1) + '" data-f3-esp="-1"><span class="r"></span><b>Otra fecha y hora</b></button></div>';
+    }
+    if(h.elegido === -1 || !esp.length)
+      html += '<div class="f1-dos" style="margin-top:10px"><label class="f1-campo"><span class="f1-rotulo">Fecha</span><input type="date" id="f3AgFecha" min="' + f1Hoy() + '" value="' + esc(h.fecha || '') + '"></label>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Hora</span><input type="time" id="f3AgHora" value="' + esc(h.hora || '') + '"></label></div>';
+    html += '</div>';
+    if(h.modo === 'video') html += '<label class="f1-campo"><span class="f1-rotulo">Link de la videollamada (opcional)</span><input type="url" id="f3AgLink" placeholder="https://…" autocomplete="off" value="' + esc(h.link || '') + '"></label>';
+    if(h.sesTipo !== 'llamada') html += '<label class="f1-campo"><span class="f1-rotulo">Precio (opcional)</span><input type="number" min="0" step="1" id="f3AgPrecio" value="' + esc(h.precio) + '" inputmode="numeric"><p class="f1-ayuda">En 0 por ahora. Cuando decidas cobrarla, se pone acá.</p></label>';
+    html += (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>' + (h.sesTipo === 'llamada' ? 'Agendar la llamada' : 'Agendar y armar las indicaciones') + '</button>' +
+      '<button type="button" class="f1-txt" data-f3-volver-int="' + esc(h.iid) + '">Cancelar</button></div></form>';
+    h._esp = esp;
+    return html;
+  }
+  function f3LeerAgendar(){
+    var h = F1.hoja; if(!h || h.tipo !== 'f3agendar') return;
+    var f = document.getElementById('f3AgFecha'), ho = document.getElementById('f3AgHora'), l = document.getElementById('f3AgLink'), p = document.getElementById('f3AgPrecio');
+    if(f) h.fecha = f.value; if(ho) h.hora = ho.value; if(l) h.link = l.value; if(p) h.precio = p.value;
+  }
+  function f3GuardarAgendar(btn){
+    var h = F1.hoja; f3LeerAgendar(); h.err = null;
+    var o = h._esp && h.elegido >= 0 ? h._esp[h.elegido] : null;
+    var fecha = o ? o.fecha : h.fecha, hora = o ? o.hora : h.hora;
+    if(!fecha || !hora){ h.err = 'Elegí el día y la hora.'; f1RepintarHoja(); return; }
+    var link = (h.link || '').trim();
+    if(link && !/^https:\/\//.test(link)){ h.err = 'El link tiene que empezar con https://'; f1RepintarHoja(); return; }
+    var precio = h.sesTipo === 'llamada' ? 0 : Number(h.precio || 0);
+    if(!(precio >= 0)){ h.err = 'El precio va en dólares, 0 o más.'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    var sid = f3Uuid();
+    sb.from('sesiones_interes').insert({ id:sid, inscripcion_id:h.iid, tipo:h.sesTipo, modo:h.modo, fecha:fecha, hora:hora, duracion_min:60,
+      link:h.modo === 'video' && link ? link : null, precio_usd:precio }).then(function(r){
+      if(r.error) throw r.error;
+      return f1Recargar();
+    }).then(function(){
+      if(h.sesTipo === 'evaluacion') f3AbrirMensaje(h.iid, 'indicaciones_evaluacion', { dia:f2DiaNombre(fecha), hora:f1Hora(hora) });
+      else if(h.sesTipo === 'clase_prueba' && (f3Item(h.iid) || {}).programa_id === 'thrive') f3AbrirMensaje(h.iid, 'thrive_pase');
+      else { f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar((h.sesTipo === 'llamada' ? 'Llamada' : 'Clase de prueba') + ' agendada: ' + f2DiaNombre(fecha) + ' a las ' + f1Hora(hora) + '.'); }
+    }).catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+  function f3HtmlSesion(h){
+    var s = F3.ses.filter(function(x){ return x.id === h.sid; })[0];
+    if(!s) return f1Top('Sesión', '') + '<p class="f1-ayuda" style="margin-top:16px">Esa sesión ya no está.</p>';
+    var x = f3Item(s.inscripcion_id), i = F3.insc[s.inscripcion_id] || {}, per = f3Persona(i.persona_id) || f1Persona(i.persona_id) || {};
+    var q = s.tipo === 'llamada' ? 'Llamada' : s.tipo === 'evaluacion' ? 'Evaluación' : 'Clase de prueba';
+    var tit = f2DiaNombre(s.fecha) + ' · ' + f1Hora(s.hora);
+    var html = f1Top(tit.charAt(0).toUpperCase() + tit.slice(1), q + ' · ' + (per.nombre || ''), false);
+    html += '<p class="f2-resultado chico">' + esc((s.modo === 'video' ? 'Por video' : 'En el studio') + ' · ' + (Number(s.precio_usd) ? f1Usd(s.precio_usd) : 'sin costo') +
+      (s.estado === 'realizada' ? ' · hecha' : s.estado === 'no_vino' ? ' · no vino' : s.estado === 'cancelada' ? ' · cancelada' : '')) + '</p>';
+    if(s.link) html += '<p style="margin-top:12px"><a class="f1-mini" href="' + esc(s.link) + '" target="_blank" rel="noopener">' + f1Ico('externo') + 'Abrir el link</a></p>';
+    if(s.estado === 'agendada'){
+      html += '<div class="f1-acciones" style="margin-top:18px"><button type="button" class="pn-btn f1-btn" data-guarda data-f3-ses-est="realizada">Hecha</button>' +
+        '<button type="button" class="f1-mini" data-guarda data-f3-ses-est="no_vino">No vino</button>' +
+        '<button type="button" class="f1-txt" data-guarda data-f3-ses-est="cancelada">Cancelarla</button></div>';
+    }else if(s.estado === 'realizada' && x){
+      var sig = s.tipo === 'llamada' ? ['resumen_llamada','Escribir el resumen de la llamada'] : ['resumen_evaluacion','Escribir el resumen de la evaluación'];
+      html += '<div class="f1-acciones" style="margin-top:18px"><button type="button" class="pn-btn f1-btn" data-guarda data-f3-msg="' + esc(s.inscripcion_id) + '|' + sig[0] + '">' + esc(sig[1]) + '</button>' +
+        (s.tipo !== 'llamada' ? '<button type="button" class="f1-mini" data-guarda data-f3-msg="' + esc(s.inscripcion_id) + '|propuesta">Mandar la propuesta</button>' : '') + '</div>';
+    }else if(s.estado === 'no_vino' && x){
+      html += '<div class="f1-acciones" style="margin-top:18px"><button type="button" class="f1-mini" data-guarda data-f3-agendar="' + esc(s.inscripcion_id) + '|' + s.tipo + '">Reprogramar</button></div>';
+    }
+    if(h.err) html += '<p class="f1-error" role="alert">' + esc(h.err) + '</p>';
+    if(x) html += '<div class="f1-acciones" style="margin-top:10px"><button type="button" class="f1-txt" data-f3-int="' + esc(s.inscripcion_id) + '">Ver su ficha</button></div>';
+    return html;
+  }
+
+  /* ═══ PASAR A CLIENTE (la misma persona, sin duplicar) ═══ */
+  function f3HtmlCliente(h){
+    var x = f3Item(h.iid) || {}, it = F3.inter[h.iid] || {};
+    var prop = f3MsjsDe(h.iid).filter(function(m){ return m.plantilla_id === 'propuesta'; })[0];
+    var mod = it.modalidad_interes && it.modalidad_interes !== 'thrive' ? it.modalidad_interes : (x.programa_id === 'grupal' ? 'grupo' : x.programa_id === 'thrive' ? 'grupo' : 'uno_a_uno');
+    if(!h.v){
+      var vers = F1.versiones.filter(function(v){ return v.vigente && (v.modalidad === 'cualquiera' || v.modalidad === mod.replace(/_remoto|_domicilio/, '')); });
+      var ver = vers[0] || F1.versiones.filter(function(v){ return v.vigente; })[0] || {};
+      var vent = (ver.ventanas || [])[0] || { desde:1, hasta:3 };
+      var d = f1Hoy(), cobro = d.slice(0, 8) + (vent.desde < 10 ? '0' : '') + vent.desde;
+      if(cobro < d){ var y = +d.slice(0, 4), m = +d.slice(5, 7) + 1; if(m > 12){ m = 1; y++; } cobro = y + '-' + (m < 10 ? '0' : '') + m + '-' + (vent.desde < 10 ? '0' : '') + vent.desde; }
+      h.v = { con:true, version:ver.id, modalidad:mod, precio:'', desde:vent.desde, hasta:vent.hasta, cobro:cobro };
+    }
+    var v = h.v;
+    var html = f1Top('Pasar a cliente', x.nombre || '', false);
+    html += '<div class="f1-sec" style="padding-top:12px"><span class="f1-rotulo">Lo que le ofreciste</span><dl class="f1-dl">' +
+      '<dt>Modalidad</dt><dd>' + esc(F3_MODAL[mod] || '') + '</dd>' + (it.horario_requerido ? '<dt>Horario</dt><dd>' + esc(it.horario_requerido) + '</dd>' : '') +
+      (prop ? '<dt>Propuesta</dt><dd>' + esc(f1El(aInputHN(prop.creado_en).slice(0, 10))) + '</dd>' : '') + '</dl>' +
+      (x.respuesta === 'si' ? '<p class="f3-dijo">Respondió que sí ' + esc(f1El(x.respuesta_en)) + '.</p>' : '') + '</div>';
+    html += '<form class="f1-form" id="f3FormCliente" novalidate><div class="f1-campo"><span class="f1-rotulo" id="f3ConT">Cómo entra</span><div class="f1-seg ancho" role="radiogroup" aria-labelledby="f3ConT">' +
+      [[false,'Solo perfil'],[true,'Con acuerdo en borrador']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (v.con === o[0]) + '" data-f3-con="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>' +
+      '<p class="f1-ayuda">Es la misma persona: no se crea otra. El borrador se confirma después, como los demás.</p></div>';
+    if(v.con){
+      html += '<label class="f1-campo"><span class="f1-rotulo">Versión del acuerdo</span><select id="f3CliVer">' + F1.versiones.filter(function(w){ return w.vigente; }).map(function(w){
+          return '<option value="' + esc(w.id) + '"' + (w.id === v.version ? ' selected' : '') + '>' + esc(w.nombre) + '</option>'; }).join('') + '</select></label>' +
+        '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Modalidad</span><select id="f3CliMod">' + ['uno_a_uno','uno_a_uno_remoto','uno_a_uno_domicilio','grupo','grupo_remoto'].map(function(k){
+          return '<option value="' + k + '"' + (k === v.modalidad ? ' selected' : '') + '>' + esc(F3_MODAL[k]) + '</option>'; }).join('') + '</select></label>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Precio al mes (US$)</span><input type="number" min="0" id="f3CliPrecio" inputmode="numeric" value="' + esc(v.precio) + '"></label></div>' +
+        '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Ventana: del día</span><input type="number" min="1" max="31" id="f3CliDesde" value="' + esc(v.desde) + '"></label>' +
+        '<label class="f1-campo"><span class="f1-rotulo">al día</span><input type="number" min="1" max="31" id="f3CliHasta" value="' + esc(v.hasta) + '"></label></div>' +
+        '<label class="f1-campo"><span class="f1-rotulo">Cobra desde</span><input type="date" id="f3CliCobro" value="' + esc(v.cobro) + '"><p class="f1-ayuda">Un día que abra la ventana.</p></label>';
+    }
+    html += '<p class="f3-que-pasa">' + f1Ico('info') + '<span>Pasa a «' + esc((f3Prog(x.programa_id) || {}).estados ? ((f3Prog(x.programa_id).estados.filter(function(e){ return e.id === f3EstadoPara(x.programa_id, 'pago'); })[0] || {}).nombre || 'cliente') : 'cliente') + '», se arma su onboarding en la ficha' +
+      (v.con ? ' y el acuerdo queda en borrador para confirmarlo' : '') + '. Los seguimientos que quedaban se cancelan.</span></p>' +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>' + (v.con ? 'Pasar a cliente y crear el borrador' : 'Pasar a cliente') + '</button><button type="button" class="f1-txt" data-f3-volver-int="' + esc(h.iid) + '">Cancelar</button></div></form>';
+    return html;
+  }
+  function f3LeerCliente(){
+    var h = F1.hoja; if(!h || h.tipo !== 'f3cliente' || !h.v) return;
+    [['f3CliVer','version'],['f3CliMod','modalidad'],['f3CliPrecio','precio'],['f3CliDesde','desde'],['f3CliHasta','hasta'],['f3CliCobro','cobro']].forEach(function(p){
+      var el = document.getElementById(p[0]); if(el) h.v[p[1]] = el.value; });
+  }
+  function f3GuardarCliente(btn){
+    var h = F1.hoja; f3LeerCliente(); var v = h.v; h.err = null;
+    var args = { p_insc:h.iid, p_con_acuerdo:!!v.con };
+    if(v.con){
+      if(v.precio === '' || !(Number(v.precio) >= 0)){ h.err = 'Falta el precio.'; f1RepintarHoja(); return; }
+      args.p_version = v.version; args.p_modalidad = v.modalidad; args.p_precio = Number(v.precio);
+      args.p_tipo = +v.desde === +v.hasta ? 'dia_fijo' : 'rango'; args.p_desde = +v.desde; args.p_hasta = +v.hasta; args.p_cobro_desde = v.cobro;
+    }
+    btn.disabled = true;
+    var x = f3Item(h.iid) || {};
+    sb.rpc('pasar_a_cliente', args).then(function(r){
+      if(r.error) throw r.error;
+      F1.elegidas[x.persona_id] = 1;
+      return f1Recargar();
+    }).then(function(){
+      f1CerrarHoja();
+      F1.sel = x.persona_id; F1.hoja = null;
+      irA('clientas');
+      if(!window.matchMedia('(min-width:1100px)').matches) f1AbrirFicha(x.persona_id);
+      avisar(primerNombre(x) + ' pasó a Clientes. Su onboarding quedó en la ficha' + (v.con ? ', con el acuerdo en borrador.' : '.'));
+    }).catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+
+  /* ═══ EL MENSAJE: sugerida, aprobar, copiar o abrir WhatsApp ═══ */
+  var F3_MOMENTO_ETAPA = { nuevo:'nuevo', respondido:'respondido', llamada_por_agendar:'llamada_por_agendar', llamada_agendada:'llamada_agendada',
+    llamada_realizada:'llamada_realizada', evaluacion_pendiente:'evaluacion_pendiente', evaluacion_realizada:'evaluacion_realizada',
+    oferta_enviada:'oferta_enviada', esperando_respuesta:'esperando_respuesta', no_continuo:'cierre', seguimiento_futuro:'cierre' };
+  function f3Sugeridas(x){
+    var progId = x.programa_id, mom = [F3_MOMENTO_ETAPA[x.etapa] || x.etapa];
+    if(x.etapa === 'esperando_respuesta'){ var s = f3SegsDe(x.inscripcion_id).filter(function(z){ return z.estado === 'pendiente'; })[0]; if(s) mom.unshift('seguimiento_' + s.numero); }
+    var i = F3.insc[x.inscripcion_id] || {};
+    if(progId === 'thrive') mom.push(i.estado);
+    var ok = F3.plant.filter(function(p){
+      if(p.activa === false || ['cobros','agenda','seguimiento'].indexOf(p.grupo) >= 0) return false;
+      if(p.programas && p.programas.indexOf(progId) < 0) return false;
+      return (p.momentos || []).some(function(m){ return mom.indexOf(m) >= 0; });
+    });
+    if(x.etapa === 'nuevo' && (x.referido_persona_id || x.referido_nombre)){
+      ok.sort(function(a, b){ return (a.id === 'primer_contacto_referido' ? -1 : 0) - (b.id === 'primer_contacto_referido' ? -1 : 0); });
+    }
+    return ok;
+  }
+  /* Los campos que el panel conoce, ya puestos. Los de Denisse quedan
+     vacíos (con su último texto para esa persona como sugerencia). */
+  function f3Conocidos(x, pl){
+    var i = F3.insc[x.inscripcion_id] || {}, per = f3Persona(x.persona_id) || {}, it = F3.inter[x.inscripcion_id] || {};
+    var vals = { nombre:primerNombre(per.nombre ? per : x) };
+    if(x.referido_persona_id){ var rp = f1Persona(x.referido_persona_id); if(rp) vals.quien_refirio = primerNombre(rp); }
+    else if(x.referido_nombre && x.referido_tipo !== 'profesional') vals.quien_refirio = x.referido_nombre;
+    if(AJ && AJ.link_calendly) vals.link_calendly = AJ.link_calendly;
+    if(AJ && AJ.direccion) vals.direccion = AJ.direccion;
+    if(it.modalidad_interes && F3_MODAL[it.modalidad_interes]) vals.modalidad = F3_MODAL[it.modalidad_interes].toLowerCase().replace('thrive', 'THRIVE');
+    if(x.programa_id === 'thrive'){
+      try{ var c = datos.filter(function(d){ return d.id === x.inscripcion_id; })[0]; if(c){ var a = autoHuecos(c); vals.link_form = a.link; if(a.pase) vals.link_pase = a.pase; if(a['día']) vals.dia = a['día']; vals.cupos = a.cupos; if(a.grupo) vals.grupo = a.grupo; } }catch(e){}
+    }else if(pl && pl.campos.indexOf('link_form') >= 0 && AJ && AJ.link_form_onboarding) vals.link_form = AJ.link_form_onboarding;
+    var ses = f3SesDe(x.inscripcion_id).filter(function(s){ return s.estado === 'agendada'; })[0];
+    if(ses){ vals.dia = vals.dia || f2DiaNombre(ses.fecha); vals.hora = f1Hora(ses.hora); }
+    if(pl && pl.id === 'seguimiento_1'){
+      var ult = F3.msjs.filter(function(m){ return m.inscripcion_id === x.inscripcion_id && m.estado === 'enviado'; }).sort(function(a, b){ return a.creado_en < b.creado_en ? 1 : -1; })[0];
+      if(ult) vals.dia = f2DiaNombre(aInputHN(ult.enviado_en || ult.creado_en).slice(0, 10));
+    }
+    return vals;
+  }
+  function f3Previos(pid){
+    var out = {};
+    F3.msjs.filter(function(m){ return m.persona_id === pid; }).forEach(function(m){ if(m.vals) Object.keys(m.vals).forEach(function(k){ out[k] = m.vals[k]; }); });
+    return out;
+  }
+  function f3AbrirMensaje(iid, plId, extra){
+    var x = f3Item(iid);
+    if(!x) return;
+    var per = f3Persona(x.persona_id) || {};
+    var sug = f3Sugeridas(x);
+    var pl = plId ? f3Pl(plId) : sug[0];
+    f3Abrir({ tipo:'f3msg', iid:iid, pl:pl ? pl.id : null, trato:per.trato === 'vos' ? 'vos' : 'usted', vals:extra || {}, dias:3, alto:true });
+  }
+  function f3HtmlMensaje(h){
+    var x = f3Item(h.iid) || {};
+    var sug = f3Sugeridas(x), pl = h.pl ? f3Pl(h.pl) : null;
+    var momento = x.etapa_nombre ? x.etapa_nombre.toLowerCase() : '';
+    var html = f1Top('Mensaje', (x.nombre || '') + (momento ? ' · ' + momento : ''), false);
+    if(h.todas) return html + f3HtmlCatalogo(h);
+    if(!pl){
+      return html + '<p class="f1-ayuda" style="margin-top:14px">No hay una plantilla para este momento.</p><button type="button" class="f1-mini" data-f3-todas>Ver todas</button>';
+    }
+    var otras = sug.filter(function(p){ return p.id !== pl.id; }).slice(0, 2);
+    html += '<div class="f1-sec" style="padding-top:12px"><span class="f1-rotulo">' + (sug[0] && sug[0].id === pl.id ? 'Sugerida' : 'Elegida') + '</span>' +
+      '<div class="f3-plt" aria-current="true"><b>' + esc(pl.nombre) + '</b></div>' +
+      (otras.length ? '<p class="f1-rotulo-gris" style="margin:14px 0 8px">Otras para este momento</p>' + otras.map(function(p){
+        return '<button type="button" class="f3-plt f1-fila-btn" data-f3-pl="' + esc(p.id) + '"><b>' + esc(p.nombre) + '</b>' + f1Ico('ir', 'f1-ir') + '</button>'; }).join('') : '') +
+      '<button type="button" class="f1-txt" data-f3-todas>Ver todas</button></div>';
+    html += f3HtmlAprobar(h, pl, x);
+    return html;
+  }
+  function f3HtmlCatalogo(h){
+    var q = plano(h.qcat || '');
+    var usos = {}; F3.msjs.forEach(function(m){ if(m.plantilla_id) usos[m.plantilla_id] = (usos[m.plantilla_id] || 0) + 1; });
+    var html = '<button type="button" class="f1-volver" data-f3-todas="no">' + f1Ico('volver') + 'Volver al mensaje</button>' +
+      '<div class="f3-catalogo"><p class="f1-h2">Todas las plantillas <i>' + F3.plant.filter(function(p){ return p.activa !== false; }).length + '</i></p>' +
+      '<label class="pn-buscar" style="margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
+      '<input type="search" id="f3Cat" placeholder="Buscar una plantilla" autocomplete="off" aria-label="Buscar una plantilla" value="' + esc(h.qcat || '') + '"></label>';
+    F3_GRUPOS.forEach(function(g){
+      var ps = F3.plant.filter(function(p){ return p.activa !== false && p.grupo === g[0] && (!q || plano(p.nombre).indexOf(q) >= 0); })
+        .sort(function(a, b){ return (usos[b.id] || 0) - (usos[a.id] || 0) || a.orden - b.orden; });
+      if(!ps.length) return;
+      html += '<div class="f3-cat-g"><p class="f1-rotulo-gris">' + esc(g[1]) + '</p>' + ps.map(function(p, k){
+        return '<button type="button" class="f1-fila-btn" data-f3-pl="' + esc(p.id) + '"><span>' + esc(p.nombre) + '</span>' + (k === 0 && usos[p.id] ? '<small>la más usada</small>' : '') + '</button>'; }).join('') + '</div>';
+    });
+    return html + '</div>';
+  }
+  function f3Partes(pl, trato, vals){
+    var texto = trato === 'vos' ? pl.texto_vos : pl.texto_usted;
+    return String(texto).split(/(\{[a-z_0-9]+\})/);
+  }
+  function f3HtmlAprobar(h, pl, x){
+    var known = f3Conocidos(x, pl), previos = f3Previos(x.persona_id);
+    Object.keys(h.vals || {}).forEach(function(k){ known[k] = h.vals[k]; });
+    if(!h.esc) h.esc = {};
+    var faltan = [], suyos = [];
+    var partes = f3Partes(pl, h.trato, known);
+    var prev = partes.map(function(t){
+      var m = /^\{([a-z_0-9]+)\}$/.exec(t);
+      if(!m) return esc(t);
+      var k = m[1], c = f3Campo(k), escrito = h.esc[k];
+      if(escrito != null && String(escrito).trim()) { if(suyos.indexOf(k) < 0) suyos.push(k); return '<span class="f3-hc suyo">' + esc(escrito) + '</span>'; }
+      if(known[k] != null && known[k] !== '' && c.origen === 'ficha') return '<span class="f3-hc">' + esc(known[k]) + '</span>';
+      if(known[k] != null && known[k] !== ''){ if(suyos.indexOf(k) < 0) suyos.push(k); return '<span class="f3-hc suyo">' + esc(known[k]) + '</span>'; }
+      if(faltan.indexOf(k) < 0) faltan.push(k);
+      return '<span class="f3-hc vacio">' + esc(c.nombre.toLowerCase()) + '</span>';
+    }).join('');
+    var html = '<div class="f1-sec"><div class="f3-trato"><span class="f1-rotulo-gris" id="f3MsgTr">Le hablás de</span><div class="f1-seg" role="radiogroup" aria-labelledby="f3MsgTr">' +
+      ['usted','vos'].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (h.trato === o) + '" data-f3-trato="' + o + '"' + (h.mid ? ' disabled' : '') + '>' + o + '</button>'; }).join('') + '</div></div>' +
+      '<div class="f3-previa" id="f3Previa">' + prev + '</div>' +
+      '<p class="f3-leyenda">En teal, lo que el panel ya sabe. En gris, lo tuyo. Punteado, lo que falta.</p>';
+    /* los campos de ella: siempre con su ayuda fija */
+    var editables = [];
+    partes.forEach(function(t){ var m = /^\{([a-z_0-9]+)\}$/.exec(t); if(m && editables.indexOf(m[1]) < 0 && (f3Campo(m[1]).origen === 'denisse' || faltan.indexOf(m[1]) >= 0)) editables.push(m[1]); });
+    if(!h.mid) editables.forEach(function(k){
+      var c = f3Campo(k), val = h.esc[k] != null ? h.esc[k] : (known[k] != null ? known[k] : '');
+      html += '<label class="f1-campo f3-campo' + (String(val).trim() ? '' : ' vacio') + '"><span class="f1-rotulo">' + esc(c.nombre) + '</span>' +
+        '<input data-f3-campo="' + esc(k) + '" value="' + esc(val) + '" autocomplete="off" maxlength="300"' + (previos[k] && !String(val).trim() ? ' placeholder="' + esc('La última vez: ' + previos[k]) + '"' : '') + '>' +
+        (c.ayuda ? '<p class="f1-ayuda">' + esc(c.ayuda) + '</p>' : '') + '</label>';
+    });
+    if(pl.inicia_espera && !h.mid){
+      html += '<div class="f1-campo"><span class="f1-rotulo" id="f3EspT">Si no responde, el primer seguimiento va</span><div class="f1-seg" role="radiogroup" aria-labelledby="f3EspT">' +
+        [3, 4].map(function(d){ return '<button type="button" role="radio" aria-checked="' + (h.dias === d) + '" data-f3-dias="' + d + '">a los ' + d + ' días</button>'; }).join('') + '</div></div>';
+    }
+    html += '</div>';
+    var texto = f3TextoFinal(h, pl, x);
+    if(h.err) html += '<p class="f1-error" role="alert">' + esc(h.err) + '</p>';
+    var per = f3Persona(x.persona_id) || {}, href = waLink(per, texto);
+    html += '<div class="f1-hoja-pie f3-pie">';
+    if(h.mid){
+      html += (h.canal === 'copiar' ? '<p class="f3-copiado" role="status">' + f1Ico('hecho') + 'Copiado. Pegalo en su chat.</p>' : '') + '<p class="f3-mandaste"><b>¿Lo mandaste?</b></p><button type="button" class="pn-btn f1-btn" data-guarda data-f3-mandado="si">Sí</button><button type="button" class="f1-mini" data-guarda data-f3-mandado="no">Todavía no</button>';
+    }else if(faltan.length){
+      html += '<button type="button" class="pn-btn f1-btn f3-falta" disabled aria-disabled="true">Falta: ' + esc(f3Campo(faltan[0]).nombre.toLowerCase()) + '</button><span class="f1-ayuda">Después: Copiar · Abrir WhatsApp</span>';
+    }else if(!h.aprobado){
+      html += '<button type="button" class="pn-btn f1-btn" data-guarda data-f3-aprobar>Aprobar</button><span class="f1-ayuda">Después: Copiar · Abrir WhatsApp</span>';
+    }else{
+      html += (href ? '<a class="wa f1-wa" href="' + esc(href) + '" target="_blank" rel="noopener" data-f3-canal="whatsapp">' + ICONO_WA + 'Abrir WhatsApp</a>' : '') +
+        '<button type="button" class="f1-mini" data-guarda data-f3-canal="copiar">' + f1Ico('copiar') + 'Copiar</button>' +
+        (!href ? '<span class="f1-ayuda">Sin teléfono: copialo y mandalo por otro lado.</span>' : '');
+    }
+    return html + '</div>';
+  }
+  function f3TextoFinal(h, pl, x){
+    var known = f3Conocidos(x, pl);
+    Object.keys(h.vals || {}).forEach(function(k){ known[k] = h.vals[k]; });
+    Object.keys(h.esc || {}).forEach(function(k){ if(String(h.esc[k]).trim()) known[k] = String(h.esc[k]).trim(); });
+    return f3Rellenar(h.trato === 'vos' ? pl.texto_vos : pl.texto_usted, known).replace(/([^.])\.\.(?=\s|$)/g, '$1.');
+  }
+  function f3LeerCampos(){
+    var h = F1.hoja; if(!h || h.tipo !== 'f3msg') return;
+    if(!h.esc) h.esc = {};
+    document.querySelectorAll('[data-f3-campo]').forEach(function(i){ h.esc[i.getAttribute('data-f3-campo')] = i.value; });
+  }
+  function f3Aprobar(canal, ancla){
+    var h = F1.hoja, x = f3Item(h.iid) || {}, pl = f3Pl(h.pl);
+    f3LeerCampos(); h.err = null;
+    var texto = f3TextoFinal(h, pl, x);
+    var seg = f3SegsDe(h.iid).filter(function(s){ return s.estado === 'pendiente' && s.numero === (pl.id === 'seguimiento_2' ? 2 : 1); })[0];
+    var fila = { id:f3Uuid(), persona_id:x.persona_id, inscripcion_id:h.iid, plantilla_id:pl.id, trato:h.trato, texto:texto, canal:canal,
+      seguimiento_id:/^seguimiento_/.test(pl.id) && seg ? seg.id : null, espera_dias:pl.inicia_espera ? h.dias : null };
+    var vals = {}; Object.keys(h.esc || {}).forEach(function(k){ if(String(h.esc[k]).trim()) vals[k] = h.esc[k]; });
+    if(canal === 'copiar') copiar(texto);
+    sb.from('mensajes').insert(fila).then(function(r){
+      if(r.error){ h.err = f1Claro(r.error); h.aprobado = false; f1RepintarHoja(); return; }
+      h.mid = fila.id; h.canal = canal; F3.msjs.push(Object.assign({ estado:'aprobado', creado_en:new Date().toISOString(), vals:vals }, fila));
+      /* el aviso va adentro de la hoja: una barra abajo taparía justo «¿Lo mandaste?» */
+      f1RepintarHoja();
+    });
+  }
+  function f3Mandado(si, btn){
+    var h = F1.hoja;
+    if(!si){ f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar('Queda aprobado, sin mandar. No se anotó en su hilo.'); return; }
+    btn.disabled = true;
+    sb.from('mensajes').update({ estado:'enviado' }).eq('id', h.mid).then(function(r){
+      if(r.error) throw r.error;
+      return f1Recargar();
+    }).then(function(){
+      var x = f3Item(h.iid);
+      F3.sel = h.iid;
+      if(x) f1MostrarHoja({ tipo:'f3int', iid:h.iid }); else f1CerrarHoja();
+      avisar('Anotado en su hilo: «' + ((f3Pl(h.pl) || {}).nombre || 'mensaje') + '».');
+    }).catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+
+  /* ═══ ONBOARDING EN LA FICHA DEL CLIENTE ═══ */
+  function f3OnbDe(pid){
+    var ins = Object.keys(F3.insc).map(function(k){ return F3.insc[k]; }).filter(function(i){ return i.persona_id === pid; });
+    var out = [];
+    ins.forEach(function(i){
+      var pasos = F3.onb.filter(function(o){ return o.inscripcion_id === i.id; });
+      if(!pasos.length) return;
+      var cat = F3.onbCat.filter(function(c){ return c.programa === i.programa_id; }).sort(function(a, b){ return a.orden - b.orden; });
+      out.push({ insc:i, pasos:cat.map(function(c){ var o = pasos.filter(function(p){ return p.paso === c.paso; })[0]; return o ? { c:c, o:o } : null; }).filter(Boolean) });
+    });
+    return out;
+  }
+  function f3Medica(pid){ return F3.medica.filter(function(m){ return m.persona_id === pid && !m.anulado; }).sort(function(a, b){ return a.creado_en < b.creado_en ? 1 : -1; })[0] || null; }
+  function f3ParqDe(pid){ return F3.parq.filter(function(q){ return q.persona_id === pid && !q.anulado; }).sort(function(a, b){ return a.completado_en < b.completado_en ? 1 : -1; })[0] || null; }
+  function f3AutzVig(pid){
+    var m = {};
+    F3.autz.filter(function(a){ return a.persona_id === pid && !a.anulado; }).sort(function(x, y){ return x.fecha < y.fecha ? -1 : x.fecha > y.fecha ? 1 : (x.creado_en < y.creado_en ? -1 : 1); })
+      .forEach(function(a){ m[a.tipo] = a; });
+    return m;
+  }
+  /* Lo que bloquea (o el paso siguiente), en una línea. Nunca de qué es el documento. */
+  function f3OnbExcepcion(pid){
+    var ob = f3OnbDe(pid); if(!ob.length) return null;
+    for(var k = 0; k < ob.length; k++){
+      var pend = ob[k].pasos.filter(function(x){ return x.o.aplica !== false && x.o.estado !== 'hecho'; });
+      if(!pend.length) continue;
+      var med = pend.filter(function(x){ return x.c.paso === 'medico' && x.o.aplica !== null; })[0];
+      if(med){
+        var md = f3Medica(pid), desde = (md && md.solicitada_en) || med.o.esperando_desde;
+        return { corto:'Documento pendiente', largo:'<strong>Onboarding: falta la autorización médica</strong>' + (desde ? ' <span>· pedida ' + esc(f1El(desde)) + '</span>' : '') };
+      }
+      var p0 = pend[0];
+      return { corto:'Onboarding pendiente', largo:'<strong>Onboarding: falta ' + esc(p0.c.nombre.charAt(0).toLowerCase() + p0.c.nombre.slice(1)) + '</strong>' +
+        (p0.o.estado === 'esperando' && p0.o.esperando_desde ? ' <span>· esperando desde ' + esc(f1El(p0.o.esperando_desde)) + '</span>' : '') };
+    }
+    return null;
+  }
+  function f3HtmlOnboarding(pid){
+    if(F3.estado !== 'ok') return '';
+    var ob = f3OnbDe(pid); if(!ob.length) return '';
+    var html = '', bloq = f3OnbExcepcion(pid);
+    /* lo que bloquea, en una línea, arriba de la lista (en la ficha vive acá y no en la franja) */
+    if(bloq) html += '<p class="f3-bloquea">' + f1Ico('lista') + '<span>' + bloq.largo + '</span></p>';
+    ob.forEach(function(b){
+      var vivos = b.pasos.filter(function(x){ return x.o.aplica !== false; });
+      var completo = vivos.every(function(x){ return x.o.estado === 'hecho'; });
+      var abierto = !completo || F3.plegado[b.insc.id];
+      html += '<div class="f1-sec"><span class="f1-rotulo">Onboarding · lo que aplica' + (ob.length > 1 ? ' · ' + esc(F3_PROG[b.insc.programa_id] || '') : '') + '</span>';
+      if(completo){
+        html += '<p class="f3-completo">' + f1Ico('hecho') + 'Onboarding completo <button type="button" class="f1-txt" data-f3-plegar="' + esc(b.insc.id) + '" aria-expanded="' + !!abierto + '">' + (abierto ? 'Plegar' : 'Ver los pasos') + '</button></p>';
+        if(!abierto){ html += '</div>'; return; }
+      }
+      vivos.forEach(function(x){
+        var o = x.o, c = x.c, hecho = o.estado === 'hecho', espera = o.estado === 'esperando';
+        var sub = '';
+        if(hecho){
+          sub = f1Corto(o.hecho_en);
+          if(c.paso === 'parq'){ var q = f3ParqDe(pid); if(q) sub += ' · vence en ' + F1_MES_L[+q.vence_el.slice(5, 7) - 1] + ' de ' + q.vence_el.slice(0, 4); }
+          if(c.paso === 'comprobante') sub += ' · se marcó al registrar el pago';
+        }else if(espera) sub = (c.paso === 'medico' ? 'Pedida ' : c.paso === 'form' ? 'Form enviado ' : 'Pedido ') + f1El(o.esperando_desde) + ' · esperando';
+        var accion = '';
+        if(o.aplica === null && !hecho){
+          accion = '<span class="acc f3-aplica"><span class="f1-ayuda">¿Aplica?</span><button type="button" class="f1-mini chico" data-guarda data-f3-aplica="' + esc(o.inscripcion_id + '|' + c.paso + '|si') + '">Sí</button>' +
+            '<button type="button" class="f1-mini chico" data-guarda data-f3-aplica="' + esc(o.inscripcion_id + '|' + c.paso + '|no') + '">No</button></span>';
+        }else if(!hecho && c.paso !== 'medico' && c.paso !== 'parq' && c.paso !== 'comprobante'){
+          accion = '<span class="acc">' + (!espera && (c.paso === 'form' || c.paso === 'coachrx') ? '<button type="button" class="f1-txt" data-guarda data-f3-paso="' + esc(o.inscripcion_id + '|' + c.paso + '|esperando') + '">Lo mandé</button>' : '') +
+            '<button type="button" class="f1-mini chico" data-guarda data-f3-paso="' + esc(o.inscripcion_id + '|' + c.paso + '|hecho') + '">Hecho</button></span>';
+        }else if(!hecho && c.paso === 'parq') accion = '<span class="acc"><button type="button" class="f1-mini chico" data-guarda data-f3-form="' + esc(pid) + '">Registrar</button></span>';
+        html += '<div class="f3-check' + (hecho ? ' hecho' : espera ? ' espera' : '') + '"><span class="box" aria-hidden="true">' + (hecho ? f1Ico('tilde') : '') + '</span>' +
+          '<b>' + esc(c.nombre) + (o.aplica === null ? ' <small>si aplica</small>' : '') + '</b>' + (sub ? '<i>' + esc(sub) + '</i>' : '') + accion;
+        if(c.paso === 'medico' && o.aplica === true && !hecho){
+          var md = f3Medica(pid), pc = md && md.puede_comenzar;
+          if(!md && !espera) html += '<span class="acc"><button type="button" class="f1-txt" data-guarda data-f3-medica="' + esc(pid) + '|pedida">La pedí hoy</button></span>';
+          html += '<div class="dentro"><div class="f1-seg ancho" role="radiogroup" aria-label="Puede comenzar">' +
+            [['si','Puede comenzar'],['con_indicaciones','Con indicaciones'],['todavia_no','Todavía no']].map(function(t){
+              return '<button type="button" role="radio" aria-checked="' + (pc === t[0]) + '" data-guarda data-f3-medica="' + esc(pid + '|' + t[0]) + '">' + t[1] + '</button>'; }).join('') + '</div>' +
+            '<p class="f1-ayuda" style="margin-top:8px">El documento y las indicaciones viven en su carpeta.</p></div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    /* las tres autorizaciones, donde están (y donde se usan) */
+    var av = f3AutzVig(pid), tipos = [['transcripcion_ia','Transcripción y notas con IA'],['fotos_videos_internos','Fotos y videos internos'],['contenido_publico','Contenido público']];
+    var uno = Object.keys(F3.insc).some(function(k){ return F3.insc[k].persona_id === pid && F3.insc[k].programa_id === 'uno-a-uno'; });
+    if(!uno) tipos = tipos.slice(1);
+    var hay = tipos.some(function(t){ return av[t[0]]; }), v0 = tipos.map(function(t){ return av[t[0]]; }).filter(Boolean)[0];
+    html += '<div class="f1-sec"><span class="f1-rotulo">Autorizaciones' + (v0 && v0.version_texto ? ' · ' + esc(v0.version_texto) + ', ' + esc(f1Corto(v0.fecha)) : '') + '</span>';
+    if(!hay) html += '<p class="f1-ayuda">Todavía no registraste las respuestas de su Form.</p>';
+    else tipos.forEach(function(t){
+      var a = av[t[0]];
+      var est = !a ? 'Sin respuesta' : a.estado === 'si' ? '<strong>Sí</strong> · desde ' + esc(f1El(a.fecha)) + (t[0] === 'transcripcion_ia' ? ' · solo 1:1' : '')
+        : a.estado === 'no' ? '<strong>No</strong> · ' + esc(f1El(a.fecha))
+        : '<strong>Revocada ' + esc(f1El(a.fecha)) + '</strong>' + (function(){ var antes = F3.autz.filter(function(z){ return z.persona_id === pid && z.tipo === t[0] && z.estado === 'si' && !z.anulado && z.fecha <= a.fecha; }).sort(function(p, q){ return p.fecha < q.fecha ? 1 : -1; })[0]; return antes ? ' · había dicho sí ' + esc(f1El(antes.fecha)) : ''; })();
+      html += '<div class="f3-autoriz"><b>' + esc(t[1]) + '</b><i>' + est + '</i><span class="acc">' + (a ? '<button type="button" class="f1-txt" data-guarda data-f3-autz="' + esc(pid + '|' + t[0] + '|' + (a.estado === 'si' ? 'revocada' : 'si')) + '">' + (a.estado === 'si' ? 'Revocar' : 'Cambiar') + '</button>' : '') + '</span></div>';
+    });
+    html += '<button type="button" class="f1-mini" style="margin-top:14px" data-guarda data-f3-form="' + esc(pid) + '">' + f1Ico('lista') + (hay ? 'Registrar el Form de nuevo' : 'Registrar el Form') + '</button></div>';
+    return html;
+  }
+  function f3HtmlForm(h){
+    var p = f1Persona(h.pid) || {};
+    var uno = Object.keys(F3.insc).some(function(k){ return F3.insc[k].persona_id === h.pid && F3.insc[k].programa_id === 'uno-a-uno'; });
+    if(!h.v){
+      var av = f3AutzVig(h.pid), v0 = av.contenido_publico || av.fotos_videos_internos || {};
+      h.v = { fecha:f1Hoy(), version:v0.version_texto || 'Form v2', repr:false, parq:'', a:{ transcripcion_ia:(av.transcripcion_ia || {}).estado === 'si' ? 'si' : 'no',
+        fotos_videos_internos:(av.fotos_videos_internos || {}).estado === 'si' ? 'si' : 'no', contenido_publico:(av.contenido_publico || {}).estado === 'si' ? 'si' : 'no' } };
+    }
+    var v = h.v, tipos = [['transcripcion_ia','Transcripción y notas con IA'],['fotos_videos_internos','Fotos y videos internos'],['contenido_publico','Contenido público']];
+    if(!uno) tipos = tipos.slice(1);
+    var html = f1Top('Registrar el Form', p.nombre || '', true) + '<form class="f1-form" id="f3FormForm" novalidate>' +
+      '<p class="f1-ayuda" style="margin-top:12px">Lo que ya respondió en su Google Form. El panel no lo reemplaza: solo lo anota.</p>';
+    tipos.forEach(function(t){
+      html += '<div class="f1-campo"><span class="f1-rotulo" id="f3a-' + t[0] + '">' + esc(t[1]) + (t[0] === 'transcripcion_ia' ? ' · solo 1:1' : '') + '</span><div class="f1-seg" role="radiogroup" aria-labelledby="f3a-' + t[0] + '">' +
+        [['si','Sí'],['no','No']].map(function(o){ return '<button type="button" role="radio" aria-checked="' + (v.a[t[0]] === o[0]) + '" data-f3-fa="' + t[0] + '|' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>';
+    });
+    html += '<div class="f1-dos"><label class="f1-campo"><span class="f1-rotulo">Fecha del Form</span><input type="date" id="f3FFecha" max="' + f1Hoy() + '" value="' + esc(v.fecha) + '"></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">Versión del Form</span><input id="f3FVer" maxlength="20" value="' + esc(v.version) + '"></label></div>' +
+      '<label class="f3-check-l"><input type="checkbox" id="f3FRepr"' + (v.repr ? ' checked' : '') + '> Lo llenó un representante</label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">PAR-Q+ completado el (opcional)</span><input type="date" id="f3FParq" max="' + f1Hoy() + '" value="' + esc(v.parq) + '"><p class="f1-ayuda">Solo la fecha: el panel calcula que vence a los 12 meses.</p></label>' +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Guardar</button><button type="button" class="f1-txt" data-f1-volver>Cancelar</button></div></form>';
+    return html;
+  }
+  function f3LeerForm(){
+    var h = F1.hoja; if(!h || h.tipo !== 'f3form') return;
+    var f = document.getElementById('f3FFecha'), ve = document.getElementById('f3FVer'), r = document.getElementById('f3FRepr'), q = document.getElementById('f3FParq');
+    if(f) h.v.fecha = f.value; if(ve) h.v.version = ve.value; if(r) h.v.repr = r.checked; if(q) h.v.parq = q.value;
+  }
+  function f3GuardarForm(btn){
+    var h = F1.hoja; f3LeerForm(); var v = h.v; h.err = null;
+    if(!v.fecha || v.fecha > f1Hoy()){ h.err = 'La fecha del Form no puede ser futura.'; f1RepintarHoja(); return; }
+    if(v.parq && v.parq > f1Hoy()){ h.err = 'La fecha del PAR-Q+ no puede ser futura.'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    var av = f3AutzVig(h.pid), filas = [];
+    Object.keys(v.a).forEach(function(t){
+      var ya = av[t];
+      if(ya && ya.estado === v.a[t] && ya.version_texto === v.version) return;
+      var est = v.a[t];
+      if(est === 'no' && ya && ya.estado === 'si') est = 'revocada';
+      filas.push({ persona_id:h.pid, tipo:t, estado:est, fecha:v.fecha, version_texto:(v.version || '').trim() || null, fuente:'google_form', dado_por:v.repr ? 'representante' : 'persona' });
+    });
+    var ins = Object.keys(F3.insc).map(function(k){ return F3.insc[k]; }).filter(function(i){ return i.persona_id === h.pid; }).map(function(i){ return i.id; });
+    var pasoForm = F3.onb.filter(function(o){ return ins.indexOf(o.inscripcion_id) >= 0 && o.paso === 'form' && o.estado !== 'hecho' && o.aplica !== false; });
+    var p = Promise.resolve({});
+    filas.forEach(function(f){ p = p.then(function(r){ if(r && r.error) throw r.error; return sb.from('autorizaciones').insert(f); }); });
+    if(v.parq) p = p.then(function(r){ if(r && r.error) throw r.error; return sb.from('parq').insert({ persona_id:h.pid, completado_en:v.parq, fuente:'google_form', quien_lleno:v.repr ? 'representante' : 'persona' }); });
+    pasoForm.forEach(function(o){ p = p.then(function(r){ if(r && r.error) throw r.error; return sb.from('onboarding_pasos').update({ estado:'hecho', hecho_en:v.fecha, aplica:true }).eq('inscripcion_id', o.inscripcion_id).eq('paso', 'form'); }); });
+    p.then(function(r){ if(r && r.error) throw r.error; return f1Recargar(); })
+      .then(function(){ f1MostrarHoja({ tipo:'ficha', pid:h.pid, desdeFicha:false }); avisar('Form registrado.'); })
+      .catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+
+  /* ═══ HOY Y SEMANA ═══ */
+  /* La única alerta nueva: alguien que escribió y nadie le contestó desde ayer. */
+  function f3AlertasHoy(){
+    if(F3.estado !== 'ok') return [];
+    var hoy = f1Hoy(), out = [];
+    F3.lista.forEach(function(x){
+      if(x.etapa !== 'nuevo' || x.ultimo_contacto) return;
+      var i = F3.insc[x.inscripcion_id] || {}; if(!i.creada_en) return;
+      var dia = aInputHN(i.creada_en).slice(0, 10);
+      if(dia >= hoy) return;
+      var cuando = dia === f1Mas(hoy, -1) ? 'Te escribió ayer a las ' + f1HoraLeida(i.creada_en) : 'Te escribió ' + f1El(dia);
+      var it = F3.inter[x.inscripcion_id] || {};
+      out.push({ tipo:'interesado', iid:x.inscripcion_id, pid:x.persona_id, nombre:x.nombre, orden:dia,
+        html:'<strong>' + esc(cuando) + '</strong> · ' + esc('con interés en ' + (F3_PROG[x.programa_id] || '') + ', sin respuesta') });
+    });
+    return out.sort(function(a, b){ return a.orden < b.orden ? -1 : 1; });
+  }
+  function f3LineaHoy(dia){
+    if(F3.estado !== 'ok') return '';
+    var segs = F3.segs.filter(function(s){ return s.estado === 'pendiente' && s.fecha <= dia && f3Item(s.inscripcion_id); }).length;
+    var ses = F3.ses.filter(function(s){ return s.estado === 'agendada' && s.fecha === dia && f3Item(s.inscripcion_id); });
+    var ll = ses.filter(function(s){ return s.tipo === 'llamada'; }).length, ev = ses.length - ll;
+    var esHoy = dia === f1Hoy(), partes = [];
+    if(segs) partes.push(segs + (segs === 1 ? ' seguimiento para aprobar' : ' seguimientos para aprobar'));
+    if(ll) partes.push(ll + (ll === 1 ? ' llamada ' : ' llamadas ') + (esHoy ? 'hoy' : 'mañana'));
+    if(ev) partes.push(ev + (ev === 1 ? ' evaluación ' : ' evaluaciones ') + (esHoy ? 'hoy' : 'mañana'));
+    if(!partes.length) return '';
+    return '<button type="button" class="f3-linea f1-fila-btn" data-f1-ir="interesados">' + f1Ico('mensajes') + '<span><b>Interesados:</b> ' + esc(partes.join(' · ')) + '</span>' + f1Ico('ir', 'f1-ir') + '</button>';
+  }
+  function f3HtmlSemana(dias){
+    if(F3.estado !== 'ok') return '';
+    var ini = dias[0], fin = dias[dias.length - 1], filas = [];
+    F3.segs.filter(function(s){ return s.estado === 'pendiente' && s.fecha <= fin; }).forEach(function(s){
+      var x = f3Item(s.inscripcion_id); if(!x) return;
+      filas.push({ iid:x.inscripcion_id, n:x.nombre, m:(s.numero === 1 ? '1.er' : '2.º') + ' seguimiento', i:s.fecha <= ini ? 'Para aprobar' : f1DiaLargo(s.fecha).toLowerCase() });
+    });
+    F3.lista.filter(function(x){ return x.etapa === 'seguimiento_futuro' && x.seguimiento_futuro_el && x.seguimiento_futuro_el <= fin; }).forEach(function(x){
+      filas.push({ iid:x.inscripcion_id, n:x.nombre, m:'Retomar', i:'dijo más adelante' });
+    });
+    var pq = [];
+    var vistos = {};
+    F3.parq.filter(function(q){ return !q.anulado; }).sort(function(a, b){ return a.completado_en < b.completado_en ? 1 : -1; }).forEach(function(q){
+      if(vistos[q.persona_id]) return; vistos[q.persona_id] = 1;
+      if(q.vence_el >= f1Hoy() && q.vence_el <= f1Mas(f1Hoy(), 30)){ var p = f1Persona(q.persona_id); if(p) pq.push({ pid:p.id, n:p.nombre, m:'PAR-Q+', i:'vence ' + f1El(q.vence_el) }); }
+    });
+    if(!filas.length && !pq.length) return '';
+    var abierto = !!F1.abiertos.int3, linea = [];
+    if(filas.length) linea.push(filas.length + (filas.length === 1 ? ' seguimiento o retomar' : ' seguimientos o retomar'));
+    if(pq.length) linea.push(pq.length + ' PAR-Q+ por vencer');
+    return '<section class="f1-bloque f1-vidrio"><button type="button" class="f1-fila-btn" data-f1-mas="int3" aria-expanded="' + abierto + '" aria-controls="f1b-int3">' +
+      '<b>Interesados de la semana</b><span>' + esc(linea.join(' · ')) + '</span><span class="f1-chev">' + f1Ico('abajo') + '</span></button>' +
+      '<div class="f1-bloque-lista" id="f1b-int3"' + (abierto ? '' : ' hidden') + '>' +
+      filas.map(function(f){ return '<button type="button" class="f1-per f1-fila-btn" data-f3-int="' + esc(f.iid) + '"><b>' + esc(f.n) + '</b><span class="m">' + esc(f.m) + '</span><i class="e3">' + esc(f.i) + '</i></button>'; }).join('') +
+      pq.map(function(f){ return '<button type="button" class="f1-per f1-fila-btn" data-f1-ficha="' + esc(f.pid) + '"><b>' + esc(f.n) + '</b><span class="m">' + esc(f.m) + '</span><i class="e3">' + esc(f.i) + '</i></button>'; }).join('') +
+      '</div></section>';
+  }
+
+  /* ═══ AJUSTES › PLANTILLAS ═══ */
+  function f3HtmlAjustes(){
+    if(F3.estado !== 'ok') return '';
+    var html = '<div class="aj-grupo" id="f3AjPlant"><h2>Plantillas de mensajes</h2><p class="ayuda">Los textos que el panel te arma para cada momento, en usted y en vos. Cada cambio guarda la versión anterior. Ninguno se manda sin que lo apruebes.</p>';
+    F3_GRUPOS.forEach(function(g){
+      var ps = F3.plant.filter(function(p){ return p.grupo === g[0]; });
+      if(!ps.length) return;
+      html += '<div class="f3-cat-g"><p class="f1-rotulo-gris">' + esc(g[1]) + '</p>' + ps.map(function(p){
+        return '<button type="button" class="f1-fila-btn" data-f3-editar="' + esc(p.id) + '"><span>' + esc(p.nombre) + '</span>' + (p.version > 1 ? '<small>versión ' + p.version + '</small>' : '') + '</button>'; }).join('') + '</div>';
+    });
+    return html + '</div>';
+  }
+  function f3HtmlEditar(h){
+    var p = F3.plant.filter(function(x){ return x.id === h.plid; })[0];
+    if(!p) return f1Top('Plantilla', '') + '<p class="f1-ayuda">No la encontré.</p>';
+    if(h.vos == null){ h.vos = p.texto_vos; h.usted = p.texto_usted; }
+    var campos = (p.campos || []).map(function(k){ return '{' + k + '}'; }).join(' ');
+    return f1Top(p.nombre, 'Versión ' + p.version, false) + '<form class="f1-form" id="f3FormEditar" novalidate>' +
+      '<p class="f1-ayuda" style="margin-top:12px">Los campos entre llaves los completa el panel o los escribís vos al aprobar: ' + esc(campos || 'esta no tiene') + '. Sin datos de salud, peso ni medidas.</p>' +
+      '<label class="f1-campo"><span class="f1-rotulo">De vos</span><textarea id="f3EdVos" rows="6">' + esc(h.vos) + '</textarea></label>' +
+      '<label class="f1-campo"><span class="f1-rotulo">De usted</span><textarea id="f3EdUsted" rows="6">' + esc(h.usted) + '</textarea></label>' +
+      (h.err ? '<p class="f1-error" role="alert">' + esc(h.err) + '</p>' : '') +
+      '<div class="f1-hoja-pie"><button type="submit" class="pn-btn f1-btn" data-guarda>Guardar</button><button type="button" class="f1-txt" data-f3-cerrar-hoja>Cancelar</button></div></form>';
+  }
+  function f3GuardarEditar(btn){
+    var h = F1.hoja, a = document.getElementById('f3EdVos'), b = document.getElementById('f3EdUsted');
+    h.vos = a.value; h.usted = b.value; h.err = null;
+    var p = F3.plant.filter(function(x){ return x.id === h.plid; })[0];
+    if(!h.vos.trim() || !h.usted.trim()){ h.err = 'Las dos versiones llevan texto.'; f1RepintarHoja(); return; }
+    var usa = (h.vos + ' ' + h.usted).match(/\{([a-z_0-9]+)\}/g) || [];
+    var raro = usa.map(function(x){ return x.slice(1, -1); }).filter(function(k){ return (p.campos || []).indexOf(k) < 0; })[0];
+    if(raro){ h.err = 'La plantilla usa {' + raro + '}, que no está en sus campos.'; f1RepintarHoja(); return; }
+    btn.disabled = true;
+    sb.from('plantillas').update({ texto_vos:h.vos, texto_usted:h.usted }).eq('id', h.plid).then(function(r){
+      if(r.error) throw r.error;
+      return f3Cargar();
+    }).then(function(){ f1CerrarHoja(); var c = document.getElementById('f3AjCaja'); if(c) c.innerHTML = f3HtmlAjustes(); avisar('Plantilla guardada. La versión anterior quedó guardada.'); })
+      .catch(function(e){ btn.disabled = false; h.err = f1Claro(e); f1RepintarHoja(); });
+  }
+
+  /* ═══ OYENTES ═══ */
+  function f3Abrir(estado){ estado.alto = estado.alto !== false; if(document.getElementById('vuelta') && !document.getElementById('vuelta').hidden) cerrarVuelta(); f1MostrarHoja(estado); }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target : null;
+    if(!t) return;
+    function q(attr){ return t.closest('[' + attr + ']'); }
+    var b, h = F1.hoja;
+    if((b = q('data-f3-cerrados'))){ F3.cerrados = !F3.cerrados; f3PintarInteresados(); return; }
+    if((b = q('data-f3-todos'))){ F3.q = ''; F3.prog = 'todos'; F3.cerrados = false; f3PintarInteresados(); return; }
+    if((b = q('data-f3-alta'))){ var ai = b.getAttribute('data-f3-alta'); f3Abrir({ tipo:'f3alta', iid:ai || null }); return; }
+    if((b = q('data-f3-v'))){ f3LeerAlta(); var pv = b.getAttribute('data-f3-v').split('|'); h.v[pv[0]] = pv[1]; f1RepintarHoja(); return; }
+    if((b = q('data-f3-es'))){ f3LeerAlta(); h.v.pid = b.getAttribute('data-f3-es') || null; if(h.v.pid){ var pe = f1Persona(h.v.pid); if(pe){ h.v.tel = h.v.tel || pe.telefono; h.v.trato = pe.trato || h.v.trato; } } f1RepintarHoja(); return; }
+    if((b = q('data-f3-cancelar'))){ if(h && h.iid) f1MostrarHoja({ tipo:'f3int', iid:h.iid }); else f1CerrarHoja(); return; }
+    if((b = q('data-f3-volver-int'))){ f1MostrarHoja({ tipo:'f3int', iid:b.getAttribute('data-f3-volver-int') }); return; }
+    if((b = q('data-f3-cerrar-hoja'))){ f1CerrarHoja(); return; }
+    if((b = q('data-f3-int'))){
+      var pi = b.getAttribute('data-f3-int').split('|');
+      F3.sel = pi[0];
+      if(vista !== 'interesados' && window.matchMedia('(min-width:1100px)').matches){ F3.cerrados = (f3Item(pi[0]) || {}).tramo === 'cerrado'; F1.hoja = null; irA('interesados'); }
+      if(F1.hoja && F1.hoja.tipo === 'f3int' && F1.hoja.iid === pi[0] && pi[1] === 'resp'){ F1.hoja.resp = !F1.hoja.resp; F1.hoja.respNo = false; f1RepintarHoja(); return; }
+      f3Abrir({ tipo:'f3int', iid:pi[0], resp:pi[1] === 'resp', alto:false });
+      document.querySelectorAll('#f3Inter .f3-int').forEach(function(f){ var sel = !!f.querySelector('[data-f3-int="' + pi[0] + '"]'); f.classList.toggle('activo', sel && f3EnLado()); });
+      return;
+    }
+    if((b = q('data-f3-resp'))){
+      var rv = b.getAttribute('data-f3-resp');
+      if(rv === 'no'){ h.respNo = true; h.motivo = h.motivo || 'otro'; f1RepintarHoja(); return; }
+      b.disabled = true;
+      sb.rpc('interesado_respondio', { p_insc:h.iid, p_respuesta:rv }).then(function(r){
+        if(r.error) throw r.error; return f1Recargar();
+      }).then(function(){ f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar(rv === 'si' ? 'Anotado: respondió que sí. Los seguimientos se cortaron.' : 'Anotado: tiene dudas. Los seguimientos se cortaron.'); })
+        .catch(function(er){ b.disabled = false; h.err = f1Claro(er); f1RepintarHoja(); });
+      return;
+    }
+    if((b = q('data-f3-resp-no'))){
+      b.disabled = true;
+      sb.rpc('interesado_respondio', { p_insc:h.iid, p_respuesta:'no', p_motivo:h.motivo || 'otro' }).then(function(r){
+        if(r.error) throw r.error; return f1Recargar();
+      }).then(function(){ f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar('Anotado: no sigue. Quedó en «Cerrados»; no se borró nada.'); })
+        .catch(function(er){ b.disabled = false; h.err = f1Claro(er); f1RepintarHoja(); });
+      return;
+    }
+    if((b = q('data-f3-motivo'))){ var fu = document.getElementById('f3Futuro'), mm = document.getElementById('f3Mandar'); if(fu) h.fecha = fu.value; if(mm) h.mandar = mm.checked; h.motivo = b.getAttribute('data-f3-motivo'); f1RepintarHoja(); return; }
+    if((b = q('data-f3-cerrar'))){ var pc = b.getAttribute('data-f3-cerrar').split('|'); f3Abrir({ tipo:'f3cerrar', iid:pc[0], futuro:pc[1] === 'futuro' }); return; }
+    if((b = q('data-f3-reabrir'))){ f3Abrir({ tipo:'f3reabrir', iid:b.getAttribute('data-f3-reabrir') }); return; }
+    if((b = q('data-f3-etapa-r'))){ h.etapa = b.getAttribute('data-f3-etapa-r'); f1RepintarHoja(); return; }
+    if((b = q('data-f3-esperar'))){ f3Abrir({ tipo:'f3esperar', iid:b.getAttribute('data-f3-esperar') }); return; }
+    if((b = q('data-f3-dias'))){ if(h.tipo === 'f3msg') f3LeerCampos(); h.dias = +b.getAttribute('data-f3-dias'); f1RepintarHoja(); return; }
+    if((b = q('data-f3-agendar'))){ var pa = b.getAttribute('data-f3-agendar').split('|'); f3Abrir({ tipo:'f3agendar', iid:pa[0], sesTipo:pa[1] || null }); return; }
+    if((b = q('data-f3-ag'))){ f3LeerAgendar(); var pg = b.getAttribute('data-f3-ag').split('|'); if(pg[0] === 'tipo'){ h.sesTipo = pg[1]; h.modo = pg[1] === 'llamada' ? 'video' : 'studio'; h.elegido = null; } else h.modo = pg[1]; f1RepintarHoja(); return; }
+    if((b = q('data-f3-esp'))){ f3LeerAgendar(); h.elegido = +b.getAttribute('data-f3-esp'); f1RepintarHoja(); return; }
+    if((b = q('data-f3-ses'))){ f3Abrir({ tipo:'f3ses', sid:b.getAttribute('data-f3-ses') }); return; }
+    if((b = q('data-f3-ses-est'))){
+      var nuevo = b.getAttribute('data-f3-ses-est'), sesId = h.sid; b.disabled = true;
+      sb.from('sesiones_interes').update({ estado:nuevo }).eq('id', sesId).then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+        .then(function(){ f1RepintarHoja(); avisar(nuevo === 'realizada' ? 'Anotada como hecha.' : nuevo === 'no_vino' ? 'Anotado: no vino.' : 'Cancelada. Queda en su hilo.'); })
+        .catch(function(er){ b.disabled = false; h.err = f1Claro(er); f1RepintarHoja(); });
+      return;
+    }
+    if((b = q('data-f3-cliente'))){ f3Abrir({ tipo:'f3cliente', iid:b.getAttribute('data-f3-cliente') }); return; }
+    if((b = q('data-f3-con'))){ f3LeerCliente(); h.v.con = b.getAttribute('data-f3-con') === 'true'; f1RepintarHoja(); return; }
+    if((b = q('data-f3-msg'))){ var pm = b.getAttribute('data-f3-msg').split('|'); f3AbrirMensaje(pm[0], pm[1] || null); return; }
+    if((b = q('data-f3-pl'))){ f3LeerCampos(); h.pl = b.getAttribute('data-f3-pl'); h.todas = false; h.aprobado = false; h.err = null; f1RepintarHoja(); var cj = f1Contenedor(); if(cj) cj.scrollTop = 0; return; }
+    if((b = q('data-f3-todas'))){ f3LeerCampos(); h.todas = b.getAttribute('data-f3-todas') !== 'no'; f1RepintarHoja(); var cj2 = f1Contenedor(); if(cj2) cj2.scrollTop = 0; return; }
+    if((b = q('data-f3-trato'))){ f3LeerCampos(); h.trato = b.getAttribute('data-f3-trato'); h.aprobado = false; f1RepintarHoja(); return; }
+    if((b = q('data-f3-aprobar'))){ f3LeerCampos(); h.aprobado = true; f1RepintarHoja(); return; }
+    if((b = q('data-f3-canal'))){ var canal = b.getAttribute('data-f3-canal'); f3Aprobar(canal); return; }
+    if((b = q('data-f3-mandado'))){ f3Mandado(b.getAttribute('data-f3-mandado') === 'si', b); return; }
+    if((b = q('data-f3-plegar'))){ var ip = b.getAttribute('data-f3-plegar'); F3.plegado[ip] = !F3.plegado[ip]; f1RepintarHoja(); return; }
+    if((b = q('data-f3-aplica'))){
+      var pa2 = b.getAttribute('data-f3-aplica').split('|'); b.disabled = true;
+      sb.from('onboarding_pasos').update({ aplica:pa2[2] === 'si' }).eq('inscripcion_id', pa2[0]).eq('paso', pa2[1])
+        .then(function(r){ if(r.error) throw r.error; return f1Recargar(); }).then(function(){ f1RepintarHoja(); })
+        .catch(function(er){ b.disabled = false; avisar(f1Claro(er)); });
+      return;
+    }
+    if((b = q('data-f3-paso'))){
+      var pp = b.getAttribute('data-f3-paso').split('|'), cambio = pp[2] === 'hecho' ? { estado:'hecho', hecho_en:f1Hoy() } : { estado:'esperando', esperando_desde:f1Hoy() };
+      b.disabled = true;
+      var antes = F3.onb.filter(function(o){ return o.inscripcion_id === pp[0] && o.paso === pp[1]; })[0];
+      sb.from('onboarding_pasos').update(cambio).eq('inscripcion_id', pp[0]).eq('paso', pp[1])
+        .then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+        .then(function(){
+          f1RepintarHoja();
+          if(pp[2] === 'esperando' && antes) ofrecerVuelta('Anotado: esperando desde hoy.', function(){
+            return sb.from('onboarding_pasos').update({ estado:'pendiente', esperando_desde:null }).eq('inscripcion_id', pp[0]).eq('paso', pp[1]).then(function(){ return f1Recargar(); });
+          });
+          else avisar('Paso marcado hecho, con la fecha de hoy.');
+        })
+        .catch(function(er){ b.disabled = false; avisar(f1Claro(er)); });
+      return;
+    }
+    if((b = q('data-f3-medica'))){
+      var pm2 = b.getAttribute('data-f3-medica').split('|'), pidM = pm2[0], val = pm2[1], md = f3Medica(pidM);
+      b.disabled = true;
+      var ins3 = Object.keys(F3.insc).map(function(k){ return F3.insc[k]; }).filter(function(i){ return i.persona_id === pidM; }).map(function(i){ return i.id; });
+      var paso = F3.onb.filter(function(o){ return ins3.indexOf(o.inscripcion_id) >= 0 && o.paso === 'medico'; })[0];
+      var hoy = f1Hoy(), w;
+      if(val === 'pedida') w = sb.from('autorizacion_medica').insert({ persona_id:pidM, solicitada_en:hoy });
+      else if(!md) w = sb.from('autorizacion_medica').insert({ persona_id:pidM, solicitada_en:(paso && paso.esperando_desde) || hoy, recibida_en:val === 'todavia_no' ? null : hoy, puede_comenzar:val });
+      else w = sb.from('autorizacion_medica').update({ puede_comenzar:val, recibida_en:md.recibida_en || (val === 'todavia_no' ? null : hoy) }).eq('id', md.id);
+      w.then(function(r){
+        if(r.error) throw r.error;
+        if(paso && paso.estado === 'pendiente' && (val === 'pedida' || val === 'todavia_no'))
+          return sb.from('onboarding_pasos').update({ estado:'esperando', esperando_desde:(md && md.solicitada_en) || hoy }).eq('inscripcion_id', paso.inscripcion_id).eq('paso', 'medico');
+        return {};
+      }).then(function(r){ if(r && r.error) throw r.error; return f1Recargar(); })
+        .then(function(){ f1RepintarHoja(); avisar(val === 'si' || val === 'con_indicaciones' ? 'Anotado: puede comenzar. El paso quedó hecho.' : val === 'pedida' ? 'Anotado: la pediste hoy.' : 'Anotado: todavía no.'); })
+        .catch(function(er){ b.disabled = false; avisar(f1Claro(er)); });
+      return;
+    }
+    if((b = q('data-f3-autz'))){
+      var pz = b.getAttribute('data-f3-autz').split('|'); b.disabled = true;
+      sb.from('autorizaciones').insert({ persona_id:pz[0], tipo:pz[1], estado:pz[2], fecha:f1Hoy(), fuente:'en_persona' })
+        .then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+        .then(function(){ f1RepintarHoja(); avisar(pz[2] === 'revocada' ? 'Revocada hoy. Lo anterior queda en su historial.' : 'Cambio anotado con la fecha de hoy.'); })
+        .catch(function(er){ b.disabled = false; avisar(f1Claro(er)); });
+      return;
+    }
+    if((b = q('data-f3-form'))){ f3Abrir({ tipo:'f3form', pid:b.getAttribute('data-f3-form') }); return; }
+    if((b = q('data-f3-fa'))){ f3LeerForm(); var pf = b.getAttribute('data-f3-fa').split('|'); h.v.a[pf[0]] = pf[1]; f1RepintarHoja(); return; }
+    if((b = q('data-f3-editar'))){ f3Abrir({ tipo:'f3editar', plid:b.getAttribute('data-f3-editar') }); return; }
+  });
+  document.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.id === 'f3Buscar'){ F3.q = t.value; f3PintarInteresados(); return; }
+    if(t.id === 'f3Cat' && F1.hoja){ F1.hoja.qcat = t.value; var pos = t.selectionStart; f1RepintarHoja(); var c = document.getElementById('f3Cat'); if(c){ c.focus(); try{ c.setSelectionRange(pos, pos); }catch(er){} } return; }
+    if(t.hasAttribute && t.hasAttribute('data-f3-campo') && F1.hoja && F1.hoja.tipo === 'f3msg'){
+      f3LeerCampos();
+      /* se repinta la vista previa y el botón sin perder el foco */
+      var k = t.getAttribute('data-f3-campo'), pos2 = t.selectionStart;
+      f1RepintarHoja();
+      var n = document.querySelector('[data-f3-campo="' + k + '"]'); if(n){ n.focus(); try{ n.setSelectionRange(pos2, pos2); }catch(er){} }
+      return;
+    }
+    if(t.id === 'f3Nombre' && F1.hoja && F1.hoja.tipo === 'f3alta'){
+      f3LeerAlta(); var p3 = t.selectionStart; f1RepintarHoja(); var nn = document.getElementById('f3Nombre'); if(nn){ nn.focus(); try{ nn.setSelectionRange(p3, p3); }catch(er){} }
+    }
+  });
+  document.addEventListener('change', function(e){
+    var t = e.target;
+    if(t.id === 'f3Prog'){ F3.prog = t.value; f3PintarInteresados(); return; }
+    if(t.id === 'f3Fuente' || t.id === 'f3RefPid'){ f3LeerAlta(); f1RepintarHoja(); return; }
+    if(t.id === 'f3Etapa'){
+      var iid = t.getAttribute('data-iid'), x = f3Item(iid), est = x && f3EstadoPara(x.programa_id, t.value);
+      if(!est) return;
+      var antes = (F3.insc[iid] || {}).estado;
+      t.disabled = true;
+      sb.from('inscripciones').update({ estado:est }).eq('id', iid).then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+        .then(function(){ f1RepintarHoja(); ofrecerVuelta('Etapa cambiada a «' + (F3.etapas.filter(function(z){ return z.id === t.value; })[0] || {}).nombre + '».', function(){
+          return sb.from('inscripciones').update({ estado:antes }).eq('id', iid).then(function(){ return f1Recargar(); }).then(function(){ f1RepintarHoja(); }); }); })
+        .catch(function(er){ t.disabled = false; avisar(f1Claro(er)); });
+      return;
+    }
+    if(t.id === 'f3CliVer' || t.id === 'f3CliMod'){
+      f3LeerCliente();
+      if(t.id === 'f3CliVer'){ var ver = F1.versiones.filter(function(v){ return v.id === t.value; })[0], vent = ver && (ver.ventanas || [])[0]; if(vent){ F1.hoja.v.desde = vent.desde; F1.hoja.v.hasta = vent.hasta; } }
+      f1RepintarHoja(); return;
+    }
+  });
+  document.addEventListener('submit', function(e){
+    var id = e.target.id, btn = e.target.querySelector('[type="submit"]');
+    if(['f3FormAlta','f3FormCerrar','f3FormReabrir','f3FormEsperar','f3FormAgendar','f3FormCliente','f3FormForm','f3FormEditar'].indexOf(id) < 0) return;
+    e.preventDefault();
+    var h = F1.hoja;
+    if(id === 'f3FormAlta') f3GuardarAlta(btn);
+    else if(id === 'f3FormCerrar') f3GuardarCerrar(btn);
+    else if(id === 'f3FormReabrir'){
+      btn.disabled = true;
+      sb.rpc('reabrir_interesado', { p_insc:h.iid, p_etapa:h.etapa }).then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+        .then(function(){ F3.cerrados = false; f3PintarInteresados(); f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar('Reabierto.'); })
+        .catch(function(er){ btn.disabled = false; h.err = f1Claro(er); f1RepintarHoja(); });
+    }
+    else if(id === 'f3FormEsperar'){
+      btn.disabled = true;
+      sb.rpc('esperar_respuesta', { p_insc:h.iid, p_dias:h.dias }).then(function(r){ if(r.error) throw r.error; return f1Recargar(); })
+        .then(function(){ f1MostrarHoja({ tipo:'f3int', iid:h.iid }); avisar('Si no responde, el 1.er seguimiento queda listo ' + f1El(f1Mas(f1Hoy(), h.dias)) + '.'); })
+        .catch(function(er){ btn.disabled = false; h.err = f1Claro(er); f1RepintarHoja(); });
+    }
+    else if(id === 'f3FormAgendar') f3GuardarAgendar(btn);
+    else if(id === 'f3FormCliente') f3GuardarCliente(btn);
+    else if(id === 'f3FormForm') f3GuardarForm(btn);
+    else if(id === 'f3FormEditar') f3GuardarEditar(btn);
+  });
+
+  /* ═══ fase 3 · LOS TEXTOS DE COBRO, desde la tabla ═══
+     Los campos llevan lo que antes se armaba en el código (qué se cobra,
+     cuánto, el saludo según la hora), así el mensaje sale igual que antes
+     y Denisse puede cambiar las palabras de alrededor. */
+  function f3TextoCobro(x, d, U, n, monto, lps, falta){
+    var tr = U ? 'usted' : 'vos', sal = f1Saludo(U);
+    var cuanto1 = (falta ? 'faltan ' : '') + f1Usd(monto) + (lps ? ' (' + lps + ')' : '');
+    if(d.tipo === 'pagador') return f3Texto('cobro_pagador', tr, { saludo:sal, pagador:n, que_se_cobra:f1QueSeCobra(x.a, x.p, primerNombre(d.cliente)), cuanto:cuanto1 });
+    var que = f1QueSeCobra(x.a, x.p);
+    if(x.paso === 'preventivo'){
+      var conTasa = lps ? ' (' + lps + ', tasa de venta BAC del ' + f1Corto(F1.tasa.tasa_fecha) + ')' : '';
+      var abre = f1Mas(x.p.fecha_preventivo, 1), abierta = f1Hoy() >= abre;
+      return f3Texto(abierta ? 'cobro_preventivo_abierta' : 'cobro_preventivo', tr, { saludo:sal, nombre:n,
+        fecha:String(abierta ? +x.p.vence.slice(8,10) : +abre.slice(8,10)), que_se_cobra:que, cuanto:f1Usd(monto) + conTasa });
+    }
+    if(x.paso === 'primero') return f3Texto('cobro_primero', tr, { saludo:sal, nombre:n, que_se_cobra:que, cuanto:cuanto1 });
+    return f3Texto('cobro_segundo', tr, { saludo:sal, nombre:n, que_se_cobra:que, cuanto:(falta ? 'faltan ' : '') + f1Usd(monto) + (lps ? ' · ' + lps : '') });
+  }
+  function f3FraseConf(d, ac, saludo, deQ, cosa, U){
+    var tr = U ? 'usted' : 'vos';
+    if(d.falta) return f3Texto('confirmacion_abono', tr, { nombre:saludo, monto_usd:d.monto, que_se_cobra:cosa + deQ + d.periodo, cuanto:f1Usd(d.falta, true) });
+    return f3Texto(f1PorClase(ac) ? 'confirmacion_pago_clases' : 'confirmacion_pago', tr, { nombre:saludo, periodo:deQ + d.periodo });
+  }
+
   /* ═══ PINTAR ═══ */
   function f1Pintar(){
     f1PintarHoy();
     if(vista === 'agenda') f2PintarAgenda();
     if(vista === 'clientas') f1PintarClientes();
+    if(vista === 'interesados') f3PintarInteresados();
     if(vista === 'cobros') f1PintarCobros();
     f1Offline();
   }
@@ -9245,8 +10755,8 @@ body .pn-app section h2{animation:none;}
           '<button type="button" class="f1-mini" data-f1-mover-vuelta="' + esc(f.aid) + '">Mover la fecha</button></span></span><span></span></div>';
         return;
       }
-      var ico = f.tipo === 'cambio' ? 'reponer' : f.tipo === 'recs' ? 'mensajes' : f.tipo === 'salud' ? 'info' : f.tipo === 'hablar' ? 'globo' : (f.html.indexOf('hablarlo') >= 0 ? 'globo' : 'billete');
-      var attr = f.tipo === 'cambio' ? (f.repo ? 'data-f2-buscar="' + esc(f.repo) + '"' : 'data-f2-grupal="' + esc(f.grupo) + '"')
+      var ico = f.tipo === 'interesado' ? 'mensajes' : f.tipo === 'cambio' ? 'reponer' : f.tipo === 'recs' ? 'mensajes' : f.tipo === 'salud' ? 'info' : f.tipo === 'hablar' ? 'globo' : (f.html.indexOf('hablarlo') >= 0 ? 'globo' : 'billete');
+      var attr = f.tipo === 'interesado' ? 'data-f3-int="' + esc(f.iid) + '"' : f.tipo === 'cambio' ? (f.repo ? 'data-f2-buscar="' + esc(f.repo) + '"' : 'data-f2-grupal="' + esc(f.grupo) + '"')
         : f.tipo === 'recs' ? 'data-f1-ir="cobros"' : f.tipo === 'salud' ? 'data-f1-insc="' + esc(f.iid) + '"' : 'data-f1-ficha="' + esc(f.pid) + '"';
       html += '<button type="button" class="f1-crit f1-fila-btn" ' + attr + '>' +
         '<span class="f1-crit-ico">' + f1Ico(ico) + '</span>' +
@@ -9259,6 +10769,8 @@ body .pn-app section h2{animation:none;}
       html += '<button type="button" class="f1-crit-mas f1-fila-btn" data-f1-mas="crit-' + dia + '" aria-expanded="' + verMas + '">' +
         '<span>' + (verMas ? 'Ver menos' : 'y ' + ocultas + ' más') + '</span>' + '<span class="f1-chev">' + f1Ico('abajo') + '</span></button>';
     }
+    var li3 = typeof F3 !== 'undefined' ? f3LineaHoy(dia) : '';
+    if(li3) html += li3;
     if(!F1.acuerdos.length && !crit.length){
       html += '<div class="f1-crit-calma" style="padding-top:0"><p style="font-family:var(--sans);font-weight:400;font-size:.94rem;color:var(--ink-2)">Todavía no hay clientes con acuerdo. Empezá por Clientes › Agregar cliente.</p></div>';
     }
@@ -9340,6 +10852,7 @@ body .pn-app section h2{animation:none;}
       html += bloque('sab', 'Si decidís trabajar el sábado', sesSab.length ? sesSab.length + (sesSab.length === 1 ? ' sesión' : ' sesiones') : 'Nada en el sábado',
         sesSab.map(function(x){ return '<div class="f1-per"><b>' + esc(x.nombre) + '</b><span class="m f1-num">' + esc(f1Hora(x.hora)) + '</span><i class="e3">' + esc(x.que) + '</i></div>'; }).join('') || '<p class="f1-vacio-linea">Nada en el sábado.</p>');
     }
+    html += typeof F3 !== 'undefined' ? f3HtmlSemana(dias) : '';
     return html + '</div>';
   }
 
@@ -9512,6 +11025,9 @@ body .pn-app section h2{animation:none;}
       out.push({ n:2, corto:cs.length === 1 ? '1 consulta abierta' : cs.length + ' consultas abiertas',
         largo:'<strong>' + (cs.length === 1 ? '1 consulta abierta' : cs.length + ' consultas abiertas') + '</strong> <span>(' + esc(tipos.join(', ')) + ')</span>', ico:'lista', orden:'3' });
     }
+    /* fase 3 · lo que bloquea el onboarding (nunca de qué es el documento) */
+    var ob = typeof F3 !== 'undefined' ? f3OnbExcepcion(g.p.id) : null;
+    if(ob) out.push({ n:2, tipo:'onb', corto:ob.corto, largo:ob.largo, ico:'lista', orden:'4' });
     return out.sort(function(x, y){ return x.n - y.n || (x.orden < y.orden ? -1 : 1); });
   }
   function f1Filtrar(gente){
@@ -9607,9 +11123,10 @@ body .pn-app section h2{animation:none;}
      En escritorio (≥ 1100 px) y dentro de Clientes: el panel de al lado.
      En cualquier otro lugar: la hoja que sube desde abajo (la misma de
      los mensajes), que en ≥ 760 px es un diálogo centrado. */
-  function f1EnLado(){ return vista === 'clientas' && window.matchMedia('(min-width:1100px)').matches && !!document.getElementById('f1Lado'); }
+  function f1LadoEl(){ return document.getElementById(vista === 'interesados' ? 'f3Lado' : 'f1Lado'); }
+  function f1EnLado(){ return (vista === 'clientas' || vista === 'interesados') && window.matchMedia('(min-width:1100px)').matches && !!f1LadoEl(); }
   function f1Contenedor(){
-    if(F1.hoja && F1.hoja.lado && document.getElementById('f1Lado')) return document.getElementById('f1Lado');
+    if(F1.hoja && F1.hoja.lado && f1LadoEl()) return f1LadoEl();
     return document.getElementById('f1HojaIn');
   }
   function f1MostrarHoja(estado){
@@ -9643,6 +11160,11 @@ body .pn-app section h2{animation:none;}
     if(h.tipo === 'pago' && document.getElementById('f1FormPago')) f1LeerPago();
     if(h.tipo === 'acuerdo' && document.getElementById('f1FormAcuerdo')) f1LeerAcuerdo();
     if(h.tipo === 'ventana' && document.getElementById('f1FormVentana')) f1LeerVentana();
+    if(h.tipo === 'f3alta' && document.getElementById('f3FormAlta')) f3LeerAlta();
+    if(h.tipo === 'f3agendar' && document.getElementById('f3FormAgendar')) f3LeerAgendar();
+    if(h.tipo === 'f3cliente' && document.getElementById('f3FormCliente')) f3LeerCliente();
+    if(h.tipo === 'f3form' && document.getElementById('f3FormForm')) f3LeerForm();
+    if(h.tipo === 'f3msg' && document.querySelector('[data-f3-campo]')) f3LeerCampos();
     var html = '';
     if(h.tipo === 'ficha') html = f1HtmlFicha(h.pid);
     else if(h.tipo === 'pago') html = f1HtmlRegistrarPago(h);
@@ -9666,10 +11188,23 @@ body .pn-app section h2{animation:none;}
     else if(h.tipo === 'f2sab') html = f2HtmlSabado(h);
     else if(h.tipo === 'f2bloque') html = f2HtmlBloque(h);
     else if(h.tipo === 'f21hor') html = f21HtmlHorario(h);
+    /* fase 3 */
+    else if(h.tipo === 'f3int') html = f3HtmlInteresado(h);
+    else if(h.tipo === 'f3alta') html = f3HtmlAlta(h);
+    else if(h.tipo === 'f3cerrar') html = f3HtmlCerrar(h);
+    else if(h.tipo === 'f3reabrir') html = f3HtmlReabrir(h);
+    else if(h.tipo === 'f3esperar') html = f3HtmlEsperar(h);
+    else if(h.tipo === 'f3agendar') html = f3HtmlAgendar(h);
+    else if(h.tipo === 'f3ses') html = f3HtmlSesion(h);
+    else if(h.tipo === 'f3cliente') html = f3HtmlCliente(h);
+    else if(h.tipo === 'f3msg') html = f3HtmlMensaje(h);
+    else if(h.tipo === 'f3form') html = f3HtmlForm(h);
+    else if(h.tipo === 'f3editar') html = f3HtmlEditar(h);
     var funde = h.funde; h.funde = false;
     caja.innerHTML = '<div class="' + (funde ? 'f1-funde' : '') + '">' + html + '</div>';
     if(h.lado) caja.scrollTop = h.scroll || 0;
     if(h.tipo === 'ficha') f1PintarHilo(h.pid);
+    if(h.tipo === 'f3int'){ var x3 = f3Item(h.iid); if(x3) f1PintarHilo(x3.persona_id); }
     if(h.tipo === 'ficha' && F1.abrirVuelta){ var bv = caja.querySelector('[data-f1-vuelta="' + F1.abrirVuelta + '"]'); F1.abrirVuelta = null; if(bv) bv.click(); }
     if(h.tipo === 'pago') f1CalcularPago();
     if(h.tipo === 'conf') f1PrepararImagenes();
@@ -9757,7 +11292,7 @@ body .pn-app section h2{animation:none;}
                 : '<span class="cuando chico">' + (!hayHorario ? 'Sin horario fijo · agregalo en el acuerdo' : pausado ? 'Sin sesiones hasta que vuelva' : 'Sin sesiones en las próximas dos semanas') + '</span>') + '</p>';
       }
       /* La pausa ya se dice arriba («En pausa · horario reservado · …»): no se repite. */
-      var exc = f1Excepciones(g).filter(function(e){ return e.tipo !== 'pausa'; }).slice(0, 3);
+      var exc = f1Excepciones(g).filter(function(e){ return e.tipo !== 'pausa' && e.tipo !== 'onb'; }).slice(0, 3);
       if(F1.estado !== 'ok') html += '<p class="f1-nada">' + esc(f1Aviso()) + '</p>';
       else if(exc.length) html += '<ul class="f1-exc-lista">' + exc.map(function(e){ return '<li>' + f1Ico(e.ico) + '<p>' + e.largo + '</p></li>'; }).join('') + '</ul>';
       else html += '<p class="f1-nada">Nada pendiente</p>';
@@ -9772,6 +11307,8 @@ body .pn-app section h2{animation:none;}
       ? '<a class="f1-mini" href="' + esc(carpeta) + '" target="_blank" rel="noopener">' + f1Ico('carpeta') + 'Abrir expediente' + f1Ico('externo') + '</a>'
       : '<button type="button" class="f1-mini" data-f1-carpeta>' + f1Ico('carpeta') + 'Agregar el link de su carpeta</button>') + '</div>';
     html += '</div>';
+    /* fase 3 · el onboarding y las autorizaciones */
+    html += f3HtmlOnboarding(pid);
 
     /* 1 · cobro actual */
     if(acs.length){
@@ -10174,7 +11711,8 @@ body .pn-app section h2{animation:none;}
     var gracias = (d.pagador ? f1TratoPagador(ac) : f1Trato(g.persona_id)) === 'usted' ? 'Muchas gracias.' : 'Gracias.';
     var deQ = d.pagador ? 'de ' + primerNombre({ nombre:d.cliente }) + ' ' : '';
     var cosa = f1PorClase(ac) ? 'las clases ' : 'la mensualidad ';
-    var frase = d.falta
+    var f3f = f3FraseConf(d, ac, saludo, deQ, cosa, gracias === 'Muchas gracias.');
+    var frase = f3f != null ? f3f : d.falta
       ? '¡Recibido, ' + saludo + '! Quedó registrado el abono de ' + d.monto + ' a ' + cosa + deQ + d.periodo + '. Faltan ' + f1Usd(d.falta, true) + '. ' + gracias
       : '¡Recibido, ' + saludo + '! Quedó ' + (f1PorClase(ac) ? 'registrado el pago de las clases ' : 'registrada la mensualidad ') + deQ + d.periodo + '. ' + gracias;
     var bloque = ['CONFIRMACIÓN DE PAGO · ' + d.numero, 'Healing Through Movement', '',
